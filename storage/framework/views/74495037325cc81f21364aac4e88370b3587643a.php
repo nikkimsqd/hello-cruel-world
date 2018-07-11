@@ -17,13 +17,13 @@
 	<form action="<?php echo e(url('/uploadproduct')); ?>" method="post" enctype="multipart/form-data">
 		<?php echo e(csrf_field()); ?>
 
-		<input type="file" name="product" multiple>
+		<input type="file" name="product[]" multiple>
 		<input type="submit" name="btn_upload">
 	</form>
 	<br><br>
 
 	<?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-	<img src="<?php echo e(asset('/uploads').$product->productName); ?>">
+	<img src="<?php echo e(asset('/uploads').$product->productName); ?>" width="100">
 	<!-- <img src="<?php echo e($product['productName']); ?>"> -->
 
 	<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

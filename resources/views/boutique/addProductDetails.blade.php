@@ -19,18 +19,11 @@
 	<br>
 	<form action="{{ url('/uploadproduct') }}" method="post" enctype="multipart/form-data">
 		{{ csrf_field() }}
-		<input type="file" name="product[]" multiple>
-		<input type="submit" name="btn_upload">
-	</form>
-	<br><br>
 
 	@foreach($products as $product)
 	<img src="{{ asset('/uploads').$product->productName }}" width="100">
-	<!-- <img src="{{ $product['productName'] }}"> -->
 
 	@endforeach
-
-	<!-- <img src="{{ asset('/uploads/f9seR.jpg') }}"> -->
 
 </div>
 
