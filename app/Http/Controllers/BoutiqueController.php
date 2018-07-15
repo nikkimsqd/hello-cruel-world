@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
+use App\File;
 
 class BoutiqueController extends Controller
 {
@@ -12,7 +13,7 @@ class BoutiqueController extends Controller
    		$id = Auth()->user()->id;
 
 
-		$products = Product::where('userID', $id)->get();
+		$products = File::where('userID', $id)->get();
 		// dd($products);
 
 		return view('boutique/products',compact('products'));
