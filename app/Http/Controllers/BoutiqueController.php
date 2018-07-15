@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
+use App\File;
 
 class BoutiqueController extends Controller
 {
@@ -12,7 +13,7 @@ class BoutiqueController extends Controller
    		$id = Auth()->user()->id;
 
 
-		$products = Product::where('userID', $id)->get();
+		$products = File::where('userID', $id)->get();
 		// dd($products);
 
 		return view('boutique/products',compact('products'));
@@ -25,34 +26,34 @@ class BoutiqueController extends Controller
 		// $validated = $request->validate([
 		// 'product' => 'required|mimes:jpeg,png,jpg,gif,svg'
 		// ]);
-	
 
     $id = Auth()->user()->id;
     // dd($id);
 
-
-    $files = $request->file('product');
+    $uploads = $request->file('product');
     if($request->hasFile('product')) {
     	
 
-    	foreach($files as $file){
-    	 // dd($file);
-    	$product = new Product();
+    	foreach($uploads as $upload){
+    	 // dd($upload);
+    	$files = new File();
 
-    		$name = $file->getClientOriginalName();
+    		$name = $upload->getClientOriginalName();
 	        $destinationPath = public_path('uploads');
 	        // $filename = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$file->getClientOriginalName();
 	        $filename = $destinationPath.'\\'. $name;
-	        $file->move($destinationPath, $filename);
+	        $upload->move($destinationPath, $filename);
 
-	        $product->productName = "/".$name;
-	       	$product->userID = $id;
-	      	$product->save();
+	        $files->filename = "/".$name;
+	       	$files->userID = $id;
+	       	$files->batchID = rand();
+	      	$files->save();
     	}
       }
 
-     
-      return view('addProductDetails', compact(''));
+    // dd($products); 	
+    // return view('boutique/addProductDetails', compact('products'));
+      return redirect('/addProductDetails', compact('products'));
 	}
 
 }

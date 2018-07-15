@@ -17,11 +17,11 @@
 
 <div>
 	<br>
-	<form action="{{ url('/uploadproduct') }}" method="post" enctype="multipart/form-data">
+	<form action="" method="post" enctype="multipart/form-data">
 		{{ csrf_field() }}
 
 	@foreach($products as $product)
-	<img src="{{ asset('/uploads').$product->productName }}" width="100">
+	<img src="{{ $product }}" width="100">
 
 	@endforeach
 

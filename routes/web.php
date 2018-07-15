@@ -33,7 +33,7 @@ Route::view('/boutique-account', 'boutique.boutiqueaccount');
 	
 Route::get('/products', 'BoutiqueController@showProducts');
 Route::post('/uploadproduct', 'BoutiqueController@uploadProduct');
-
+Route::get('addProductDetails', 'BoutiqueController@addProductDetails');
 
 
 
