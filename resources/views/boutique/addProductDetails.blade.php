@@ -20,10 +20,10 @@
 	<form action="{{ url('/uploadproduct') }}" method="post" enctype="multipart/form-data">
 		{{ csrf_field() }}
 
-	@foreach($products as $product)
-	<img src="{{ asset('/uploads').$product->productName }}" width="100">
+	<!-- @foreach($files as $file) -->
+	<img src="{{ asset('/uploads').$files->filename }}" width="100">
 
-	@endforeach
+	<!-- @endforeach -->
 
 </div>
 

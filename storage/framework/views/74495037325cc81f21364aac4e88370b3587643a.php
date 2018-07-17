@@ -22,6 +22,8 @@
 	</form>
 	<br><br>
 
+	
+
 	<?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 	<img src="<?php echo e(asset('/uploads').$product->productName); ?>" width="100">
 	<!-- <img src="<?php echo e($product['productName']); ?>"> -->

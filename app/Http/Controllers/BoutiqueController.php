@@ -32,28 +32,30 @@ class BoutiqueController extends Controller
     // dd($id);
 
 
-    $files = $request->file('product');
+    $uploads = $request->file('product');
     if($request->hasFile('product')) {
-    	
+    	$random = rand();
 
-    	foreach($files as $file){
+    	foreach($uploads as $upload){
     	 // dd($file);
-    	$product = new Product();
+    	$files = new File();
 
-    		$name = $file->getClientOriginalName();
+    		$name = $upload->getClientOriginalName();
 	        $destinationPath = public_path('uploads');
 	        // $filename = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$file->getClientOriginalName();
 	        $filename = $destinationPath.'\\'. $name;
-	        $file->move($destinationPath, $filename);
+	        $upload->move($destinationPath, $filename);
 
-	        $product->productName = "/".$name;
-	       	$product->userID = $id;
-	      	$product->save();
+	       	$files->userID = $id;
+	       	$files->batchID = $random;
+	        $files->filename = "/".$name;
+	      	$files->save();
     	}
       }
+      // dd($files->filename);
 
-     
-      return view('addProductDetails', compact(''));
+     return view('boutique/addProductDetails', compact('files'));
+      // return view('addProductDetails', compact(''));
 	}
 
 }

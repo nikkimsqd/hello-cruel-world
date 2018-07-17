@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductDescriptionsTable extends Migration
+class CreateFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class CreateProductDescriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('ProductDescriptions', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('files', function (Blueprint $table) {
+            $table->increments('fileID');
+            $table->string('userID');
+            $table->string('batchID');
+            $table->string('filename');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ class CreateProductDescriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ProductDescriptions');
+        Schema::dropIfExists('files');
     }
 }

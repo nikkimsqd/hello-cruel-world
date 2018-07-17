@@ -24,6 +24,8 @@
 	</form>
 	<br><br>
 
+	
+
 	@foreach($products as $product)
 	<img src="{{ asset('/uploads').$product->productName }}" width="100">
 	<!-- <img src="{{ $product['productName'] }}"> -->
