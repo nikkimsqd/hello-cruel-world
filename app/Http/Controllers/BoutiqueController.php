@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Product;
 use App\File;
+use App\Category;
+use App\User;
 
 class BoutiqueController extends Controller
 {
@@ -13,31 +15,46 @@ class BoutiqueController extends Controller
    		$id = Auth()->user()->id;
 
 
-		$products = File::where('userID', $id)->get();
+		$products = Product::where('userID', $id)->get();
 		// dd($products);
 
 		return view('boutique/products',compact('products'));
 	}
 
 
-    public function uploadProduct(Request $request)
+	public function addProduct()
 	{
+		$categories = Category::all();
 
-		// $validated = $request->validate([
-		// 'product' => 'required|mimes:jpeg,png,jpg,gif,svg'
-		// ]);
-	
-
-    $id = Auth()->user()->id;
-    // dd($id);
+		return view('boutique/addProducts', compact('categories'));
+	}
 
 
-    $uploads = $request->file('product');
-    if($request->hasFile('product')) {
-    	$random = rand();
+	public function saveProduct(Request $request)
+	{
+    	$id = Auth()->user()->id;
+
+    	
+
+
+    	$products = Product::create([
+    		'userID' => $id,
+    		'productName' => $request->input('productName'),
+    		'productDesc' => $request->input('productDesc'),
+    		'productPrice' => $request->input('productPrice'),
+    		'category' => $request->input('category'),
+    		'productStatus' => "Available"
+    		]);
+
+    	// dd($products['productID']);
+
+
+
+    	$uploads = $request->file('file');
+
+    	if($request->hasFile('file')) {
 
     	foreach($uploads as $upload){
-    	 // dd($file);
     	$files = new File();
 
     		$name = $upload->getClientOriginalName();
@@ -47,15 +64,14 @@ class BoutiqueController extends Controller
 	        $upload->move($destinationPath, $filename);
 
 	       	$files->userID = $id;
-	       	$files->batchID = $random;
+	       	$files->productID = $products['productID'];
 	        $files->filename = "/".$name;
 	      	$files->save();
+	      	$filename = "/".$name;
     	}
       }
-      // dd($files->filename);
 
-     return view('boutique/addProductDetails', compact('files'));
-      // return view('addProductDetails', compact(''));
+    	return redirect('/products');
 	}
 
 }

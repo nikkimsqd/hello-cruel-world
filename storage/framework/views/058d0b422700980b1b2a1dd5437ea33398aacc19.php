@@ -1,228 +1,335 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<!-- <meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
-	<title><?php echo $__env->yieldContent('titletext'); ?></title>
-	<!-- <meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="" />
-	<meta name="keywords" content="" />
-	<meta name="author" content="" /> -->
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-  <!-- Facebook and Twitter integration -->
-	<!-- <meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" /> -->
+    <!-- Title  -->
+    <title><?php echo $__env->yieldContent('titletext'); ?></title>
 
-	<!-- <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:100,300,400,600,700" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700" rel="stylesheet"> -->
-  	<!-- <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/font-awesome/css/font-awesome.min.css')); ?>"> -->
+    <!-- Favicon  -->
+    <link rel="icon" href="<?php echo e(asset('essence/img/core-img/favicon.ico')); ?>">
 
-	
-	<!-- Animate.css -->
-	<!-- <link rel="stylesheet" href="css/animate.css"> -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/animate.css')); ?>">
-
-	<!-- Icomoon Icon Fonts-->
-	<!-- <link rel="stylesheet" href="css/icomoon.css"> -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/icomoon.css')); ?>">
-
-	<!-- Bootstrap  -->
-	<!-- <link rel="stylesheet" href="css/bootstrap.css"> -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/bootstrap.css')); ?>">
-    <link rel="stylesheet" href="<?php echo e(asset('css/bootstrap.min.css')); ?>">
-
-
-	<!-- Magnific Popup -->
-	<!-- <link rel="stylesheet" href="css/magnific-popup.css"> -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/magnific-popup.css')); ?>">
-
-
-	<!-- Owl Carousel -->
-	<!-- <link rel="stylesheet" href="css/owl.carousel.min.css"> -->
-	<!-- <link rel="stylesheet" href="css/owl.theme.default.min.css"> -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/owl.theme.default.min.css')); ?>">
-    <link rel="stylesheet" href="<?php echo e(asset('css/owl.carousel.min.css')); ?>">
-
-
-	<!-- Theme style  -->
-	<!-- <link rel="stylesheet" href="css/style.css"> -->
-    <link rel="stylesheet" href="<?php echo e(asset('css/style.css')); ?>">
-
-
-	<!-- Modernizr JS -->
-	<script src="<?php echo e(asset('js/modernizr-2.6.2.min.js')); ?>"></script>
-    <!-- <script src="<?php echo e(asset('js/app.js')); ?>" defer></script> -->
-
-	<!-- FOR IE9 below -->
-	<script src="<?php echo e(asset('js/respond.min.js')); ?>"></script>
-	<!-- [if lt IE 9]> -->
-	<!-- <![endif] -->
-
-	<!-- ADMINLTE -->
-  	<link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css')); ?>">
-  	<link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/Ionicons/css/ionicons.min.css')); ?>">
-  	<link rel="stylesheet" href="<?php echo e(asset('adminlte/dist/css/AdminLTE.min.css')); ?>">
-  	<link rel="stylesheet" href="<?php echo e(asset('adminlte/dist/css/skins/_all-skins.min.css')); ?>">
-
-
-
+    <!-- Core Style CSS -->
+    <link rel="stylesheet" href="<?php echo e(asset('essence/css/core-style.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('essence/style.css')); ?>">
 
 </head>
-<style type="text/css">
-	a{
-		color: black !important;
-	}
 
-	div{
-		font-family: "Times New Roman";
-	}
-	/*.video-hero{
-		background-color: #f2f2f2 !important!
-	}*/
-
-</style>
 <body>
+    <!-- ##### Header Area Start ##### -->
+    <header class="header_area">
+        <div class="classy-nav-container breakpoint-off d-flex align-items-center justify-content-between">
+            <!-- Classy Menu -->
+            <nav class="classy-navbar" id="essenceNav">
+                <!-- Logo -->
+                <a class="nav-brand" href="index.html"><img src="<?php echo e(asset('essence/img/core-img/logo.png')); ?>" alt=""></a>
+                <!-- Navbar Toggler -->
+                <div class="classy-navbar-toggler">
+                    <span class="navbarToggler"><span></span><span></span><span></span></span>
+                </div>
+                <!-- Menu -->
+                <div class="classy-menu">
+                    <!-- close btn -->
+                    <div class="classycloseIcon">
+                        <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                    </div>
+                    <!-- Nav Start -->
+                    <div class="classynav">
+                        <ul>
+                            <li><a href="#">Shop</a>
+                                <div class="megamenu">
+                                    <ul class="single-mega cn-col-4">
+                                        <li class="title">Women's Collection</li>
+                                        <li><a href="shop.html">Dresses</a></li>
+                                        <li><a href="shop.html">Blouses &amp; Shirts</a></li>
+                                        <li><a href="shop.html">T-shirts</a></li>
+                                        <li><a href="shop.html">Rompers</a></li>
+                                        <li><a href="shop.html">Bras &amp; Panties</a></li>
+                                    </ul>
+                                    <ul class="single-mega cn-col-4">
+                                        <li class="title">Men's Collection</li>
+                                        <li><a href="shop.html">T-Shirts</a></li>
+                                        <li><a href="shop.html">Polo</a></li>
+                                        <li><a href="shop.html">Shirts</a></li>
+                                        <li><a href="shop.html">Jackets</a></li>
+                                        <li><a href="shop.html">Trench</a></li>
+                                    </ul>
+                                    <ul class="single-mega cn-col-4">
+                                        <li class="title">Kid's Collection</li>
+                                        <li><a href="shop.html">Dresses</a></li>
+                                        <li><a href="shop.html">Shirts</a></li>
+                                        <li><a href="shop.html">T-shirts</a></li>
+                                        <li><a href="shop.html">Jackets</a></li>
+                                        <li><a href="shop.html">Trench</a></li>
+                                    </ul>
+                                    <div class="single-mega cn-col-4">
+                                        <img src="img/bg-img/bg-6.jpg" alt="">
+                                    </div>
+                                </div>
+                            </li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="index.html">Home</a></li>
+                                    <li><a href="shop.html">Shop</a></li>
+                                    <li><a href="single-product-details.html">Product Details</a></li>
+                                    <li><a href="checkout.html">Checkout</a></li>
+                                    <li><a href="blog.html">Blog</a></li>
+                                    <li><a href="single-blog.html">Single Blog</a></li>
+                                    <li><a href="regular-page.html">Regular Page</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </div>
+                    <!-- Nav End -->
+                </div>
+            </nav>
+
+            <!-- Header Meta Data -->
+            <div class="header-meta d-flex clearfix justify-content-end">
+                <!-- Search Area -->
+                <div class="search-area">
+                    <form action="#" method="post">
+                        <input type="search" name="search" id="headerSearch" placeholder="Type for search">
+                        <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                </div>
+                <!-- Favourite Area -->
+                <div class="favourite-area">
+                    <a href="#"><img src="<?php echo e(asset('essence/img/core-img/heart.svg')); ?>" alt=""></a>
+                </div>
+                <!-- User Login Info -->
+                <div class="user-login-info">
+                    <a href="#"><img src="<?php echo e(asset('essence/img/core-img/user.svg')); ?>" alt=""></a>
+                </div>
+                <!-- Cart Area -->
+                <div class="cart-area">
+                    <a href="#" id="essenceCartBtn"><img src="<?php echo e(asset('essence/img/core-img/bag.svg')); ?>" alt=""> <span>3</span></a>
+                </div>
+            </div>
+
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
 
 
 
-	<div id="page">
-		<nav class="colorlib-nav" role="navigation">
-			<div class="top-menu">
-				<div class="container">
-					<div class="row">
-						<div class="col-md-2 col-md-push-5 text-center">
-							<div style="background-size: 60px;"><a href="/hinimo/public/dashboard">
-								<!-- <img src="<?php echo e(asset('hinimo.png')); ?>"></a> -->
-								<p style="font-family: Arizonia; font-size: 60px;"> Hinimo</p>
-							</div>
-						</div>
-					</div> <!-- row1 -->
+    <!-- ##### Right Side Cart Area ##### -->
+    <div class="cart-bg-overlay"></div>
 
-					<div class="row"> <!-- row2 -->
-						
-						<div class="col-md-12 text-center">
-							<ul>
-								<li>
-									<a href="/hinimo/public/about">About</a>
-								</li>
-								<li>
-									<a href="/hinimo/public/how-it-works">How It Works</a>
-								</li>
-								<li><a href="/hinimo/public/lookbook">Lookbook</a>
-								</li>
-								<!-- <li class="btn btn-success">
-									<a href="/hinimo/public/create-design-choose-mannequin">GET STARTED</a>
-								</li> -->
-								<li class="has-dropdown"><a href="/hinimo/public/products">Products</a>
-								</li>
-								<!-- <li>
-									<a href="/hinimo/public/contact-us">Contact Us</a>
-								</li> -->
-								<li class="active has-dropdown">
-									<a href="/hinimo/public/my-account">Boutique de Filipina</a>
-									<ul class="dropdown" style="background-color: #f2f2f2;">
-										<li><a href="/hinimo/public/boutique-account">View Transactions</a></li>
-										<li><a href="/hinimo/public/my-account">View Account</a></li>
-										<li><a href="/hinimo/public/logout">Logout</a></li>
-									</ul>
-								</li>
-							</ul>
-						</div>
-					</div> <!-- row2 -->
-				</div> <!-- container -->
-			</div> <!-- top menu -->
-		</nav>
+    <div class="right-side-cart-area">
 
-		<?php echo $__env->yieldContent('content'); ?>
-			
+        <!-- Cart Button -->
+        <div class="cart-button">
+            <a href="#" id="rightSideCart"><img src="img/core-img/bag.svg" alt=""> <span>3</span></a>
+        </div>
 
-		<footer id="colorlib-footer">
-			<div class="container">
-				<div class="row row-pb-md">
-					<div class="col-md-3 colorlib-widget">
-						<h4>About Hinimo</h4>
-						<p>Far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics</p>
-						<p>
-							<ul class="colorlib-social-icons">
-								<li><a href="#"><i class="icon-twitter"></i></a></li>
-								<li><a href="#"><i class="icon-facebook"></i></a></li>
-								<li><a href="#"><i class="icon-linkedin"></i></a></li>
-								<li><a href="#"><i class="icon-dribbble"></i></a></li>
-							</ul>
-						</p>
-					</div>
-					<div class="col-md-3 colorlib-widget">
-						<h4>Information</h4>
-						<p>
-							<ul class="colorlib-footer-links">
-								<li><a href="/hinimo/public/index"><i class="icon-check"></i> Home</a></li>
-								<li><a href="/hinimo/public/about"><i class="icon-check"></i> About</a></li>
-								<li><a href="/hinimo/public/how-it-works"><i class="icon-check"></i> How It Works</a></li>
-								<li><a href="/hinimo/public/shop"><i class="icon-check"></i> Shop</a></li>
-								<li><a href="/hinimo/public/lookbook"><i class="icon-check"></i> Lookbook</a></li>
-								<li><a href="/hinimo/public/contact-us"><i class="icon-check"></i> Conatct Us</a></li>
-							</ul>
-						</p>
-					</div>
+        <div class="cart-content d-flex">
 
-					<div class="col-md-3 colorlib-widget">
-						<h4>Contact Info</h4>
-						<ul class="colorlib-footer-links">
-							<li>291 South 21th Street, <br> Suite 721 New York NY 10016</li>
-							<li><a href="tel://1234567920"><i class="icon-phone"></i> + 1235 2355 98</a></li>
-							<li><a href="mailto:info@yoursite.com"><i class="icon-envelope"></i> info@yoursite.com</a></li>
-							<li><a href="#"><i class="icon-location4"></i> yourwebsite.com</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<div class="copy">
-				<div class="container">
-					<div class="row">
-						<div class="col-md-12 text-center">
-							<p>
-								<small class="block"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></small><br> 
-								<small class="block">Demo Images: <a href="http://unsplash.co/" target="_blank">Unsplash</a>, <a href="http://pexels.com/" target="_blank">Pexels</a></small>
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
+            <!-- Cart List Area -->
+            <div class="cart-list">
+                <!-- Single Cart Item -->
+                <div class="single-cart-item">
+                    <a href="#" class="product-image">
+                        <img src="img/product-img/product-1.jpg" class="cart-thumb" alt="">
+                        <!-- Cart Item Desc -->
+                        <div class="cart-item-desc">
+                          <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                            <span class="badge">Mango</span>
+                            <h6>Button Through Strap Mini Dress</h6>
+                            <p class="size">Size: S</p>
+                            <p class="color">Color: Red</p>
+                            <p class="price">$45.00</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Single Cart Item -->
+                <div class="single-cart-item">
+                    <a href="#" class="product-image">
+                        <img src="img/product-img/product-2.jpg" class="cart-thumb" alt="">
+                        <!-- Cart Item Desc -->
+                        <div class="cart-item-desc">
+                          <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                            <span class="badge">Mango</span>
+                            <h6>Button Through Strap Mini Dress</h6>
+                            <p class="size">Size: S</p>
+                            <p class="color">Color: Red</p>
+                            <p class="price">$45.00</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Single Cart Item -->
+                <div class="single-cart-item">
+                    <a href="#" class="product-image">
+                        <img src="img/product-img/product-3.jpg" class="cart-thumb" alt="">
+                        <!-- Cart Item Desc -->
+                        <div class="cart-item-desc">
+                          <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                            <span class="badge">Mango</span>
+                            <h6>Button Through Strap Mini Dress</h6>
+                            <p class="size">Size: S</p>
+                            <p class="color">Color: Red</p>
+                            <p class="price">$45.00</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-amount-summary">
+
+                <h2>Summary</h2>
+                <ul class="summary-table">
+                    <li><span>subtotal:</span> <span>$274.00</span></li>
+                    <li><span>delivery:</span> <span>Free</span></li>
+                    <li><span>discount:</span> <span>-15%</span></li>
+                    <li><span>total:</span> <span>$232.00</span></li>
+                </ul>
+                <div class="checkout-btn mt-100">
+                    <a href="checkout.html" class="btn essence-btn">check out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Right Side Cart End ##### -->
 
 
+    <?php echo $__env->yieldContent('content'); ?>
+    
+    
 
-	</div>
+    
 
-<!-- jQuery -->
-	<script src="<?php echo e(asset('js/jquery.min.js')); ?>"></script>
-	<!-- jQuery Easing -->
-	<script src="<?php echo e(asset('js/jquery.easing.1.3.js')); ?>"></script>
-	<!-- Bootstrap -->
-	<script src="<?php echo e(asset('js/bootstrap.min.js')); ?>"></script>
-	<!-- Waypoints -->
-	<script src="<?php echo e(asset('js/jquery.waypoints.min.js')); ?>"></script>
-	<!-- Stellar Parallax -->
-	<script src="<?php echo e(asset('js/jquery.stellar.min.js')); ?>"></script>
-	<!-- YTPlayer -->
-	<script src="<?php echo e(asset('js/jquery.mb.YTPlayer.min.js')); ?>"></script>
-	<!-- Owl carousel -->
-	<script src="<?php echo e(asset('js/owl.carousel.min.js')); ?>"></script>
-	<!-- Magnific Popup -->
-	<script src="<?php echo e(asset('js/jquery.magnific-popup.min.js')); ?>"></script>
-	<script src="<?php echo e(asset('js/magnific-popup-options.js')); ?>"></script>
-	<!-- Main -->
-	<script src="<?php echo e(asset('js/main.js')); ?>"></script>
+    <!-- ##### Brands Area Start ##### -->
+    <div class="brands-area d-flex align-items-center justify-content-between">
+        <!-- Brand Logo -->
+        <div class="single-brands-logo">
+            <img src="img/core-img/brand1.png" alt="">
+        </div>
+        <!-- Brand Logo -->
+        <div class="single-brands-logo">
+            <img src="img/core-img/brand2.png" alt="">
+        </div>
+        <!-- Brand Logo -->
+        <div class="single-brands-logo">
+            <img src="img/core-img/brand3.png" alt="">
+        </div>
+        <!-- Brand Logo -->
+        <div class="single-brands-logo">
+            <img src="img/core-img/brand4.png" alt="">
+        </div>
+        <!-- Brand Logo -->
+        <div class="single-brands-logo">
+            <img src="img/core-img/brand5.png" alt="">
+        </div>
+        <!-- Brand Logo -->
+        <div class="single-brands-logo">
+            <img src="img/core-img/brand6.png" alt="">
+        </div>
+    </div>
+    <!-- ##### Brands Area End ##### -->
 
+    <!-- ##### Footer Area Start ##### -->
+    <footer class="footer_area clearfix">
+        <div class="container">
+            <div class="row">
+                <!-- Single Widget Area -->
+                <div class="col-12 col-md-6">
+                    <div class="single_widget_area d-flex mb-30">
+                        <!-- Logo -->
+                        <div class="footer-logo mr-50">
+                            <a href="#"><img src="img/core-img/logo2.png" alt=""></a>
+                        </div>
+                        <!-- Footer Menu -->
+                        <div class="footer_menu">
+                            <ul>
+                                <li><a href="shop.html">Shop</a></li>
+                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="contact.html">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Single Widget Area -->
+                <div class="col-12 col-md-6">
+                    <div class="single_widget_area mb-30">
+                        <ul class="footer_widget_menu">
+                            <li><a href="#">Order Status</a></li>
+                            <li><a href="#">Payment Options</a></li>
+                            <li><a href="#">Shipping and Delivery</a></li>
+                            <li><a href="#">Guides</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Use</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row align-items-end">
+                <!-- Single Widget Area -->
+                <div class="col-12 col-md-6">
+                    <div class="single_widget_area">
+                        <div class="footer_heading mb-30">
+                            <h6>Subscribe</h6>
+                        </div>
+                        <div class="subscribtion_form">
+                            <form action="#" method="post">
+                                <input type="email" name="mail" class="mail" placeholder="Your email here">
+                                <button type="submit" class="submit"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Single Widget Area -->
+                <div class="col-12 col-md-6">
+                    <div class="single_widget_area">
+                        <div class="footer_social_area">
+                            <a href="#" data-toggle="tooltip" data-placement="top" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                            <a href="#" data-toggle="tooltip" data-placement="top" title="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                            <a href="#" data-toggle="tooltip" data-placement="top" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                            <a href="#" data-toggle="tooltip" data-placement="top" title="Pinterest"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                            <a href="#" data-toggle="tooltip" data-placement="top" title="Youtube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<div class="row mt-5">
+                <div class="col-md-12 text-center">
+                    <p>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+    <!-- ##### Footer Area End ##### -->
+
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+    <script src="<?php echo e(asset('essence/js/jquery/jquery-2.2.4.min.js')); ?>"></script>
+    <!-- Popper js -->
+    <script src="<?php echo e(asset('essence/js/popper.min.js')); ?>"></script>
+    <!-- Bootstrap js -->
+    <script src="<?php echo e(asset('essence/js/bootstrap.min.js')); ?>"></script>
+    <!-- Plugins js -->
+    <script src="<?php echo e(asset('essence/js/plugins.js')); ?>"></script>
+    <!-- Classy Nav js -->
+    <script src="<?php echo e(asset('essence/js/classy-nav.min.js')); ?>"></script>
+    <!-- Active js -->
+    <script src="<?php echo e(asset('essence/js/active.js')); ?>"></script>
 
 </body>
+
 </html>

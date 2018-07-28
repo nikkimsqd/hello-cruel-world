@@ -30,6 +30,15 @@
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <!-- ESSENCE -->
+    <!-- Favicon  -->
+    <link rel="icon" href="{{asset('essence/img/core-img/favicon.ico')}}">
+
+    <!-- Core Style CSS -->
+    <link rel="stylesheet" href="{{asset('essence/css/core-style.css')}}">
+    <!-- <link rel="stylesheet" href="{{asset('style.css')}}"> -->
+
 </head>
 
 <body class="hold-transition skin-green sidebar-mini">
@@ -672,5 +681,20 @@
 <script src="{{asset('adminlte/dist/js/pages/dashboard2.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('adminlte/dist/js/demo.js') }}"></script>
+
+<!-- ESSENCE -->
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+    <script src="{{asset('essence/js/jquery/jquery-2.2.4.min.js')}}"></script>
+    <!-- Popper js -->
+    <script src="{{asset('essence/js/popper.min.js')}}"></script>
+    <!-- Bootstrap js -->
+    <script src="{{asset('essence/js/bootstrap.min.js')}}"></script>
+    <!-- Plugins js -->
+    <script src="{{asset('essence/js/plugins.js')}}"></script>
+    <!-- Classy Nav js -->
+    <script src="{{asset('essence/js/classy-nav.min.js')}}"></script>
+    <!-- Active js -->
+    <script src="{{asset('essence/js/active.js')}}"></script>
+
 </body>
 </html>

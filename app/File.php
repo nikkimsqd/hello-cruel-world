@@ -8,6 +8,6 @@ class File extends Model
 {
 	protected $primaryKey = 'fileID';
     protected $fillable = [
-        'userID', 'batchID', 'filename'
+        'userID', 'filename'
     ];
 }

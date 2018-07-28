@@ -32,7 +32,8 @@ Route::view('/rents', 'boutique.rents');
 Route::view('/boutique-account', 'boutique.boutiqueaccount');
 	
 Route::get('/products', 'BoutiqueController@showProducts');
-Route::post('/uploadproduct', 'BoutiqueController@uploadProduct');
+Route::get('/addproduct', 'BoutiqueController@addProduct');
+Route::post('/saveproduct', 'BoutiqueController@saveProduct');
 
 
 
@@ -49,7 +50,8 @@ Route::post('/uploadproduct', 'BoutiqueController@uploadProduct');
 
 
 //customer
-Route::view('/index', 'hinimo.index');
+Route::get('/index', 'CustomerController@index');
+
 Route::view('/about', 'hinimo.about');
 Route::view('/how-it-works', 'hinimo.how');
 Route::view('/shop', 'hinimo.shop');
