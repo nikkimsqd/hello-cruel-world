@@ -34,7 +34,7 @@ Route::view('/boutique-account', 'boutique.boutiqueaccount');
 Route::get('/products', 'BoutiqueController@showProducts');
 Route::get('/addproduct', 'BoutiqueController@addProduct');
 Route::post('/saveproduct', 'BoutiqueController@saveProduct');
-
+Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
 
 
 

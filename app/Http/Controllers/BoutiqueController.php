@@ -74,4 +74,11 @@ class BoutiqueController extends Controller
     	return redirect('/products');
 	}
 
+	public function viewProduct($productID)
+	{
+		$product = Product::where('productID', $productID)->first();
+
+		return view('boutique/viewProduct', compact('product'));
+	}
+
 }

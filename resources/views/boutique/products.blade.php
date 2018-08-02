@@ -5,28 +5,20 @@
   Boutique de Filipina
 @endsection
 
-
+@section('header')
+  Products
+@endsection
 
 @section('content')
 <div class="page">
-<div id="content-wrapper" style="background-color: white;">
+<div id="content-wrapper">
 <hr>
 
 
-<section class="shop_grid_area section-padding-80">
+<section class="shop_grid_area">
 <div class="container">
-<div class="row">
-
-<div class="col-8 col-md-8 col-lg-9">
-<!-- <div class="shop_grid_product_area">
-<div class="row">
-<div class="col-12">
-
-</div>
-</div>
 
 
-</div> -->
 	<br>
 	<a href="/hinimo/public/addproduct/">Add Products here</a>
 	<br><br>
@@ -45,7 +37,7 @@
     	@foreach($products as $product) <!--  -------------WALA PAKO NAHUMAN ARIIII---------------- -->
             <!--         {{$product->productFile}} -->
 <!-- Single Product -->
-        <div class="col-12 col-sm-6 col-lg-4">
+        <div class="col-md-12 col-lg-3">
             <div class="single-product-wrapper">
                 <!-- Product Image -->
                 <div class="product-img">
@@ -58,19 +50,13 @@
         
                 @if($counter == 1)
                     <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
-                    <img class="hover-img" src="{{ asset('/uploads').$product->productFile  }}" alt="">
                 @elseif($counter == 2)
                     <!-- Hover Thumb -->
-                    <img class="hover-img" src="{{ asset('/uploads').$product->productFile  }}" alt="">
+                    <!-- <img class="hover-img" src="{{ asset('/uploads').$product->productFile  }}" alt=""> -->
                     @endif
                     <?php $counter++; ?>
                 @endforeach
                 
-                
-                    <!-- Favourite -->
-                    <div class="product-favourite">
-                        <a href="#" class="favme fa fa-heart"></a>
-                    </div>
                 </div>
 
                 <!-- Product Description -->
@@ -85,7 +71,7 @@
                     <div class="hover-content">
                         <!-- Add to Cart -->
                         <div class="add-to-cart-btn">
-                            <a href="#" class="btn essence-btn">Add to Cart</a>
+                            <a href="viewproduct/{{ $product['productID'] }}" class="btn essence-btn">View Product</a>
                         </div>
                     </div>
                 </div>
@@ -97,11 +83,105 @@
 <br><br>
 </div>
 
+<!-- <div class="row">
+@foreach($products as $product)
+
+<div class="col-md-6">
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">Carousel</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- <div class="box-body">
+              <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+           
+                <div class="carousel-inner">
+            @foreach( $product->productFile as $image)
+                
+                  <div class="item">
+                    <img src="{{ asset('/uploads').$image['filename'] }}">
+
+                  </div>
 
 
+
+            @endforeach
+                </div>
+
+                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                  <span class="fa fa-angle-left"></span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                  <span class="fa fa-angle-right"></span>
+                </a>
+                
+              </div>
+            </div> -->
+            <!-- /.box-body -->
+        
+          <!-- </div> -->
+          <!-- /.box -->
+        <!-- </div> -->
+        <!-- /.col -->
+        <!-- @endforeach -->
+        <!-- </div> --> 
+
+
+
 </div>
+
+<!-- ------------------------NEW OPTION------------------------------ -->
+
+
+
+<div class="row">
+@foreach($products as $product)
+
+
+    <div class="col-md-3">
+
+        <div class="box"> 
+
+        <?php 
+            $counter = 1;
+        ?>
+
+        @foreach( $product->productFile as $image)
+
+        @if($counter == 1)
+            <img src="{{ asset('/uploads').$image['filename'] }}" style="width: 100%; align-self: center; padding: 20px;">
+        @else
+            
+        @endif
+
+        <?php $counter++; ?>
+        @endforeach
+
+        <a href="single-product-details.html">
+            <h6>{{ $product['productName'] }}</h6>
+        </a>
+
+        <h2></h2>
+
+        <div class="hover-content">
+            <!-- Add to Cart -->
+            <div class="add-to-cart-btn">
+                <a href="viewproduct/{{ $product['productID'] }}" class="btn essence-btn">View Product</a>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+
+@endforeach
 </div>
-</div>
+
+
+
+
+
+
 </section>
 
 

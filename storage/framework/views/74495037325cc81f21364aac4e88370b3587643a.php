@@ -2,28 +2,20 @@
   Boutique de Filipina
 <?php $__env->stopSection(); ?>
 
-
+<?php $__env->startSection('header'); ?>
+  Products
+<?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
 <div class="page">
-<div id="content-wrapper" style="background-color: white;">
+<div id="content-wrapper">
 <hr>
 
 
-<section class="shop_grid_area section-padding-80">
+<section class="shop_grid_area">
 <div class="container">
-<div class="row">
-
-<div class="col-8 col-md-8 col-lg-9">
-<!-- <div class="shop_grid_product_area">
-<div class="row">
-<div class="col-12">
-
-</div>
-</div>
 
 
-</div> -->
 	<br>
 	<a href="/hinimo/public/addproduct/">Add Products here</a>
 	<br><br>
@@ -42,7 +34,7 @@
     	<?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <!--  -------------WALA PAKO NAHUMAN ARIIII---------------- -->
             <!--         <?php echo e($product->productFile); ?> -->
 <!-- Single Product -->
-        <div class="col-12 col-sm-6 col-lg-4">
+        <div class="col-md-12 col-lg-3">
             <div class="single-product-wrapper">
                 <!-- Product Image -->
                 <div class="product-img">
@@ -55,19 +47,13 @@
         
                 <?php if($counter == 1): ?>
                     <img src="<?php echo e(asset('/uploads').$image['filename']); ?>" alt="">
-                    <img class="hover-img" src="<?php echo e(asset('/uploads').$product->productFile); ?>" alt="">
                 <?php elseif($counter == 2): ?>
                     <!-- Hover Thumb -->
-                    <img class="hover-img" src="<?php echo e(asset('/uploads').$product->productFile); ?>" alt="">
+                    <!-- <img class="hover-img" src="<?php echo e(asset('/uploads').$product->productFile); ?>" alt=""> -->
                     <?php endif; ?>
                     <?php $counter++; ?>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 
-                
-                    <!-- Favourite -->
-                    <div class="product-favourite">
-                        <a href="#" class="favme fa fa-heart"></a>
-                    </div>
                 </div>
 
                 <!-- Product Description -->
@@ -82,7 +68,7 @@
                     <div class="hover-content">
                         <!-- Add to Cart -->
                         <div class="add-to-cart-btn">
-                            <a href="#" class="btn essence-btn">Add to Cart</a>
+                            <a href="viewproduct/<?php echo e($product['productID']); ?>" class="btn essence-btn">View Product</a>
                         </div>
                     </div>
                 </div>
@@ -94,11 +80,98 @@
 <br><br>
 </div>
 
+<!-- <div class="row">
+<?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+<div class="col-md-6">
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">Carousel</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- <div class="box-body">
+              <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+           
+                <div class="carousel-inner">
+            <?php $__currentLoopData = $product->productFile; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                
+                  <div class="item">
+                    <img src="<?php echo e(asset('/uploads').$image['filename']); ?>">
+
+                  </div>
 
 
+
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+
+                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                  <span class="fa fa-angle-left"></span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                  <span class="fa fa-angle-right"></span>
+                </a>
+                
+              </div>
+            </div> -->
+            <!-- /.box-body -->
+        
+          <!-- </div> -->
+          <!-- /.box -->
+        <!-- </div> -->
+        <!-- /.col -->
+        <!-- <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> -->
+        <!-- </div> --> 
+
+
+
 </div>
+
+<!-- ------------------------NEW OPTION------------------------------ -->
+
+
+
+<div class="row">
+<?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+
+    <div class="col-md-3">
+
+        <div class="box"> 
+
+        <?php 
+            $counter = 1;
+        ?>
+
+        <?php $__currentLoopData = $product->productFile; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+        <?php if($counter == 1): ?>
+            <img src="<?php echo e(asset('/uploads').$image['filename']); ?>" style="width: 100%; align-self: center; padding: 20px;">
+        <?php else: ?>
+            
+        <?php endif; ?>
+
+        <?php $counter++; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+        <a href="single-product-details.html">
+            <h6><?php echo e($product['productName']); ?></h6>
+        </a>
+
+         <h2></h2>
+        </div>
+
+    </div>
+
+
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
-</div>
+
+
+
+
+
+
 </section>
 
 
