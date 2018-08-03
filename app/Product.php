@@ -8,11 +8,9 @@ class Product extends Model
 {
 	protected $primaryKey = 'productID';
     protected $fillable = [
-<<<<<<< HEAD
-        'productID', 'fileID', 'productName', 'productDesc', 'productPrice'
-=======
+
         'userID', 'fileID', 'productName', 'productDesc', 'productPrice', 'category', 'productStatus'
->>>>>>> master
+        
     ];
 
      public function productFile()

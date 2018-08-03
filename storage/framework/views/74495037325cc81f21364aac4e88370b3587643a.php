@@ -158,7 +158,14 @@
             <h6><?php echo e($product['productName']); ?></h6>
         </a>
 
-         <h2></h2>
+        <h2></h2>
+
+        <div class="hover">
+            <!-- Add to Cart -->
+            <div class="add-to-cart-btn">
+                <a href="viewproduct/<?php echo e($product['productID']); ?>" class="btn essence-btn">View Product</a>
+            </div>
+        </div>
         </div>
 
     </div>

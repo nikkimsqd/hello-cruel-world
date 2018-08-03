@@ -32,11 +32,13 @@
 
     <!-- ESSENCE -->
     <!-- Favicon  -->
-    <link rel="icon" href="{{asset('essence/img/core-img/favicon.ico')}}">
+    <!-- <link rel="icon" href="{{asset('essence/img/core-img/favicon.ico')}}"> -->
 
     <!-- Core Style CSS -->
-    <link rel="stylesheet" href="{{asset('essence/css/core-style.css')}}">
+    <!-- <link rel="stylesheet" href="{{asset('essence/css/core-style.css')}}"> -->
     <!-- <link rel="stylesheet" href="{{asset('style.css')}}"> -->
+
+    
 
 </head>
 

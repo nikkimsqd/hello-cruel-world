@@ -163,7 +163,15 @@
 
         <h2></h2>
 
-        <div class="hover-content">
+        <style type="text/css">
+
+        .hover{
+          
+        }
+
+        </style>
+
+        <div class="hover">
             <!-- Add to Cart -->
             <div class="add-to-cart-btn">
                 <a href="viewproduct/{{ $product['productID'] }}" class="btn essence-btn">View Product</a>
