@@ -25,4 +25,11 @@ class CustomerController extends Controller
 
     	return view('hinimo/shop', compact('products', 'categories'));
     }
+
+    public function productDetails($productID)
+    {
+    	$product = Product::where('productID', $productID)->first();
+
+    	return view('hinimo/single-product-details', compact('product'));
+    }
 }

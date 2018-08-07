@@ -46,31 +46,28 @@
                                 <ul id="menu-content2" class="menu-content collapse show">
 
                                     <!-- Single Item -->
-                                    <li data-toggle="collapse" data-target="#clothing">
+                                    <li data-toggle="collapse" data-target="#womens">
                                         <a href="#">Womens</a>
-                                        <ul class="sub-menu collapse show" id="clothing">
+                                        <ul class="sub-menu collapse show" id="womens">
                                 		@foreach($categories as $category)
+                                		@if($category['gender'] == "Womens")
                                             <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                            @else
+                                            @endif
                                         @endforeach
                                         </ul>
                                     </li>
-                                   
 
                                     <!-- Single Item -->
-                                    <li data-toggle="collapse" data-target="#shoes" class="collapsed">
-                                        <a href="#">shoes</a>
-                                        <ul class="sub-menu collapse" id="shoes">
-                                            <li><a href="#">All</a></li>
-                                            <li><a href="#">Bodysuits</a></li>
-                                            <li><a href="#">Dresses</a></li>
-                                            <li><a href="#">Hoodies &amp; Sweats</a></li>
-                                            <li><a href="#">Jackets &amp; Coats</a></li>
-                                            <li><a href="#">Jeans</a></li>
-                                            <li><a href="#">Pants &amp; Leggings</a></li>
-                                            <li><a href="#">Rompers &amp; Jumpsuits</a></li>
-                                            <li><a href="#">Shirts &amp; Blouses</a></li>
-                                            <li><a href="#">Shirts</a></li>
-                                            <li><a href="#">Sweaters &amp; Knits</a></li>
+                                    <li data-toggle="collapse" data-target="#mens">
+                                        <a href="#">Mens</a>
+                                        <ul class="sub-menu collapse" id="mens">
+                                		@foreach($categories as $category)
+                                		@if($category['gender'] == "Mens")
+                                            <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                            @else
+                                            @endif
+                                        @endforeach
                                         </ul>
                                     </li>
                                    
