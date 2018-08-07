@@ -1,4 +1,4 @@
-@extends('layouts.userindex')
+@extends('layouts.boutique')
 
 
 @section('titletext')
@@ -14,203 +14,212 @@
 	
 
 <div class="page">
-<section id="home" style="height: 200px; background-image: url('silk.jpg');  background-size:cover; ">
-</section>
 
-
-
-
-
-<br><br>
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2 text-center colorlib-heading animate-box">
-			<h2>Shop</h2>
-			<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name</p>
-		</div>
-	</div>
-	<div class="row animate-box services colorlib-heading">
-		<!-- <h2>Noelle West Bridals</h2> -->
-		<div class="col-md-3">
-			<a href="wedding/a.jpg" data-toggle="modal" data-target="#pendingModal"><img class="img-responsive" src="wedding/a.jpg"></a>
-				<div class="desc text-center">
-					<h2>Alice</h2>
-					<p>8,000</p>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-			<a href="wedding/gg.jpg"><img class="img-responsive" src="wedding/gg.jpg" alt=""></a>
-				<div class="desc text-center">
-					<h2>Alice</h2>
-					<p>5,000</p>
-					<p><button class="btn btn-default">Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-		</div>
-		<div class="col-md-3">
-			<a href="wedding/k.jpg" class="image-popup-link animate-box"><img class="img-responsive" src="wedding/k.jpg" alt=""></a>
-				<div class="desc text-center">
-					<h2>Beka</h2>
-					<p>5,000</p>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-			<a href="wedding/i.jpg" class="image-popup-link animate-box"><img class="img-responsive" src="wedding/i.jpg" alt=""></a>
-				<div class="desc text-center">
-					<h2>Alice</h2>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-		</div>
-		<div class="col-md-3">
-			<a href="wedding/pp.jpg" class="image-popup-link animate-box"><img class="img-responsive" src="wedding/pp.jpg" alt=""></a>
-				<div class="desc text-center">
-					<h2>Candice</h2>
-					<p>8,500</p>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-			<a href="wedding/o.jpg" class="image-popup-link animate-box"><img class="img-responsive" src="wedding/o.jpg" alt=""></a>
-				<div class="desc text-center">
-					<h2>Alice</h2>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-		</div>
-		<div class="col-md-3">
-			<a href="wedding/b.jpg" class="image-popup-link animate-box"><img class="img-responsive" src="wedding/b.jpg" alt=""></a>
-				<div class="desc text-center">
-					<h2>Alice</h2>
-					<p>7,500</p>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-			<a href="wedding/d.jpg" class="image-popup-link animate-box"><img class="img-responsive" src="wedding/d.jpg"></a>
-				<div class="desc text-center">
-					<h2>Alice</h2>
-					<p><button>Rent</button>&nbsp<button>Buy</button></p>
-				</div>
-				<br><br>
-		</div>
-		<br><br><br><br><br><br>
-		
-	</div>
-
-
-	<div class="modal fade" id="pendingModal" role="dialog">
-    <div class="modal-dialog modal-lg">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h3 class="modal-title"><b>Rent Details</b></h3>
+<!-- ##### Breadcumb Area Start ##### -->
+    <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="page-title text-center">
+                        <h2>dresses</h2>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="modal-body">
-          <table class="table">
-            <tr>
-              <td><b>Rent ID:</b></td>
-              <td>183</td>
-            </tr>
-            <tr>
-              <td><b>Customer Name:</b></td>
-              <td>John Doe</td>
-            </tr>
-            <tr>
-              <td><b>Order Placed at</b></td>
-              <td>11-07-2017</td>
-            </tr>
-            <tr>
-              <td>Order Status:</td>
-              <td><span class="label label-warning">Pending</span></td>
-            </tr>
-            <tr>
-              <td>Item ID</td>
-              <td>G001</td>
-            </tr>
-            <tr>
-              <td>Item:</td>
-              <td><img src="long/b.jpg"></td>
-            </tr>
-          </table>
-
-
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-dismiss="modal">Accept Order</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel Order</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
     </div>
-  </div>
+    <!-- ##### Breadcumb Area End ##### -->
 
-<!-- 
-	<div class="row animate-box services colorlib-heading">
-		<h2>You 'n Style</h2>
-		<div class="col-md-3 no-gutters">
-			<a href="long/e.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/e.jpg" alt=""></a>
-			<a href="long/i.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/i.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="long/b.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/b.jpg" alt=""></a>
-			<a href="long/q.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/q.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="long/g.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/g.jpg" alt=""></a>
-			<a href="long/m.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/m.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="long/a.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/a.jpg" alt=""></a>
-			<a href="long/c.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="long/c.jpg"></a>
-		</div>
-	</div>
+    <!-- ##### Shop Grid Area Start ##### -->
+    <section class="shop_grid_area section-padding-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="shop_sidebar_area">
+
+                        <!-- ##### Single Widget ##### -->
+                        <div class="widget catagory mb-50">
+                            <!-- Widget Title -->
+                            <h6 class="widget-title mb-30">Catagories</h6>
+
+                            <!--  Catagories  -->
+                            <div class="catagories-menu">
+                                <ul id="menu-content2" class="menu-content collapse show">
+
+                                    <!-- Single Item -->
+                                    <li data-toggle="collapse" data-target="#clothing">
+                                        <a href="#">Womens</a>
+                                        <ul class="sub-menu collapse show" id="clothing">
+                                		@foreach($categories as $category)
+                                            <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                        @endforeach
+                                        </ul>
+                                    </li>
+                                   
+
+                                    <!-- Single Item -->
+                                    <li data-toggle="collapse" data-target="#shoes" class="collapsed">
+                                        <a href="#">shoes</a>
+                                        <ul class="sub-menu collapse" id="shoes">
+                                            <li><a href="#">All</a></li>
+                                            <li><a href="#">Bodysuits</a></li>
+                                            <li><a href="#">Dresses</a></li>
+                                            <li><a href="#">Hoodies &amp; Sweats</a></li>
+                                            <li><a href="#">Jackets &amp; Coats</a></li>
+                                            <li><a href="#">Jeans</a></li>
+                                            <li><a href="#">Pants &amp; Leggings</a></li>
+                                            <li><a href="#">Rompers &amp; Jumpsuits</a></li>
+                                            <li><a href="#">Shirts &amp; Blouses</a></li>
+                                            <li><a href="#">Shirts</a></li>
+                                            <li><a href="#">Sweaters &amp; Knits</a></li>
+                                        </ul>
+                                    </li>
+                                   
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ##### Single Widget ##### -->
+                        <div class="widget price mb-50">
+                            <!-- Widget Title -->
+                            <h6 class="widget-title mb-30">Filter by</h6>
+                            <!-- Widget Title 2 -->
+                            <p class="widget-title2 mb-30">Price</p>
+
+                            <div class="widget-desc">
+                                <div class="slider-range">
+                                    <div data-min="49" data-max="360" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="49" data-value-max="360" data-label-result="Range:">
+                                        <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                    </div>
+                                    <div class="range-price">Range: $49.00 - $360.00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ##### Single Widget ##### -->
+                        <div class="widget color mb-50">
+                            <!-- Widget Title 2 -->
+                            <p class="widget-title2 mb-30">Color</p>
+                            <div class="widget-desc">
+                                <ul class="d-flex">
+                                    <li><a href="#" class="color1"></a></li>
+                                    <li><a href="#" class="color2"></a></li>
+                                    <li><a href="#" class="color3"></a></li>
+                                    <li><a href="#" class="color4"></a></li>
+                                    <li><a href="#" class="color5"></a></li>
+                                    <li><a href="#" class="color6"></a></li>
+                                    <li><a href="#" class="color7"></a></li>
+                                    <li><a href="#" class="color8"></a></li>
+                                    <li><a href="#" class="color9"></a></li>
+                                    <li><a href="#" class="color10"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ##### Single Widget ##### -->
+                        <!-- <div class="widget brands mb-50"> -->
+                            <!-- Widget Title 2 -->
+                            <!-- <p class="widget-title2 mb-30">Brands</p>
+                            <div class="widget-desc">
+                                <ul>
+                                    <li><a href="#">Asos</a></li>
+                                    <li><a href="#">Mango</a></li>
+                                    <li><a href="#">River Island</a></li>
+                                    <li><a href="#">Topshop</a></li>
+                                    <li><a href="#">Zara</a></li>
+                                </ul>
+                            </div> -->
+                        <!-- </div> -->
 
 
-	<div class="row animate-box services colorlib-heading">
-		<h2>Short gowns/dresses</h2>
-		<div class="col-md-3 no-gutters">
-			<a href="short/z.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/z.jpg" alt=""></a>
-			<a href="short/q.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/q.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="short/t.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/t.jpg" alt=""></a>
-			<a href="short/s.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/s.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="short/b.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/b.jpg" alt=""></a>
-			<a href="short/a.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/a.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="short/p.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/p.jpg" alt=""></a>
-			<a href="short/l.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="short/l.jpg"></a>
-		</div>
-	</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-8 col-lg-9"> <!-- Products show area -->
+                    <div class="shop_grid_product_area">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="product-topbar d-flex align-items-center justify-content-between">
+                                    <!-- Total Products -->
+                                    <div class="total-products">
+                                        <p><span>186</span> products found</p>
+                                    </div>
+                                    <!-- Sorting -->
+                                    <div class="product-sorting d-flex">
+                                        <p>Sort by:</p>
+                                        <form action="#" method="get">
+                                            <select name="select" id="sortByselect">
+                                                <option value="value">Highest Rated</option>
+                                                <option value="value">Newest</option>
+                                                <option value="value">Price: $$ - $</option>
+                                                <option value="value">Price: $ - $$</option>
+                                            </select>
+                                            <input type="submit" class="d-none" value="">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
-	<div class="row animate-box services colorlib-heading">
-		<h2>Kolossas</h2>
-		<div class="col-md-3 no-gutters">
-			<a href="mens/g.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/g.jpg" alt=""></a>
-			<a href="mens/d.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/d.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="mens/e.jpeg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/e.jpeg" alt=""></a>
-			<a href="mens/k.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/k.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="mens/j.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/j.jpg" alt=""></a>
-			<a href="mens/h.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/h.jpg" alt=""></a>
-		</div>
-		<div class="col-md-3 no-gutters">
-			<a href="mens/f.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/f.jpg" alt=""></a>
-			<a href="mens/c.jpg" class="gallery-img image-popup-link animate-box"><img class="img-responsive" src="mens/c.jpg"></a>
-		</div>
-	</div> -->
-</div> <!-- sa gallery -->
+
+                        <div class="row"> <!-- Products Display -->
+                        	@foreach($products as $product)
+                            @foreach($product->productFile as $image)
+	                        <!-- Single Product -->
+	                        <div class="single-product-wrapper col-md-4">
+	                            <!-- Product Image -->
+	                            <div class="product-img">
+	                                <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+	                                <!-- Hover Thumb -->
+	                                <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" alt="">
+	                                <!-- Favourite -->
+	                                <div class="product-favourite">
+	                                    <a href="#" class="favme fa fa-heart"></a>
+	                                </div>
+	                            </div>
+	                            <!-- Product Description -->
+	                            <div class="product-description">
+	                                <span>{{ $product->owner['username'] }}</span>
+	                                <a href="single-product-details.html">
+	                                    <h6>{{ $product['productName'] }}</h6>
+	                                </a>
+	                                <p class="product-price">${{ $product['productPrice'] }}</p>
+
+	                                <!-- Hover Content -->
+	                                <div class="hover-content">
+	                                    <!-- Add to Cart -->
+	                                    <div class="add-to-cart-btn">
+	                                        <a href="#" class="btn essence-btn">Add to Cart</a>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+		                    @endforeach
+                            @endforeach
+
+                        </div>
+                    </div>
+                    <!-- Pagination -->
+                    <nav aria-label="navigation">
+                        <ul class="pagination mt-50 mb-70">
+                            <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-left"></i></a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">21</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ##### Shop Grid Area End ##### -->
+
+
 	
 		
 

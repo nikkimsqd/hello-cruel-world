@@ -30,14 +30,14 @@
     </div>
 
 
-    <div class="row">
-    	<?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <!--  -------------WALA PAKO NAHUMAN ARIIII---------------- -->
+    <!-- <div class="row"> -->
+    	<!-- <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>  -------------WALA PAKO NAHUMAN ARIIII---------------- -->
             <!--         <?php echo e($product->productFile); ?> -->
 <!-- Single Product -->
-        <div class="col-md-12 col-lg-3">
-            <div class="single-product-wrapper">
+ <!--        <div class="col-md-12 col-lg-3">
+            <div class="single-product-wrapper"> -->
                 <!-- Product Image -->
-                <div class="product-img">
+               <!--  <div class="product-img">
 
                 <?php 
                 $counter = 1;
@@ -47,38 +47,38 @@
         
                 <?php if($counter == 1): ?>
                     <img src="<?php echo e(asset('/uploads').$image['filename']); ?>" alt="">
-                <?php elseif($counter == 2): ?>
+                <?php elseif($counter == 2): ?> -->
                     <!-- Hover Thumb -->
                     <!-- <img class="hover-img" src="<?php echo e(asset('/uploads').$product->productFile); ?>" alt=""> -->
-                    <?php endif; ?>
+                   <!--  <?php endif; ?>
                     <?php $counter++; ?>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> -->
                 
-                </div>
+                <!-- </div> -->
 
-                <!-- Product Description -->
+                <!-- Product Description --><!-- 
                 <div class="product-description">
                     <span><?php echo e($product->owner['username']); ?></span>
                     <a href="single-product-details.html">
                         <h6><?php echo e($product['productName']); ?></h6>
                     </a>
-                    <p class="product-price"><?php echo e($product['productPrice']); ?></p>
+                    <p class="product-price"><?php echo e($product['productPrice']); ?></p> -->
 
                     <!-- Hover Content -->
-                    <div class="hover-content">
+                    <!-- <div class="hover-content"> -->
                         <!-- Add to Cart -->
-                        <div class="add-to-cart-btn">
+           <!--              <div class="add-to-cart-btn">
                             <a href="viewproduct/<?php echo e($product['productID']); ?>" class="btn essence-btn">View Product</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     <!-- Single Product End -->
-		<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+		<!-- <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> -->
 
-<br><br>
-</div>
+<!-- <br><br> -->
+<!-- </div> -->
 
 <!-- <div class="row">
 <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -137,7 +137,8 @@
 
     <div class="col-md-3">
 
-        <div class="box"> 
+        <div class="box">
+        	<div style="padding: 20px;">
 
         <?php 
             $counter = 1;
@@ -146,7 +147,7 @@
         <?php $__currentLoopData = $product->productFile; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
         <?php if($counter == 1): ?>
-            <img src="<?php echo e(asset('/uploads').$image['filename']); ?>" style="width: 100%; align-self: center; padding: 20px;">
+            <img src="<?php echo e(asset('/uploads').$image['filename']); ?>" style="width: 100%; align-self: center;">
         <?php else: ?>
             
         <?php endif; ?>
@@ -160,14 +161,23 @@
 
         <h2></h2>
 
+        <style type="text/css">
+
+        .hover{
+          
+        }
+
+        </style>
+
         <div class="hover">
             <!-- Add to Cart -->
             <div class="add-to-cart-btn">
-                <a href="viewproduct/<?php echo e($product['productID']); ?>" class="btn essence-btn">View Product</a>
+                <a href="viewproduct/<?php echo e($product['productID']); ?>" class="btn btn-block btn-primary">View Product</a>
             </div>
         </div>
-        </div>
 
+    	</div>
+        </div>
     </div>
 
 

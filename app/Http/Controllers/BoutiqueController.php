@@ -69,8 +69,32 @@ class BoutiqueController extends Controller
 	public function viewProduct($productID)
 	{
 		$product = Product::where('productID', $productID)->first();
-		
-		return view('boutique/viewProduct', compact('product'));
+		$category = Category::where('id', $product['category'])->first();
+		// dd($category);
+
+		return view('boutique/viewProduct', compact('product', 'category'));
+	}
+
+	public function editView($productID)
+	{
+		$product = Product::where('productID', $productID)->first();
+		$categories = Category::all();
+		// dd($category);
+
+		return view('boutique/editView', compact('product', 'categories'));
+
+	}
+
+	public function editProduct($productID)
+	{
+
+	}
+
+	public function delete($productID)
+	{
+		$product = Product::where('productID', $productID)->delete();
+
+		return redirect('/products');
 	}
 
 

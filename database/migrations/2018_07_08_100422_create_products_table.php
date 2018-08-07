@@ -13,14 +13,7 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-<<<<<<< HEAD
-        Schema::create('Products', function (Blueprint $table) {
-            $table->string('productID');
-            $table->string('fileID');
-            $table->string('productName');
-            $table->string('productDesc');
-            $table->string('productPrice');
-=======
+
         Schema::create('products', function (Blueprint $table) {
             $table->increments('productID');
             $table->string('userID');
@@ -29,7 +22,6 @@ class CreateProductsTable extends Migration
             $table->string('productPrice');
             $table->string('category');
             $table->string('productStatus');
->>>>>>> master
             $table->timestamps();
         });
     }

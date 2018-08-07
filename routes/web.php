@@ -37,6 +37,9 @@ Route::get('/products', 'BoutiqueController@showProducts');
 Route::get('/addproduct', 'BoutiqueController@addProduct');
 Route::post('/saveproduct', 'BoutiqueController@saveProduct');
 Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
+Route::get('/editView/{productID}', 'BoutiqueController@editView');
+Route::post('/editproduct/{productID}', 'BoutiqueController@editProduct');
+Route::get('/delete/{productID}', 'BoutiqueController@delete');
 
 
 
@@ -45,31 +48,30 @@ Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
 
 
 
-
-
-
-
-
-
-
 //customer
 Route::get('/index', 'CustomerController@index');
+Route::get('/shop', 'CustomerController@shop');
+Route::get('/shop/womens', 'CustomerController@shopWomens');
 
-Route::view('/about', 'hinimo.about');
-Route::view('/how-it-works', 'hinimo.how');
-Route::view('/shop', 'hinimo.shop');
-Route::view('/shop/noelle-west-bridals', 'hinimo.noellewest');
-Route::view('/shop/younstyle', 'hinimo.younstyle');
-Route::view('/shop/kolossas', 'hinimo.kolossas');
-Route::view('/lookbook', 'hinimo.lookbook');
-Route::view('/contact-us', 'hinimo.contactus');
-Route::view('/create-design-choose-mannequin', 'hinimo.choosemannequin');
-Route::view('/create-design', 'hinimo.createdesign');
-Route::view('/my-account', 'hinimo.useraccount');
-Route::view('/created-designs', 'hinimo.designs');
-Route::view('/user-profile', 'hinimo.userprofile');
-Route::view('/logout', 'hinimo.index');
-Route::view('/my-designs', 'hinimo.designs');
+
+
+
+
+// Route::view('/about', 'hinimo.about');
+// Route::view('/how-it-works', 'hinimo.how');
+// Route::view('/shop', 'hinimo.shop');
+// Route::view('/shop/noelle-west-bridals', 'hinimo.noellewest');
+// Route::view('/shop/younstyle', 'hinimo.younstyle');
+// Route::view('/shop/kolossas', 'hinimo.kolossas');
+// Route::view('/lookbook', 'hinimo.lookbook');
+// Route::view('/contact-us', 'hinimo.contactus');
+// Route::view('/create-design-choose-mannequin', 'hinimo.choosemannequin');
+// Route::view('/create-design', 'hinimo.createdesign');
+// Route::view('/my-account', 'hinimo.useraccount');
+// Route::view('/created-designs', 'hinimo.designs');
+// Route::view('/user-profile', 'hinimo.userprofile');
+// Route::view('/logout', 'hinimo.index');
+// Route::view('/my-designs', 'hinimo.designs');
 
 
 

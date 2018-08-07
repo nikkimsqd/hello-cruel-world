@@ -14,56 +14,77 @@
 
 
 <div class="container">
-<div class="row">
 
 <div class="col-md-10">
 
 	<br>
-	<a href="/hinimo/public/addproduct/">Add Products here</a>
+	<a href="/hinimo/public/products">Back</a>
 	<br><br>
 
+    <?php 
+        $counter = 1;
+    ?>
 
-
-<!-- ##### Single Product Details Area Start ##### -->
-    <section class="single_product_details_area d-flex align-items-center">
-
-        <!-- Single Product Thumb -->
-        <div class="single_product_thumb clearfix">
-            <div class="product_thumbnail_slides owl-carousel">
-                <img src="img/product-img/product-big-1.jpg" alt="">
-                <img src="img/product-img/product-big-2.jpg" alt="">
-                <img src="img/product-img/product-big-3.jpg" alt="">
-            </div>
-        </div>
-
-        <!-- Single Product Description -->
-        <div class="single_product_desc clearfix">
-            <span>mango</span>
-            <a href="cart.html">
-                <h2>{{ $product['productName'] }}</h2>
-            </a>
-            <p class="product-price">{{ $product['productPrice'] }}</p>
-            <p class="product-desc">{{ $product['productDesc'] }}</p>
-
-            <!-- Form -->
-            <form class="cart-form clearfix" method="post">
+    
+<div class="row">
+    <div class="box">
+    <div class="col-md-4">
+    
+        
+        @foreach( $product->productFile as $image)
+        
+        @if($counter == 1)
+            <img src="{{ asset('/uploads').$image['filename'] }}" style="width: 100%; align-self: center; padding: 20px;">
+        @else
             
-                    <a href="" class="btn essence-btn">Modify Product Details</a><br>
-                    <a href="" class="btn essence-btn">Delete Products</a>
-                   
-              
-            </form>
+        @endif
+
+        <?php $counter++; ?>
+        @endforeach
         </div>
-    </section>
-    <!-- ##### Single Product Details Area End ##### -->
 
+        <div class="col-md-5">
+            <br><br>
+            <table class="table">
+                <tr>
+                    <td>Product ID: </td>
+                    <td>{{ $product['productID'] }}</td>
+                </tr>
+                <tr>
+                    <td>Product Name: </td>
+                    <td>{{ $product['productName'] }}</td>
+                </tr>
+                <tr>
+                    <td>Description: </td>
+                     <td>{{ $product['productDesc'] }}</td>
+                </tr>
+                <tr>
+                     <td>Price:</td> 
+                     <td>{{ $product['productPrice'] }}</td>
+                </tr>
+                <tr>
+                    <td>Category:</td>
+                    <td>{{ $product->getCategory->gender.', '.$product->getCategory->categoryName }}</td>
+                </tr>
+                <tr>
+                    <td>Status:</td>
+                    <td>{{ $product['productStatus'] }}</td>
+                </tr>
+            </table>
+            <br><br>
 
+            <a href="/hinimo/public/editView/{{$product['productID']}}" class="btn btn-success">Edit</a>
+            <a href="/hinimo/public/delete/{{$product['productID']}}" class="btn btn-danger">Delete</a>
 
+        </div>
 
-
-
-
+    </div>
 </div>
+
+
+
+
+
 </div>
 </div>
 
@@ -74,3 +95,5 @@
 
 
 @endsection
+
+<!-- $category['gender'].', '.$category['categoryName'] -->

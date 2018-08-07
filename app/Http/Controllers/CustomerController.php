@@ -14,8 +14,15 @@ class CustomerController extends Controller
     	$categories = Category::all();
     	$products = Product::all();
 
-    	
-
     	return view('hinimo/index', compact('categories', 'products'));
+    }
+
+    public function shop()
+    {
+    	$products = Product::all();
+    	$categories = Category::all();
+    	// dd($products);
+
+    	return view('hinimo/shop', compact('products', 'categories'));
     }
 }

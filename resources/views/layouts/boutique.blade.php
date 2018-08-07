@@ -41,29 +41,29 @@
                     <!-- Nav Start -->
                     <div class="classynav">
                         <ul>
-                            <li><a href="#">Shop</a>
+                            <li><a href="shop/">Shop</a>
                                 <div class="megamenu">
                                     <ul class="single-mega cn-col-4">
                                         <li class="title">Women's Collection</li>
-                                        <li><a href="shop.html">Dresses</a></li>
-                                        <li><a href="shop.html">Blouses &amp; Shirts</a></li>
-                                        <li><a href="shop.html">T-shirts</a></li>
-                                        <li><a href="shop.html">Rompers</a></li>
-                                        <li><a href="shop.html">Bras &amp; Panties</a></li>
+                                        <ul class=" cn-col-4">
+                                            <li><a href="shop.html">Casual Dresses</a></li>
+                                            <li><a href="shop.html">Blouses &amp; Shirts</a></li>
+                                            <li><a href="shop.html">Rompers</a></li>
+                                            <li><a href="shop.html">Pants & Shorts</a></li>
+                                        </ul>
+                                        <ul class=" cn-col-4">
+                                            <li><a href="shop.html">Jackets & Cardigans</a></li>
+                                            <li><a href="shop.html">Short Gowns</a></li>
+                                            <li><a href="shop.html">Long & Ball Gowns</a></li>
+                                        </ul>
+                                        
+                                        
                                     </ul>
                                     <ul class="single-mega cn-col-4">
                                         <li class="title">Men's Collection</li>
                                         <li><a href="shop.html">T-Shirts</a></li>
                                         <li><a href="shop.html">Polo</a></li>
-                                        <li><a href="shop.html">Shirts</a></li>
-                                        <li><a href="shop.html">Jackets</a></li>
-                                        <li><a href="shop.html">Trench</a></li>
-                                    </ul>
-                                    <ul class="single-mega cn-col-4">
-                                        <li class="title">Kid's Collection</li>
-                                        <li><a href="shop.html">Dresses</a></li>
-                                        <li><a href="shop.html">Shirts</a></li>
-                                        <li><a href="shop.html">T-shirts</a></li>
+                                        <li><a href="shop.html"></a></li>
                                         <li><a href="shop.html">Jackets</a></li>
                                         <li><a href="shop.html">Trench</a></li>
                                     </ul>

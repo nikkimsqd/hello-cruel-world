@@ -13,7 +13,7 @@
 
 
 	<!-- ##### Welcome Area Start ##### -->
-    <section class="welcome_area bg-img background-overlay" style="background-image: url(essence/img/bg-img/bg-1.jpg);">
+    <section class="welcome_area bg-img background-overlay" style="background-image: url(long/o.jpg);">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
@@ -35,17 +35,17 @@
             <div class="row justify-content-center">
                 <!-- Single Catagory -->
                 <div class="col-12 col-sm-6 col-md-6">
-                    <div class="single_catagory_area d-flex align-items-center justify-content-center bg-img" style="background-image: url(essence/img/bg-img/bg-2.jpg);">
+                    <div class="single_catagory_area d-flex align-items-center justify-content-center bg-img" style="background-image: url(long/h.jpg);">
                         <div class="catagory-content">
-                            <a href="#">Womens</a>
+                            <a href="shop/womens">Womens</a>
                         </div>
                     </div>
                 </div>
                 <!-- Single Catagory -->
                 <div class="col-sm-6 col-md-6">
-                    <div class="single_catagory_area d-flex align-items-center justify-content-center bg-img" style="background-image: url(essence/img/bg-img/bg-3.jpg);">
+                    <div class="single_catagory_area d-flex align-items-center justify-content-center bg-img" style="background-image: url(mens/b.jfif);">
                         <div class="catagory-content">
-                            <a href="#">Mens</a>
+                            <a href="shop/mens">Mens</a>
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                                 <a href="single-product-details.html">
                                     <h6>{{ $product['productName'] }}</h6>
                                 </a>
-                                <p class="product-price">$80.00</p>
+                                <p class="product-price">${{ $product['productPrice'] }}</p>
 
                                 <!-- Hover Content -->
                                 <div class="hover-content">

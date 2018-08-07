@@ -22,4 +22,9 @@ class Product extends Model
     {
         return $this->hasOne('App\User', 'id', 'userID');
     }
+
+    public function getCategory()
+    {
+        return $this->hasOne('App\Category', 'id', 'category');
+    }
 }
