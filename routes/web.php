@@ -51,7 +51,8 @@ Route::get('/delete/{productID}', 'BoutiqueController@delete');
 //customer
 Route::get('/index', 'CustomerController@index');
 Route::get('/shop', 'CustomerController@shop');
-Route::get('/shop/womens', 'CustomerController@shopWomens');
+Route::get('/shop/{gender}', 'CustomerController@shopWomens');
+Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
 
 

@@ -10,13 +10,9 @@
 @endsection
 
 @section('content')
-<div class="page">
-<div id="content-wrapper">
-<hr>
 
-
-<section class="shop_grid_area">
-<div class="container">
+<div>
+<div style="padding: 50px;">
 
 
 	<br>
@@ -32,7 +28,6 @@
         </div>
     </div>
 
-</div>
 
 
 <!-- ------------------------NEW OPTION------------------------------ -->
@@ -47,41 +42,42 @@
 
         <div class="box" style="padding: 20px;">
         <div style="padding-right: 20px; padding-left: 20px;">
-        <div class="row" style="width: auto; height: 400px;">
 
-        <?php 
-            $counter = 1;
-        ?>
+        <div class="row" style="width: auto; height: 450px; overflow: hidden;">
+            <?php 
+                $counter = 1;
+            ?>
 
-        @foreach( $product->productFile as $image)
+            @foreach( $product->productFile as $image)
 
-        @if($counter == 1)
-            <img src="{{ asset('/uploads').$image['filename'] }}" style="max-width: 100%; max-height: 100%; ">
-        @else
-            
-        @endif
+            @if($counter == 1)
+                <img src="{{ asset('/uploads').$image['filename'] }}" style="max-width: 100%; overflow: hidden; ">
+            @else
+                
+            @endif
 
-        <?php $counter++; ?>
-        @endforeach
+            <?php $counter++; ?>
+            @endforeach
         </div>
+
 
         <div class="row">
 
-        <a href="single-product-details.html">
-            <h6>{{ $product['productName'] }}</h6>
-        </a>
+            <a href="single-product-details.html">
+                <h6>{{ $product['productName'] }}</h6>
+            </a>
 
-        <h2></h2>
+            <h2></h2>
 
 
-        <div class="hover">
-            <!-- Add to Cart -->
-            <div class="add-to-cart-btn">
-                <a href="viewproduct/{{ $product['productID'] }}" class="btn btn-block btn-primary">View Product</a>
+            <div class="hover">
+                <!-- Add to Cart -->
+                <div class="add-to-cart-btn">
+                    <a href="viewproduct/{{ $product['productID'] }}" class="btn btn-block btn-primary">View Product</a>
+                </div>
             </div>
         </div>
 
-        </div>
     	</div>
         </div>
     </div>
@@ -93,14 +89,6 @@
 
 
 
-
-
-</section>
-
-
-
-
 </div>
-
-
+</div>
 @endsection
