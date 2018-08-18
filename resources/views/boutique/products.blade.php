@@ -11,7 +11,7 @@
 
 @section('content')
 
-<div>
+<div class="">
 <div style="padding: 50px;">
 
 
@@ -38,20 +38,21 @@
 @foreach($products as $product)
 
 
-    <div class="col-md-3">
+    <!-- <div class="col-md-3 col-sm-6 col-xs-12"> -->
+        <div class="col-12 col-sm-6 col-lg-3">
 
-        <div class="box" style="padding: 20px;">
+        <div class="info-box" style="padding: 20px;">
         <div style="padding-right: 20px; padding-left: 20px;">
 
-        <div class="row" style="width: auto; height: 450px; overflow: hidden;">
+        <div class="row" style="width: auto; height: auto; overflow: hidden;">
             <?php 
                 $counter = 1;
             ?>
 
             @foreach( $product->productFile as $image)
 
-            @if($counter == 1)
-                <img src="{{ asset('/uploads').$image['filename'] }}" style="max-width: 100%; overflow: hidden; ">
+            @if($counter == 1)  
+                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
             @else
                 
             @endif

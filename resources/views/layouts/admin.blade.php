@@ -327,7 +327,7 @@
 
     </nav>
   </header>
-</div>
+
 
 
 
@@ -350,7 +350,6 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
        
-      
         <li>
           <a href="/hinimo/public/dashboard">
             <i class="fa fa-th"></i> <span>Dashboard</span>
@@ -359,8 +358,6 @@
             </span>
           </a>
         </li>
-
-
 
         <li class="treeview">
           <a href="#">
