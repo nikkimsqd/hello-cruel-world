@@ -1,335 +1,463 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Noelle West Bridals</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{asset('adminlte/bower_components/font-awesome/css/font-awesome.min.css') }}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="{{asset('adminlte/bower_components/Ionicons/css/ionicons.min.css') }}">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="{{asset('adminlte/bower_components/jvectormap/jquery-jvectormap.css') }}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{asset('adminlte/dist/css/AdminLTE.min.css') }}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{{asset('adminlte/dist/css/skins/_all-skins.min.css') }}">
 
-    <!-- Title  -->
-    <title>@yield('titletext')</title>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
 
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <!-- ESSENCE -->
     <!-- Favicon  -->
-    <link rel="icon" href="{{ asset('essence/img/core-img/favicon.ico') }}">
+    <!-- <link rel="icon" href="{{asset('essence/img/core-img/favicon.ico')}}"> -->
 
     <!-- Core Style CSS -->
-    <link rel="stylesheet" href="{{ asset('essence/css/core-style.css') }}">
-    <link rel="stylesheet" href="{{ asset('essence/style.css') }}">
+    <!-- <link rel="stylesheet" href="{{asset('essence/css/core-style.css')}}"> -->
+    <link rel="stylesheet" href="{{asset('adminlte/dist/css/alt/select2.min.css')}}">
+
+    
 
 </head>
 
-<body>
-    <!-- ##### Header Area Start ##### -->
-    <header class="header_area">
-        <div class="classy-nav-container breakpoint-off d-flex align-items-center justify-content-between">
-            <!-- Classy Menu -->
-            <nav class="classy-navbar" id="essenceNav">
-                <!-- Logo -->
-                <a class="nav-brand" href="index.html"><img src="{{ asset('essence/img/core-img/logo.png') }}" alt=""></a>
-                <!-- Navbar Toggler -->
-                <div class="classy-navbar-toggler">
-                    <span class="navbarToggler"><span></span><span></span><span></span></span>
-                </div>
-                <!-- Menu -->
-                <div class="classy-menu">
-                    <!-- close btn -->
-                    <div class="classycloseIcon">
-                        <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
-                    </div>
-                    <!-- Nav Start -->
-                    <div class="classynav">
-                        <ul>
-                            <li><a href="shop/">Shop</a>
-                                <div class="megamenu">
-                                    <ul class="single-mega cn-col-4">
-                                        <li class="title">Women's Collection</li>
-                                        <ul class=" cn-col-4">
-                                            <li><a href="shop.html">Casual Dresses</a></li>
-                                            <li><a href="shop.html">Blouses &amp; Shirts</a></li>
-                                            <li><a href="shop.html">Rompers</a></li>
-                                            <li><a href="shop.html">Pants & Shorts</a></li>
-                                        </ul>
-                                        <ul class=" cn-col-4">
-                                            <li><a href="shop.html">Jackets & Cardigans</a></li>
-                                            <li><a href="shop.html">Short Gowns</a></li>
-                                            <li><a href="shop.html">Long & Ball Gowns</a></li>
-                                        </ul>
-                                        
-                                        
-                                    </ul>
-                                    <ul class="single-mega cn-col-4">
-                                        <li class="title">Men's Collection</li>
-                                        <li><a href="shop.html">T-Shirts</a></li>
-                                        <li><a href="shop.html">Polo</a></li>
-                                        <li><a href="shop.html"></a></li>
-                                        <li><a href="shop.html">Jackets</a></li>
-                                        <li><a href="shop.html">Trench</a></li>
-                                    </ul>
-                                    <div class="single-mega cn-col-4">
-                                        <img src="img/bg-img/bg-6.jpg" alt="">
-                                    </div>
-                                </div>
-                            </li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="shop.html">Shop</a></li>
-                                    <li><a href="single-product-details.html">Product Details</a></li>
-                                    <li><a href="checkout.html">Checkout</a></li>
-                                    <li><a href="blog.html">Blog</a></li>
-                                    <li><a href="single-blog.html">Single Blog</a></li>
-                                    <li><a href="regular-page.html">Regular Page</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="blog.html">Blog</a></li>
-                            <li><a href="contact.html">Contact</a></li>
-                        </ul>
-                    </div>
-                    <!-- Nav End -->
-                </div>
-            </nav>
+<!-- <style type="text/css">
 
-            <!-- Header Meta Data -->
-            <div class="header-meta d-flex clearfix justify-content-end">
-                <!-- Search Area -->
-                <div class="search-area">
-                    <form action="#" method="post">
-                        <input type="search" name="search" id="headerSearch" placeholder="Type for search">
-                        <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </form>
-                </div>
-                <!-- Favourite Area -->
-                <div class="favourite-area">
-                    <a href="#"><img src="{{ asset('essence/img/core-img/heart.svg') }}" alt=""></a>
-                </div>
-                <!-- User Login Info -->
-                <div class="user-login-info">
-                    <a href="#"><img src="{{ asset('essence/img/core-img/user.svg') }}" alt=""></a>
-                </div>
-                <!-- Cart Area -->
-                <div class="cart-area">
-                    <a href="#" id="essenceCartBtn"><img src="{{ asset('essence/img/core-img/bag.svg') }}" alt=""> <span>3</span></a>
-                </div>
-            </div>
+  body{
+    font-family: Century Gothic !important;
+    color: black !important;
+  }
+</style> -->
 
+<body class="hold-transitionen sidebar-mini skin-green"> <!-- butngan ra ug skin-green para nay color -->
+<div class="wrapper">
+
+
+
+  <header class="main-header">
+
+    <!-- LOGO -->
+    <a href="/hinimo/public/dashboard" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>N</b>WB</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg">Hinimo</span>
+    </a>
+
+
+
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+
+
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+
+
+          <!-- Messages: style can be found in dropdown.less-->
+          @yield('inbox')
+
+          <!-- Notifications: style can be found in dropdown.less -->
+          @yield('notifications')
+          
+          <!-- Tasks: style can be found in dropdown.less -->
+          @yield('tasks')
+
+          <!-- User Account: style can be found in dropdown.less -->
+          @yield('useraccount')
+
+
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+        </ul><!--  <ul class="nav navbar-nav"> -->
+      </div> <!-- <div class="navbar-custom-menu"> -->      
+
+    </nav>
+  </header>
+
+
+
+
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar ">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
         </div>
-    </header>
-    <!-- ##### Header Area End ##### -->
-
-
-
-    <!-- ##### Right Side Cart Area ##### -->
-    <div class="cart-bg-overlay"></div>
-
-    <div class="right-side-cart-area">
-
-        <!-- Cart Button -->
-        <div class="cart-button">
-            <a href="#" id="rightSideCart"><img src="img/core-img/bag.svg" alt=""> <span>3</span></a>
+        <div class="pull-left info">
+          <p>Alexander Pierce</p>
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
+      </div>
 
-        <div class="cart-content d-flex">
+       <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">MAIN NAVIGATION</li>
+       
+        <li>
+          <a href="/hinimo/public/dashboard">
+            <i class="fa fa-th"></i> <span>Dashboard</span>
+            <span class="pull-right-container">
+              <!-- <small class="label pull-right bg-green">new</small> -->
+            </span>
+          </a>
+        </li>
 
-            <!-- Cart List Area -->
-            <div class="cart-list">
-                <!-- Single Cart Item -->
-                <div class="single-cart-item">
-                    <a href="#" class="product-image">
-                        <img src="img/product-img/product-1.jpg" class="cart-thumb" alt="">
-                        <!-- Cart Item Desc -->
-                        <div class="cart-item-desc">
-                          <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">Mango</span>
-                            <h6>Button Through Strap Mini Dress</h6>
-                            <p class="size">Size: S</p>
-                            <p class="color">Color: Red</p>
-                            <p class="price">$45.00</p>
-                        </div>
-                    </a>
-                </div>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-pie-chart"></i>
+            <span>Products</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="/hinimo/public/weddinggowns"><i class="fa fa-circle-o"></i> Wedding gowns</a></li>
+            <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Entourage Set</a></li>
+            <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Accessories</a></li>
+          </ul>
+        </li>
 
-                <!-- Single Cart Item -->
-                <div class="single-cart-item">
-                    <a href="#" class="product-image">
-                        <img src="img/product-img/product-2.jpg" class="cart-thumb" alt="">
-                        <!-- Cart Item Desc -->
-                        <div class="cart-item-desc">
-                          <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">Mango</span>
-                            <h6>Button Through Strap Mini Dress</h6>
-                            <p class="size">Size: S</p>
-                            <p class="color">Color: Red</p>
-                            <p class="price">$45.00</p>
-                        </div>
-                    </a>
-                </div>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-pie-chart"></i>
+            <span>Transactions</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
+            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Rent</a></li>
+          </ul>
+        </li>
 
-                <!-- Single Cart Item -->
-                <div class="single-cart-item">
-                    <a href="#" class="product-image">
-                        <img src="img/product-img/product-3.jpg" class="cart-thumb" alt="">
-                        <!-- Cart Item Desc -->
-                        <div class="cart-item-desc">
-                          <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">Mango</span>
-                            <h6>Button Through Strap Mini Dress</h6>
-                            <p class="size">Size: S</p>
-                            <p class="color">Color: Red</p>
-                            <p class="price">$45.00</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
 
-            <!-- Cart Summary -->
-            <div class="cart-amount-summary">
 
-                <h2>Summary</h2>
-                <ul class="summary-table">
-                    <li><span>subtotal:</span> <span>$274.00</span></li>
-                    <li><span>delivery:</span> <span>Free</span></li>
-                    <li><span>discount:</span> <span>-15%</span></li>
-                    <li><span>total:</span> <span>$232.00</span></li>
-                </ul>
-                <div class="checkout-btn mt-100">
-                    <a href="checkout.html" class="btn essence-btn">check out</a>
-                </div>
-            </div>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+      <!-- Info boxes -->
+      @yield('content')
+     
+
+    </section>
+    <!-- /.content --> 
+
+  </div>
+  <!-- /.content-wrapper -->
+
+
+
+
+      <!-- search form -->
+      <!-- <form action="#" method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
+          <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
         </div>
+      </form> -->
+      <!-- /.search form -->
+
+
+
+     
+
+
+
+
+  <!-- Content Wrapper. Contains page content -->
+ 
+
+
+
+
+
+
+
+
+
+
+
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+      <b>Version</b> 2.4.0
     </div>
-    <!-- ##### Right Side Cart End ##### -->
+    <strong>Copyright &copy; 2014-2016 <a href="https://adminlte.io">Almsaeed Studio</a>.</strong> All rights
+    reserved.
+  </footer>
 
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-light">
+    <!-- Create the tabs -->
+    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+      <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+      <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!-- Home tab content -->
+      <div class="tab-pane" id="control-sidebar-home-tab">
+        <h3 class="control-sidebar-heading">Recent Activity</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript:void(0)">
+              <i class="menu-icon fa fa-birthday-cake bg-red"></i>
 
-    @yield('content')
-    
-    
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
 
-    
+                <p>Will be 23 on April 24th</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="menu-icon fa fa-user bg-yellow"></i>
 
-    <!-- ##### Brands Area Start ##### -->
-    <div class="brands-area d-flex align-items-center justify-content-between">
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
-            <img src="img/core-img/brand1.png" alt="">
-        </div>
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
-            <img src="img/core-img/brand2.png" alt="">
-        </div>
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
-            <img src="img/core-img/brand3.png" alt="">
-        </div>
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
-            <img src="img/core-img/brand4.png" alt="">
-        </div>
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
-            <img src="img/core-img/brand5.png" alt="">
-        </div>
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
-            <img src="img/core-img/brand6.png" alt="">
-        </div>
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+
+                <p>New phone +1(800)555-1234</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+
+                <p>nora@example.com</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <i class="menu-icon fa fa-file-code-o bg-green"></i>
+
+              <div class="menu-info">
+                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+
+                <p>Execution time 5 seconds</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+        <h3 class="control-sidebar-heading">Tasks Progress</h3>
+        <ul class="control-sidebar-menu">
+          <li>
+            <a href="javascript:void(0)">
+              <h4 class="control-sidebar-subheading">
+                Custom Template Design
+                <span class="label label-danger pull-right">70%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <h4 class="control-sidebar-subheading">
+                Update Resume
+                <span class="label label-success pull-right">95%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <h4 class="control-sidebar-subheading">
+                Laravel Integration
+                <span class="label label-warning pull-right">50%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <h4 class="control-sidebar-subheading">
+                Back End Framework
+                <span class="label label-primary pull-right">68%</span>
+              </h4>
+
+              <div class="progress progress-xxs">
+                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <!-- /.control-sidebar-menu -->
+
+      </div>
+      <!-- /.tab-pane -->
+
+      <!-- Settings tab content -->
+      <div class="tab-pane" id="control-sidebar-settings-tab">
+        <form method="post">
+          <h3 class="control-sidebar-heading">General Settings</h3>
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Report panel usage
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Some information about this general settings option
+            </p>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Allow mail redirect
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Other sets of options are available
+            </p>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Expose author name in posts
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+
+            <p>
+              Allow the user to show his name in blog posts
+            </p>
+          </div>
+          <!-- /.form-group -->
+
+          <h3 class="control-sidebar-heading">Chat Settings</h3>
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Show me as online
+              <input type="checkbox" class="pull-right" checked>
+            </label>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Turn off notifications
+              <input type="checkbox" class="pull-right">
+            </label>
+          </div>
+          <!-- /.form-group -->
+
+          <div class="form-group">
+            <label class="control-sidebar-subheading">
+              Delete chat history
+              <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+            </label>
+          </div>
+          <!-- /.form-group -->
+        </form>
+      </div>
+      <!-- /.tab-pane -->
     </div>
-    <!-- ##### Brands Area End ##### -->
+  </aside>
+  <!-- /.control-sidebar -->
+  <!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
 
-    <!-- ##### Footer Area Start ##### -->
-    <footer class="footer_area clearfix">
-        <div class="container">
-            <div class="row">
-                <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
-                    <div class="single_widget_area d-flex mb-30">
-                        <!-- Logo -->
-                        <div class="footer-logo mr-50">
-                            <a href="#"><img src="img/core-img/logo2.png" alt=""></a>
-                        </div>
-                        <!-- Footer Menu -->
-                        <div class="footer_menu">
-                            <ul>
-                                <li><a href="shop.html">Shop</a></li>
-                                <li><a href="blog.html">Blog</a></li>
-                                <li><a href="contact.html">Contact</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
-                    <div class="single_widget_area mb-30">
-                        <ul class="footer_widget_menu">
-                            <li><a href="#">Order Status</a></li>
-                            <li><a href="#">Payment Options</a></li>
-                            <li><a href="#">Shipping and Delivery</a></li>
-                            <li><a href="#">Guides</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Terms of Use</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+</div>
+<!-- ./wrapper -->
 
-            <div class="row align-items-end">
-                <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
-                    <div class="single_widget_area">
-                        <div class="footer_heading mb-30">
-                            <h6>Subscribe</h6>
-                        </div>
-                        <div class="subscribtion_form">
-                            <form action="#" method="post">
-                                <input type="email" name="mail" class="mail" placeholder="Your email here">
-                                <button type="submit" class="submit"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
-                    <div class="single_widget_area">
-                        <div class="footer_social_area">
-                            <a href="#" data-toggle="tooltip" data-placement="top" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                            <a href="#" data-toggle="tooltip" data-placement="top" title="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-                            <a href="#" data-toggle="tooltip" data-placement="top" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                            <a href="#" data-toggle="tooltip" data-placement="top" title="Pinterest"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
-                            <a href="#" data-toggle="tooltip" data-placement="top" title="Youtube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- jQuery 3 -->
+<script src="{{asset('adminlte/bower_components/jquery/dist/jquery.min.js') }}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{{asset('adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<!-- FastClick -->
+<script src="{{asset('adminlte/bower_components/fastclick/lib/fastclick.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{asset('adminlte/dist/js/adminlte.min.js') }}"></script>
+<!-- Sparkline -->
+<script src="{{asset('adminlte/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
+<!-- jvectormap  -->
+<script src="{{asset('adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
+<script src="{{asset('adminlte/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+<!-- SlimScroll -->
+<script src="{{asset('adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+<!-- ChartJS -->
+<script src="{{asset('adminlte/bower_components/chart.js/Chart.js') }}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="{{asset('adminlte/dist/js/pages/dashboard2.js') }}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{asset('adminlte/dist/js/demo.js') }}"></script>
 
-<div class="row mt-5">
-                <div class="col-md-12 text-center">
-                    <p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    </p>
-                </div>
-            </div>
-
-        </div>
-    </footer>
-    <!-- ##### Footer Area End ##### -->
-
+<!-- ESSENCE -->
     <!-- jQuery (Necessary for All JavaScript Plugins) -->
-    <script src="{{ asset('essence/js/jquery/jquery-2.2.4.min.js') }}"></script>
+    <!-- <script src="{{asset('essence/js/jquery/jquery-2.2.4.min.js')}}"></script> -->
     <!-- Popper js -->
-    <script src="{{ asset('essence/js/popper.min.js') }}"></script>
+    <!-- <script src="{{asset('essence/js/popper.min.js')}}"></script> -->
     <!-- Bootstrap js -->
-    <script src="{{ asset('essence/js/bootstrap.min.js') }}"></script>
+    <!-- <script src="{{asset('essence/js/bootstrap.min.js')}}"></script> -->
     <!-- Plugins js -->
-    <script src="{{ asset('essence/js/plugins.js') }}"></script>
+    <!-- <script src="{{asset('essence/js/plugins.js')}}"></script> -->
     <!-- Classy Nav js -->
-    <script src="{{ asset('essence/js/classy-nav.min.js') }}"></script>
+    <!-- <script src="{{asset('essence/js/classy-nav.min.js')}}"></script> -->
     <!-- Active js -->
-    <script src="{{ asset('essence/js/active.js') }}"></script>
+    <!-- <script src="{{asset('essence/js/active.js')}}"></script> -->
 
 </body>
-
 </html>

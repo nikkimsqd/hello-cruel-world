@@ -139,5 +139,88 @@
 
 <?php $__env->stopSection(); ?>
 
+<?php $__env->startSection('cartbutton'); ?>
+
+<!-- Cart Area -->
+    <div class="cart-area">
+        <a href="#" id="essenceCartBtn"><img src="<?php echo e(asset('essence/img/core-img/bag.svg')); ?>" alt="">
+        <?php if($cartCount > 0): ?>
+            <span><?php echo e($cartCount); ?></span>
+        <?php else: ?>
+        <?php endif; ?>
+        </a>
+    </div>
+
+<?php $__env->stopSection(); ?>
+
+
+<?php $__env->startSection('cart'); ?>
+
+<!-- ##### Right Side Cart Area ##### -->
+    <div class="cart-bg-overlay"></div>
+
+    <div id="cart-area" class="right-side-cart-area">
+
+        <!-- Cart Button -->
+        <div class="cart-button">
+            <a href="#" id="rightSideCart"><img src="<?php echo e(asset('essence/img/core-img/bag.svg')); ?>" alt=""> 
+            <?php if($cartCount > 0): ?>
+                <span><?php echo e($cartCount); ?></span>
+            <?php else: ?>
+            <?php endif; ?>
+            </a>
+        </div>
+
+        <div class="cart-content d-flex">
+
+            <!-- Cart List Area -->
+            <div class="cart-list">
+                <!-- Single Cart Item -->
+                <?php
+                    $subtotal = 0;
+                ?>
+                <?php $__currentLoopData = $carts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cart): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="single-cart-item">
+                    <a href="#" class="product-image">
+                        <img src="<?php echo e(asset('/uploads').$cart->productFile['filename']); ?>" class="cart-thumb" alt="">
+
+                        <!-- Cart Item Desc -->
+                        <div class="cart-item-desc">
+                          <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                            <span class="badge"><?php echo e($cart->owner['username']); ?></span>
+                            <h6><?php echo e($cart->product['productName']); ?></h6>
+                            <!-- <p class="size">Size: S</p> -->
+                            <!-- <p class="color">Color: Red</p> -->
+                            <p class="price">$<?php echo e(number_format($cart->product['productPrice'])); ?></p>
+                        </div>
+                    </a>
+                </div>
+                <?php
+                    $subtotal += $cart->product['productPrice'];
+                ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-amount-summary">
+
+                <h2>Summary</h2>
+                <ul class="summary-table">
+                    <li><span>subtotal:</span> <span>$<?php echo e(number_format($subtotal, 2)); ?></span></li>
+                    <!-- <li><span>delivery:</span> <span>Free</span></li> -->
+                    <!-- <li><span>discount:</span> <span>-15%</span></li> -->
+                    <!-- <li><span>total:</span> <span>$232.00</span></li> -->
+                </ul>
+                <div class="checkout-btn mt-100">
+                    <a href="checkout" class="btn essence-btn">proceed to check out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- ##### Right Side Cart End ##### -->
+
+
+<?php $__env->stopSection(); ?>
+
 
 <?php echo $__env->make('layouts.boutique', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -39,7 +39,7 @@
 
 
     <!-- <div class="col-md-3 col-sm-6 col-xs-12"> -->
-        <div class="col-12 col-sm-6 col-lg-3">
+        <div class="col-12 col-sm-6 col-lg-4">
 
         <div class="info-box" style="padding: 20px;">
         <div style="padding-right: 20px; padding-left: 20px;">
@@ -52,7 +52,7 @@
             @foreach( $product->productFile as $image)
 
             @if($counter == 1)  
-                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 400px; object-fit: cover;">
             @else
                 
             @endif

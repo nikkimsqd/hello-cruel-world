@@ -1,4 +1,4 @@
-@extends('layouts.boutique')
+@extends('layouts.hinimo')
 
 
 @section('titletext')
@@ -16,20 +16,20 @@
         <!-- Single Product Thumb -->
         <div class="single_product_thumb clearfix">
             <div class="product_thumbnail_slides owl-carousel">
-                <img src="img/product-img/product-big-1.jpg" alt="">
-                <img src="img/product-img/product-big-2.jpg" alt="">
-                <img src="img/product-img/product-big-3.jpg" alt="">
+                @foreach($product->productFile as $image)
+                <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+                @endforeach
             </div>
         </div>
 
         <!-- Single Product Description -->
         <div class="single_product_desc clearfix">
-            <span>mango</span>
+            <span>{{$product->owner->fname}}</span>
             <a href="cart.html">
-                <h2>One Shoulder Glitter Midi Dress</h2>
+                <h2>{{ $product['productName'] }}</h2>
             </a>
-            <p class="product-price"><span class="old-price">$65.00</span> $49.00</p>
-            <p class="product-desc">Mauris viverra cursus ante laoreet eleifend. Donec vel fringilla ante. Aenean finibus velit id urna vehicula, nec maximus est sollicitudin.</p>
+            <p class="product-price"><span class="old-price">$65.00</span>{{ $product['productPrice'] }}</p>
+            <p class="product-desc">{{ $product['productDesc'] }}</p>
 
             <!-- Form -->
             <form class="cart-form clearfix" method="post">

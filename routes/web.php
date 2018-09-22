@@ -19,17 +19,21 @@ Route::get('/home', 'HomeController@index');
 
 
 
+
+
+
 Route::middleware(['auth'])->group(function(){
 
-
 //boutique
-Route::view('/dashboard', 'boutique.dashboard');
+Route::get('/dashboard', 'BoutiqueController@dashboard');
 Route::view('/weddinggowns', 'boutique.weddinggowns');
 Route::view('/entourage', 'boutique.entourage');
 Route::view('/accessories', 'boutique.accessories');
 Route::view('/made-to-orders', 'boutique.madetoorders');
 Route::view('/rents', 'boutique.rents');
 Route::view('/boutique-account', 'boutique.boutiqueaccount');
+	
+
 	
 Route::get('/products', 'BoutiqueController@showProducts');
 
@@ -43,17 +47,26 @@ Route::get('/delete/{productID}', 'BoutiqueController@delete');
 
 
 
-
-});
-
-
-
 //customer
 Route::get('/index', 'CustomerController@index');
 Route::get('/shop', 'CustomerController@shop');
 Route::get('/shop/{gender}', 'CustomerController@shopWomens');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
+
+//CART
+Route::get('/addtoCart/{productID}', 'CustomerController@addtoCart');
+Route::get('/cart', 'CustomerController@cart');
+Route::get('/checkout', 'CustomerController@cart');
+Route::get('/getCart/{productID}', 'CustomerController@getCart');
+
+
+
+});
+
+
+
+
 
 
 

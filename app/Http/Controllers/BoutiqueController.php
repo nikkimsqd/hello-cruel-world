@@ -11,6 +11,16 @@ use App\User;
 class BoutiqueController extends Controller
 {
 
+	public function dashboard()
+	{
+   		$id = Auth()->user()->id;
+		// $products = Product::where('userID', $id)->get();
+		$user = User::find($id);
+		// dd($user);
+
+		return view('boutique/dashboard',compact('user'));
+	}
+
     public function showProducts()
 	{
    		$id = Auth()->user()->id;
