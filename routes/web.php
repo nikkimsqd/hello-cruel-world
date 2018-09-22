@@ -32,12 +32,14 @@ Route::view('/rents', 'boutique.rents');
 Route::view('/boutique-account', 'boutique.boutiqueaccount');
 	
 Route::get('/products', 'BoutiqueController@showProducts');
-
-
+<<<<<<< HEAD
+Route::post('/uploadproduct', 'BoutiqueController@uploadProduct');
+Route::get('addProductDetails', 'BoutiqueController@addProductDetails');
+=======
 Route::get('/addproduct', 'BoutiqueController@addProduct');
 Route::post('/saveproduct', 'BoutiqueController@saveProduct');
 Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
-
+>>>>>>> master
 
 
 
