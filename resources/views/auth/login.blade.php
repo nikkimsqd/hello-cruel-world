@@ -1,13 +1,28 @@
-@extends('layouts.app')
+@extends('layouts.hinimo')
 
-@section('content')
-<div class="container">
+@section('titletext')
+Hinimo | Register
+@endsection
+
+@section('auth')
+<div class="classynav">
+    <ul>
+        <li><a href="login">Login</a></li>  
+        <li><a href="register">Signup</a></li>
+    </ul>
+    
+</div>
+
+@endsection
+
+
+@section('body')
+<div class="container section-padding-80">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+            <!-- <div class=""> -->
+                <div class="card-page-heading mb-30">Login</div>
 
-                <div class="card-body">
                     <form method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}">
                         @csrf
 
@@ -61,8 +76,7 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 </div>

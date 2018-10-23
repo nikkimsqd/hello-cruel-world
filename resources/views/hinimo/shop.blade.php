@@ -233,19 +233,38 @@
 @endsection
 
 
+@section('search')
+<!-- Search Area -->
+    <div class="search-area">
+        <form action="#" method="post">
+            <input type="search" name="search" id="headerSearch" placeholder="Type for search">
+            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </form>
+    </div>
+@endsection
+
+
+@section('favorites')
+<!-- Favourite Area -->
+    <div class="favourite-area">
+        <a href="#"><img src="{{ asset('essence/img/core-img/heart.svg') }}" alt=""></a>
+    </div>
+@endsection
+
 @section('userinfo')
 
 <!-- User Login Info -->
     <div class="user-login-info classynav">
         <ul>
-            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user.svg') }}" alt=""></a>
+            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user.svg') }}"></a>
             <ul class="dropdown">
-                <li><a href="index.html">Profile</a></li>
-                <li><a href="shop.html">Settings</a></li>
+                <li><a href="user-account/{{$userid}}">My account</a></li>
+                <li><a href="shop.html">My Purchase</a></li>
+                <li><a href="shop.html">Logout</a></li>
             </ul>
             </li>
         </ul>
-       
+    
     </div>
 
 @endsection

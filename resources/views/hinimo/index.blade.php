@@ -1,14 +1,60 @@
 @extends('layouts.hinimo')
 
-
 @section('titletext')
 	Hinimo
 @endsection
 
 
+@section('search')
+<!-- Search Area -->
+    <div class="search-area">
+        <form action="#" method="post">
+            <input type="search" name="search" id="headerSearch" placeholder="Type for search">
+            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </form>
+    </div>
+@endsection
 
 
-@section('content')
+@section('favorites')
+<!-- Favourite Area -->
+    <div class="favourite-area">
+        <a href="#"><img src="{{ asset('essence/img/core-img/heart.svg') }}" alt=""></a>
+    </div>
+@endsection
+
+
+@section('userinfo')
+
+<!-- User Login Info -->
+    <div class="user-login-info classynav">
+        <ul>
+            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
+            <ul class="dropdown">
+                <li><a href="user-account/{{$userid}}">My account</a></li>
+                <li><a href="shop.html">My Purchase</a></li>
+                <li>
+                    <a href="{{ route('logout') }}"
+                       onclick="event.preventDefault();
+                                     document.getElementById('logout-form').submit();">
+                        {{ __('Logout') }}
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </li>
+
+            </ul>
+            </li>
+        </ul>
+    
+    </div>
+
+@endsection
+
+
+@section('body')
 <div id="page" style="background-color: white;">
 
 
@@ -139,8 +185,9 @@
 
 </div> <!-- sa page -->
 
-
 @endsection
+
+
 
 @section('cartbutton')
 

@@ -1,30 +1,15 @@
-@extends('layouts.hinimo')
+@extends('layouts.app')
 
-@section('titletext')
-Hinimo | Register
-@endsection
-
-@section('auth')
-<div class="classynav">
-    <ul>
-        <li><a href="login">Login</a></li>  
-        <li><a href="register">Signup</a></li>
-    </ul>
-    
-</div>
-
-@endsection
-
-
-@section('body')
-<div class="container section-padding-80">
+@section('content')
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="">
-                <div class="cart-page-heading mb-30">{{ __('Register') }}</div>
+            <div class="card">
+                <div class="card-header">{{ __('Register') }}</div>
 
+                <div class="card-body">
                     <form method="POST" action="{{ route('register') }}" aria-label="{{ __('Register') }}">
-                        {{csrf_field()}}
+                        @csrf
 
                         <div class="form-group row">
                             <label for="fname" class="col-md-4 col-form-label text-md-right">{{ __('First Name') }}</label>
@@ -112,7 +97,7 @@ Hinimo | Register
                             </div>
                         </div>
                     </form>
-              
+                </div>
             </div>
         </div>
     </div>

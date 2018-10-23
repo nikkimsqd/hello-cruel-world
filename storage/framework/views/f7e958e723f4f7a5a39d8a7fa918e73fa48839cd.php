@@ -3,9 +3,57 @@
 <?php $__env->stopSection(); ?>
 
 
+<?php $__env->startSection('search'); ?>
+<!-- Search Area -->
+    <div class="search-area">
+        <form action="#" method="post">
+            <input type="search" name="search" id="headerSearch" placeholder="Type for search">
+            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </form>
+    </div>
+<?php $__env->stopSection(); ?>
 
 
-<?php $__env->startSection('content'); ?>
+<?php $__env->startSection('favorites'); ?>
+<!-- Favourite Area -->
+    <div class="favourite-area">
+        <a href="#"><img src="<?php echo e(asset('essence/img/core-img/heart.svg')); ?>" alt=""></a>
+    </div>
+<?php $__env->stopSection(); ?>
+
+
+<?php $__env->startSection('userinfo'); ?>
+
+<!-- User Login Info -->
+    <div class="user-login-info classynav">
+        <ul>
+            <li> <a href="#"><img src="<?php echo e(asset('essence/img/core-img/user1.svg')); ?>"></a>
+            <ul class="dropdown">
+                <li><a href="user-account/<?php echo e($userid); ?>">My account</a></li>
+                <li><a href="shop.html">My Purchase</a></li>
+                <li>
+                    <a href="<?php echo e(route('logout')); ?>"
+                       onclick="event.preventDefault();
+                                     document.getElementById('logout-form').submit();">
+                        <?php echo e(__('Logout')); ?>
+
+                    </a>
+
+                    <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+                        <?php echo csrf_field(); ?>
+                    </form>
+                </li>
+
+            </ul>
+            </li>
+        </ul>
+    
+    </div>
+
+<?php $__env->stopSection(); ?>
+
+
+<?php $__env->startSection('body'); ?>
 <div id="page" style="background-color: white;">
 
 
@@ -136,8 +184,9 @@
 
 </div> <!-- sa page -->
 
-
 <?php $__env->stopSection(); ?>
+
+
 
 <?php $__env->startSection('cartbutton'); ?>
 
@@ -223,4 +272,4 @@
 <?php $__env->stopSection(); ?>
 
 
-<?php echo $__env->make('layouts.boutique', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php echo $__env->make('layouts.hinimo', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

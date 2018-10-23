@@ -1,4 +1,4 @@
-@extends('layouts.boutique')
+@extends('layouts.hinimo')
 
 
 @section('titletext')

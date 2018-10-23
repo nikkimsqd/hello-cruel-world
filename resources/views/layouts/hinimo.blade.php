@@ -94,20 +94,17 @@
 
             <!-- Header Meta Data -->
             <div class="header-meta d-flex clearfix justify-content-end">
-                <!-- Search Area -->
-                <div class="search-area">
-                    <form action="#" method="post">
-                        <input type="search" name="search" id="headerSearch" placeholder="Type for search">
-                        <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </form>
-                </div>
-                <!-- Favourite Area -->
-                <div class="favourite-area">
-                    <a href="#"><img src="{{ asset('essence/img/core-img/heart.svg') }}" alt=""></a>
-                </div>
+                @guest
+                @yield('auth')
+                @else
+                @yield('search')
+                @yield('favorites')
                 @yield('userinfo')
                 @yield('cartbutton')
+                @endguest
+               
             </div>
+                
 
         </div>
     </header>

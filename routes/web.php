@@ -53,12 +53,25 @@ Route::get('/shop', 'CustomerController@shop');
 Route::get('/shop/{gender}', 'CustomerController@shopWomens');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
+Route::get('/user-account/{userID}', 'CustomerController@useraccount');
+Route::get('/addAddress/{userID}', 'CustomerController@addAddress');
+
+Route::view('/autocomplete', 'hinimo.autocomplete');
+
+
+
 
 //CART
 Route::get('/addtoCart/{productID}', 'CustomerController@addtoCart');
 Route::get('/cart', 'CustomerController@cart');
 Route::get('/checkout', 'CustomerController@cart');
 Route::get('/getCart/{productID}', 'CustomerController@getCart');
+
+
+//ADDRESS
+Route::get('/getProvince/{regCode}', 'CustomerController@getProvince');
+Route::get('/getCity/{provCode}', 'CustomerController@getCity');
+Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
 
 
 

@@ -1,11 +1,26 @@
-<?php $__env->startSection('content'); ?>
-<div class="container">
+<?php $__env->startSection('titletext'); ?>
+Hinimo | Register
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('auth'); ?>
+<div class="classynav">
+    <ul>
+        <li><a href="login">Login</a></li>  
+        <li><a href="register">Signup</a></li>
+    </ul>
+    
+</div>
+
+<?php $__env->stopSection(); ?>
+
+
+<?php $__env->startSection('body'); ?>
+<div class="container section-padding-80">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header"><?php echo e(__('Login')); ?></div>
+            <!-- <div class=""> -->
+                <div class="card-page-heading mb-30">Login</div>
 
-                <div class="card-body">
                     <form method="POST" action="<?php echo e(route('login')); ?>" aria-label="<?php echo e(__('Login')); ?>">
                         <?php echo csrf_field(); ?>
 
@@ -62,11 +77,10 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php echo $__env->make('layouts.hinimo', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
