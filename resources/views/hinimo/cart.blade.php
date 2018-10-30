@@ -40,7 +40,7 @@
 
 				</td>
 				<td width="10%">
-					<a href=""><i>Remove</i></a>
+					<a href="removeItem/{{$cart['id']}}"><i>Remove</i></a>
 				</td>
 				<td width="10%">
 					${{ number_format($cart->product['productPrice']) }}

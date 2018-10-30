@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.boutique')
 
 
 @section('titletext')
@@ -31,7 +31,7 @@
 	<input type="number" name="productPrice" class="input form-control"><br><br>
 
 	Product Category:
-	<select class="form-control select2">
+	<select class="form-control select2" name="gender" id="gender-select">
 		<option selected="selected"> </option>
 		<option value="Womens">Womens</option>
 		<option value="Mens">Mens</option>
@@ -46,6 +46,9 @@
 	</select>
 	<br><br>
 
+	<input type="checkbox" name="forRent" value="true" class="checkbox-primary"> For Rent <br>
+	<input type="checkbox" name="forSale" value="true" class="checkbox-primary"> For Sale <br><br>
+
 	Add Image:
 	<input type="file" name="file[]" multiple><br><br>
 
@@ -58,6 +61,23 @@
 
 </div>
 </div>
+
+<script type="text/javascript">
+
+	$('#gender-select').on('change', function(){
+		var gender = $(this).val();
+
+		$.ajax({
+			url: "getGender/"+gender,
+        success:function(data){
+
+        }
+		});
+
+	});
+	
+
+</script>
 
 
 @endsection

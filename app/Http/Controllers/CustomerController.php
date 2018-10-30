@@ -12,6 +12,7 @@ use App\Region;
 use App\Province;
 use App\City;
 use App\Barangay;
+use App\Address;
 
 
 class CustomerController extends Controller
@@ -68,6 +69,13 @@ class CustomerController extends Controller
     	return view('hinimo/cart', compact('carts'));
     }
 
+    public function removeItem($cartID)
+    {
+        $item = Cart::where('id', $cartID)->delete();
+
+        return redirect('/checkout');
+    }
+
     public function getCart($productID)
     {
     	$product = Product::find($productID);
@@ -93,25 +101,15 @@ class CustomerController extends Controller
         $products = Product::all();
         $cartCount = Cart::where('userID', $user['id'])->where('status',"Pending")->count();
         $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
+        $addresses = Address::where('userID', $user['id'])->get();
+
 
         $regions = Region::all();
-        $provinces = Province::all();
+        $provinces = Province::orderBy('provDesc', 'ASC')->get();
         $cities = City::all();
         $barangays = Barangay::all();
 
-        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'regions', 'provinces', 'cities', 'barangays'));
-
-    }
-
-    public function addAddress()
-    {
-        $user = User::find($userID);
-        $cartCount = Cart::where('userID', $user['id'])->where('status',"Pending")->count();
-        $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
-
-
-
-        return view('hinimo/addAddress', compact('user', 'carts', 'cartCount'));
+        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'regions', 'provinces', 'cities', 'barangays', 'addresses'));
 
     }
 
@@ -138,8 +136,57 @@ class CustomerController extends Controller
 
     public function getBrgy($citymunCode)
     {
-        $brgys = Barangay::where('citymunCode', $citymunCode)->geT();
+        $brgys = Barangay::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
 
         return response()->json(['brgys' => $brgys]);
     }
+
+    public function addAddress(Request $request)
+    {
+        $id = Auth()->user()->id;
+
+        $address = Address::create([
+            'userID' => $id, 
+            'contactName' => $request->input('contactName'), 
+            'phoneNumber' => $request->input('phoneNumber'), 
+            'province' => $request->input('province'), 
+            'city' => $request->input('city'), 
+            'barangay' => $request->input('barangay'), 
+            'completeAddress' => $request->input('completeAddress'),
+            'status' => "Default"
+        ]);
+
+        return redirect('/user-account/'.$id);
+    }
+
+    // public function addAddress()
+    // {
+    //     $user = User::find($userID);
+    //     $cartCount = Cart::where('userID', $user['id'])->where('status',"Pending")->count();
+    //     $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
+
+
+
+    //     return view('hinimo/addAddress', compact('user', 'carts', 'cartCount'));
+
+    // }
+
+    public function setAsDefault($addressID)
+    {
+        $id = Auth()->user()->id;
+
+        $addresses = Address::where('status', "Default")->update([
+            'status' => ""
+        ]);
+
+
+        $address = Address::where('id', $addressID)->update([
+            'status' => "Default"
+        ]);
+
+        return redirect('/user-account/'.$id);
+
+    }
+
+
 }

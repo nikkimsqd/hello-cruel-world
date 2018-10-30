@@ -48,9 +48,14 @@ class BoutiqueController extends Controller
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
     		'productPrice' => $request->input('productPrice'),
+    		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
-    		'productStatus' => "Available"
+    		'productStatus' => "Available",
+    		'forRent' => $request->input('forRent'),
+    		'forSale' => $request->input('forSale')
     		]);
+
+    	// dd($products);
 
     	// dd($products['productID']);
     	$uploads = $request->file('file');
@@ -105,6 +110,11 @@ class BoutiqueController extends Controller
 		$product = Product::where('productID', $productID)->delete();
 
 		return redirect('/products');
+	}
+
+	public function getGender()
+	{
+		
 	}
 
 

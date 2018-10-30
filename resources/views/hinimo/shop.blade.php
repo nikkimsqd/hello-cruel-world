@@ -186,7 +186,7 @@
 	                            <!-- Product Description -->
 	                            <div class="product-description">
 	                                <span>{{ $product->owner['username'] }}</span>
-	                                <a href="single-product-details/{{$product['productID']}}">
+	                                <a href="#">
 	                                    <h6>{{ $product['productName'] }}</h6>
 	                                </a>
 	                                <p class="product-price">${{ number_format($product['productPrice']) }}</p>
@@ -196,7 +196,7 @@
 	                                    <!-- Add to Cart -->
 	                                    <div class="add-to-cart-btn">
 	                                    	<input type="text" name="productID" value="{{$product['productID']}}" hidden>
-	                                        <a href="#" class="btn essence-btn">Add to Cart</a>
+	                                        <a href="single-product-details/{{$product['productID']}}" class="btn essence-btn">View Product</a>
 	                                    </div>
 	                                </div>
 	                            </div>
@@ -356,41 +356,41 @@
 @section('scripts')
 <script type="text/javascript">
 
-$('.add-to-cart-btn').on('click', function(){
-	var productID = $(this).find("input").val();
-	var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
+// $('.add-to-cart-btn').on('click', function(){
+// 	var productID = $(this).find("input").val();
+// 	var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
 
-	$.ajax({
-		url: "addtoCart/"+productID,
-		// type: "POST",
-		// data: {id: productID}
-	});
+// 	$.ajax({
+// 		url: "addtoCart/"+productID,
+// 		// type: "POST",
+// 		// data: {id: productID}
+// 	});
 
 
-	$.ajax({
-		url: "getCart/"+productID,
-		success:function(data){
-			// $("#product").html(data.product)x	
-			$(".cart-list").append('<div class="single-cart-item">' +
-                    '<a href="#" class="product-image">' +
-                        '<img src="'+ image +'" class="cart-thumb" alt="">' +
+// 	$.ajax({
+// 		url: "getCart/"+productID,
+// 		success:function(data){
+// 			// $("#product").html(data.product)x	
+// 			$(".cart-list").append('<div class="single-cart-item">' +
+//                     '<a href="#" class="product-image">' +
+//                         '<img src="'+ image +'" class="cart-thumb" alt="">' +
 
                      
-                        '<div class="cart-item-desc">' +
-                          '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
-                            '<span class="badge">'+ data.owner.fname +'</span>' +
-                            '<h6>'+ data.product.productName +'</h6>' +
-                            '<p class="price">$'+ data.product.productPrice +'</p>' +
-                        '</div>' +
-                    '</a>' +
-                '</div>'
-                );
+//                         '<div class="cart-item-desc">' +
+//                           '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
+//                             '<span class="badge">'+ data.owner.fname +'</span>' +
+//                             '<h6>'+ data.product.productName +'</h6>' +
+//                             '<p class="price">$'+ data.product.productPrice +'</p>' +
+//                         '</div>' +
+//                     '</a>' +
+//                 '</div>'
+//                 );
 
-		}
+// 		}
 
-	}); //second ajax
+// 	}); //second ajax
 	
- }); //main ending
+//  }); //main ending
 
 
 

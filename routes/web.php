@@ -36,6 +36,7 @@ Route::view('/boutique-account', 'boutique.boutiqueaccount');
 
 	
 Route::get('/products', 'BoutiqueController@showProducts');
+Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 
 
 Route::get('/addproduct', 'BoutiqueController@addProduct');
@@ -66,12 +67,15 @@ Route::get('/addtoCart/{productID}', 'CustomerController@addtoCart');
 Route::get('/cart', 'CustomerController@cart');
 Route::get('/checkout', 'CustomerController@cart');
 Route::get('/getCart/{productID}', 'CustomerController@getCart');
+Route::get('/removeItem/{cartID}', 'CustomerController@removeItem');
 
 
 //ADDRESS
 Route::get('/getProvince/{regCode}', 'CustomerController@getProvince');
 Route::get('/getCity/{provCode}', 'CustomerController@getCity');
 Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
+Route::post('/addAddress', 'CustomerController@addAddress');
+Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
 
 
 

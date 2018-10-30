@@ -224,20 +224,19 @@
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-md-9 mb-3">
-
-                        <table class="table">
+                        <div class="col-md-8 mb-3">
+                            
+                        @foreach($addresses as $address)
+                        <hr>
+                        <table class="">
                             <tr>
-                                <td width="60%">
-                                    <b>Name</b><br>
-                                    number here<br>
-                                    <i>address here</i>
+                                <td width="15%">Name</td>
+                                <td width="70%">
+                                    <b>{{$address['contactName']}}</b><br>
                                 </td>
-                                <td width="20%" align="right">
+
+                                <td width="20%" rowspan="2" width="20%" align="right">
                                     <br>
-                                    <a href="">Set as Default</a>
-                                </td>
-                                <td width="20%" align="right">
                                     <a href="" class="btn btn-app">
                                         <i class="fa fa-edit"> 
                                         </i>
@@ -245,10 +244,30 @@
                                     <a href="" class="btn btn-app">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
+                                    <br>
+                                    @if($address['status'] == null)
+                                    <a href="/hinimo/public/setAsDefault/{{$address['id']}}">Set as Default</a>
+                                    @endif
+                                    <br>
                                 </td>
                             </tr>
-
+                            <tr>
+                                <td width="15%">Phone</td>
+                                <td width="70%">{{$address['phoneNumber']}}<br></td>
+                            </tr>
+                            <tr>
+                                <td width="15%">Address</td>
+                                <td width="70%">
+                                    {{$address['completeAddress']}}<br>
+                                    {{$address->brgyName['brgyDesc'].', '.$address->cityName['citymunDesc'].', '.$address->provName['provDesc']}}
+                                </td>
+                            </tr>
+                            
                         </table>
+                        <br>
+                        @endforeach
+
+                        <br><br>
                         
                         </div>
 
@@ -276,25 +295,29 @@
         </div>
 
         <div class="modal-body">
-        <form action="" method="post">
+        <form action="/hinimo/public/addAddress" method="post">
             {{csrf_field()}}
             <label>Name:</label>
             <input type="text" name="contactName" class="form-control"><br>
 
             <label>Phone Number:</label>
-            <input type="text" name="contactNumber" class="form-control"><br>
+            <input type="text" name="phoneNumber" class="form-control"><br>
 
-            <label>Region:</label><br>
-            <select name="region" class="form-control" id="region-select">
+            <!-- <div class="select-box"> -->
+            <!-- <label>Region:</label><br>
+            <select name="region"" id="region-select">
                 <option value=""><u>-----------------</u></option>
                 @foreach($regions as $region)
                 <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
                 @endforeach
-            </select><br><br><br>
+            </select><br><br><br> -->
 
             <label>Province:</label><br>
-            <select name="province" class="form-control" id="province-select">
+            <select name="province" class="mr-5" id="province-select" size="5">
                 <option value=""><u>-----------------</u></option>
+                @foreach($provinces as $province)
+                <option value="{{$province['provCode']}}">{{$province['provDesc']}}</option>
+                @endforeach
             </select><br><br><br>
 
             <label>City</label><br>
@@ -309,18 +332,19 @@
                 <option value=""></option>
              
             </select><br><br><br>
+            <!-- </div> -->
 
             <label>Complete Address</label><br>
-            <input type="text" name="completeAdd" class="form-control">
+            <input type="text" name="completeAddress" class="form-control">
 
            
-        </form>
+        <!-- </form> -->
         </div> <!-- modal-body -->
 
         <div class="modal-footer">
           <input type="submit" name="btn_submit" value="Submit" class="btn btn-success">
         </div>
-        <!-- </form> -->
+        </form>
 
       
     </div> <!-- modal-content -->
@@ -343,42 +367,52 @@
 <script type="text/javascript">
 
 
-$("#region-select").on('change', function(){
+// $("#region-select").on('change', function(){
 
-    $('#province-select').empty();
-    $('#province-select').next().find('.list').empty();
-    $('#province-select').next().find('.current').empty();
-    $('#city-select').empty();
-    $('#city-select').next().find('.list').empty();
-    $('#city-select').next().find('.current').empty();
-    $('#brgy-select').empty();
-    $('#brgy-select').next().find('.list').empty();
-    $('#brgy-select').next().find('.current').empty();
+//     // $('#province-select').empty();
+//     // $('#province-select').prop('disabled', false);
+//     // $('#province-select').removeAttr('disabled');
 
-    var regCode = $(this).val();
+//     // $('#province-select').next().prop('disabled', false);
+//     // $('#province-select').next().removeAttr('disabled');
+//     // $('#province-select').next().find('.list').prop('disabled', false);
+//     // $('#province-select').next().find('.list').removeAttr('disabled');
+
+//     // $('#province-select').next().find('.list').empty();
+//     // $('#province-select').next().find('.current').val("-----------------");
+
+//     $('#city-select').empty();
+//     $('#city-select').next().find('.list').empty();
+//     $('#city-select').next().find('.current').emptyval("-----------------");
+//     $('#brgy-select').empty();
+
+//     $('#brgy-select').next().find('.list').empty();
+//     $('#brgy-select').next().find('.current').val("-----------------");
+
+//     var regCode = $(this).val();
        
-    // $('#province-select').prop('disabled',false);
-    // alert($('#province-select').prop('disabled'));
-    console.log(regCode);
+//     // $('#province-select').prop('disabled',false);
+//     // alert($('#province-select').prop('disabled'));
+//     console.log(regCode);
 
 
-    $.ajax({
-        url: "/hinimo/public/getProvince/"+regCode,
-        success:function(data){
+//     $.ajax({
+//         url: "/hinimo/public/getProvince/"+regCode,
+//         success:function(data){
 
-            data.provinces.forEach(function(province){
+//             data.provinces.forEach(function(province){
 
-                $('#province-select').append(
-                    '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
-                    );
+//                 $('#province-select').append(
+//                     '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
+//                 );
 
-                $('#province-select').next().find('.list').append(
-                    '<li data-value="'+province.provCode+'" class="option">'+province.provDesc+'</li>'
-                );
-            });
-        }
-    });
-});
+//                 $('#province-select').next().find('.list').append(
+//                     '<li data-value="'+province.provCode+'" class="option">'+province.provDesc+'</li>'
+//                 );
+//             });
+//         }
+//     });
+// });
 
 
 
@@ -386,10 +420,10 @@ $('#province-select').on('change', function(){
 
     $('#city-select').empty();
     $('#city-select').next().find('.list').empty();
-    $('#city-select').next().find('.current').empty();
+    $('#city-select').next().find('.current').val("-----------------");
     $('#brgy-select').empty();
     $('#brgy-select').next().find('.list').empty();
-    $('#brgy-select').next().find('.current').empty();
+    $('#brgy-select').next().find('.current').val("-----------------");
 
     var provCode = $(this).val();
      // console.log(provCode);
@@ -418,7 +452,7 @@ $('#city-select').on('change', function(){
 
     $('#brgy-select').empty();
     $('#brgy-select').next().find('.list').empty();
-    $('#brgy-select').next().find('.current').empty();
+    $('#brgy-select').next().find('.current').val("-----------------");
 
     var citymunCode = $(this).val();
 
