@@ -13,6 +13,8 @@ use App\Province;
 use App\City;
 use App\Barangay;
 use App\Address;
+use App\Boutique;
+
 
 
 class CustomerController extends Controller
@@ -42,9 +44,12 @@ class CustomerController extends Controller
 
     public function productDetails($productID)
     {
+        $user = Auth()->user();
+        $cartCount = Cart::where('userID', $user['id'])->where('status', "Pending")->count();
+        $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
     	$product = Product::where('productID', $productID)->first();
 
-    	return view('hinimo/single-product-details', compact('product'));
+    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user'));
     }
 
     public function addtoCart($productID)
@@ -186,6 +191,46 @@ class CustomerController extends Controller
 
         return redirect('/user-account/'.$id);
 
+    }
+
+    public function propaganda()
+    {
+
+        $userID = Auth()->user()->id;
+        // dd($user['id']);
+        // $userid = Auth()->user()->id;
+        $categories = Category::all();
+        $products = Product::all();
+        $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
+        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+
+        return view('hinimo/propaganda', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
+    }
+    public function registerboutique()
+    {
+        $userID = Auth()->user()->id;
+        $categories = Category::all();
+        $products = Product::all();
+        $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
+        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+
+        return view('hinimo/upgradetoseller', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
+    }
+
+    public function saveboutique(Request $request)
+    {
+        $userID = Auth()->user()->id;
+
+        $boutique = Boutique::create([
+            'userID' => $userID,
+            'boutiqueName' => $request->input('boutiqueName'),
+            'boutiqueAddress' => $request->input('boutiqueAddress')
+        ]);
+
+        $id = Auth()->user()->id;
+        $user = User::find($id);
+
+        return view('boutique/dashboard', compact('user'));
     }
 
 

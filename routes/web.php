@@ -57,6 +57,11 @@ Route::get('/single-product-details/{productID}', 'CustomerController@productDet
 Route::get('/user-account/{userID}', 'CustomerController@useraccount');
 Route::get('/addAddress/{userID}', 'CustomerController@addAddress');
 
+//upgrade account
+Route::get('/upgrade-user-account', 'CustomerController@propaganda');
+Route::get('/register-boutique', 'CustomerController@registerboutique');
+Route::post('/save-boutique', 'CustomerController@saveboutique');
+
 Route::view('/autocomplete', 'hinimo.autocomplete');
 
 

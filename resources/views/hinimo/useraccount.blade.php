@@ -6,6 +6,17 @@
 @endsection
 
 
+@section('boutiques')
+    <ul class="dropdown">
+        <li><a href="index.html">Boutique 1</a></li>
+        <li><a href="shop.html">Boutique 2</a></li>
+        Q<li><a href="single-product-details.html">Boutique 3</a></li>
+        <li><a href="checkout.html">Boutique 4</a></li>
+        <li><a href="blog.html">Boutique 5</a></li>
+        <li><a href="single-blog.html">Boutique 6</a></li>
+    </ul>
+@endsection
+
 @section('search')
 <!-- Search Area -->
     <div class="search-area">
@@ -28,27 +39,26 @@
 @section('userinfo')
 
 <!-- User Login Info -->
-    <div class="user-login-info classynav">
-        <ul>
-            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
-            <ul class="dropdown">
-                <li><a href="user-account/{{$user['id']}}">My account</a></li>
-                <li><a href="shop.html">My Purchase</a></li>
-                <li>
+    <div class="user-login-info" id="user-info">
+
+        <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
+
+        <div class="user-dropdown" style="width: 170%; float: 100%;">
+            <div id="dropdown" hidden>
+                <a href="/hinimo/public/user-account/{{$user['id']}}"> My account</a>
+                <a href="shop.html">My Purchase</a>
+                <a href="/hinimo/public/upgrade-user-account">Upgrade</a>
+               
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                     <a href="{{ route('logout') }}"
                        onclick="event.preventDefault();
                                      document.getElementById('logout-form').submit();">
                         {{ __('Logout') }}
                     </a>
-
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                </li>
-
-            </ul>
-            </li>
-        </ul>
+                </div>
+        </div>
     
     </div>
 
@@ -165,7 +175,7 @@
     <div class="container">
         <div class="row">
 
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-11">
                 <div class="checkout_details_area mt-50 clearfix">
 
                     <div class="row">
@@ -198,6 +208,7 @@
                                 <input type="text" class="form-control" id="first_name" value="{{$user['email']}}" disabled>
                             </div>
                         </div>
+                        <!-- <input type="submit" name="btn_submit" value=""> -->
                     </form>
 
                     
@@ -219,7 +230,7 @@
                         </div>
 
                         <div class="col-md-3 justify-content-right">
-                            <a href="" data-toggle="modal" data-target="#pendingModal"><u>+ New Address</u></a>
+                            <a href="" data-toggle="modal" data-target="#addAddress"><u>+ New Address</u></a>
                         </div>
                     </div>
                     <br>
@@ -237,7 +248,7 @@
 
                                 <td width="20%" rowspan="2" width="20%" align="right">
                                     <br>
-                                    <a href="" class="btn btn-app">
+                                    <a href="" data-toggle="modal" data-target="#editAddress" class="btn btn-app">
                                         <i class="fa fa-edit"> 
                                         </i>
                                     </a>
@@ -283,73 +294,136 @@
 
 
 
-<div class="modal fade" id="pendingModal" role="dialog">
+<div class="modal fade" id="addAddress" role="dialog">
     <div class="modal-dialog modal-lg">
     
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title"><b>Add Address</b></h3>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          
+          <button type="button" class="close" data-dismiss="modal">&times;</button> 
         </div>
 
         <div class="modal-body">
-        <form action="/hinimo/public/addAddress" method="post">
-            {{csrf_field()}}
-            <label>Name:</label>
-            <input type="text" name="contactName" class="form-control"><br>
+            <form action="/hinimo/public/addAddress" method="post">
+                {{csrf_field()}}
+                <label>Name:</label>
+                <input type="text" name="contactName" class="form-control"><br>
 
-            <label>Phone Number:</label>
-            <input type="text" name="phoneNumber" class="form-control"><br>
+                <label>Phone Number:</label>
+                <input type="text" name="phoneNumber" class="form-control"><br>
 
-            <!-- <div class="select-box"> -->
-            <!-- <label>Region:</label><br>
-            <select name="region"" id="region-select">
-                <option value=""><u>-----------------</u></option>
-                @foreach($regions as $region)
-                <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
-                @endforeach
-            </select><br><br><br> -->
+                <!-- <div class="select-box"> -->
+                <!-- <label>Region:</label><br>
+                <select name="region"" id="region-select">
+                    <option value=""><u>-----------------</u></option>
+                    @foreach($regions as $region)
+                    <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
+                    @endforeach
+                </select><br><br><br> -->
 
-            <label>Province:</label><br>
-            <select name="province" class="mr-5" id="province-select" size="5">
-                <option value=""><u>-----------------</u></option>
-                @foreach($provinces as $province)
-                <option value="{{$province['provCode']}}">{{$province['provDesc']}}</option>
-                @endforeach
-            </select><br><br><br>
+                <label>Province:</label><br>
+                <select name="province" class="mr-5" id="province-select" size="5">
+                    <option value=""><u>-----------------</u></option>
+                    @foreach($provinces as $province)
+                    <option value="{{$province['provCode']}}">{{$province['provDesc']}}</option>
+                    @endforeach
+                </select><br><br><br>
 
-            <label>City</label><br>
-            <select name="city" class="form-control" id="city-select">
-                <option value=""><u>-----------------</u></option>
-            </select><br><br><br>
+                <label>City</label><br>
+                <select name="city" class="form-control" id="city-select">
+                    <option value=""><u>-----------------</u></option>
+                </select><br><br><br>
 
-            <label>Barangay</label><br>
-            <select name="barangay" class="form-control" id="brgy-select">
-                <option value=""><u>-----------------</u></option>
-             
-                <option value=""></option>
-             
-            </select><br><br><br>
-            <!-- </div> -->
+                <label>Barangay</label><br>
+                <select name="barangay" class="form-control" id="brgy-select">
+                    <option value=""><u>-----------------</u></option>
+                 
+                    <option value=""></option>
+                 
+                </select><br><br><br>
+                <!-- </div> -->
 
-            <label>Complete Address</label><br>
-            <input type="text" name="completeAddress" class="form-control">
-
-           
-        <!-- </form> -->
+                <label>Complete Address</label><br>
+                <input type="text" name="completeAddress" class="form-control">       
         </div> <!-- modal-body -->
 
-        <div class="modal-footer">
-          <input type="submit" name="btn_submit" value="Submit" class="btn btn-success">
-        </div>
-        </form>
-
-      
+                <div class="modal-footer">
+                  <input type="submit" name="btn_submit" value="Submit" class="btn btn-success">
+                </div>
+            </form>
     </div> <!-- modal-content -->
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
+
+
+
+
+<div class="modal fade" id="editAddress" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title"><b>Edit Address</b></h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button> 
+        </div>
+
+        <div class="modal-body">
+            <form action="/hinimo/public/addAddress" method="post">
+                {{csrf_field()}}
+                <label>Name:</label>
+                <input type="text" name="contactName" class="form-control"><br>
+
+                <label>Phone Number:</label>
+                <input type="text" name="phoneNumber" class="form-control"><br>
+
+                <!-- <div class="select-box"> -->
+                <!-- <label>Region:</label><br>
+                <select name="region"" id="region-select">
+                    <option value=""><u>-----------------</u></option>
+                    @foreach($regions as $region)
+                    <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
+                    @endforeach
+                </select><br><br><br> -->
+
+                <label>Province:</label><br>
+                <select name="province" class="mr-5" id="province-select" size="5">
+                    <option value=""><u>-----------------</u></option>
+                    @foreach($provinces as $province)
+                    <option value="{{$province['provCode']}}">{{$province['provDesc']}}</option>
+                    @endforeach
+                </select><br><br><br>
+
+                <label>City</label><br>
+                <select name="city" class="form-control" id="city-select">
+                    <option value=""><u>-----------------</u></option>
+                </select><br><br><br>
+
+                <label>Barangay</label><br>
+                <select name="barangay" class="form-control" id="brgy-select">
+                    <option value=""><u>-----------------</u></option>
+                 
+                    <option value=""></option>
+                 
+                </select><br><br><br>
+                <!-- </div> -->
+
+                <label>Complete Address</label><br>
+                <input type="text" name="completeAddress" class="form-control">       
+        </div> <!-- modal-body -->
+
+                <div class="modal-footer">
+                  <input type="submit" name="btn_submit" value="Submit" class="btn btn-success">
+                </div>
+            </form>
+    </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
+</div> <!-- modal-fade -->
+
+
+
+
 
 
 
@@ -365,6 +439,30 @@
 
 @section('scripts')
 <script type="text/javascript">
+    var session = 0;
+
+$('#user-info').on('click', function(){
+
+    if (session == 0) 
+    {
+        $('#dropdown').removeAttr('hidden');
+        session = session + 1;
+        // if ( ) 
+            // $('.page').on('click', function(){ });
+        // {
+        //     $('#dropdown').prop('hidden', true);
+        //     session = session - 1;
+        // }
+    }else
+    {
+        $('#dropdown').prop('hidden', true);
+        session = session - 1;
+    }
+    // console.log(session);
+
+
+
+});
 
 
 // $("#region-select").on('change', function(){
@@ -418,9 +516,9 @@
 
 $('#province-select').on('change', function(){
 
+    $('#city-select').next().find('.current').val("-----------------");
     $('#city-select').empty();
     $('#city-select').next().find('.list').empty();
-    $('#city-select').next().find('.current').val("-----------------");
     $('#brgy-select').empty();
     $('#brgy-select').next().find('.list').empty();
     $('#brgy-select').next().find('.current').val("-----------------");

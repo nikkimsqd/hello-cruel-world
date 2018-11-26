@@ -84,6 +84,9 @@
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </li>
+                            <li><a href="#">Boutiques</a>
+                                @yield('boutiques')
+                            </li>
                             <li><a href="blog.html">Blog</a></li>
                             <li><a href="contact.html">Contact</a></li>
                         </ul>
@@ -101,6 +104,7 @@
                 @yield('favorites')
                 @yield('userinfo')
                 @yield('cartbutton')
+                
                 @endguest
                
             </div>
@@ -110,38 +114,39 @@
     </header>
     <!-- ##### Header Area End ##### -->
 
+
     @yield('cart')
 
     @yield('body')
     
 
     <!-- ##### Brands Area Start ##### -->
-    <div class="brands-area d-flex align-items-center justify-content-between">
+    <!-- <div class="brands-area d-flex align-items-center justify-content-between"> -->
         <!-- Brand Logo -->
-        <div class="single-brands-logo">
+        <!-- <div class="single-brands-logo">
             <img src="img/core-img/brand1.png" alt="">
-        </div>
+        </div> -->
         <!-- Brand Logo -->
-        <div class="single-brands-logo">
+      <!--   <div class="single-brands-logo">
             <img src="img/core-img/brand2.png" alt="">
-        </div>
+        </div> -->
         <!-- Brand Logo -->
-        <div class="single-brands-logo">
+      <!--   <div class="single-brands-logo">
             <img src="img/core-img/brand3.png" alt="">
-        </div>
+        </div> -->
         <!-- Brand Logo -->
-        <div class="single-brands-logo">
+     <!--    <div class="single-brands-logo">
             <img src="img/core-img/brand4.png" alt="">
-        </div>
+        </div> -->
         <!-- Brand Logo -->
-        <div class="single-brands-logo">
+        <!-- <div class="single-brands-logo">
             <img src="img/core-img/brand5.png" alt="">
         </div>
-        <!-- Brand Logo -->
-        <div class="single-brands-logo">
+ -->        <!-- Brand Logo -->
+        <!-- <div class="single-brands-logo">
             <img src="img/core-img/brand6.png" alt="">
         </div>
-    </div>
+    </div> -->
     <!-- ##### Brands Area End ##### -->
 
     <!-- ##### Footer Area Start ##### -->
