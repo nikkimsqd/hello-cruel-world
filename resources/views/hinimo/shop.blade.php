@@ -35,7 +35,7 @@
                         <!-- ##### Single Widget ##### -->
                         <div class="widget catagory mb-50">
                             <!-- Widget Title -->
-                            <h6 class="widget-title mb-30">Catagories</h6>
+                            <h6 class="widget-title mb-30">Categories</h6>
 
                             <!--  Catagories  -->
                             <div class="catagories-menu">
@@ -258,7 +258,7 @@
         <ul>
             <li> <a href="#"><img src="{{ asset('essence/img/core-img/user.svg') }}"></a>
             <ul class="dropdown">
-                <li><a href="user-account/{{$userid}}">My account</a></li>
+                <li><a href="user-account/{{$userID}}">My account</a></li>
                 <li><a href="shop.html">My Purchase</a></li>
                 <li><a href="shop.html">Logout</a></li>
             </ul>

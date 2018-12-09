@@ -7,18 +7,24 @@ use App\Product;
 use App\File;
 use App\Category;
 use App\User;
+use App\Boutique;
 
 class BoutiqueController extends Controller
 {
 
-	public function dashboard()
+	public function dashboard($userID)
 	{
    		$id = Auth()->user()->id;
 		// $products = Product::where('userID', $id)->get();
-		$user = User::find($id);
+		$user = User::find($userID);
+		$boutiques = Boutique::where('userID', $userID)->get();
 		// dd($user);
 
-		return view('boutique/dashboard',compact('user'));
+		foreach ($boutiques as $boutique) {
+			$boutique;
+		}
+
+		return view('boutique/dashboard',compact('user', 'boutique'));
 	}
 
     public function showProducts()
@@ -112,9 +118,49 @@ class BoutiqueController extends Controller
 		return redirect('/products');
 	}
 
-	public function getGender()
+	public function categories($userID)
 	{
-		
+		// $id = Auth()->user()->id;
+		// $products = Product::where('userID', $id)->get();
+		$user = User::find($userID);
+		$boutiques = Boutique::where('userID', $userID)->get();
+		// dd($user);
+
+		foreach ($boutiques as $boutique) {
+			$boutique;
+		}
+
+		$categories = Category::where('boutiqueID', $boutique['id'])->get();
+
+		return view('boutique/categories',compact('user', 'boutique', 'categories'));
+	}
+
+	public function addCategories()
+	{
+    	$id = Auth()->user()->id;
+		// $products = Product::where('userID', $id)->get();
+		$user = User::find($id);
+		$boutiques = Boutique::where('userID', $id)->get();
+		// dd($user);
+
+		foreach ($boutiques as $boutique) {
+			$boutique;
+		}
+
+		return view('boutique/addCategories' ,compact('user', 'boutique'));
+	}
+
+	public function saveCategory(Request $request)
+	{
+    	$id = Auth()->user()->id;
+
+		$category = Category::create([
+			'boutiqueID' => $request->input('boutiqueID'),
+			'categoryName' => $request->input('categoryName'),
+			'gender' => $request->input('gender')
+		]);
+
+		return redirect('/categories/'.$id);
 	}
 
 

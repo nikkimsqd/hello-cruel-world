@@ -72,7 +72,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li><a href="#">Pages</a>
+                            <!-- <li><a href="#">Pages</a>
                                 <ul class="dropdown">
                                     <li><a href="index.html">Home</a></li>
                                     <li><a href="shop.html">Shop</a></li>
@@ -83,12 +83,13 @@
                                     <li><a href="regular-page.html">Regular Page</a></li>
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li><a href="#">Boutiques</a>
                                 @yield('boutiques')
                             </li>
                             <li><a href="blog.html">Blog</a></li>
                             <li><a href="contact.html">Contact</a></li>
+                            @yield('sellerboutique')
                         </ul>
                     </div>
                     <!-- Nav End -->

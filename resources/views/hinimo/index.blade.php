@@ -31,7 +31,7 @@
         <ul>
             <li> <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
             <ul class="dropdown">
-                <li><a href="user-account/{{$userid}}">My account</a></li>
+                <li><a href="user-account/{{$userID}}">My account</a></li>
                 <li><a href="shop.html">My Purchase</a></li>
                 <li>
                     <a href="{{ route('logout') }}"

@@ -10,22 +10,20 @@
     <ul class="dropdown">
         <li><a href="index.html">Boutique 1</a></li>
         <li><a href="shop.html">Boutique 2</a></li>
-        Q<li><a href="single-product-details.html">Boutique 3</a></li>
+        <li><a href="single-product-details.html">Boutique 3</a></li>
         <li><a href="checkout.html">Boutique 4</a></li>
         <li><a href="blog.html">Boutique 5</a></li>
         <li><a href="single-blog.html">Boutique 6</a></li>
     </ul>
 @endsection
 
-@section('search')
-<!-- Search Area -->
-    <div class="search-area">
-        <form action="#" method="post">
-            <input type="search" name="search" id="headerSearch" placeholder="Type for search">
-            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-        </form>
-    </div>
+
+@section('sellerboutique')
+   
+    <li><a href="/hinimo/public/dashboard/{{$user['id']}}">Open Shop</a></li>
+
 @endsection
+
 
 
 @section('favorites')
@@ -47,6 +45,7 @@
             <div id="dropdown" hidden>
                 <a href="/hinimo/public/user-account/{{$user['id']}}"> My account</a>
                 <a href="shop.html">My Purchase</a>
+                <a href="/hinimo/public/upgrade-user-account">Upgrade</a>
                 <a href="/hinimo/public/upgrade-user-account">Upgrade</a>
                
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

@@ -60,7 +60,7 @@
     <!-- LOGO -->
     <a href="/hinimo/public/dashboard" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>N</b>WB</span>
+      <span class="logo-mini"><b>H</b></span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">Hinimo</span>
     </a>
@@ -108,64 +108,9 @@
 
   <!-- Left side column. contains the logo and sidebar -->
   <aside class="main-sidebar ">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="<?php echo e(asset('adminlte/dist/img/user2-160x160.jpg')); ?>" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Alexander Pierce</p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-      </div>
 
-       <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
-       
-        <li>
-          <a href="/hinimo/public/dashboard">
-            <i class="fa fa-th"></i> <span>Dashboard</span>
-            <span class="pull-right-container">
-              <!-- <small class="label pull-right bg-green">new</small> -->
-            </span>
-          </a>
-        </li>
-
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>Products</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="/hinimo/public/weddinggowns"><i class="fa fa-circle-o"></i> Wedding gowns</a></li>
-            <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Entourage Set</a></li>
-            <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Accessories</a></li>
-          </ul>
-        </li>
-
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>Transactions</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Rent</a></li>
-          </ul>
-        </li>
-
-      </ul>
-    </section>
-    <!-- /.sidebar -->
+    <?php echo $__env->yieldContent('sidebar'); ?>
+  
   </aside>
 
 

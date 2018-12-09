@@ -25,7 +25,12 @@ Route::get('/home', 'HomeController@index');
 Route::middleware(['auth'])->group(function(){
 
 //boutique
-Route::get('/dashboard', 'BoutiqueController@dashboard');
+Route::get('/dashboard/{userID}', 'BoutiqueController@dashboard');
+Route::get('/categories/{userID}', 'BoutiqueController@categories');
+Route::get('/addCategories', 'BoutiqueController@addCategories');
+Route::post('/saveCategory', 'BoutiqueController@saveCategory');
+
+
 Route::view('/weddinggowns', 'boutique.weddinggowns');
 Route::view('/entourage', 'boutique.entourage');
 Route::view('/accessories', 'boutique.accessories');
