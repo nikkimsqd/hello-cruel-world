@@ -433,8 +433,37 @@ img {
             }
         }
     }
+    .user-login-info a{
+            position: relative;
+            z-index: 1;
+            @include flex(0 0 90px);
+            width: 160px;
+            display: block;
+            text-align: left;
+            border-left: 1px solid $border-color;
+            height: 100%;
+            line-height: 80px;
+            @media #{$breakpoint-xs} {
+                @include flex(0 0 50px);
+                width: 50px;
+                line-height: 40px;
+            }
+            img {
+                max-width: 20px;
+            }
+            span {
+                font-family: $font-ubuntu;
+                font-size: 18px;
+                color: $bg-default;
+                font-weight: 700;
+                position: absolute;
+                top: -10px;
+                @media #{$breakpoint-xs} {
+                    font-size: 14px;
+                }
+            }}
     .favourite-area,
-    .user-login-info,
+    
     .cart-area {
         a {
             position: relative;

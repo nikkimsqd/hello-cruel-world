@@ -143,13 +143,14 @@
                                         <p>Sort by:</p>
                                         <form action="#" method="get">
                                             <select name="select" id="sortByselect">
-                                                <option value="value">Highest Rated</option>
-                                                <option value="value">Newest</option>
-                                                <option value="value">Price: $$ - $</option>
-                                                <option value="value">Price: $ - $$</option>
+                                                <option value="highest_rated">Highest Rated</option>
+                                                <option value="newest">Newest</option>
+                                                <option value="value">Price: $10,000 - $5,000</option>
+                                                <option value="value">Price: $1,000 - $5,000</option>
+                                                <option value="value">Price: below $1,000</option>
                                             </select>
                                             <input type="submit" class="d-none" value="">
-                                        </form>
+                                        </form> 
                                     </div>
                                 </div>
                             </div>
@@ -157,7 +158,7 @@
 
 
 
-                        <div class="row"> <!-- Products Display -->
+                        <div class="products_list row"> <!-- Products Display -->
                         	@foreach($products as $product)
 	                        <!-- Single Product -->
                             <div class="col-12 col-sm-6 col-lg-4">
@@ -256,11 +257,18 @@
 <!-- User Login Info -->
     <div class="user-login-info classynav">
         <ul>
-            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user.svg') }}"></a>
+            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
             <ul class="dropdown">
-                <li><a href="user-account/{{$userID}}">My account</a></li>
+                <li><a href="user-account">My account</a></li>
                 <li><a href="shop.html">My Purchase</a></li>
-                <li><a href="shop.html">Logout</a></li>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <li><a href="{{ route('logout') }}"
+                       onclick="event.preventDefault();
+                                     document.getElementById('logout-form').submit();">
+                        {{ __('Logout') }}
+                    </a></li>
             </ul>
             </li>
         </ul>
@@ -318,7 +326,7 @@
                         <!-- Cart Item Desc -->
                         <div class="cart-item-desc">
                           <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">{{ $cart->owner['username'] }}</span>
+                            <span class="badge">{{ $cart->owner['boutiqueName'] }}</span>
                             <h6>{{ $cart->product['productName'] }}</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
@@ -343,7 +351,7 @@
                     <!-- <li><span>total:</span> <span>$232.00</span></li> -->
                 </ul>
                 <div class="checkout-btn mt-100">
-                    <a href="checkout" class="btn essence-btn">proceed to check out</a>
+                    <a href="/hinimo/public/cart" class="btn essence-btn">open cart</a>
                 </div>
             </div>
         </div>
@@ -355,6 +363,80 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+
+$('#sortByselect').on('change', function(){
+    var condition = $(this).val();
+    // console.log(condition);
+
+    $.ajax({
+     url: "/hinimo/public/getProducts/"+condition,
+     success:function(data){
+        // alert(data.products[5].productName);
+
+        $(".products_list").empty();
+        data.products.forEach(function(product) {
+        
+                // product.productFile.forEach(function(image){ 
+                //     $(".product-img").append('<img src="' + image + '" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">');
+                // }); 
+
+                $(".products_list").append('<div class="col-12 col-sm-6 col-lg-4">' +
+                    '<div class="single-product-wrapper">' + 
+                    '<div class="product-img">' +
+
+                    // product.productFile.forEach(function(image){ 
+                    //     $(".product-img").append('<img src="' + image + '" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">');
+                    // }); 
+                    
+                   + '<div class="product-favourite"> <a href="#" class="favme fa fa-heart"></a></div>' +
+                    '</div>' +
+
+                    '<div class="product-description">' +
+                    '<span>' + product.owner.username +'</span>' +
+                    '<a href="#"> <h6>' + product.productName + '</h6> </a>' +
+                    '<p class="product-price">$' + product.productPrice + '</p>' +
+
+                    '<div class="hover-content">' +
+                    '<div class="add-to-cart-btn">' +
+                    '<input type="text" name="productID" value="' + product.productID + '" hidden>' +
+                    '<a href="single-product-details/' + product.productID + '" class="btn essence-btn">View Product</a>' +
+                    '</div> </div> </div> </div> </div>'
+                    );
+
+
+                console.log(product.productID);
+                console.log(product.productName);
+            
+        });
+     }
+    });
+
+
+ //    $.ajax({
+ //     url: "getProducts/"+productID,
+ //     success:function(data){
+ //         // $("#product").html(data.product)x    
+ //         $(".cart-list").append('<div class="single-cart-item">' +
+ //                    '<a href="#" class="product-image">' +
+ //                        '<img src="'+ image +'" class="cart-thumb" alt="">' +
+
+                     
+ //                        '<div class="cart-item-desc">' +
+ //                          '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
+ //                            '<span class="badge">'+ data.owner.fname +'</span>' +
+ //                            '<h6>'+ data.product.productName +'</h6>' +
+ //                            '<p class="price">$'+ data.product.productPrice +'</p>' +
+ //                        '</div>' +
+ //                    '</a>' +
+ //                '</div>'
+ //                );
+
+ //     }
+
+ // }); //second ajax
+
+});
 
 // $('.add-to-cart-btn').on('click', function(){
 // 	var productID = $(this).find("input").val();

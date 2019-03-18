@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'fname', 'lname', 'username', 'email', 'password',
+        'fname', 'lname', 'username', 'email', 'password', 'gender'
     ];
 
     /**
@@ -26,4 +26,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function boutiqueAccount()
+    {
+        return $this->hasOne('App\Boutique', 'id', 'id');
+    }
 }

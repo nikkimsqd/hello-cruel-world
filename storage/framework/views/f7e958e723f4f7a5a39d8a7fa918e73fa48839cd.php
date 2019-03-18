@@ -29,20 +29,19 @@
         <ul>
             <li> <a href="#"><img src="<?php echo e(asset('essence/img/core-img/user1.svg')); ?>"></a>
             <ul class="dropdown">
-                <li><a href="user-account/<?php echo e($userid); ?>">My account</a></li>
+                <li><a href="user-account/<?php echo e($userID); ?>">My account</a></li>
                 <li><a href="shop.html">My Purchase</a></li>
-                <li>
-                    <a href="<?php echo e(route('logout')); ?>"
+                <li><a href="<?php echo e(route('logout')); ?>"
                        onclick="event.preventDefault();
                                      document.getElementById('logout-form').submit();">
                         <?php echo e(__('Logout')); ?>
 
-                    </a>
+                    </a></li>
 
                     <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
                         <?php echo csrf_field(); ?>
                     </form>
-                </li>
+                
 
             </ul>
             </li>
@@ -261,7 +260,7 @@
                     <!-- <li><span>total:</span> <span>$232.00</span></li> -->
                 </ul>
                 <div class="checkout-btn mt-100">
-                    <a href="checkout" class="btn essence-btn">proceed to check out</a>
+                    <a href="/hinimo/public/cart" class="btn essence-btn">open cart</a>
                 </div>
             </div>
         </div>

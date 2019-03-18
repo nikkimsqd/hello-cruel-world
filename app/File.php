@@ -8,7 +8,5 @@ class File extends Model
 {
 	protected $primaryKey = 'fileID';
 	
-    protected $fillable = [
-        'userID', 'filename'
-    ];
+    protected $fillable = ['userID', 'filename'];
 }

@@ -9,7 +9,7 @@ class Product extends Model
 	protected $primaryKey = 'productID';
     protected $fillable = [
 
-        'userID', 'fileID', 'productName', 'productDesc', 'productPrice', 'category', 'productStatus', 'forRent', 'forSale', 'gender'
+        'boutiqueID', 'fileID', 'productName', 'productDesc', 'productPrice', 'category', 'productStatus', 'forRent', 'forSale', 'gender', 'customizable'
         
     ];
 
@@ -20,7 +20,7 @@ class Product extends Model
 
     public function owner()
     {
-        return $this->hasOne('App\User', 'id', 'userID');
+        return $this->hasOne('App\Boutique', 'id', 'boutiqueID');
     }
 
     public function getCategory()

@@ -10,7 +10,7 @@ class Cart extends Model
 
     public function owner()
     {
-        return $this->hasOne('App\User', 'id', 'userID');
+        return $this->hasOne('App\Boutique', 'id', 'userID');
     }
 
     public function product()

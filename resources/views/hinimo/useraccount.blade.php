@@ -20,7 +20,7 @@
 
 @section('sellerboutique')
    
-    <li><a href="/hinimo/public/dashboard/{{$user['id']}}">Open Shop</a></li>
+    <li><a href="/hinimo/public/dashboard">Open Shop</a></li>
 
 @endsection
 
@@ -42,12 +42,10 @@
         <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
 
         <div class="user-dropdown" style="width: 170%; float: 100%;">
-            <div id="dropdown" hidden>
-                <a href="/hinimo/public/user-account/{{$user['id']}}"> My account</a>
+            <div id="dropdown" class="dropdown" hidden>
+                <a href="/hinimo/public/user-account"> My account</a>
                 <a href="shop.html">My Purchase</a>
                 <a href="/hinimo/public/upgrade-user-account">Upgrade</a>
-                <a href="/hinimo/public/upgrade-user-account">Upgrade</a>
-               
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
@@ -138,7 +136,7 @@
                     <!-- <li><span>total:</span> <span>$232.00</span></li> -->
                 </ul>
                 <div class="checkout-btn mt-100">
-                    <a href="checkout" class="btn essence-btn">proceed to check out</a>
+                    <a href="/hinimo/public/cart" class="btn essence-btn">open cart</a>
                 </div>
             </div>
         </div>

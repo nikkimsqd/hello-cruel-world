@@ -11,13 +11,16 @@
 |
 */
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/shop');
 });
 
 Auth::routes();
 Route::get('/home', 'HomeController@index');
+Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('/login', 'Auth\LoginController@login');
 
-
+// Route::get('register-boutique', 'AdminController@addBoutique');
+// Route::post('register-boutiques', 'AdminController@createseller');
 
 
 
@@ -25,23 +28,13 @@ Route::get('/home', 'HomeController@index');
 Route::middleware(['auth'])->group(function(){
 
 //boutique
-Route::get('/dashboard/{userID}', 'BoutiqueController@dashboard');
-Route::get('/categories/{userID}', 'BoutiqueController@categories');
+Route::get('/dashboard', 'BoutiqueController@dashboard');
+Route::get('/categories/', 'BoutiqueController@categories');
 Route::get('/addCategories', 'BoutiqueController@addCategories');
 Route::post('/saveCategory', 'BoutiqueController@saveCategory');
+Route::get('/tags', 'BoutiqueController@tags');
+Route::post('/addTag', 'BoutiqueController@addTag');
 
-
-Route::view('/weddinggowns', 'boutique.weddinggowns');
-Route::view('/entourage', 'boutique.entourage');
-Route::view('/accessories', 'boutique.accessories');
-Route::view('/made-to-orders', 'boutique.madetoorders');
-Route::view('/rents', 'boutique.rents');
-Route::view('/boutique-account', 'boutique.boutiqueaccount');
-	
-
-	
-Route::get('/products', 'BoutiqueController@showProducts');
-Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 
 
 Route::get('/addproduct', 'BoutiqueController@addProduct');
@@ -52,22 +45,59 @@ Route::post('/editproduct/{productID}', 'BoutiqueController@editProduct');
 Route::get('/delete/{productID}', 'BoutiqueController@delete');
 
 
+Route::get('/products', 'BoutiqueController@showProducts');
+Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 
-//customer
+
+
+//TRANSACTIONS-RENT
+Route::get('/made-to-orders', 'BoutiqueController@madeToOrders');
+Route::get('/rents', 'BoutiqueController@rents');
+Route::get('/getRentInfo/{rentID}', 'BoutiqueController@getRentInfo');
+Route::post('/approveRent', 'BoutiqueController@approveRent');
+Route::get('/declineRent/{rentID}', 'BoutiqueController@declineRent');
+
+
+
+
+Route::view('/weddinggowns', 'boutique.weddinggowns');
+Route::view('/entourage', 'boutique.entourage');
+Route::view('/accessories', 'boutique.accessories');
+Route::view('/made-to-orders', 'boutique.madetoorders');
+Route::view('/boutique-account', 'boutique.boutiqueaccount');
+	
+
+
+//CUSTOMER--------------------------------------------------------------------------------------------
+Route::get('/get-started/welcome', 'CustomerController@welcome');
+Route::get('/get-started', 'CustomerController@getStarted');
+Route::post('/user-profiling', 'CustomerController@profiling');
+Route::get('/user-profiling/done', 'CustomerController@profilingDone');
+// Route::get('/get-started/tops', 'CustomerController@tops');
+
+
 Route::get('/index', 'CustomerController@index');
 Route::get('/shop', 'CustomerController@shop');
 Route::get('/shop/{gender}', 'CustomerController@shopWomens');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
-Route::get('/user-account/{userID}', 'CustomerController@useraccount');
-Route::get('/addAddress/{userID}', 'CustomerController@addAddress');
+Route::get('/user-account', 'CustomerController@useraccount');
+
+
+Route::get('/sortBy/{condition}', 'CustomerController@sortBy');
+Route::get('/getProducts/{condition}', 'CustomerController@getProducts');
+
 
 //upgrade account
 Route::get('/upgrade-user-account', 'CustomerController@propaganda');
-Route::get('/register-boutique', 'CustomerController@registerboutique');
+// Route::get('/register-boutique', 'CustomerController@registerboutique');
 Route::post('/save-boutique', 'CustomerController@saveboutique');
 
 Route::view('/autocomplete', 'hinimo.autocomplete');
+
+
+//request for rent
+Route::post('/requestToRent', 'CustomerController@requestToRent');
 
 
 
@@ -75,12 +105,13 @@ Route::view('/autocomplete', 'hinimo.autocomplete');
 //CART
 Route::get('/addtoCart/{productID}', 'CustomerController@addtoCart');
 Route::get('/cart', 'CustomerController@cart');
-Route::get('/checkout', 'CustomerController@cart');
+Route::get('/checkout', 'CustomerController@checkout');
 Route::get('/getCart/{productID}', 'CustomerController@getCart');
 Route::get('/removeItem/{cartID}', 'CustomerController@removeItem');
 
 
 //ADDRESS
+Route::get('/addAddress/{userID}', 'CustomerController@addAddress');
 Route::get('/getProvince/{regCode}', 'CustomerController@getProvince');
 Route::get('/getCity/{provCode}', 'CustomerController@getCity');
 Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');

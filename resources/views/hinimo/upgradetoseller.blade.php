@@ -139,7 +139,7 @@
                     <!-- <li><span>total:</span> <span>$232.00</span></li> -->
                 </ul>
                 <div class="checkout-btn mt-100">
-                    <a href="checkout" class="btn essence-btn">proceed to check out</a>
+                    <a href="/hinimo/public/cart" class="btn essence-btn">open cart</a>
                 </div>
             </div>
         </div>

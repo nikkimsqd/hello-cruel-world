@@ -14,14 +14,64 @@ use App\City;
 use App\Barangay;
 use App\Address;
 use App\Boutique;
+use App\Rent;
+use App\Profiling;
 
 
 
 class CustomerController extends Controller
 {
-    public function index()
+
+    public function welcome()
     {
 
+    }
+
+    public function getStarted()
+    {
+
+        return view('hinimo/getstarted');
+
+    }
+
+    public function profiling(Request $request)
+    {
+        $userID = Auth()->user()->id;
+
+        $tops = $request->input('tops');
+        $sweaters = $request->input('sweaters');
+        $jackets = $request->input('jackets');
+        $pants = $request->input('pants');
+        $dresses = $request->input('dresses');
+
+        $data = array();
+
+        array_push($data, $tops);
+        array_push($data, $sweaters);
+        array_push($data, $jackets);
+        array_push($data, $pants);
+        array_push($data, $dresses);
+        // dd($data);
+
+        $data_encoded = json_encode($data);
+
+        
+        $profilings = Profiling::create([
+            'userID' => $userID,
+            'data' => $data_encoded
+        ]);
+
+        return redirect('/user-profiling/done');
+    }
+
+    public function profilingDone()
+    {
+        return view('hinimo/profiling-done');
+    }
+
+
+    public function index()
+    {
         $userID = Auth()->user()->id;
     	$categories = Category::all();
     	$products = Product::all();
@@ -49,14 +99,16 @@ class CustomerController extends Controller
         $cartCount = Cart::where('userID', $user['id'])->where('status', "Pending")->count();
         $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
     	$product = Product::where('productID', $productID)->first();
+        $addresses = Address::where('userID', $user['id'])->get();
 
-    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user'));
+        // $boutique = Boutique::where('userID', $user['id'])->get();
+        // dd($boutique);
+
+    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses'));
     }
 
     public function addtoCart($productID)
     {
-    	// print_r("yey");
-
    		$userID = Auth()->user()->id;
     	$cart = Cart::create([
     		'productID' => $productID,
@@ -97,18 +149,17 @@ class CustomerController extends Controller
     	return view('hinimo/checkout');
     }
 
-    public function useraccount($userID)
+    public function useraccount()
     {
-        // $userid = Auth()->user()->id;
-        $user = User::find($userID);
-        // dd($user['id']);
-        // $userid = Auth()->user()->id;
+        $id = Auth()->user()->id;
+        $user = User::find($id);
+
         $categories = Category::all();
         $products = Product::all();
-        $cartCount = Cart::where('userID', $user['id'])->where('status',"Pending")->count();
-        $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
-        $addresses = Address::where('userID', $user['id'])->get();
-        $boutique = Boutique::where('userID', $user['id'])->get();
+        $cartCount = Cart::where('userID', $id)->where('status',"Pending")->count();
+        $carts = Cart::where('userID', $id)->where('status', "Pending")->get();
+        $addresses = Address::where('userID', $id)->get();
+        $boutique = Boutique::where('userID', $id)->get();
 
 
         $regions = Region::all();
@@ -163,20 +214,8 @@ class CustomerController extends Controller
             'status' => "Default"
         ]);
 
-        return redirect('/user-account/'.$id);
+        return redirect('/user-account');
     }
-
-    // public function addAddress()
-    // {
-    //     $user = User::find($userID);
-    //     $cartCount = Cart::where('userID', $user['id'])->where('status',"Pending")->count();
-    //     $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
-
-
-
-    //     return view('hinimo/addAddress', compact('user', 'carts', 'cartCount'));
-
-    // }
 
     public function setAsDefault($addressID)
     {
@@ -220,8 +259,8 @@ class CustomerController extends Controller
             return view('hinimo/shop', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
 
         }
-
     }
+
     public function registerboutique()
     {
 
@@ -244,10 +283,76 @@ class CustomerController extends Controller
             'boutiqueAddress' => $request->input('boutiqueAddress')
         ]);
 
-        $id = Auth()->user()->id;
-        $user = User::find($id);
+        // $id = Auth()->user()->id;
+        $user = User::find($userID);
 
-        return view('boutique/dashboard', compact('user'));
+        return redirect('dashboard');
+    }
+
+
+    public function sortBy($condition)
+    {
+        $userID = Auth()->user()->id;
+        $categories = Category::all();
+        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
+        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+        // dd($carts);
+
+        if ($condition == "newest") {
+
+            $products = Product::all();
+            $sorted = sort($products['created_at']);
+        }
+
+        return redirect('/shop');
+
+    }
+
+    public function getProducts($condition)
+    {
+        if ($condition == "newest") {
+
+            $products = Product::all();
+
+            foreach ($products as $product) {
+                $product->owner;
+                $product->getCategory;
+                $product->productFile;
+            }
+
+            $productsArray = $products->toArray();
+
+            array_multisort(array_column($productsArray, "created_at"), SORT_DESC, $productsArray);
+
+        }else if($condition == "newest"){
+
+        }
+
+        return response()->json([
+            'products' => $productsArray
+        ]);
+
+    }
+
+    public function requestToRent(Request $request)
+    {
+        $id = Auth()->user()->id;
+
+        $rent = Rent::create([
+            'boutiqueID' => $request->input('boutiqueID'),
+            'customerID' => $id, 
+            'status' => "Pending", 
+            'productID' => $request->input('productID'), 
+            'dateToUse' => $request->input('dateToUse'), 
+            'locationToBeUsed' => $request->input('locationToBeUsed'), 
+            'addressOfDelivery' => $request->input('addressOfDelivery'),
+            'additionalNotes' => $request->input('additionalNotes')
+        ]);
+
+         // dd($id);
+        // print_r("stejf");
+
+        return redirect('/shop');
     }
 
 

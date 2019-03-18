@@ -5,7 +5,9 @@
   Boutique de Filipina
 @endsection
 
-
+@section('page_title')
+  Categories
+@endsection
 
 
 @section('inbox')
@@ -172,7 +174,7 @@
     <li class="header">MAIN NAVIGATION</li>
    
     <li>
-      <a href="/hinimo/public/dashboard/{{$user['id']}}">
+      <a href="/hinimo/public/dashboard">
         <i class="fa fa-th"></i> <span>Dashboard</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
@@ -189,7 +191,7 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/hinimo/public/categories/{{$user['id']}}"><i class="fa fa-circle-o"></i> Categories</a></li>
+        <li><a href="/hinimo/public/categories"><i class="fa fa-circle-o"></i> Categories</a></li>
         <li><a href="/hinimo/public/weddinggowns"><i class="fa fa-circle-o"></i> Wedding gowns</a></li>
         <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Entourage Set</a></li>
         <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Accessories</a></li>
@@ -220,49 +222,42 @@
 
 @section('content')
 
-<div class="page">
-<div id="content-wrapper" style="background-color: white;">
 
-<hr>
 
 <div class="row">
+    <div class="col-md-12">
+    <div class="box box-success">
 
-<div class="col-md-4 col-md-offset-4">
-  <a href="/hinimo/public/products/">Back</a>
-  <br><br><br>
+    <div class="box-header with-border">
+      <h3 class="box-title">Categories</h3>
+    </div>
 
-
-    @foreach($categories as $category)
-      
-      <!-- {{$category['gender']}} -->
-      Womens
-      @if($category['gender'] == "Womens")
-        @foreach($category as $cat)
-        <li>{{$cat['categoryName']}}</li>
+    <div class="box-body">
+      <div class="col-md-5"> 
+          
+        <label>Womens</label>
+        @foreach($womens as $women)
+          <li>{{$women['categoryName']}}</li>
         @endforeach
-      @endif
 
-      Mens
-      @if($category['gender'] == "Mens")
-        @foreach($category as $cat)
-        <li>{{$cat['categoryName']}}</li>
-        @endforeach
-      @endif
+      </div>
 
-    @endforeach
-    
-    
-  
+      <div class="col-md-5">
+          <label>Mens</label>
+          @foreach($mens as $men)
+              <li>{{$men['categoryName']}}</li>
+          @endforeach
+      </div>
 
-  
-  <br>
+    </div>
+    <div class="box-footer" style="text-align: right;">
+     <a class="btn btn-warning" href="/hinimo/public/dashboard/"><i class="fa fa-arrow-left"> Back to dasboard</i></a>
+     <a class="btn btn-primary" href="/hinimo/public/addCategories/"><i class="fa fa-plus"> Add a Category</i></a>
+    </div>
+
+    </div>
 </div>
 </div>
-
-</div>
-</div>
-
-
 
 
 

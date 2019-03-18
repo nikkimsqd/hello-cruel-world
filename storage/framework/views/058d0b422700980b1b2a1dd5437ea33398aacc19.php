@@ -19,6 +19,21 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="<?php echo e(asset('adminlte/dist/css/skins/_all-skins.min.css')); ?>">
+    <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/iCheck/all.css')); ?>">
+
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css')); ?>">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')); ?>">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/iCheck/all.css')); ?>">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css')); ?>">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/timepicker/bootstrap-timepicker.min.css')); ?>">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/select2/dist/css/select2.min.css')); ?>">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -116,6 +131,19 @@
 
 <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
+    <section class="content-header">
+      <h1>
+        <?php echo $__env->yieldContent('page_title'); ?>
+        <small></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Forms</a></li>
+        <li class="active"><?php echo $__env->yieldContent('page_title'); ?></li>
+      </ol>
+    </section>
+
 
     <!-- Main content -->
     <section class="content">
@@ -389,6 +417,26 @@
 <script src="<?php echo e(asset('adminlte/dist/js/pages/dashboard2.js')); ?>"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo e(asset('adminlte/dist/js/demo.js')); ?>"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo e(asset('adminlte/plugins/iCheck/icheck.min.js')); ?>"></script>
+<!-- Select2 -->
+<script src="<?php echo e(asset('adminlte/bower_components/select2/dist/js/select2.full.min.js')); ?>"></script>
+<!-- InputMask -->
+<script src="<?php echo e(asset('adminlte/plugins/input-mask/jquery.inputmask.js')); ?>"></script>
+<script src="<?php echo e(asset('adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js')); ?>"></script>
+<script src="<?php echo e(asset('adminlte/plugins/input-mask/jquery.inputmask.extensions.js')); ?>"></script>
+<!-- date-range-picker -->
+<script src="<?php echo e(asset('adminlte/bower_components/moment/min/moment.min.js')); ?>"></script>
+<script src="<?php echo e(asset('adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js')); ?>"></script>
+<!-- bootstrap datepicker -->
+<script src="<?php echo e(asset('adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')); ?>"></script>
+<!-- bootstrap color picker -->
+<script src="<?php echo e(asset('adminlte/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js')); ?>"></script>
+<!-- bootstrap time picker -->
+<script src="<?php echo e(asset('adminlte/plugins/timepicker/bootstrap-timepicker.min.js')); ?>"></script>
+
+
+<?php echo $__env->yieldContent('scripts'); ?>
 
 <!-- ESSENCE -->
     <!-- jQuery (Necessary for All JavaScript Plugins) -->
