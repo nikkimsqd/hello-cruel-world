@@ -12,6 +12,12 @@ class Address extends Model
     	'userID', 'contactName', 'phoneNumber', 'province', 'city', 'barangay', 'completeAddress', 'status'
     ];
 
+
+    public function user()
+    {
+        return $this->hasOne('App\User', 'id', 'userID');
+    }
+
     public function provName()
     {
         return $this->hasOne('App\Province', 'provCode', 'province');

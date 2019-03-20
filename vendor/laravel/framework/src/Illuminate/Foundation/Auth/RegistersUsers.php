@@ -20,11 +20,6 @@ trait RegistersUsers
         return view('auth.register');
     }
 
-    public function showBoutiqueRegistrationForm()
-    {
-        return view('auth.registerseller');
-    }
-
     /**
      * Handle a registration request for the application.
      *

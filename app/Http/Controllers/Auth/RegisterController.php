@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Boutique;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -28,7 +32,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/get-started/welcome';
+    protected $redirectTo = '/get-started';
 
     /**
      * Create a new controller instance.
@@ -40,6 +44,11 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    public function showBoutiqueRegistrationForm()
+    {
+        return view('auth.registerseller');
+    }
+
     /**
      * Get a validator for an incoming registration request.
      *
@@ -49,12 +58,14 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'fname' => 'required|string|max:255',
-            'lname' => 'required|string|max:255',
+            'fname' => 'string|max:255',
+            'lname' => 'string|max:255',
             'username' => 'required|string|max:255',
-            'gender' => 'required|string|max:255',
+            'gender' => 'string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'boutiqueName' => 'string|max:255',
+            'boutiqueAddress' => 'string|max:255',
         ]);
     }
 
@@ -66,26 +77,38 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'fname' => $data['fname'],
-            'lname' => $data['lname'],
-            'username' => $data['username'],
-            'gender' => $data['gender'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        
+        if (!empty($data['fname'])) {
+
+            return User::create([
+                'fname' => $data['fname'],
+                'lname' => $data['lname'],
+                'username' => $data['username'],
+                'gender' => $data['gender'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'roles' => "customer",
+            ]);
+
+        } else {
+
+            $user = User::create([
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'roles' => "boutique",
+            ]);
+
+            Boutique::create([
+                'userID' => $user['id'],
+                'boutiqueName' => $data['boutiqueName'],
+                'boutiqueAddress' => $data['boutiqueAddress'],
+            ]);
+
+
+            $this->redirectTo = '/dashboard';
+
+            return $user;
+        }
     }
-
-    public function createseller(array $data)
-    {
-        return User::create([
-            'fname' => $data['fname'],
-            'lname' => $data['lname'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-    }
-
-
 }

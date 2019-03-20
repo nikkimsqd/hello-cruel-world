@@ -9,73 +9,76 @@ use App\Category;
 use App\User;
 use App\Boutique;
 use App\Rent;
+use App\Tag;
 
 class BoutiqueController extends Controller
 {
 
 	public function dashboard()
 	{
+		$page_title = "Dashboard";
    		$id = Auth()->user()->id;
 		$user = User::find($id);
-    	$boutiques = Boutique::where('userID', $id)->get();
+    	$boutique = Boutique::where('userID', $id)->first();
 
-    	foreach ($boutiques as $boutique) {
-    		$boutique;
-    	}
+    	// foreach ($boutiques as $boutique) {
+    	// 	$boutique;
+    	// }
 
 		$rents = Rent::where('boutiqueID', $boutique['id'])->get();
+
 		foreach ($rents as $rent) {
 			$rent;
 		}
+		// if($rent['approved_at'] != null) { 
+		// 	$approvedDate = $rent['approved_at']->format('M d, Y');
+		// 	$completedDate = $rent['completed_at']->format('M d, Y');
+		// }else {
+		// 	$approvedDate = $rent['approved_at'];
+		// 	$completedDate = $rent['completed_at'];
+		// }
+		// $requestedDate = $rent['created_at']->format('M d, Y');
 
-		if($rent['approved_at'] != null) { 
-			$approvedDate = $rent['approved_at']->format('M d, Y');
-			$completedDate = $rent['completed_at']->format('M d, Y');
-		}else {
-			$approvedDate = $rent['approved_at'];
-			$completedDate = $rent['completed_at'];
-		}
-		
-		$requestedDate = $rent['created_at']->format('M d, Y');
-
-		$customer = User::where('id', $rent['customerID'])->first();
-		$product = Product::where('productID', $rent['productID'])->first();
+		// $customer = User::where('id', $rent['customerID'])->first();
+		// $product = Product::where('productID', $rent['productID'])->first();
 
 		// dd($rent);
         $rentArray = $rents->toArray();
         array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
 
-		return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate'));
+		return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title')); 
 	}
+
+
+	// }
 
     public function showProducts()
 	{
+		$page_title = "Products";
    		$user = Auth()->user()->id;
-		$boutiques = Boutique::where('userID', $user)->first();
-		$products = Product::where('boutiqueID', $boutiques['id'])->get();
-		// dd($boutiques['id']);
+		$boutique = Boutique::where('userID', $user)->first();
+		$products = Product::where('boutiqueID', $boutique['id'])->get();
+		$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
 
-		foreach ($boutiques as $boutique) {
-			$boutique;
-		}
-
-		return view('boutique/products',compact('products', 'boutique', 'user'));
+		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
 	}
 
 
 	public function addProduct()
 	{
+		$page_title = "Add Product";
 		$user = Auth()->user()->id;
 		$boutiques = Boutique::where('userID', $user)->get();
 		$categories = Category::all();
+		$tags = Tag::all();
 
 		foreach ($boutiques as $boutique) {
 			$boutique;
 		}
 
 
-		return view('boutique/addProducts', compact('categories', 'boutique', 'user'));
+		return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title'));
 	}
 
 
@@ -84,6 +87,11 @@ class BoutiqueController extends Controller
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
     	
+    	$tags = $request->input('tags');
+        $data = array();
+        array_push($data, $tags);
+        $data_encoded = json_encode($data);
+
     	$products = Product::create([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
@@ -91,15 +99,13 @@ class BoutiqueController extends Controller
     		'productPrice' => $request->input('productPrice'),
     		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
+    		'tags' => $data_encoded,
     		'productStatus' => "Available",
     		'forRent' => $request->input('forRent'),
     		'forSale' => $request->input('forSale'),
     		'customizable' => $request->input('customizable')
     		]);
 
-    	// dd($products);
-
-    	// dd($products['productID']);
     	$uploads = $request->file('file');
 
     	if($request->hasFile('file')) {
@@ -125,6 +131,7 @@ class BoutiqueController extends Controller
 
 	public function viewProduct($productID)
 	{
+		$page_title = "View Product";
 		$user = Auth()->user()->id;
 		$boutiques = Boutique::where('userID', $user)->get();
 
@@ -136,11 +143,12 @@ class BoutiqueController extends Controller
 		}
 		// dd($product->category);
 
-		return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user'));
+		return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title'));
 	}
 
 	public function editView($productID)
 	{
+		$page_title = "Edit Product";
 		$user = Auth()->user()->id;
 		$boutiques = Boutique::where('userID', $user)->get();
 		$product = Product::where('productID', $productID)->first();
@@ -157,7 +165,7 @@ class BoutiqueController extends Controller
 		$womensCategories = Category::where('gender', "Womens")->get();
 		// dd($womensCategories);
 
-		return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user'));
+		return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title'));
 
 	}
 
@@ -210,104 +218,30 @@ class BoutiqueController extends Controller
 		return redirect('/products');
 	}
 
-	public function categories()
-	{
-		$id = Auth()->user()->id;
-		$user = User::find($id);
-		$boutiques = Boutique::where('userID', $id)->get();
-
-		foreach ($boutiques as $boutique) {
-			$boutique;
-		}
-
-		$categories = Category::where('boutiqueID', $boutique['id'])->get();
-		// foreach ($categories as $category) {
-			$womens = Category::where('gender', "Womens")->get();
-			$mens = Category::where('gender', "Mens")->get();
-				// dd($mens);
-		// }
-
-		return view('boutique/categories',compact('user', 'boutique', 'categories','womens', 'mens'));
-	}
-
-	public function addCategories()
-	{
-    	$id = Auth()->user()->id;
-		// $products = Product::where('userID', $id)->get();
-		$user = User::find($id);
-		$boutiques = Boutique::where('userID', $id)->get();
-		// dd($user);
-
-		foreach ($boutiques as $boutique) {
-			$boutique;
-		}
-
-		return view('boutique/addCategories' ,compact('user', 'boutique'));
-	}
-
-	public function saveCategory(Request $request)
-	{
-    	$id = Auth()->user()->id;
-
-		$category = Category::create([
-			'boutiqueID' => $request->input('boutiqueID'),
-			'categoryName' => $request->input('categoryName'),
-			'gender' => $request->input('gender')
-		]);
-
-		return redirect('/categories/'.$id);
-	}
-
 	public function madeToOrders()
 	{
-    	$id = Auth()->user()->id;
+    	$page_title = "Made-to-Orders";
+   		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$products = Product::where('boutiqueID', $boutique['id'])->get();
+		$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
 
-		return view('boutique/madetoorders');
+
+		return view('boutique/madetoorders',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
 	}
 
 	public function rents()
 	{
+    	$page_title = "Rents";
     	$id = Auth()->user()->id;
-    	$boutiques = Boutique::where('userID', $id)->get();
-    	foreach ($boutiques as $boutique) {
-    		$boutique;
-    	}
+    	$boutique = Boutique::where('userID', $id)->first();
 
-		// dd($boutique['id']);
 		$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 		foreach ($rents as $rent) {
 			$rent;
 		}
-		// dd($rents);
-		// $requestedDate = $rent['created_at']->format('M d, Y');
 
-		// if($rent['approved_at'] != null) { 
-		// 	$approvedDate = $rent['approved_at'];
-		// 	$completedDate = $rent['completed_at'];
-		// }else {
-		// 	$approvedDate = $rent['approved_at'];
-		// 	$completedDate = $rent['completed_at'];
-		// }
-
-		// dd($rent);
-		
-
-		$customer = User::where('id', $rent['customerID'])->first();
-		$product = Product::where('productID', $rent['productID'])->first();
-
-		return view('boutique/rents', compact( 'rents' ));
-
-		//,'customer', 'product'
-	}
-
-	public function getRentInfo($rentID)
-	{
-		$rent = Rent::where('rentID', $rentID);
-
-		dd("sfafwsgwgwgw");
-
-		return redirect('/rent');
-
+		return view('boutique/rents', compact( 'rents', 'boutique', 'page_title'));
 	}
 
 	public function approveRent(Request $request)

@@ -13,7 +13,6 @@ Hinimo | Login
     </ul>
     
 </div>
-
 @endsection
 
 

@@ -7,11 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
 	protected $primaryKey = 'productID';
-    protected $fillable = [
-
-        'boutiqueID', 'fileID', 'productName', 'productDesc', 'productPrice', 'category', 'productStatus', 'forRent', 'forSale', 'gender', 'customizable'
-        
-    ];
+    protected $fillable = ['boutiqueID', 'fileID', 'productName', 'productDesc', 'productPrice', 'category', 'productStatus', 'forRent', 'forSale', 'gender', 'customizable', 'tags'];
 
      public function productFile()
     {

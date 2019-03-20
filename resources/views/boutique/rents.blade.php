@@ -1,12 +1,5 @@
 @extends('layouts.boutique')
-
-@section('titletext')
-  Boutique de Filipina
-@endsection
-
-@section('page_title')
-Rents
-@endsection
+@extends('boutique.layout')
 
 @section('content')
 
@@ -319,20 +312,6 @@ Rents
 @section('scripts')
 <script type="text/javascript">
 
-  // $('#pendingModal').on('shown.bs.modal', function (e) {
-  //   alert("alert!");
-  // });
-
-
-  // function declineFunction() {
-  //   var rentID = document.getElementById("declineRequest").value;
-  //   console.log(document.getElementById("declineRequest").value);
-
-  //   $.ajax({
-  //    url: "declineRent/"+rentID,
-  //   });
-
-  // }
 
 
 

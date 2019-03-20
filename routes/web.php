@@ -16,24 +16,36 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::get('/home', 'HomeController@index');
-Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
-Route::post('/login', 'Auth\LoginController@login');
 
-// Route::get('register-boutique', 'AdminController@addBoutique');
-// Route::post('register-boutiques', 'AdminController@createseller');
 
+//SHOP
+Route::get('/shop', 'CustomerController@shop');
+Route::get('/index', 'CustomerController@index');
+Route::get('/shop/{gender}', 'CustomerController@shopWomens');
+Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
+Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
+Route::get('/user-account', 'CustomerController@useraccount');
 
 
 
 Route::middleware(['auth'])->group(function(){
 
+//admin
+Route::get('/admin-dashboard', 'AdminController@dashboard');
+Route::get('/admin-orders', 'AdminController@orders');
+Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
+Route::get('/admin-rents', 'AdminController@rents');
+Route::get('/admin-categories', 'AdminController@categories');
+Route::get('/admin-tags', 'AdminController@tags');
+Route::post('/addTag', 'AdminController@addTag');
+Route::post('/saveCategory', 'AdminController@saveCategory');
+
+
 //boutique
 Route::get('/dashboard', 'BoutiqueController@dashboard');
 Route::get('/categories/', 'BoutiqueController@categories');
 Route::get('/addCategories', 'BoutiqueController@addCategories');
-Route::post('/saveCategory', 'BoutiqueController@saveCategory');
-Route::get('/tags', 'BoutiqueController@tags');
-Route::post('/addTag', 'BoutiqueController@addTag');
+// Route::post('/saveCategory', 'BoutiqueController@saveCategory'); naa nani ni boutique
 
 
 
@@ -46,6 +58,9 @@ Route::get('/delete/{productID}', 'BoutiqueController@delete');
 
 
 Route::get('/products', 'BoutiqueController@showProducts');
+Route::get('/products/womens', 'BoutiqueController@showProducts');
+Route::get('/products/mens', 'BoutiqueController@showProducts');
+Route::get('/products/embellishments', 'BoutiqueController@showProducts');
 Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 
 
@@ -63,7 +78,7 @@ Route::get('/declineRent/{rentID}', 'BoutiqueController@declineRent');
 Route::view('/weddinggowns', 'boutique.weddinggowns');
 Route::view('/entourage', 'boutique.entourage');
 Route::view('/accessories', 'boutique.accessories');
-Route::view('/made-to-orders', 'boutique.madetoorders');
+// Route::view('/made-to-orders', 'boutique.madetoorders');
 Route::view('/boutique-account', 'boutique.boutiqueaccount');
 	
 
@@ -76,12 +91,7 @@ Route::get('/user-profiling/done', 'CustomerController@profilingDone');
 // Route::get('/get-started/tops', 'CustomerController@tops');
 
 
-Route::get('/index', 'CustomerController@index');
-Route::get('/shop', 'CustomerController@shop');
-Route::get('/shop/{gender}', 'CustomerController@shopWomens');
-Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
-Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
-Route::get('/user-account', 'CustomerController@useraccount');
+
 
 
 Route::get('/sortBy/{condition}', 'CustomerController@sortBy');

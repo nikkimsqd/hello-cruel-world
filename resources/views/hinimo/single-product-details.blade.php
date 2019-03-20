@@ -5,7 +5,16 @@
 	Hinimo
 @endsection
 
-
+@section('auth')
+<div class="classynav">
+    <ul>
+        <li><a href="/hinimo/public/register-boutique">Sell on Hinimo</a></li>  
+        <li><a href="/hinimo/public/login">Login</a></li>  
+        <li><a href="/hinimo/public/register">Signup</a></li>
+    </ul>
+    
+</div>
+@endsection
 
 @section('search')
 <!-- Search Area -->
@@ -196,64 +205,68 @@
     </section>
 
     <!-- MODAAAAAAAAAAAAAAAL -->
+    @if($user != null)
     <div class="modal fade" id="requestToRentModal" role="dialog">
-    <div class="modal-dialog modal-lg">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h3 class="modal-title"><b>Rent Details</b></h3>
+        <div class="modal-dialog modal-lg">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h3 class="modal-title"><b>Rent Details</b></h3>
+            </div>
+
+            <div class="modal-body">
+              <form action="/hinimo/public/requestToRent" method="post">
+                {{csrf_field()}}
+                <label>Name:</label>
+                <input type="text" name="customerName" class="form-control" value="{{$user['lname'].', '.$user['fname']}}" disabled><br> 
+
+                <label>Email Address:</label>
+                <input type="text" name="email" class="form-control" value="{{$user['email']}}" disabled><br> 
+
+                <label>Contact Number:</label>
+                <input type="text" name="phoneNumber" class="form-control"><br> 
+
+                <label>Date Item will be used:</label>
+                <input type="date" name="dateToUse" class="form-control"><br> 
+
+                <label>Location Item will be used:</label>
+                <input type="text" name="locationToBeUsed" class="form-control"><br> 
+
+                <label>Address of delivery:</label>
+                <!-- <input type="text" name="addressOfDelivery" class="form-control"><br> -->
+                <select name="addressOfDelivery">
+                    <option>&nbsp;</option>
+                    @foreach($addresses as $address)
+                    <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
+                    @endforeach
+                </select><br><br><br>
+
+                <label>Additional Notes:</label>
+                <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
+
+                <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
+                <input type="text" name="productID" value="{{$product['productID']}}" hidden>
+
+
+
+            </div>
+
+            <div class="modal-footer">
+              <input type="submit" class="btn essence-btn" value="Place Request">
+              <!-- <input type="" class="btn btn-danger" data-dismiss="modal" value="Cancel"> -->
+              </form>
+
+            </div>
+          </div>
+          
         </div>
-
-        <div class="modal-body">
-          <form action="/hinimo/public/requestToRent" method="post">
-            {{csrf_field()}}
-            <label>Name:</label>
-            <input type="text" name="customerName" class="form-control" value="{{$user['lname'].', '.$user['fname']}}" disabled><br> 
-
-            <label>Email Address:</label>
-            <input type="text" name="email" class="form-control" value="{{$user['email']}}" disabled><br> 
-
-            <label>Contact Number:</label>
-            <input type="text" name="phoneNumber" class="form-control"><br> 
-
-            <label>Date Item will be used:</label>
-            <input type="date" name="dateToUse" class="form-control"><br> 
-
-            <label>Location Item will be used:</label>
-            <input type="text" name="locationToBeUsed" class="form-control"><br> 
-
-            <label>Address of delivery:</label>
-            <!-- <input type="text" name="addressOfDelivery" class="form-control"><br> -->
-            <select name="addressOfDelivery">
-                <option>&nbsp;</option>
-                @foreach($addresses as $address)
-                <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
-                @endforeach
-            </select><br><br><br>
-
-            <label>Additional Notes:</label>
-            <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
-
-            <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
-            <input type="text" name="productID" value="{{$product['productID']}}" hidden>
-
-
-
-        </div>
-
-        <div class="modal-footer">
-          <input type="submit" class="btn essence-btn" value="Place Request">
-          <!-- <input type="" class="btn btn-danger" data-dismiss="modal" value="Cancel"> -->
-          </form>
-
-        </div>
-      </div>
-      
     </div>
-  </div>
     <!-- ##### Single Product Details Area End ##### -->
+    @else
+        {{route('login')}}
+    @endif
 
 
 @endsection

@@ -8,32 +8,32 @@
                 <div class="card-header">{{ __('Register Seller') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}" aria-label="{{ __('Register') }}">
+                    <form method="POST" action="register-boutique" aria-label="{{ __('Register Seller') }}">
                         @csrf
 
                         <div class="form-group row">
-                            <label for="fname" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Name') }}</label>
+                            <label for="boutiqueName" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="boutiqueName" type="text" class="form-control{{ $errors->has('fname') ? ' is-invalid' : '' }}" name="fname" value="{{ old('fname') }}" required autofocus>
+                                <input id="boutiqueName" type="text" class="form-control{{ $errors->has('boutiqueName') ? ' is-invalid' : '' }}" name="boutiqueName" value="{{ old('boutiqueName') }}" required autofocus>
 
-                                @if ($errors->has('fname'))
+                                @if ($errors->has('boutiqueName'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('fname') }}</strong>
+                                        <strong>{{ $errors->first('boutiqueName') }}</strong>
                                     </span>
                                 @endif
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="lname" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
+                            <label for="boutiqueAddress" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Address') }}</label>
 
                             <div class="col-md-6">
-                                <input id="lname" type="text" class="form-control{{ $errors->has('lname') ? ' is-invalid' : '' }}" name="lname" value="{{ old('lname') }}" required autofocus>
+                                <input id="boutiqueAddress" type="text" class="form-control{{ $errors->has('boutiqueAddress') ? ' is-invalid' : '' }}" name="boutiqueAddress" value="{{ old('boutiqueAddress') }}" required autofocus>
 
-                                @if ($errors->has('lname'))
+                                @if ($errors->has('boutiqueAddress'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('lname') }}</strong>
+                                        <strong>{{ $errors->first('boutiqueAddress') }}</strong>
                                     </span>
                                 @endif
                             </div>

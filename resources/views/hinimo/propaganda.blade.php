@@ -184,7 +184,7 @@
                     <div class="regular-page-content-wrapper section-padding-80">
                         <div class="regular-page-text">
                             <h2>Register your boutique in Hinimo!</h2>
-                            <p>Register your boutique in Hinimo and sell your rent your items through our website </p>
+                            <p>Register your boutique in Hinimo and sell or rent your items through our website </p>
 
 
                         <a href="/hinimo/public/register-boutique" class="btn essence-btn">CONTINUE</a>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Category;
 use App\Product;
@@ -83,14 +84,24 @@ class CustomerController extends Controller
 
     public function shop()
     {
-   		$userID = Auth()->user()->id;
-    	$products = Product::all();
-    	$categories = Category::all();
-    	$cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-    	$carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
-    	// dd($carts);
+        if (Auth::check()) {
+       		$userID = Auth()->user()->id;
+            $products = Product::all();
+        	$productsCount = Product::all()->count();
+        	$categories = Category::all();
+        	$cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
+        	$carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+      
+        	return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount'));
+        }else {
+            $products = Product::all();
+            $productsCount = Product::all()->count();
+            $categories = Category::all();
+            $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
+            $carts = Cart::where('userID', "")->where('status', "Pending")->get();
 
-    	return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID'));
+            return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount'));
+        }
     }
 
     public function productDetails($productID)
@@ -239,7 +250,7 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         // $userID = "3";
 
-        $boutique = Boutique::where('userID', $userID)->get();
+        $boutique = Boutique::where('userID', $userID)->first();
 
         if($boutique == null){
             $categories = Category::all();

@@ -5,6 +5,7 @@ Hinimo | Register
 <?php $__env->startSection('auth'); ?>
 <div class="classynav">
     <ul>
+        <li><a href="register-boutique">Sell on Hinimo</a></li>  
         <li><a href="login">Login</a></li>  
         <li><a href="register">Signup</a></li>
     </ul>

@@ -33,8 +33,7 @@
                 <div class="classy-navbar-toggler">
                     <span class="navbarToggler"><span></span><span></span><span></span></span>
                 </div>
-                @guest
-                @else
+               
                 <!-- Menu -->
                 <div class="classy-menu">
                     <!-- close btn -->
@@ -97,13 +96,13 @@
                     </div>
                     <!-- Nav End -->
                 </div>
-                @endguest
+                
             </nav>
 
             <!-- Header Meta Data -->
             <div class="header-meta d-flex clearfix justify-content-end">
                 @guest
-                @yield('auth')
+                @yield('auth') 
                 @else
                 @yield('search')
                 @yield('favorites')

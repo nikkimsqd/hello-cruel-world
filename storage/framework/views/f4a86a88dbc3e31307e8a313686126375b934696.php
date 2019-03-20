@@ -11,7 +11,6 @@ Hinimo | Login
     </ul>
     
 </div>
-
 <?php $__env->stopSection(); ?>
 
 

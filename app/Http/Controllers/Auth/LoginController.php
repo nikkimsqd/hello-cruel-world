@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+
+
 
 class LoginController extends Controller
 {
@@ -25,7 +30,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = '/index';
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -42,18 +47,17 @@ class LoginController extends Controller
         return 'username';
     }
 
-    public function authenticate(Request $request)
+    protected function authenticated(Request $request, $user)
     {
-        $authResult = Auth::attempt(['username' => $request['username'],
-            'password' => $request['password']
-        ]);
-        dd($authResult);
-
-        if ($authResult) {
-            return redirect()->to(route('dashboard'));
-        }else{
-            return redirect()->to(route('login'));
+        if ($user['roles'] === "boutique") {
+            $this->redirectTo = '/dashboard';
+            // dd($this->redirectPath());
+        } else if ($user['roles'] === "customer") {
+            $this->redirectTo = '/shop';
+            // dd($this->redirectPath());
+        } else {
+            $this->redirectTo = '/admin-dashboard';
         }
-
     }
+    
 }

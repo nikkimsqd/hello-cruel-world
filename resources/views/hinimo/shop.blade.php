@@ -6,9 +6,19 @@
 @endsection
 
 
-@section('body')
-	
+@section('auth')
+<div class="classynav">
+    <ul>
+        <li><a href="login">Login</a></li>  
+        <li><a href="register">Signup</a></li>
+        <li><a href="register-boutique">Sell on Hinimo</a></li>  
+    </ul>
+    
+</div>
+@endsection
 
+
+@section('body')
 <div class="page">
 
 <!-- ##### Breadcumb Area Start ##### -->
@@ -136,7 +146,7 @@
                                 <div class="product-topbar d-flex align-items-center justify-content-between">
                                     <!-- Total Products -->
                                     <div class="total-products">
-                                        <p><span>186</span> products found</p>
+                                        <p><span>{{$productsCount}}</span> products found</p>
                                     </div>
                                     <!-- Sorting -->
                                     <div class="product-sorting d-flex">
@@ -175,6 +185,13 @@
                                     <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
 	                            @else
                                 @endif
+
+                                @if($product['forRent'] == "true")
+                                    <!-- Product Badge -->
+                                    <div class="product-badge new-badge">
+                                        <span>Rentable</span>
+                                    </div>
+                                    @endif
 	                                <!-- Favourite -->
 	                                <div class="product-favourite">
 	                                    <a href="#" class="favme fa fa-heart"></a>
@@ -186,7 +203,7 @@
 
 	                            <!-- Product Description -->
 	                            <div class="product-description">
-	                                <span>{{ $product->owner['username'] }}</span>
+	                                <span>{{ $product->owner['boutiqueName'] }}</span>
 	                                <a href="#">
 	                                    <h6>{{ $product['productName'] }}</h6>
 	                                </a>
@@ -262,11 +279,10 @@
                 <li><a href="user-account">My account</a></li>
                 <li><a href="shop.html">My Purchase</a></li>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
+                    @csrf
+                </form>
                     <li><a href="{{ route('logout') }}"
-                       onclick="event.preventDefault();
-                                     document.getElementById('logout-form').submit();">
+                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         {{ __('Logout') }}
                     </a></li>
             </ul>
@@ -326,7 +342,7 @@
                         <!-- Cart Item Desc -->
                         <div class="cart-item-desc">
                           <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">{{ $cart->owner['boutiqueName'] }}</span>
+                            <span class="badge">{{ $cart->product->owner['boutiqueName'] }}</span>
                             <h6>{{ $cart->product['productName'] }}</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
