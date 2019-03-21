@@ -1,31 +1,12 @@
 @extends('layouts.boutique')
+@extends('boutique.layout')
 
-
-@section('titletext')
-  Boutique de Filipina
-@endsection
-
-@section('page_title')
-  View Product
-@endsection
-
-@section('logo')
-<!-- LOGO -->
-    <a href="/hinimo/public/dashboard" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>H</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">Hinimo</span>
-    </a>
-@endsection
 
 @section('content')
+  <?php 
+      $counter = 1;
+  ?>
 
-    <?php 
-        $counter = 1;
-    ?>
-
-    
 <div class="row">
   <div class="col-md-12">
     <div class="box">
@@ -44,12 +25,27 @@
             <h4>Product Description</h4>
             <p>{{ $product['productDesc'] }}</p>
 
-            <h4>Product Price</h4>
+            @if($product['forSale'] === "true" && $product['forRent'] === "true")
+            <h4>Retail Price</h4>
             <p>{{ $product['productPrice'] }}</p>
+
+            <h4>Rent Price</h4>
+            <p>{{ $product['rentPrice'] }}</p>
+            
+            @elseif($product['forRent'] === "true")
+            <h4>Rent Price</h4>
+            <p>{{ $product['rentPrice'] }}</p>
+
+            @elseif($product['forSale'] === "true")
+            <h4>Retail Price</h4>
+            <p>{{ $product['productPrice'] }}</p>
+
+            @endif
+
 
 
             <h4>Product Category</h4>
-            <p>{{ $product->gender.', '.$product->category}}<p>
+            <p>{{ $product->gender.', '.$product->getCategory['categoryName']}}<p>
 
             <h4>Product Status</h4>
             <p>{{ $product['productStatus'] }}</p>
@@ -97,67 +93,3 @@
 
 @endsection
 
-
-@section('sidebar')
-<!-- sidebar: style can be found in sidebar.less -->
-<section class="sidebar">
-  <!-- Sidebar user panel -->
-  <div class="user-panel">
-    <div class="pull-left image">
-      <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-    </div>
-    <div class="pull-left info">
-      <p>{{$boutique['boutiqueName']}}</p>
-      <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-    </div>
-  </div>
-
-   <!-- sidebar menu: : style can be found in sidebar.less -->
-  <ul class="sidebar-menu" data-widget="tree">
-    <li class="header">MAIN NAVIGATION</li>
-   
-    <li>
-      <a href="/hinimo/public/dashboard">
-        <i class="fa fa-th"></i> <span>Dashboard</span>
-        <span class="pull-right-container">
-          <!-- <small class="label pull-right bg-green">new</small> -->
-        </span>
-      </a>
-    </li>
-
-    <li class="treeview">
-      <a href="#">
-        <i class="fa fa-pie-chart"></i>
-        <span>Products</span>
-        <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
-      </a>
-      <ul class="treeview-menu">
-        <li><a href="/hinimo/public/products"><i class="fa fa-circle-o"></i> View Products</a></li>
-        <li><a href="/hinimo/public/categories"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li><a href="/hinimo/public/weddinggowns"><i class="fa fa-circle-o"></i> Wedding gowns</a></li>
-        <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Entourage Set</a></li>
-        <li><a href="/hinimo/public/dashboard"><i class="fa fa-circle-o"></i> Accessories</a></li>
-      </ul>
-    </li>
-
-    <li class="treeview">
-      <a href="#">
-        <i class="fa fa-pie-chart"></i>
-        <span>Transactions</span>
-        <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
-      </a>
-      <ul class="treeview-menu">
-        <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-        <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Rent</a></li>
-      </ul>
-    </li>
-
-  </ul>
-</section>
-<!-- /.sidebar -->
-
-@endsection

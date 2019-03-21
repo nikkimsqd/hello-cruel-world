@@ -201,9 +201,10 @@
       </a>
       <ul class="treeview-menu">
         <li><a href="/hinimo/public/products/"><i class="fa fa-circle-o"></i> All Products</a></li>
-        <li><a href="/hinimo/public/categories"><i class="fa fa-circle-o"></i> Womens</a></li>
-        <li><a href="/hinimo/public/tags"><i class="fa fa-circle-o"></i> Mens</a></li>
-        <li><a href="/hinimo/public/tags"><i class="fa fa-circle-o"></i> Embellishments</a></li>
+        <li><a href="/hinimo/public/products/womens"><i class="fa fa-circle-o"></i> Womens</a></li>
+        <li><a href="/hinimo/public/products/mens"><i class="fa fa-circle-o"></i> Mens</a></li>
+        <li><a href="/hinimo/public/products/embellishments"><i class="fa fa-circle-o"></i> Embellishments</a></li>
+        <li><a href="/hinimo/public/products/customizable"><i class="fa fa-circle-o"></i> Customizable Items</a></li>
       </ul>
     </li>
 

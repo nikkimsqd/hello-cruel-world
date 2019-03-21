@@ -109,11 +109,6 @@ Add Products
 	    </div>
 
       <div class="form-group">
-        <label>Product Price</label>
-        <input type="number" name="productPrice" class="input form-control">
-      </div>
-
-      <div class="form-group">
         <label>Product Category</label>
         <select class="form-control select2" name="gender" id="gender-select">
           <option selected="selected"> </option>
@@ -133,8 +128,18 @@ Add Products
   	<div class="col-md-6">
       <div class="form-group">
        <label>Item Availability:</label><br>
-       <input type="checkbox" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
-       <input type="checkbox" name="forSale" class="minimal-red" value="true"> For Sale
+       <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
+       <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
+      </div>
+
+      <div class="form-group">
+        <label>Retail Price</label>
+        <input type="number" id="forSalePrice" name="productPrice" class="input form-control" disabled>
+      </div>
+
+      <div class="form-group">
+        <label>Rent Price</label>
+        <input type="number" id="forRentPrice" name="rentPrice" class="input form-control" disabled>
       </div>
 
       <div class="form-group">
@@ -206,6 +211,14 @@ Add Products
 @section('scripts')
 
 <script type="text/javascript">
+
+  $('#forRent').on('change', function() {
+      $('#forRentPrice').attr('disabled',!this.checked)
+  });
+
+  $('#forSale').on('change', function() {
+      $('#forSalePrice').attr('disabled',!this.checked)
+  });
 
   $('#gender-select').on('change', function(){
     var gender = $(this).val();

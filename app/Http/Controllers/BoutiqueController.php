@@ -10,6 +10,8 @@ use App\User;
 use App\Boutique;
 use App\Rent;
 use App\Tag;
+use App\DeclinedRent;
+
 
 class BoutiqueController extends Controller
 {
@@ -21,37 +23,18 @@ class BoutiqueController extends Controller
 		$user = User::find($id);
     	$boutique = Boutique::where('userID', $id)->first();
 
-    	// foreach ($boutiques as $boutique) {
-    	// 	$boutique;
-    	// }
-
 		$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 
 		foreach ($rents as $rent) {
 			$rent;
 		}
-		// if($rent['approved_at'] != null) { 
-		// 	$approvedDate = $rent['approved_at']->format('M d, Y');
-		// 	$completedDate = $rent['completed_at']->format('M d, Y');
-		// }else {
-		// 	$approvedDate = $rent['approved_at'];
-		// 	$completedDate = $rent['completed_at'];
-		// }
-		// $requestedDate = $rent['created_at']->format('M d, Y');
-
-		// $customer = User::where('id', $rent['customerID'])->first();
-		// $product = Product::where('productID', $rent['productID'])->first();
 
 		// dd($rent);
         $rentArray = $rents->toArray();
         array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-
 		return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title')); 
 	}
-
-
-	// }
 
     public function showProducts()
 	{
@@ -63,7 +46,6 @@ class BoutiqueController extends Controller
 
 		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
 	}
-
 
 	public function addProduct()
 	{
@@ -81,7 +63,6 @@ class BoutiqueController extends Controller
 		return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title'));
 	}
 
-
 	public function saveProduct(Request $request)
 	{
     	$id = Auth()->user()->id;
@@ -97,6 +78,7 @@ class BoutiqueController extends Controller
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
     		'productPrice' => $request->input('productPrice'),
+    		'rentPrice' => $request->input('rentPrice'),
     		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
     		'tags' => $data_encoded,
@@ -127,7 +109,6 @@ class BoutiqueController extends Controller
 
     	return redirect('/products');
 	}
-
 
 	public function viewProduct($productID)
 	{
@@ -166,7 +147,6 @@ class BoutiqueController extends Controller
 		// dd($womensCategories);
 
 		return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title'));
-
 	}
 
 	public function editProduct($productID, Request $request)
@@ -179,6 +159,7 @@ class BoutiqueController extends Controller
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
     		'productPrice' => $request->input('productPrice'),
+    		'rentPrice' => $request->input('rentPrice'),
     		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
     		'productStatus' => $request->input('productStatus'),
@@ -186,8 +167,6 @@ class BoutiqueController extends Controller
     		'forSale' => $request->input('forSale'),
     		'customizable' => $request->input('customizable')
     		]);
-
-
 
     	$uploads = $request->file('file');
 
@@ -226,7 +205,6 @@ class BoutiqueController extends Controller
 		$products = Product::where('boutiqueID', $boutique['id'])->get();
 		$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
 
-
 		return view('boutique/madetoorders',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
 	}
 
@@ -244,14 +222,28 @@ class BoutiqueController extends Controller
 		return view('boutique/rents', compact( 'rents', 'boutique', 'page_title'));
 	}
 
+	public function getRentInfo($rentID)
+	{
+		$page_title = "Rent Information";
+    	$id = Auth()->user()->id;
+    	$boutique = Boutique::where('userID', $id)->first();
+
+		$rent = Rent::where('rentID', $rentID)->first();
+	
+		return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title'));
+	}
+
 	public function approveRent(Request $request)
 	{
 		$rentID = $request->input('rentID');
 		$currentDate = date('Y-m-d');
+		$rent = rent::where('rentID', $rentID)->first();
 
-		// dd($rentID);
+		$product = Product::where('productID', $rent['productID'])->update([
+			'productStatus' => "Not Available"
+		]);
 
-		$rent = Rent::where('rentID', $rentID)->update([
+		Rent::where('rentID', $rentID)->update([
 			'approved_at' => $currentDate,
 			'status' => "In-Progress"
 		]);
@@ -259,16 +251,88 @@ class BoutiqueController extends Controller
 		return redirect('/rents');
 	}
 
-	public function declineRent($rentID)
+	public function updateRentInfo(Request $request)
 	{
-		$rent = Rent::where('rentID', $rentID)->update([
+		$rentID = $request->input('rentID');
+	
+		Rent::where('rentID', $rentID)->update([
+			'dateToBeReturned' => $request->input('dateToBeReturned')
+		]);
+
+		return redirect('rents/'.$rentID);
+	}
+
+	public function declineRent(Request $request)
+	{
+		$declinedrent = DeclinedRent::create([
+			'rentID' => $request->input('rentID'),
+			'reason' => $request->input('reason')
+		]);
+		// dd($declinedrent);
+
+		Rent::where('rentID', $request->input('rentID'))->update([
 			'status' => "Declined"
 		]);
 
 		return redirect('/rents');
 	}
 
+	public function makeOrderforRent(Request $request)
+	{
+		$rentID = $request->input('rentID');
+		// dd($rentID);
 	
+		$rent = Rent::where('rentID', $rentID)->first();
+		// Order::create([
+		// 	'subtotal' => 
+		// ]);
+
+		return redirect('rents/'.$rentID);
+	}
+
+	public function getwomens()
+	{
+		$page_title = "Womens";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$products = Product::where('gender', 'Womens')->get();
+		$productCount = Product::where('gender', 'Womens')->get()->count();
+
+		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
+	}
+
+	public function getmens()
+	{
+		$page_title = "Mens";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$products = Product::where('gender', 'Mens')->get();
+		$productCount = Product::where('gender', 'Mens')->get()->count();
+
+		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
+	}
+
+	public function getembellishments()
+	{
+		$page_title = "Embellishments";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$products = Product::where('gender', 'Mens')->get();
+		$productCount = Product::where('gender', 'Mens')->get()->count();
+
+		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
+	}
+
+	public function getcustomizables()
+	{
+		$page_title = "Customizable Items";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$products = Product::where('customizable', 'Yes')->get();
+		$productCount = Product::where('customizable', 'Yes')->get()->count();
+
+		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title'));
+	}
 
 
 }

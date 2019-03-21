@@ -26,7 +26,7 @@ class AddStatusToOrders extends Migration
     public function down()
     {
         Schema::table('orders', function($table) {
-            $table->string('status');
+            $table->dropColumn('status');
         });
     }
 }

@@ -9,8 +9,6 @@ use App\Category;
 use App\Product;
 use App\Cart;
 use App\User;
-use App\Region;
-use App\Province;
 use App\City;
 use App\Barangay;
 use App\Address;
@@ -67,7 +65,9 @@ class CustomerController extends Controller
 
     public function profilingDone()
     {
-        return view('hinimo/profiling-done');
+        $boutiques = Boutique::all();
+
+        return view('hinimo/profiling-done', compact('boutiques'));
     }
 
 
@@ -78,8 +78,9 @@ class CustomerController extends Controller
     	$products = Product::all();
         $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+        $boutiques = Boutique::all();
 
-    	return view('hinimo/index', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
+    	return view('hinimo/index', compact('categories', 'products', 'carts', 'cartCount', 'userID', 'boutiques'));
     }
 
     public function shop()
@@ -91,16 +92,19 @@ class CustomerController extends Controller
         	$categories = Category::all();
         	$cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
         	$carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+            $boutiques = Boutique::all();
+            // dd($boutiques);
       
-        	return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount'));
+        	return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
         }else {
             $products = Product::all();
             $productsCount = Product::all()->count();
             $categories = Category::all();
             $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
             $carts = Cart::where('userID', "")->where('status', "Pending")->get();
+            $boutiques = Boutique::all();
 
-            return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount'));
+            return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
         }
     }
 
@@ -111,11 +115,9 @@ class CustomerController extends Controller
         $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
     	$product = Product::where('productID', $productID)->first();
         $addresses = Address::where('userID', $user['id'])->get();
+        $boutiques = Boutique::all();
 
-        // $boutique = Boutique::where('userID', $user['id'])->get();
-        // dd($boutique);
-
-    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses'));
+    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses', 'boutiques'));
     }
 
     public function addtoCart($productID)
@@ -134,8 +136,9 @@ class CustomerController extends Controller
     {
    		$userID = Auth()->user()->id;
     	$carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+        $boutiques = Boutique::all();
     	
-    	return view('hinimo/cart', compact('carts'));
+    	return view('hinimo/cart', compact('carts', 'boutiques'));
     }
 
     public function removeItem($cartID)
@@ -170,37 +173,13 @@ class CustomerController extends Controller
         $cartCount = Cart::where('userID', $id)->where('status',"Pending")->count();
         $carts = Cart::where('userID', $id)->where('status', "Pending")->get();
         $addresses = Address::where('userID', $id)->get();
-        $boutique = Boutique::where('userID', $id)->get();
+        $boutiques = Boutique::all();
 
-
-        $regions = Region::all();
-        $provinces = Province::orderBy('provDesc', 'ASC')->get();
-        $cities = City::all();
+        $cities = City::where('provCode', '0722')->orderBy('citymunDesc', 'ASC')->get();
         $barangays = Barangay::all();
 
-        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'regions', 'provinces', 'cities', 'barangays', 'addresses', 'boutique'));
+        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'cities', 'barangays', 'addresses', 'boutiques'));
 
-    }
-
-    public function getCity($provCode)
-    {
-
-        $userID = Auth()->user()->id;
-
-        $cities = City::where('provCode', $provCode)->get();
-        // print_r("yey");
-
-        // return redirect('/user-account/'.$userid);
-
-        return response()->json(['cities' => $cities]);
-    }
-
-    public function getProvince($regCode)
-    {
-        $userID = Auth()->user()->id;
-        $provinces = Province::where('regCode', $regCode)->get();
-
-        return response()->json(['provinces' => $provinces]);
     }
 
     public function getBrgy($citymunCode)
@@ -217,8 +196,7 @@ class CustomerController extends Controller
         $address = Address::create([
             'userID' => $id, 
             'contactName' => $request->input('contactName'), 
-            'phoneNumber' => $request->input('phoneNumber'), 
-            'province' => $request->input('province'), 
+            'phoneNumber' => $request->input('phoneNumber'),
             'city' => $request->input('city'), 
             'barangay' => $request->input('barangay'), 
             'completeAddress' => $request->input('completeAddress'),
@@ -236,69 +214,68 @@ class CustomerController extends Controller
             'status' => ""
         ]);
 
-
         $address = Address::where('id', $addressID)->update([
             'status' => "Default"
         ]);
 
-        return redirect('/user-account/'.$id);
+        return redirect('/user-account#addresses');
 
     }
 
-    public function propaganda()
-    {
-        $userID = Auth()->user()->id;
-        // $userID = "3";
+    // public function propaganda()
+    // {
+    //     $userID = Auth()->user()->id;
+    //     // $userID = "3";
 
-        $boutique = Boutique::where('userID', $userID)->first();
+    //     $boutique = Boutique::where('userID', $userID)->first();
 
-        if($boutique == null){
-            $categories = Category::all();
-            $products = Product::all();
-            $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
-            $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+    //     if($boutique == null){
+    //         $categories = Category::all();
+    //         $products = Product::all();
+    //         $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
+    //         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
 
-            return view('hinimo/propaganda', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
+    //         return view('hinimo/propaganda', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
 
-        }else{
+    //     }else{
 
-            $categories = Category::all();
-            $products = Product::all();
-            $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
-            $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+    //         $categories = Category::all();
+    //         $products = Product::all();
+    //         $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
+    //         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
 
-            return view('hinimo/shop', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
+    //         return view('hinimo/shop', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
 
-        }
-    }
+    //     }
+    // }
 
-    public function registerboutique()
-    {
+    // public function registerboutique()
+    // {
 
-        $userID = Auth()->user()->id;
-        $categories = Category::all();
-        $products = Product::all();
-        $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+    //     $userID = Auth()->user()->id;
+    //     $categories = Category::all();
+    //     $products = Product::all();
+    //     $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
+    //     $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
 
-        return view('hinimo/upgradetoseller', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
-    }
+    //     return view('hinimo/upgradetoseller', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
+    // }
 
-    public function saveboutique(Request $request)
-    {   
-        $userID = Auth()->user()->id;
+    // public function saveboutique(Request $request)
+    // {   
+    //     $userID = Auth()->user()->id;
 
-        $boutique = Boutique::create([
-            'userID' => $userID,
-            'boutiqueName' => $request->input('boutiqueName'),
-            'boutiqueAddress' => $request->input('boutiqueAddress')
-        ]);
+    //     $boutique = Boutique::create([
+    //         'userID' => $userID,
+    //         'boutiqueName' => $request->input('boutiqueName'),
+    //         'boutiqueAddress' => $request->input('boutiqueAddress')
+    //     ]);
 
-        // $id = Auth()->user()->id;
-        $user = User::find($userID);
+    //     // $id = Auth()->user()->id;
+    //     $user = User::find($userID);
 
-        return redirect('dashboard');
-    }
+    //     return redirect('dashboard');
+    // }
 
 
     public function sortBy($condition)
@@ -359,9 +336,6 @@ class CustomerController extends Controller
             'addressOfDelivery' => $request->input('addressOfDelivery'),
             'additionalNotes' => $request->input('additionalNotes')
         ]);
-
-         // dd($id);
-        // print_r("stejf");
 
         return redirect('/shop');
     }

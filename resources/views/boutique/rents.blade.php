@@ -1,9 +1,9 @@
 @extends('layouts.boutique')
-@extends('boutique.layout')
+@extends('boutique.layout') 
 
 @section('content')
 
-<div class="row">
+<div class="row" id="pendings">
   <div class="col-md-12">
     <div class="box box-warning">
       <div class="box-header">
@@ -38,7 +38,8 @@
             <td>{{$rent['created_at']->format('M d, Y')}}</td>
             <td><span class="label label-warning">Pending</span></td>
             <td>
-                <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#pendingModal{{$rent['rentID']}}">
+                <!-- <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#pendingModal{{$rent['rentID']}}"> -->
+                <a href="rents/{{$rent['rentID']}}" class="btn btn-primary btn-sm">View Order</a>
             </td>
           </tr>
          
@@ -51,7 +52,7 @@
 </div> <!-- table row -->
 <br><br>
 
-<div class="row">
+<div class="row" id="in-progress">
   <div class="col-md-12">
     <div class="box box-info">
       <div class="box-header">
@@ -84,7 +85,10 @@
             <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
             <td>{{$rent['created_at']->format('M d, Y')}}</td>
             <td><span class="label label-info">In-Progress</span></td>
-            <td><input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#inprogressModal{{$rent['rentID']}}"></td>
+            <td>
+              <!-- <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#inprogressModal{{$rent['rentID']}}"> -->
+              <a href="rents/{{$rent['rentID']}}" class="btn btn-primary btn-sm">View Order</a>
+            </td>
           </tr>
           @endif
           @endforeach
@@ -95,7 +99,7 @@
 </div> <!-- table row -->
 <br><br>
 
-<div class="row">
+<div class="row" id="history">
   <div class="col-md-12">
     <div class="box box-danger">
       <div class="box-header">
@@ -136,7 +140,7 @@
             </td>
             <td><input type="submit" class="btn btn-sm-primary" value="View Order" data-toggle="modal" data-target="#myModal"></td>
           </tr>
-          @elseif($rent['status'] != "Completed")
+          @elseif($rent['status'] != "Completed" || $rent['status'] != "Declined")
           <tr>
             <td colspan="5"><i>You have no rent history...</i></td>
             @break
@@ -173,11 +177,31 @@
             <td>{{$rent['rentID']}}</td>
           </tr>
           <tr>
+            <td><label>Product Name:</label></td>
+            <td>{{$rent->product['productName']}}</td>
+          </tr>
+          <tr>
+            <td><label>Boutique Name:</label></td>
+            <td>{{$rent->product->owner['boutiqueName']}}</td>
+          </tr>
+          <tr>
             <td><label>Customer Name:</label></td>
             <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
           </tr>
           <tr>
-            <td><label>Order Placed at</label></td>
+            <td><label>Location item will be used</label></td>
+            <td>{{$rent['locationToBeUsed']}}</td>
+          </tr>
+          <tr>
+            <td><label>Date Item will be used</label></td>
+            <td>{{$rent['dateToUse']}}</td>
+          </tr>
+          <tr>
+            <td><label>Date to be returned</label></td>
+            <td>{{$rent['dateToUse']}}</td>
+          </tr>
+          <tr>
+            <td><label>Request Placed at</label></td>
             <td>{{$rent['created_at']->format('M d, Y')}}</td>
           </tr>
           <tr>
@@ -185,11 +209,7 @@
             <td>{{$rent['status']}}</td>
           </tr>
           <tr>
-            <td><label>Item ID</label></td>
-            <td>{{$rent->product->productID}}</td>
-          </tr>
-          <tr>
-            <td><label>Item:</label></td>
+            <td><label>Product Image:</label></td>
             <td>
               <!-- <img src="long/m.jpg"> -->
              <?php 
@@ -213,12 +233,6 @@
         <input type="text" name="rentID" value="{{$rent['rentID']}}" >
         <input type="submit" name="btn_sumbit" class="btn btn-success" value="Accept Order">
         </form>
-       <!--  <form action="declineRent" method="post">
-        {{csrf_field()}} -->
-        <!-- <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
-        <input type="submit" name="btn_sumbit" class="btn btn-danger" value="Decline Request"> -->
-        <!-- <button type="button" id="declineRequest" class="btn btn-danger" value="{{$rent['rentID']}}"  onclick="declineFunction()">Decline Request</button> -->
-        <!-- </form> -->
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -303,18 +317,12 @@
   </div>
 </div>
 @endforeach
-
-
 @endsection
 
 
 
 @section('scripts')
 <script type="text/javascript">
-
-
-
-
   
 </script>
 @endsection

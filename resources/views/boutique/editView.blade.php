@@ -38,17 +38,12 @@ Edit Products
 	<div class="col-md-6">
 	    <div class="form-group">
 	      <label>Product Name</label>
-			<input type="text" name="productName" class="input form-control" value="{{ $product['productName'] }}">
+			<input type="text" name="productName" class="input form-control" value="{{ $product['productName'] }}" required>
 	    </div>
 
 	    <div class="form-group">
 	      <label>Product Description</label>
-	      <textarea name="productDesc" rows="3" cols="50" class="input form-control">{{ $product['productDesc'] }}</textarea>
-	    </div>
-
-	    <div class="form-group">
-	      <label>Product Price</label>
-		  <input type="number" name="productPrice" class="input form-control" value="{{ $product['productPrice'] }}">
+	      <textarea name="productDesc" rows="3" cols="50" class="input form-control" required>{{ $product['productDesc'] }}</textarea>
 	    </div>
 
 	    <div class="form-group">
@@ -68,62 +63,76 @@ Edit Products
 		  <select class="form-control select2" name="category">
 
 		  	@if($product['gender'] == "Womens")
-		  	@foreach($womensCategories as $womensCategory)
-			<option selected value="{{$womensCategory['id']}}">{{$womensCategory['categoryName']}}</option>
-		  	@endforeach
+			  	@foreach($womensCategories as $womensCategory)
+				  	@if($product->getCategory['categoryName'] === $womensCategory['categoryName'])
+					<option selected value="{{$womensCategory['id']}}">{{$womensCategory['categoryName']}}</option>
+					@else
+					<option value="{{$womensCategory['id']}}">{{$womensCategory['categoryName']}}</option>
+					@endif
+			  	@endforeach
 		  	@elseif($product['gender'] == "Mens")
-		  	@foreach($mensCategories as $mensCategory)
-			<option selected value="{{$mensCategory['id']}}">{{$mensCategory['categoryName']}}</option>
-		  	@endforeach
+			  	@foreach($mensCategories as $mensCategory)
+				  	@if($product->getCategory['categoryName'] === $mensCategory['categoryName'])
+					<option selected value="{{$mensCategory['id']}}">{{$mensCategory['categoryName']}}</option>
+					@else
+					<option value="{{$mensCategory['id']}}">{{$mensCategory['categoryName']}}</option>
+					@endif
+			  	@endforeach
 		  	@endif
 
-
-			<!-- @foreach($categories as $category)
-			@if($product['category'] == $category['id'])
-				<option selected value="{{$category['id']}}">{{$category['categoryName']}}</option>
-			@else
-				<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-			@endif
-			@endforeach -->
 		  </select>
-	    </div>
-
-	    <div class="form-group">
-	      	<label>Product Status</label><br>
-	      	@if($product->productStatus == "Available")
-	      	<label><input type="radio" name="productStatus" value="Available" checked> Available</label>
-			<label><input type="radio" name="productStatus" value="Not Available"> Not Available</label>
-	      	@else
-	      	<label><input type="radio" name="productStatus" value="Available"> Available</label>
-			<label><input type="radio" name="productStatus" value="Not Available" checked> Not Available</label>
-			@endif
 	    </div>
 
 	    <div class="form-group">
 	      	<label>Product Availability</label><br>
 	      	@if($product->forRent != null && $product->forSale != null)
-			<input type="checkbox" name="forRent" value="true" checked> For Rent
-			<input type="checkbox" name="forSale" value="true" checked> For Sale
+			<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 	      	@elseif($product->forRent != null)
-	    	<input type="checkbox" name="forRent" value="true" checked> For Rent
-			<input type="checkbox" name="forSale" value="true"> For Sale
+	    	<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
 			@elseif($product->forSale != null)
-			<input type="checkbox" name="forRent" value="true"> For Rent
-			<input type="checkbox" name="forSale" value="true" checked> For Sale
+			<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 			@else
-			<input type="checkbox" name="forRent" value="true"> For Rent
-			<input type="checkbox" name="forSale" value="true"> For Sale
+			<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+			@endif
+	    </div>
+
+	    @if($product['forSale'] != null)
+	    <div class="form-group" id="forSalePrice">
+	      <label>Retail Price</label>
+		  <input type="number" name="productPrice" class="input form-control" value="{{ $product['productPrice'] }}" required>
+	    </div>
+	    @endif
+
+	    @if($product['forRent'] != null)
+	    <div class="form-group" id="forRentPrice">
+	        <label>Rent Price</label>
+	        <input type="number" name="rentPrice" value="{{ $product['rentPrice'] }}" class="input form-control" required>
+	     </div>
+	     @endif
+
+	    <div class="form-group">
+	      	<label>Product Status</label><br>
+	      	@if($product->productStatus == "Available")
+	      	<input type="radio" id="available" name="productStatus" value="Available" checked> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" id="nAvailable" name="productStatus" value="Not Available"> <label for="nAvailable"> Not Available</label>
+	      	@else
+	      	<input type="radio" id="available" name="productStatus" value="Available"> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" id="nAvailable" name="productStatus" value="Not Available" checked> <label for="nAvailable"> Not Available</label>
 			@endif
 	    </div>
 
 	    <div class="form-group">
 			<label>Is item customizable?</label><br>
 			@if($product['customizable'] == "Yes")
-			<input type="radio" name="customizable" class="minimal-red" value="Yes" checked> Yes
-			<input type="radio" name="customizable" class="minimal-red" value="No"> No
+			<input type="radio" id="yes" name="customizable" class="" value="Yes" checked> <label for="yes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" id="no" name="customizable" class="" value="No"> <label for="no">No</label>
 			@else
-			<input type="radio" name="customizable" class="minimal-red" value="Yes"> Yes
-			<input type="radio" name="customizable" class="minimal-red" value="No" checked> No
+			<input type="radio" id="yes" name="customizable" class="" value="Yes"> <label for="yes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="radio" id="no" name="customizable" class="" value="No" checked> <label for="no">No</label>
 			@endif
       	</div>
 
@@ -146,7 +155,7 @@ Edit Products
   </div> <!-- box-body -->
 
   <div class="box-footer" style="text-align: right;">
-  	<a href="/hinimo/public/products" class="btn btn-warning"><i class="fa fa-arrow-left"> Back to Products</i></a>
+  	<a href="/hinimo/public/viewproduct/{{$product['productID']}}" class="btn btn-warning"><i class="fa fa-arrow-left"> Back</i></a>
 	<input type="submit" name="btn_add" value="Update Product" class="btn btn-primary">
   </div>
 
@@ -223,5 +232,34 @@ Edit Products
   </ul>
 </section>
 <!-- /.sidebar -->
+
+@endsection
+
+@section('scripts')
+
+<script type="text/javascript">
+	
+	$('#forRent').change(function() {
+
+      if($('#forRent').is(':checked')) {
+      	$('#forRentPrice').show();
+      } else {
+      	$('#forRentPrice').hide();
+      }
+
+  	});
+
+  	$('#forSale').change(function() {
+
+      if($('#forSale').is(':checked')) {
+      	$('#forSalePrice').show();
+      } else {
+      	$('#forSalePrice').hide();
+      }
+
+  	});
+
+
+</script>
 
 @endsection

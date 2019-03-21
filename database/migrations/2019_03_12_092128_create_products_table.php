@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('boutiqueID');
             $table->string('productName');
             $table->string('productDesc');
-            $table->string('productPrice');
+            $table->string('productPrice')->nullable();
             $table->string('category');
             $table->string('productStatus');
             $table->string('forRent')->nullable();

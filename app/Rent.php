@@ -21,4 +21,9 @@ class Rent extends Model
     {
         return $this->hasOne('App\Product', 'productID', 'productID');
     }
+
+    public function address()
+    {
+        return $this->hasOne('App\Address', 'id', 'addressOfDelivery');
+    }
 }

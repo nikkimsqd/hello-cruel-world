@@ -18,11 +18,6 @@ class Address extends Model
         return $this->hasOne('App\User', 'id', 'userID');
     }
 
-    public function provName()
-    {
-        return $this->hasOne('App\Province', 'provCode', 'province');
-    }
-
     public function cityName()
     {
         return $this->hasOne('App\City', 'citymunCode', 'city');

@@ -19,7 +19,7 @@ class CreateRentsTable extends Migration
             $table->string('customerID');
             $table->string('status');
             $table->string('productID');
-            $table->string('dateToUse');
+            $table->date('dateToUse');
             $table->string('locationToBeUsed');
             $table->string('addressOfDelivery');
             $table->string('additionalNotes');
