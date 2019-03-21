@@ -43,7 +43,7 @@
                     <!-- Nav Start -->
                     <div class="classynav">
                         <ul>
-                            <li><a href="/hinimo/public/shop/">Shop</a>
+                            <li><a href="{{url('/shop')}}">Shop</a>
                                 <div class="megamenu">
                                     <ul class="single-mega cn-col-4">
                                         <li class="title">Women's Collection</li>
@@ -89,7 +89,7 @@
                             <li><a href="#">Boutiques</a>
                                 @yield('boutiques')
                             </li>
-                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="{{url('/biddings')}}">Biddings</a></li>
                             <li><a href="contact.html">Contact</a></li>
                         
                         </ul>

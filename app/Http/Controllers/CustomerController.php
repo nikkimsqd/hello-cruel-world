@@ -116,8 +116,11 @@ class CustomerController extends Controller
     	$product = Product::where('productID', $productID)->first();
         $addresses = Address::where('userID', $user['id'])->get();
         $boutiques = Boutique::all();
+        
+        $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
+        // dd($totalPrice);
 
-    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses', 'boutiques'));
+    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice'));
     }
 
     public function addtoCart($productID)
@@ -334,10 +337,27 @@ class CustomerController extends Controller
             'dateToUse' => $request->input('dateToUse'), 
             'locationToBeUsed' => $request->input('locationToBeUsed'), 
             'addressOfDelivery' => $request->input('addressOfDelivery'),
-            'additionalNotes' => $request->input('additionalNotes')
+            'additionalNotes' => $request->input('additionalNotes'),
+            // 'deliveryFee' => $request->input('')
         ]);
 
         return redirect('/shop');
+    }
+
+    public function showBiddings()
+    {
+        $page_title = "Biddings";
+        $userID = Auth()->user()->id;
+        $productsCount = Product::all()->count();
+        $categories = Category::all();
+        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
+        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+        $boutiques = Boutique::all();
+        // dd($boutiques);
+  
+
+        return view('hinimo/bidding', compact('categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title'));
+
     }
 
 

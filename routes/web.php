@@ -14,6 +14,10 @@ Route::get('/', function () {
     return redirect('/shop');
 });
 
+// $this->get('register-boutique', 'Auth\RegisterController@showBoutiqueRegistrationForm')->name('registerseller');
+// $this->post('register-boutique', 'Auth\RegisterController@register');
+
+
 Auth::routes();
 // Route::get('/home', 'HomeController@index');
 Route::get('/home', 'CustomerController@index');
@@ -109,6 +113,11 @@ Route::get('/getCity/{provCode}', 'CustomerController@getCity');
 Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
 Route::post('/addAddress', 'CustomerController@addAddress');
 Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
+
+
+//BIDDING
+Route::get('/biddings', 'CustomerController@showBiddings');
+
 
 
 

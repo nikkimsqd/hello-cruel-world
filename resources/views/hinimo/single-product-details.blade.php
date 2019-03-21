@@ -137,10 +137,21 @@
                 <input type="text" name="productID" value="{{$product['productID']}}" hidden>
 
 
-                <div class="form-group">
-                    <label>Subtotal</label>
-                    <label>Delivery Fee</label>
-                    <label>Total Paymant</label>
+                <div class="form-group payment-info">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td><label>Subtotal</label></td>
+                            <td class="price">{{$product['rentPrice']}}</td>
+                        </tr>
+                        <tr>
+                            <td><label>Delivery Fee</label></td>
+                            <td class="price"><input type="text" name="deliveryFee"></td>
+                        </tr>
+                        <tr>
+                            <td><label>Total Payment</label></td>
+                            <td class="price">{{$totalPrice}}</td>
+                        </tr>
+                    </table>
                 </div>
 
 
@@ -162,6 +173,10 @@
         {{route('login')}}
     @endif
 
+<style type="text/css">
+    .price{text-align: right;}
+    .payment-info{color: #0000;}
+</style>
 
 @endsection
 

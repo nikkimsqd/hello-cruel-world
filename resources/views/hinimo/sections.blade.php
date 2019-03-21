@@ -16,7 +16,7 @@
 @section('boutiques')
     <ul class="dropdown">
     	@foreach($boutiques as $boutique)
-        <li><a href="/hinimo/public/boutiques/{{$boutique['id']}}">{{$boutique['boutiqueName']}}</a></li>
+        <li><a href="{{url('/boutiques').'/'.$boutique['id']}}">{{$boutique['boutiqueName']}}</a></li>
         @endforeach
     </ul>
 @endsection
@@ -44,7 +44,7 @@
         <ul>
             <li> <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
             <ul class="dropdown">
-                <li><a href="user-account">My account</a></li>
+                <li><a href="{{url('user-account')}}">My account</a></li>
                 <li><a href="shop.html">My Purchase</a></li>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
