@@ -252,7 +252,7 @@ $('#sortByselect').on('change', function(){
     var condition = $(this).val();
 
     $.ajax({
-     url: "/hinimo/public/getProducts/"+condition,
+     url: "{{ url('/getProducts') }}" + '/' + condition,
      success:function(data){
 
         $(".products_list").empty();
