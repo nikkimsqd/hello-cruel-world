@@ -51,8 +51,15 @@
             <!-- <a href="cart.html"> -->
                 <h2>{{ $product['productName'] }}</h2>
             <!-- </a> -->
-            <p class="product-price"><!-- <span class="old-price">$65.00</span> -->Retail Price: ₱{{ $product['productPrice'] }}</p>
+            @if($product['forSale'] != null && $product['forRent'] != null)
+            <p class="product-price">Retail Price: ₱{{ $product['productPrice'] }}</p>
             <p class="product-price">Rent Price: ₱{{ $product['rentPrice'] }}</p>
+            @elseif($product['forSale'] != null)
+            <p class="product-price">Retail Price: ₱{{ $product['productPrice'] }}</p>
+            @elseif($product['forRent'] != null)
+            <p class="product-price">Rent Price: ₱{{ $product['rentPrice'] }}</p>
+            
+            @endif
             <p class="product-desc">{{ $product['productDesc'] }}</p>
 
             <!-- Form -->

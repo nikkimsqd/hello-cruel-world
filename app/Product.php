@@ -9,7 +9,7 @@ class Product extends Model
 	protected $primaryKey = 'productID';
     protected $fillable = ['boutiqueID', 'fileID', 'productName', 'productDesc', 'productPrice', 'rentPrice', 'category', 'productStatus', 'forRent', 'forSale', 'gender', 'customizable', 'tags'];
 
-     public function productFile()
+    public function productFile()
     {
         return $this->hasMany('App\File', 'productID', 'productID');
     }
@@ -22,5 +22,10 @@ class Product extends Model
     public function getCategory()
     {
         return $this->hasOne('App\Category', 'id', 'category');
+    }
+
+    public function getTags()
+    {
+        return $this->hasOne('App\Tag', 'id', 'tags');
     }
 }

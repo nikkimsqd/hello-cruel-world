@@ -3,7 +3,7 @@ Hinimo | Register
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('auth'); ?>
-<div class="classynav">
+<div class="classynav" style="padding-right: 50px;">
     <ul>
         <li><a href="register-boutique">Sell on Hinimo</a></li>  
         <li><a href="login">Login</a></li>  
@@ -27,7 +27,7 @@ Hinimo | Register
             <div class="col-12 col-md-8">
                 <div class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
-                        <div class="cart-page-heading mb-30">Register</div>
+                        <div class="cart-page-heading mb-30" style="text-align: center;"><h4>Register</h4></div>
                         <form method="POST" action="<?php echo e(route('register')); ?>" aria-label="<?php echo e(__('Register')); ?>">
                             <?php echo e(csrf_field()); ?>
 

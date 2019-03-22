@@ -1,5 +1,5 @@
 @extends('layouts.boutique')
-@extends('boutique.layout')
+@extends('boutique.sections')
 
 
 @section('content')

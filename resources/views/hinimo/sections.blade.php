@@ -3,7 +3,7 @@
 @endsection
 
 @section('auth')
-<div class="classynav">
+<div class="classynav" style="padding-right: 50px;">
     <ul>
         <li><a href="login">Login</a></li>  
         <li><a href="register">Signup</a></li>

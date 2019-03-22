@@ -65,5 +65,5 @@
 <?php $__env->stopSection(); ?>
 
 
-<?php echo $__env->make('boutique.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php echo $__env->make('boutique.sections', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 <?php echo $__env->make('layouts.boutique', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,5 +1,5 @@
 @extends('layouts.boutique')
-@extends('boutique.layout')
+@extends('boutique.sections')
 
 
 @section('content')
@@ -63,6 +63,12 @@
 
             <h4>Is item customizable?</h4>
             <p>{{$product['customizable']}}</p>
+
+            <h4>Tags:</h4>
+            @foreach($tags as $tag)
+            <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['name']}}</h2>
+            @endforeach
+
           </div>
 
           <div class="col-md-5">

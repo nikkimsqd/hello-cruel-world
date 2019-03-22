@@ -1,85 +1,7 @@
 @extends('layouts.boutique')
+@extends('boutique.sections')
 
 
-@section('titletext')
-  Boutique de Filipina
-@endsection
-
-@section('page_title')
-Add Products
-@endsection
-
-@section('logo')
-<!-- LOGO -->
-    <a href="/hinimo/public/dashboard" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>H</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">Hinimo</span>
-    </a>
-@endsection
-
-@section('sidebar')
-<!-- sidebar: style can be found in sidebar.less -->
-<section class="sidebar">
-  <!-- Sidebar user panel -->
-  <div class="user-panel">
-    <div class="pull-left image">
-      <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-    </div>
-    <div class="pull-left info">
-      <p>{{$boutique['boutiqueName']}}</p>
-      <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-    </div>
-  </div>
-
-   <!-- sidebar menu: : style can be found in sidebar.less -->
-  <ul class="sidebar-menu" data-widget="tree">
-    <li class="header">MAIN NAVIGATION</li>
-   
-    <li>
-      <a href="/hinimo/public/dashboard">
-        <i class="fa fa-th"></i> <span>Dashboard</span>
-        <span class="pull-right-container">
-          <!-- <small class="label pull-right bg-green">new</small> -->
-        </span>
-      </a>
-    </li>
-
-    <li class="treeview">
-      <a href="#">
-        <i class="fa fa-pie-chart"></i>
-        <span>Products</span>
-        <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
-      </a>
-      <ul class="treeview-menu">
-        <li><a href="/hinimo/public/products/"><i class="fa fa-circle-o"></i> View Products</a></li>
-        <li><a href="/hinimo/public/categories"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li><a href="/hinimo/public/tags"><i class="fa fa-circle-o"></i> Tags</a></li>
-      </ul>
-    </li>
-
-    <li class="treeview">
-      <a href="#">
-        <i class="fa fa-pie-chart"></i>
-        <span>Transactions</span>
-        <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
-      </a>
-      <ul class="treeview-menu">
-        <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-        <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Rent</a></li>
-      </ul>
-    </li>
-
-  </ul>
-</section>
-<!-- /.sidebar -->
-
-@endsection
 
 
 
@@ -153,10 +75,10 @@ Add Products
 			 <input type="file" name="file[]" multiple>
 	    </div>
 
-       <label>Add Tags:</label>
+      <label>Add Tags:</label>
       <div class="form-group tags">
        @foreach($tags as $tag)
-       <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['name']}}">
+       <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
        <label for="{{$tag['name']}}">{{$tag['name']}}</label>
        @endforeach
       </div>
@@ -201,7 +123,6 @@ Add Products
 }
 
 </style>
-
 
 @endsection
 

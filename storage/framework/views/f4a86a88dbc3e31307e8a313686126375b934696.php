@@ -3,7 +3,7 @@ Hinimo | Login
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('auth'); ?>
-<div class="classynav">
+<div class="classynav" style="padding-right: 50px;">
     <ul>
         <li><a href="register-boutique">Sell on Hinimo</a></li>  
         <li><a href="login">Login</a></li>  
@@ -27,7 +27,7 @@ Hinimo | Login
             <div class="col-12 col-md-8">
                 <div class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
-                        <div class="card-page-heading mb-30">Login</div>
+                        <div class="card-page-heading mb-30" style="text-align: center;"><h4>Login</h4></div>
 
                     <form method="POST" action="<?php echo e(route('login')); ?>" aria-label="<?php echo e(__('Login')); ?>">
                         <?php echo csrf_field(); ?>

@@ -11,6 +11,7 @@ use App\Boutique;
 use App\Rent;
 use App\Tag;
 use App\DeclinedRent;
+use App\Prodtag;
 
 
 class BoutiqueController extends Controller
@@ -68,11 +69,6 @@ class BoutiqueController extends Controller
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
     	
-    	$tags = $request->input('tags');
-        $data = array();
-        array_push($data, $tags);
-        $data_encoded = json_encode($data);
-
     	$products = Product::create([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
@@ -81,12 +77,21 @@ class BoutiqueController extends Controller
     		'rentPrice' => $request->input('rentPrice'),
     		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
-    		'tags' => $data_encoded,
     		'productStatus' => "Available",
     		'forRent' => $request->input('forRent'),
     		'forSale' => $request->input('forSale'),
     		'customizable' => $request->input('customizable')
     		]);
+
+
+    	$tags = $request->input('tags');
+
+        foreach($tags as $tag) {
+	    	Prodtag::create([
+	    		'tagID' => $tag,
+	    		'productID' => $products['productID']
+	    	]);
+		}
 
     	$uploads = $request->file('file');
 
@@ -115,16 +120,15 @@ class BoutiqueController extends Controller
 		$page_title = "View Product";
 		$user = Auth()->user()->id;
 		$boutiques = Boutique::where('userID', $user)->get();
-
 		$product = Product::where('productID', $productID)->first();
 		$category = Category::where('id', $product['category'])->first();
+		$tags = ProdTag::where('productID', $productID)->get();
 
 		foreach ($boutiques as $boutique) {
 			$boutique;
 		}
-		// dd($product->category);
 
-		return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title'));
+		return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tags'));
 	}
 
 	public function editView($productID)
@@ -134,6 +138,8 @@ class BoutiqueController extends Controller
 		$boutiques = Boutique::where('userID', $user)->get();
 		$product = Product::where('productID', $productID)->first();
 		$categories = Category::all();
+		$tags = Tag::all();
+		$prodtags = ProdTag::where('productID', $productID)->get();
 
 		foreach ($boutiques as $boutique) {
 			$boutique;
@@ -146,20 +152,32 @@ class BoutiqueController extends Controller
 		$womensCategories = Category::where('gender', "Womens")->get();
 		// dd($womensCategories);
 
-		return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title'));
+		return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title', 'tags', 'prodtags'));
 	}
 
 	public function editProduct($productID, Request $request)
 	{
 		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
+
+		if($request->input('forRent') == null) {
+			$rentPrice = null;
+		}else {
+			$rentPrice = $request->input('rentPrice');
+		}
+
+		if($request->input('forSale') == null) {
+			$productPrice = null;
+		}else {
+			$productPrice = $request->input('productPrice');
+		}
     	
     	$products = Product::where('productID', $productID)->update([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
-    		'productPrice' => $request->input('productPrice'),
-    		'rentPrice' => $request->input('rentPrice'),
+    		'productPrice' => $productPrice,
+    		'rentPrice' => $rentPrice,
     		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
     		'productStatus' => $request->input('productStatus'),
@@ -168,9 +186,12 @@ class BoutiqueController extends Controller
     		'customizable' => $request->input('customizable')
     		]);
 
+
     	$uploads = $request->file('file');
 
     	if($request->hasFile('file')) {
+    	File::where('productID', $productID)->delete();
+    	
     	foreach($uploads as $upload){
     		$files = new File();
     		$name = $upload->getClientOriginalName();
@@ -179,7 +200,7 @@ class BoutiqueController extends Controller
 	        $upload->move($destinationPath, $filename);
 
 	       	$files->userID = $id;
-	       	$files->productID = $products['productID'];
+	       	$files->productID = $productID;
 	        $files->filename = "/".$name;
 	      	$files->save();
 	      	$filename = "/".$name;
