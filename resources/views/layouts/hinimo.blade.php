@@ -163,16 +163,9 @@
                     <div class="single_widget_area d-flex mb-30">
                         <!-- Logo -->
                         <div class="footer-logo mr-50">
-                            <a href="#"><img src="img/core-img/logo2.png" alt=""></a>
+                            <a href="{{url('/shop')}}"><img src="{{asset('essence/img/core-img/logo2.png')}}" alt=""></a>
                         </div>
-                        <!-- Footer Menu -->
-                        <div class="footer_menu">
-                            <ul>
-                                <li><a href="shop.html">Shop</a></li>
-                                <li><a href="blog.html">Blog</a></li>
-                                <li><a href="contact.html">Contact</a></li>
-                            </ul>
-                        </div>
+                        @yield('footer_menu')
                     </div>
                 </div>
                 <!-- Single Widget Area -->
@@ -223,7 +216,7 @@
                 <div class="col-md-12 text-center">
                     <p>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Hinimo
     <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </p>
                 </div>

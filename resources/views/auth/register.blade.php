@@ -145,3 +145,14 @@ Hinimo | Register
 </div>
 
 @endsection
+
+@section('footer_menu')
+<!-- Footer Menu -->
+<div class="footer_menu">
+    <ul>
+        <li><a href="{{url('/shop')}}">Shop</a></li>
+        <li><a href="{{url('/biddings')}}">Biddings</a></li>
+        <li><a href="contact.html">Contact</a></li>
+    </ul>
+</div>
+@endsection
