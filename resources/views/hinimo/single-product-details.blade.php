@@ -6,32 +6,7 @@
 	Hinimo
 @endsection
 
-@section('userinfo')
 
-<!-- User Login Info -->
-    <div class="nav-brand classynav">
-        <ul>
-            <li><a href="#"><img src="{{ asset('essence/img/core-img/user.png') }}" style="display: block;"></a>
-            <ul class="dropdown">
-                <li><a href="/hinimo/public/user-account">My account</a></li>
-                <li><a href="shop.html">My Purchase</a></li>
-                <li><a href="{{ route('logout') }}"
-                       onclick="event.preventDefault();
-                                     document.getElementById('logout-form').submit();">
-                        {{ __('Logout') }}
-                    </a></li>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    
-            </ul>
-            </ul>
-            </li>
-        </ul>
-    
-    </div>
-@endsection
-\
 @section('body')
 <!-- ##### Single Product Details Area Start ##### -->
     <section class="single_product_details_area d-flex align-items-center">

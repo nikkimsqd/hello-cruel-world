@@ -40,23 +40,8 @@
 
 @section('userinfo')
 <!-- User Login Info -->
-    <div class="user-login-info classynav">
-        <ul>
-            <li> <a href="#"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
-            <ul class="dropdown">
-                <li><a href="{{url('user-account')}}">My account</a></li>
-                <li><a href="shop.html">My Purchase</a></li>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-                    <li><a href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        {{ __('Logout') }}
-                    </a></li>
-            </ul>
-            </li>
-        </ul>
-    
+    <div class="user-login-info">
+         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
     </div>
 @endsection
 
@@ -69,6 +54,19 @@
     		<span>{{$cartCount}}</span>
         @else
         @endif
+        </a>
+    </div>
+@endsection
+
+
+@section('logout')
+<!-- Cart Area -->
+    <div class="cart-area">
+        <a href="{{ route('logout') }}" id="essenceCartBtn" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <img src="{{ asset('essence/img/core-img/long-arrow-right.svg') }}" alt="">
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
         </a>
     </div>
 @endsection

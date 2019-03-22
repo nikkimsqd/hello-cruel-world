@@ -105,9 +105,10 @@
                 @yield('auth') 
                 @else
                 @yield('search')
+                @yield('cartbutton')
                 @yield('favorites')
                 @yield('userinfo')
-                @yield('cartbutton')
+                @yield('logout')
                 
                 @endguest
                
