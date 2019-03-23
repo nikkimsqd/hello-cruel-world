@@ -15,6 +15,9 @@ use App\Address;
 use App\Boutique;
 use App\Rent;
 use App\Profiling;
+use App\Bidding;
+use App\Prodtag;
+use App\Tag;
 
 
 
@@ -148,7 +151,7 @@ class CustomerController extends Controller
     {
         $item = Cart::where('id', $cartID)->delete();
 
-        return redirect('/checkout');
+        return redirect('/cart');
     }
 
     public function getCart($productID)
@@ -347,23 +350,25 @@ class CustomerController extends Controller
     public function showBiddings()
     {
         if (Auth::check()) {
-            $userID = Auth()->user()->id;
+        $userID = Auth()->user()->id;
         }
 
         $page_title = 'BIDDINGS';
         $products = [];
-        $productsCount = Product::all()->count();
+        $productsCount = Bidding::all()->count();
         $categories = Category::all();
         $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
         $carts = Cart::where('userID', "")->where('status', "Pending")->get();
         $boutiques = Boutique::all();
+        $biddings = Bidding::all();
 
-        return view('hinimo/bidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
+        return view('hinimo/bidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'biddings'));
     }
 
     public function showStartNewBidding()
     {
         $page_title = "START A BIDDING";
+        $page_title = "Biddings";
         $userID = Auth()->user()->id;
         $products = [];
         $productsCount = Product::all()->count();
@@ -371,7 +376,35 @@ class CustomerController extends Controller
         $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
-  
-        return view('hinimo/bidding-newBidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
+        $tags = Tag::all();
+
+        return view('hinimo/bidding-newBidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'tags'));
     }
+
+    public function savebidding(Request $request)
+    {
+        // dd($request->input('productType'));
+
+        $bidding = Bidding::create([
+            'productType' => $request->input('productType'),
+            'startingprice' => $request->input('startingprice'),
+            'notes' => $request->input('notes'),
+            'endDate' => $request->input('endDate'),
+            'dateOfUse' => $request->input('dateOfUse'),
+        ]);
+
+        $tags = $request->input('tags');
+
+        foreach($tags as $tag) {
+            Prodtag::create([
+                'tagID' => $tag,
+                'biddingID' => $bidding['id']
+            ]);
+        }
+
+        return redirect('/biddings');
+    }
+
+
+
 }

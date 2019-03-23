@@ -1,5 +1,5 @@
 @extends('layouts.boutique')
-@extends('boutique.layout') 
+@extends('boutique.sections') 
 
 @section('content')
 
@@ -128,7 +128,7 @@
       </div>
 
       <div class="modal-body">
-        <form action="/hinimo/public/declineRent" method="post">
+        <form action="{{url('/declinedRent')}}" method="post">
         {{csrf_field()}}
         <textarea name="reason" rows="3" cols="50" class="input form-control" placeholder="Place your reason here"></textarea>
       </div>
@@ -154,7 +154,7 @@
       </div>
 
       <div class="modal-body">
-        <form action="/hinimo/public/makeOrderforRent" method="post">
+        <form action="{{url('/makeOrderforRent')}}" method="post">
         {{csrf_field()}}
           <label>Product Name</label>
           <h4>{{ $rent->product['productName'] }}</h4>

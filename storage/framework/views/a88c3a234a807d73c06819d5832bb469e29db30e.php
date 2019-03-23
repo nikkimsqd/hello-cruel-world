@@ -146,4 +146,14 @@ Hinimo | Register
 
 <?php $__env->stopSection(); ?>
 
+<?php $__env->startSection('footer_menu'); ?>
+<!-- Footer Menu -->
+<div class="footer_menu">
+    <ul>
+        <li><a href="<?php echo e(url('/shop')); ?>">Shop</a></li>
+        <li><a href="<?php echo e(url('/biddings')); ?>">Biddings</a></li>
+        <li><a href="contact.html">Contact</a></li>
+    </ul>
+</div>
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.hinimo', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

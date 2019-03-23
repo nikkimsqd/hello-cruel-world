@@ -112,22 +112,7 @@
                                     <li><a href="#" class="color10"></a></li>
                                 </ul>
                             </div>
-                        </div>
-
-                        <!-- ##### Single Widget ##### -->
-                        <!-- <div class="widget brands mb-50"> -->
-                            <!-- Widget Title 2 -->
-                            <!-- <p class="widget-title2 mb-30">Brands</p>
-                            <div class="widget-desc">
-                                <ul>
-                                    <li><a href="#">Asos</a></li>
-                                    <li><a href="#">Mango</a></li>
-                                    <li><a href="#">River Island</a></li>
-                                    <li><a href="#">Topshop</a></li>
-                                    <li><a href="#">Zara</a></li>
-                                </ul>
-                            </div> -->
-                        <!-- </div> -->
+                        </div
 
 
                     </div>
@@ -163,7 +148,7 @@
 
 
                         <div class="products_list row"> <!-- Products Display -->
-                            @foreach($products as $product)
+                            @foreach($biddings as $bidding)
                             <!-- Single Product -->
                             <div class="col-12 col-sm-6 col-lg-4">
                             <div class="single-product-wrapper">
@@ -172,7 +157,7 @@
                                     $counter = 1;
                                 ?>
                             
-                            @foreach($product->productFile as $image)
+                            @foreach($bidding->productFile as $image)
                                 
                                 <div class="product-img">
                                 @if($counter == 1)    
@@ -180,11 +165,11 @@
                                 @else
                                 @endif
 
-                                @if($product['forRent'] == "true")
+                                @if($bidding['forRent'] == "true")
                                     <div class="product-badge new-badge">
                                         <span>Rentable</span>
                                     </div>
-                                @elseif($product['productStatus'] == "Not Available")
+                                @elseif($bidding['productStatus'] == "Not Available")
                                     <div class="product-badge offer-badge">
                                         <span>NOT AVAILABLE</span>
                                     </div>
@@ -200,18 +185,18 @@
 
                                 <!-- Product Description -->
                                 <div class="product-description">
-                                    <span>{{ $product->owner['boutiqueName'] }}</span>
+                                    <span>{{ $bidding->owner['boutiqueName'] }}</span>
                                     <a href="#">
-                                        <h6>{{ $product['productName'] }}</h6>
+                                        <h6>{{ $bidding['productName'] }}</h6>
                                     </a>
-                                    <p class="product-price">${{ number_format($product['productPrice']) }}</p>
+                                    <p class="product-price">${{ number_format($bidding['productPrice']) }}</p>
 
                                     <!-- Hover Content -->
                                     <div class="hover-content">
                                         <!-- Add to Cart -->
                                         <div class="add-to-cart-btn">
                                             <!-- <input type="text" name="productID" value="{{$product['productID']}}" hidden> -->
-                                            @if($product['productStatus'] == "Available")
+                                            @if($bidding['productStatus'] == "Available")
                                             <a href="single-product-details/{{$product['productID']}}" class="btn essence-btn">View Product</a>
                                             @endif
                                         </div>
@@ -224,7 +209,7 @@
                         </div>
                     </div>
                     <!-- Pagination -->
-                    <nav aria-label="navigation">
+                   <!--  <nav aria-label="navigation">
                         <ul class="pagination mt-50 mb-70">
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-left"></i></a></li>
                             <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -234,7 +219,7 @@
                             <li class="page-item"><a class="page-link" href="#">21</a></li>
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
-                    </nav>
+                    </nav> -->
                 </div>
             </div>
         </div>

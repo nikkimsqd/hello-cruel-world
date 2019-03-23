@@ -12,6 +12,7 @@ use App\Rent;
 use App\Tag;
 use App\DeclinedRent;
 use App\Prodtag;
+use App\Order;
 
 
 class BoutiqueController extends Controller
@@ -235,12 +236,13 @@ class BoutiqueController extends Controller
     	$id = Auth()->user()->id;
     	$boutique = Boutique::where('userID', $id)->first();
 
-		$rents = Rent::where('boutiqueID', $boutique['id'])->get();
-		foreach ($rents as $rent) {
-			$rent;
-		}
+    	$rents = Rent::where('boutiqueID', $boutique['id'])->get();
+		$pendings = Rent::where('boutiqueID', $boutique['id'])->where('status', 'Pending')->get();
+		$inprogress = Rent::where('boutiqueID', $boutique['id'])->where('status', 'In-Progress')->get();
+		$histories = Rent::where('boutiqueID', $boutique['id'])->whereIn('status', ['Declined', 'Completed'])->get();
+		// dd($pendings);
 
-		return view('boutique/rents', compact( 'rents', 'boutique', 'page_title'));
+		return view('boutique/rents', compact( 'pendings', 'inprogress', 'histories', 'boutique', 'page_title', 'rents'));
 	}
 
 	public function getRentInfo($rentID)
@@ -304,9 +306,15 @@ class BoutiqueController extends Controller
 		// dd($rentID);
 	
 		$rent = Rent::where('rentID', $rentID)->first();
-		// Order::create([
-		// 	'subtotal' => 
-		// ]);
+		Order::create([
+			'subtotal' => $rent['subtotal'],
+			'deliveryfee' => $rent['deliveryFee'],
+			'total' => $rent['total'],
+			'boutiqueID' => $rent['boutiqueID'],
+			'deliveryAddress' => $rent->address['completeAddress'],
+			'status' => 'For Delivery',
+			'rentID' => $rent['rentID']
+		]);
 
 		return redirect('rents/'.$rentID);
 	}

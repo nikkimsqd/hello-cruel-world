@@ -56,15 +56,38 @@
                 </div> -->
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
-                    <!-- Cart -->
+                @if ($product['forSale'] == 'true' && $product['forRent'] == 'true')
+                <div class="add-to-cart-btn">
+                    <input type="text" name="productID" value="{{$product['productID']}}" hidden>
+                    <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
+                </div>
+
+                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal">
+
+                <div class="product-favourite ml-4">
+                    <a href="#" class="favme fa fa-heart"></a>
+                </div>
+
+                @elseif($product['forRent'] == true)
+                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal">
+            
+                @elseif($product['forSale'] == true)
+                <div class="add-to-cart-btn">
+                    <input type="text" name="productID" value="{{$product['productID']}}" hidden>
+                    <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
+                </div>
+                @endif
+                </div>
+
+
+              <!--   <div class="cart-fav-box d-flex align-items-center">
                     <div class="add-to-cart-btn">
                     <input type="text" name="productID" value="{{$product['productID']}}" hidden>
                     <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
 
                     </div>
-                    <!-- <button name="addtocart" class="btn essence-btn">Request for Rent</button> -->
                     <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal">
-                    <!-- Favourite -->
+                    
                     <div class="product-favourite ml-4">
                         <a href="#" class="favme fa fa-heart"></a>
                     </div>
@@ -119,7 +142,7 @@
                 <input type="text" name="productID" value="{{$product['productID']}}" hidden>
 
 
-                <div class="form-group payment-info">
+               <!--  <div class="form-group payment-info">
                     <table style="width: 100%;">
                         <tr>
                             <td><label>Subtotal</label></td>
@@ -134,7 +157,7 @@
                             <td class="price">{{$totalPrice}}</td>
                         </tr>
                     </table>
-                </div>
+                </div> -->
 
 
 

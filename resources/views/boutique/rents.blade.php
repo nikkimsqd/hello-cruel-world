@@ -1,5 +1,5 @@
 @extends('layouts.boutique')
-@extends('boutique.layout') 
+@extends('boutique.sections') 
 
 @section('content')
 
@@ -30,19 +30,19 @@
             <th>Status</th>
             <th></th>
           </tr>
-          @foreach($rents as $rent)
-          @if($rent['status'] === "Pending")
+          @foreach($pendings as $pending)
+          @if(!empty($pending['status']))
           <tr>
-            <td>{{$rent['rentID']}}</td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
+            <td>{{$pending['rentID']}}</td>
+            <td>{{$pending->customer->lname.', '.$pending->customer->fname}}</td>
+            <td>{{$pending['created_at']->format('M d, Y')}}</td>
             <td><span class="label label-warning">Pending</span></td>
-            <td>
-                <!-- <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#pendingModal{{$rent['rentID']}}"> -->
-                <a href="rents/{{$rent['rentID']}}" class="btn btn-primary btn-sm">View Order</a>
-            </td>
+            <td><a href="rents/{{$pending['rentID']}}" class="btn btn-primary btn-sm">View Order</a></td>
           </tr>
-         
+          @else
+          <tr>
+            <td colspan="5"><i>You have no pending requests...</i></td>
+          </tr>
           @endif
           @endforeach
         </table>
@@ -78,17 +78,14 @@
             <th>Status</th>
             <th></th>
           </tr>
-          @foreach($rents as $rent)
-          @if($rent['status'] == "In-Progress")
+          @foreach($inprogress as $inprog)
+          @if(!empty($inprog['status']))
           <tr>
-            <td>{{$rent['rentID']}}</td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
+            <td>{{$inprog['rentID']}}</td>
+            <td>{{$inprog->customer->lname.', '.$inprog->customer->fname}}</td>
+            <td>{{$inprog['created_at']->format('M d, Y')}}</td>
             <td><span class="label label-info">In-Progress</span></td>
-            <td>
-              <!-- <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#inprogressModal{{$rent['rentID']}}"> -->
-              <a href="rents/{{$rent['rentID']}}" class="btn btn-primary btn-sm">View Order</a>
-            </td>
+            <td><a href="rents/{{$inprog['rentID']}}" class="btn btn-primary btn-sm">View Order</a></td>
           </tr>
           @endif
           @endforeach
@@ -125,25 +122,24 @@
             <th>Status</th>
             <th></th>
           </tr>
-          @foreach($rents as $rent)
-          @if($rent['status'] == "Completed" || $rent['status'] == "Declined")
+          @foreach($histories as $history)
+          @if(!empty($history['status']))
           <tr>
-            <td>{{$rent['rentID']}}</td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
+            <td>{{$history['rentID']}}</td>
+            <td>{{$history->customer->lname.', '.$history->customer->fname}}</td>
+            <td>{{$history['created_at']->format('M d, Y')}}</td>
             <td>
-              @if($rent['status'] == "Completed")
+              @if($history['status'] == "Completed")
               <span class="label label-success">Completed</span>
-              @elseif($rent['status'] == "Declined")
+              @elseif($history['status'] == "Declined")
               <span class="label label-danger">Declined</span>
               @endif
             </td>
             <td><input type="submit" class="btn btn-sm-primary" value="View Order" data-toggle="modal" data-target="#myModal"></td>
           </tr>
-          @elseif($rent['status'] != "Completed" || $rent['status'] != "Declined")
+          @else
           <tr>
             <td colspan="5"><i>You have no rent history...</i></td>
-            @break
           </tr>
           @endif
           @endforeach
@@ -153,170 +149,6 @@
   </div>
 </div> <!-- table row -->
 
-
-
-<!-- MODALS HEREE -->
-<!-- PENDING MODAL -->
-@foreach($rents as $rent)
-<div class="modal fade" id="pendingModal{{$rent['rentID']}}" role="dialog">
-  <div class="modal-dialog modal-lg">
-  
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h3 class="modal-title"><b>Rent Details</b></h3>
-      </div>
-
-      <div class="modal-body">
-        <form action="approveRent" method="post">
-        {{csrf_field()}}
-        <table class="table">
-          <tr>
-            <td><label>Rent ID:</label></td>
-            <td>{{$rent['rentID']}}</td>
-          </tr>
-          <tr>
-            <td><label>Product Name:</label></td>
-            <td>{{$rent->product['productName']}}</td>
-          </tr>
-          <tr>
-            <td><label>Boutique Name:</label></td>
-            <td>{{$rent->product->owner['boutiqueName']}}</td>
-          </tr>
-          <tr>
-            <td><label>Customer Name:</label></td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-          </tr>
-          <tr>
-            <td><label>Location item will be used</label></td>
-            <td>{{$rent['locationToBeUsed']}}</td>
-          </tr>
-          <tr>
-            <td><label>Date Item will be used</label></td>
-            <td>{{$rent['dateToUse']}}</td>
-          </tr>
-          <tr>
-            <td><label>Date to be returned</label></td>
-            <td>{{$rent['dateToUse']}}</td>
-          </tr>
-          <tr>
-            <td><label>Request Placed at</label></td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
-          </tr>
-          <tr>
-            <td><label>Order Status:</label></td>
-            <td>{{$rent['status']}}</td>
-          </tr>
-          <tr>
-            <td><label>Product Image:</label></td>
-            <td>
-              <!-- <img src="long/m.jpg"> -->
-             <?php 
-                  $counter = 1;
-              ?>
-                            
-              @foreach($rent->product->productFile as $image)
-              @if($counter == 1)    
-              <img src="{{ asset('/uploads').$image['filename'] }}">
-              @else
-              @endif
-              <?php $counter++; ?>
-              @endforeach
-            </td>
-          </tr>
-        </table>
-
-      </div>
-
-      <div class="modal-footer">
-        <input type="text" name="rentID" value="{{$rent['rentID']}}" >
-        <input type="submit" name="btn_sumbit" class="btn btn-success" value="Accept Order">
-        </form>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-    
-  </div>
-</div>
-@endforeach
-
-
-
-<!-- IN-PROGRESS MODAL -->
-@foreach($rents as $rent)
-<div class="modal fade" id="inprogressModal{{$rent['rentID']}}" role="dialog">
-  <div class="modal-dialog modal-lg">
-  
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h3 class="modal-title"><b>Rent Details</b></h3>
-      </div>
-
-      <div class="modal-body">
-        <!-- <form action="approveRent" method="post"> -->
-        {{csrf_field()}}
-        <table class="table">
-          <tr>
-            <td><label>Rent ID:</label></td>
-            <td>{{$rent['rentID']}}</td>
-          </tr>
-          <tr>
-            <td><label>Customer Name:</label></td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-          </tr>
-          <tr>
-            <td><label>Order Placed at</label></td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
-          </tr>
-          <tr>
-            <td><label>Rent Status:</label></td>
-            <td>{{$rent['status']}}</td>
-          </tr>
-          <tr>
-            <td><label>Request Approved at:</label></td>
-            <!-- <td>{{$rent['approved_at']}}</td> -->
-            <td>{{date('M d, Y', strtotime($rent['approved_at']))}}</td>
-          </tr>
-          <tr>
-            <td><label>Item ID</label></td>
-            <td>{{$rent->product->productID}}</td>
-          </tr>
-          <tr>
-            <td><label>Item:</label></td>
-            <td>
-              <!-- <img src="long/m.jpg"> -->
-             <?php 
-                  $counter = 1;
-              ?>
-                            
-              @foreach($rent->product->productFile as $image)
-              @if($counter == 1)    
-              <img src="{{ asset('/uploads').$image['filename'] }}">
-              @else
-              @endif
-              <?php $counter++; ?>
-              @endforeach
-            </td>
-          </tr>
-        </table>
-
-      </div>
-
-      <div class="modal-footer">
-        <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
-        <input type="submit" name="btn_sumbit" class="btn btn-success" value="Accept Order">
-        <!-- </form> -->
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel Order</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-    
-  </div>
-</div>
-@endforeach
 @endsection
 
 

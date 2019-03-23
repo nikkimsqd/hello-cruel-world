@@ -15,6 +15,11 @@ class CreateBiddingsTable extends Migration
     {
         Schema::create('biddings', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('productType');
+            $table->integer('startingprice');
+            $table->string('notes');
+            $table->date('endDate');
+            $table->date('dateOfUse');
             $table->timestamps();
         });
     }

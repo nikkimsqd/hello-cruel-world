@@ -117,6 +117,8 @@ Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
 
 //BIDDING
 Route::get('/biddings', 'CustomerController@showBiddings');
+Route::get('/biddings/startNewBidding', 'CustomerController@showStartNewBidding');
+Route::post('/savebidding', 'CustomerController@savebidding');
 
 
 
