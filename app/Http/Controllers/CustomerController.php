@@ -346,19 +346,32 @@ class CustomerController extends Controller
 
     public function showBiddings()
     {
-        $page_title = "Biddings";
+        if (Auth::check()) {
+            $userID = Auth()->user()->id;
+        }
+
+        $page_title = 'BIDDINGS';
+        $products = [];
+        $productsCount = Product::all()->count();
+        $categories = Category::all();
+        $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
+        $carts = Cart::where('userID', "")->where('status', "Pending")->get();
+        $boutiques = Boutique::all();
+
+        return view('hinimo/bidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
+    }
+
+    public function showStartNewBidding()
+    {
+        $page_title = "START A BIDDING";
         $userID = Auth()->user()->id;
+        $products = [];
         $productsCount = Product::all()->count();
         $categories = Category::all();
         $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
-        // dd($boutiques);
   
-
-        return view('hinimo/bidding', compact('categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title'));
-
+        return view('hinimo/bidding-newBidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
     }
-
-
 }
