@@ -18,6 +18,8 @@ use App\Profiling;
 use App\Bidding;
 use App\Prodtag;
 use App\Tag;
+// use App\Notification;
+use App\Notifications\RentRequest;
 
 
 
@@ -228,62 +230,6 @@ class CustomerController extends Controller
 
     }
 
-    // public function propaganda()
-    // {
-    //     $userID = Auth()->user()->id;
-    //     // $userID = "3";
-
-    //     $boutique = Boutique::where('userID', $userID)->first();
-
-    //     if($boutique == null){
-    //         $categories = Category::all();
-    //         $products = Product::all();
-    //         $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
-    //         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
-
-    //         return view('hinimo/propaganda', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
-
-    //     }else{
-
-    //         $categories = Category::all();
-    //         $products = Product::all();
-    //         $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
-    //         $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
-
-    //         return view('hinimo/shop', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
-
-    //     }
-    // }
-
-    // public function registerboutique()
-    // {
-
-    //     $userID = Auth()->user()->id;
-    //     $categories = Category::all();
-    //     $products = Product::all();
-    //     $cartCount = Cart::where('userID', $userID)->where('status',"Pending")->count();
-    //     $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
-
-    //     return view('hinimo/upgradetoseller', compact('categories', 'products', 'carts', 'cartCount', 'userID'));
-    // }
-
-    // public function saveboutique(Request $request)
-    // {   
-    //     $userID = Auth()->user()->id;
-
-    //     $boutique = Boutique::create([
-    //         'userID' => $userID,
-    //         'boutiqueName' => $request->input('boutiqueName'),
-    //         'boutiqueAddress' => $request->input('boutiqueAddress')
-    //     ]);
-
-    //     // $id = Auth()->user()->id;
-    //     $user = User::find($userID);
-
-    //     return redirect('dashboard');
-    // }
-
-
     public function sortBy($condition)
     {
         $userID = Auth()->user()->id;
@@ -331,6 +277,7 @@ class CustomerController extends Controller
     public function requestToRent(Request $request)
     {
         $id = Auth()->user()->id;
+        $user = User::find($id);
 
         $rent = Rent::create([
             'boutiqueID' => $request->input('boutiqueID'),
@@ -343,6 +290,13 @@ class CustomerController extends Controller
             'additionalNotes' => $request->input('additionalNotes'),
             // 'deliveryFee' => $request->input('')
         ]);
+
+        $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
+        $boutiqueseller = User::find($boutique['userID']);
+        
+        $boutiqueseller->notify(new RentRequest($rent));
+
+        // dd($notification);
 
         return redirect('/shop');
     }

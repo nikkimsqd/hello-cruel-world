@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'App\\Address' => $baseDir . '/app/Address.php',
     'App\\Barangay' => $baseDir . '/app/Barangay.php',
+    'App\\Bidding' => $baseDir . '/app/Bidding.php',
     'App\\Bot' => $baseDir . '/app/Bot.php',
     'App\\Boutique' => $baseDir . '/app/Boutique.php',
     'App\\Cart' => $baseDir . '/app/Cart.php',
@@ -33,6 +34,7 @@ return array(
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\Notifications\\RentRequest' => $baseDir . '/app/Notifications/RentRequest.php',
     'App\\Order' => $baseDir . '/app/Order.php',
     'App\\Prodtag' => $baseDir . '/app/Prodtag.php',
     'App\\Product' => $baseDir . '/app/Product.php',

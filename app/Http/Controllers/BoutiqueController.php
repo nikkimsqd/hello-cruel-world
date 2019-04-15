@@ -13,10 +13,23 @@ use App\Tag;
 use App\DeclinedRent;
 use App\Prodtag;
 use App\Order;
+use App\Notifications\RentRequest;
 
 
 class BoutiqueController extends Controller
 {
+
+	// public function getNotifications()
+	// {
+ //   		$id = Auth()->user()->id;
+	// 	$user = User::find($id);
+	// 	$notifications = $user->notifications;
+
+	// 	// $rents = Rent::where('boutiqueID', $boutique['id'])->get();
+
+	// 	// dd($notifications);
+	// 	return $this->dashboard($notifications);
+	// }
 
 	public function dashboard()
 	{
@@ -27,15 +40,20 @@ class BoutiqueController extends Controller
 
 		$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 
-		foreach ($rents as $rent) {
-			$rent;
-		}
+		$notifications = $user->notifications;
+		$notificationsCount = $notifications->count(); //dapat ang unread ang icount
 
-		// dd($rent);
+		// foreach($notifications as $notification) {
+		// 	foreach ($notification['data'] as $value) {
+		// 		dd($notification['data']);
+		// 	}
+		// }
+
+
         $rentArray = $rents->toArray();
         array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-		return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title')); 
+		return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title', 'notifications', 'notificationsCount')); 
 	}
 
     public function showProducts()

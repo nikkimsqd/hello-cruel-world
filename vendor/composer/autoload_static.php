@@ -340,6 +340,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
     public static $classMap = array (
         'App\\Address' => __DIR__ . '/../..' . '/app/Address.php',
         'App\\Barangay' => __DIR__ . '/../..' . '/app/Barangay.php',
+        'App\\Bidding' => __DIR__ . '/../..' . '/app/Bidding.php',
         'App\\Bot' => __DIR__ . '/../..' . '/app/Bot.php',
         'App\\Boutique' => __DIR__ . '/../..' . '/app/Boutique.php',
         'App\\Cart' => __DIR__ . '/../..' . '/app/Cart.php',
@@ -365,6 +366,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Notifications\\RentRequest' => __DIR__ . '/../..' . '/app/Notifications/RentRequest.php',
         'App\\Order' => __DIR__ . '/../..' . '/app/Order.php',
         'App\\Prodtag' => __DIR__ . '/../..' . '/app/Prodtag.php',
         'App\\Product' => __DIR__ . '/../..' . '/app/Product.php',

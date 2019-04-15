@@ -22,7 +22,7 @@
 <li class="dropdown messages-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
     <i class="fa fa-envelope-o"></i>
-    <span class="label label-success">4</span>
+    <span class="label label-danger">4</span>
   </a>
   <ul class="dropdown-menu">
     <li class="header">You have 4 messages</li>
@@ -55,19 +55,21 @@
 <li class="dropdown notifications-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
     <i class="fa fa-bell-o"></i>
-    <span class="label label-warning">10</span>
+    <span class="label label-danger">{{$notificationsCount}}</span>
   </a>
   <ul class="dropdown-menu">
-    <li class="header">You have 10 notifications</li>
+    <li class="header">You have {{$notificationsCount}} notifications</li>
     <li>
       <!-- inner menu: contains the actual data -->
       <ul class="menu">
 
+        @foreach($notifications as $notification)
         <li>
           <a href="#">
-            <i class="fa fa-users text-aqua"></i> 5 new orders today
+              <i class="fa fa-tags text-aqua"></i> {{$notification->data['data']}}
           </a>
         </li>
+        @endforeach
 
       </ul>
     </li>
@@ -129,7 +131,7 @@
 
       <p>
         {{$boutique['boutiqueName']}}
-        <small>Member since {{$boutique['created_at']->format('M d, Y')}}</small>
+        <small>Member since {{$boutique['created_at']}}</small>
       </p>
     </li>
     <!-- Menu Body -->
