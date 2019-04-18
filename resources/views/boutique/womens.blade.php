@@ -54,7 +54,7 @@
                 </a>
                 <h2></h2>
 
-                <a href="/hinimo/public/viewproduct/{{ $product['productID'] }}" class="btn btn-block btn-primary">View Product</a>
+                <a href="{{ url('viewproduct/'.$product['productID']) }}" class="btn btn-block btn-primary">View Product</a>
               </div>
             </div>
           </div>

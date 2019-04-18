@@ -1,7 +1,8 @@
-@section('page_title')
-Rents
-@endsection
+@extends('layouts.boutique')
+@extends('boutique.sections')
 
+
+@section('content')
 <div class="row">
   <div class="col-md-12">
     <div class="box box-success">
@@ -27,7 +28,7 @@ Rents
 </div>
 
 
-
+<!-- collapsible box -->
 <div class="box">
   <div class="box-header with-border">
     <h3 class="box-title">Title</h3>
@@ -49,3 +50,4 @@ Rents
   </div>
   <!-- /.box-footer-->
 </div>
+@endsection

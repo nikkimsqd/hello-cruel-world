@@ -23,7 +23,7 @@
 
             <div class="col-md-3">
                 <div class="form-group">
-                 <a class="btn btn-block btn-info" href="/hinimo/public/addproduct/">Add Products here</a>
+                 <a class="btn btn-block btn-info" href="{{url('addproduct')}}">Add Products here</a>
                 </div>
             </div>
           </div>
@@ -49,12 +49,12 @@
               @endforeach
 
               <div class="row">
-                <a href="viewproduct/{{ $product['productID'] }}">
+                <a href="{{ url('viewproduct/'.$product['productID']) }}">
                   <h4>{{ $product['productName'] }}</h4>
                 </a>
                 <h2></h2>
 
-                <a href="viewproduct/{{ $product['productID'] }}" class="btn btn-block btn-primary">View Product</a>
+                <a href="{{ url('viewproduct/'.$product['productID']) }}" class="btn btn-block btn-primary">View Product</a>
               </div>
             </div>
           </div>

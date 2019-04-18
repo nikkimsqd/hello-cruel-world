@@ -19,7 +19,7 @@
 
             <div class="col-md-3">
                 <div class="form-group">
-                 <a class="btn btn-block btn-info" href="/hinimo/public/addproduct/">Add Products here</a>
+                 <a class="btn btn-block btn-info" href="<?php echo e(url('addproduct')); ?>">Add Products here</a>
                 </div>
             </div>
           </div>
@@ -50,7 +50,7 @@
                 </a>
                 <h2></h2>
 
-                <a href="viewproduct/<?php echo e($product['productID']); ?>" class="btn btn-block btn-primary">View Product</a>
+                <a href="<?php echo e(url('viewproduct/'.$product['productID'])); ?>" class="btn btn-block btn-primary">View Product</a>
               </div>
             </div>
           </div>

@@ -55,7 +55,10 @@
 <li class="dropdown notifications-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
     <i class="fa fa-bell-o"></i>
+    @if($notificationsCount != null)
     <span class="label label-danger">{{$notificationsCount}}</span>
+    @else
+    @endif
   </a>
   <ul class="dropdown-menu">
     <li class="header">You have {{$notificationsCount}} notifications</li>
@@ -64,11 +67,19 @@
       <ul class="menu">
 
         @foreach($notifications as $notification)
+        @if($notification->read_at != null)
         <li>
-          <a href="#">
-              <i class="fa fa-tags text-aqua"></i> {{$notification->data['data']}}
-          </a>
+          <a href="{{ url('notifications/'.$notification->id) }}">
+              <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
+          </a> 
         </li>
+        @else
+        <li style="background-color: #e6f2ff;">
+          <a href="{{ url('notifications/'.$notification->id) }}">
+              <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
+          </a> 
+        </li>
+        @endif
         @endforeach
 
       </ul>

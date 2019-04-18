@@ -52,6 +52,7 @@ Route::get('/categories/', 'BoutiqueController@categories');
 Route::get('/addCategories', 'BoutiqueController@addCategories');
 // Route::post('/saveCategory', 'BoutiqueController@saveCategory'); naa nani ni boutique
 
+Route::get('/notifications/{notificationID}', 'BoutiqueController@viewNotifications');
 
 
 Route::get('/addproduct', 'BoutiqueController@addProduct');
