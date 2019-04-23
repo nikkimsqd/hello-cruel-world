@@ -70,7 +70,7 @@
 
       </div>
       <div class="box-footer" style="text-align: right;">
-       <a class="btn btn-warning" href="{{url('notifications')}}"><i class="fa fa-arrow-left"> Back</i></a>
+       <a class="btn btn-warning" href="{{url('boutique-notifications')}}"><i class="fa fa-arrow-left"> Go to notifications</i></a>
        <a class="btn btn-primary" href="{{url('rents/'.$rent['rentID'])}}"><i class="fa fa-plus"> View rent info</i></a>
       </div>
     </div>

@@ -14,6 +14,7 @@ use App\DeclinedRent;
 use App\Prodtag;
 use App\Order;
 use App\Notifications\RentRequest;
+use App\Notifications\NewCategoryRequest;
 
 
 class BoutiqueController extends Controller
@@ -51,57 +52,69 @@ class BoutiqueController extends Controller
 
 	public function dashboard()
 	{
-		$page_title = "Dashboard";
-   		$id = Auth()->user()->id;
-		$user = User::find($id);
-    	$boutique = Boutique::where('userID', $id)->first();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Dashboard";
+	   		$id = Auth()->user()->id;
+			$user = User::find($id);
+	    	$boutique = Boutique::where('userID', $id)->first();
 
-		$rents = Rent::where('boutiqueID', $boutique['id'])->get();
+			$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 
-		$notifications = $user->notifications;
-		$notificationsCount = $user->unreadNotifications->count();
+			$notifications = $user->notifications;
+			$notificationsCount = $user->unreadNotifications->count();
 
-		// foreach($notifications as $notification) {
-		// 	foreach ($notification['data'] as $value) {
-		// 		dd($notification['data']);
-		// 	}
-		// }
+			// foreach($notifications as $notification) {
+			// 	foreach ($notification['data'] as $value) {
+			// 		dd($notification['data']);
+			// 	}
+			// }
 
-        $rentArray = $rents->toArray();
-        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
+	        $rentArray = $rents->toArray();
+	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-		return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title', 'notifications', 'notificationsCount')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title', 'notifications', 'notificationsCount')); 
+		}else {
+			return redirect('/shop');
+		}
 	}
 
     public function showProducts()
 	{
-		$page_title = "Products";
-   		$user = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $user)->first();
-		$products = Product::where('boutiqueID', $boutique['id'])->get();
-		$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Products";
+	   		$user = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $user)->first();
+			$products = Product::where('boutiqueID', $boutique['id'])->get();
+			$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function addProduct()
 	{
-		$page_title = "Add Product";
-		$user = Auth()->user()->id;
-		$boutiques = Boutique::where('userID', $user)->get();
-		$categories = Category::all();
-		$tags = Tag::all();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Add Product";
+			$user = Auth()->user()->id;
+			$boutiques = Boutique::where('userID', $user)->get();
+			$categories = Category::all();
+			$tags = Tag::all();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		foreach ($boutiques as $boutique) {
-			$boutique;
+			foreach ($boutiques as $boutique) {
+				$boutique;
+			}
+
+
+			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
 		}
-
-
-		return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount'));
 	}
 
 	public function saveProduct(Request $request)
@@ -157,47 +170,55 @@ class BoutiqueController extends Controller
 
 	public function viewProduct($productID)
 	{
-		$page_title = "View Product";
-		$user = Auth()->user()->id;
-		$boutiques = Boutique::where('userID', $user)->get();
-		$product = Product::where('productID', $productID)->first();
-		$category = Category::where('id', $product['category'])->first();
-		$tags = ProdTag::where('productID', $productID)->get();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "View Product";
+			$user = Auth()->user()->id;
+			$boutiques = Boutique::where('userID', $user)->get();
+			$product = Product::where('productID', $productID)->first();
+			$category = Category::where('id', $product['category'])->first();
+			$tags = ProdTag::where('productID', $productID)->get();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		foreach ($boutiques as $boutique) {
-			$boutique;
-		}
+			foreach ($boutiques as $boutique) {
+				$boutique;
+			}
 
-		return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tags', 'notifications', 
+			return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tags', 'notifications', 
 			'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function editView($productID)
 	{
-		$page_title = "Edit Product";
-		$user = Auth()->user()->id;
-		$boutiques = Boutique::where('userID', $user)->get();
-		$product = Product::where('productID', $productID)->first();
-		$categories = Category::all();
-		$tags = Tag::all();
-		$prodtags = ProdTag::where('productID', $productID)->get();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Edit Product";
+			$user = Auth()->user()->id;
+			$boutiques = Boutique::where('userID', $user)->get();
+			$product = Product::where('productID', $productID)->first();
+			$categories = Category::all();
+			$tags = Tag::all();
+			$prodtags = ProdTag::where('productID', $productID)->get();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		foreach ($boutiques as $boutique) {
-			$boutique;
+			foreach ($boutiques as $boutique) {
+				$boutique;
+			}
+			foreach ($categories as $category) {
+				$category;
+			}
+
+			$mensCategories = Category::where('gender', "Mens")->get();
+			$womensCategories = Category::where('gender', "Womens")->get();
+			// dd($womensCategories);
+
+			return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount'));
+			}else {
+			return redirect('/shop');
 		}
-		foreach ($categories as $category) {
-			$category;
-		}
-
-		$mensCategories = Category::where('gender', "Mens")->get();
-		$womensCategories = Category::where('gender', "Womens")->get();
-		// dd($womensCategories);
-
-		return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount'));
 	}
 
 	public function editProduct($productID, Request $request)
@@ -261,67 +282,84 @@ class BoutiqueController extends Controller
 		$product = Product::where('productID', $productID)->delete();
 
 		return redirect('/products');
+
 	}
 
 	public function madeToOrders()
 	{
-    	$page_title = "Made-to-Orders";
-   		$id = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $id)->first();
-		$products = Product::where('boutiqueID', $boutique['id'])->get();
-		$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+	    	$page_title = "Made-to-Orders";
+	   		$id = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $id)->first();
+			$products = Product::where('boutiqueID', $boutique['id'])->get();
+			$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/madetoorders',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/madetoorders',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function rents()
 	{
-    	$page_title = "Rents";
-    	$id = Auth()->user()->id;
-    	$boutique = Boutique::where('userID', $id)->first();
+		if(Auth()->user()->roles == "boutique") {
+	    	$page_title = "Rents";
+	    	$id = Auth()->user()->id;
+	    	$boutique = Boutique::where('userID', $id)->first();
 
-    	$rents = Rent::where('boutiqueID', $boutique['id'])->get();
-		$pendings = Rent::where('boutiqueID', $boutique['id'])->where('status', 'Pending')->get();
-		$inprogress = Rent::where('boutiqueID', $boutique['id'])->where('status', 'In-Progress')->get();
-		$histories = Rent::where('boutiqueID', $boutique['id'])->whereIn('status', ['Declined', 'Completed'])->get();
-		// dd($pendings);
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+	    	$rents = Rent::where('boutiqueID', $boutique['id'])->get();
+			$pendings = Rent::where('boutiqueID', $boutique['id'])->where('status', 'Pending')->get();
+			$inprogress = Rent::where('boutiqueID', $boutique['id'])->where('status', 'In-Progress')->get();
+			$histories = Rent::where('boutiqueID', $boutique['id'])->whereIn('status', ['Declined', 'Completed'])->get();
+			// dd($pendings);
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/rents', compact( 'pendings', 'inprogress', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount'));
+			return view('boutique/rents', compact( 'pendings', 'inprogress', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function getRentInfo($rentID)
 	{
-		$page_title = "Rent Information";
-    	$id = Auth()->user()->id;
-    	$boutique = Boutique::where('userID', $id)->first();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Rent Information";
+	    	$id = Auth()->user()->id;
+	    	$boutique = Boutique::where('userID', $id)->first();
 
-		$rent = Rent::where('rentID', $rentID)->first();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
-	
-		return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount'));
+			$rent = Rent::where('rentID', $rentID)->first();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
+		
+			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function approveRent(Request $request)
 	{
-		$rentID = $request->input('rentID');
-		$currentDate = date('Y-m-d');
-		$rent = rent::where('rentID', $rentID)->first();
+		if(Auth()->user()->roles == "boutique") {
+			$rentID = $request->input('rentID');
+			$currentDate = date('Y-m-d');
+			$rent = rent::where('rentID', $rentID)->first();
 
-		$product = Product::where('productID', $rent['productID'])->update([
-			'productStatus' => "Not Available"
-		]);
+			$product = Product::where('productID', $rent['productID'])->update([
+				'productStatus' => "Not Available"
+			]);
 
-		Rent::where('rentID', $rentID)->update([
-			'approved_at' => $currentDate,
-			'status' => "In-Progress"
-		]);
+			Rent::where('rentID', $rentID)->update([
+				'approved_at' => $currentDate,
+				'status' => "In-Progress"
+			]);
 
-		return redirect('/rents');
+			return redirect('/rents');
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function updateRentInfo(Request $request)
@@ -371,54 +409,98 @@ class BoutiqueController extends Controller
 
 	public function getwomens()
 	{
-		$page_title = "Womens";
-   		$user = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $user)->first();
-		$products = Product::where('gender', 'Womens')->get();
-		$productCount = Product::where('gender', 'Womens')->get()->count();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Womens";
+	   		$user = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $user)->first();
+			$products = Product::where('gender', 'Womens')->get();
+			$productCount = Product::where('gender', 'Womens')->get()->count();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function getmens()
 	{
-		$page_title = "Mens";
-   		$user = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $user)->first();
-		$products = Product::where('gender', 'Mens')->get();
-		$productCount = Product::where('gender', 'Mens')->get()->count();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Mens";
+	   		$user = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $user)->first();
+			$products = Product::where('gender', 'Mens')->get();
+			$productCount = Product::where('gender', 'Mens')->get()->count();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function getembellishments()
 	{
-		$page_title = "Embellishments";
-   		$user = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $user)->first();
-		$products = Product::where('gender', 'Mens')->get();
-		$productCount = Product::where('gender', 'Mens')->get()->count();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Embellishments";
+	   		$user = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $user)->first();
+			$products = Product::where('gender', 'Mens')->get();
+			$productCount = Product::where('gender', 'Mens')->get()->count();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
 	}
 
 	public function getcustomizables()
 	{
-		$page_title = "Customizable Items";
-   		$user = Auth()->user()->id;
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Customizable Items";
+	   		$user = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $user)->first();
+			$products = Product::where('customizable', 'Yes')->get();
+			$productCount = Product::where('customizable', 'Yes')->get()->count();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
+
+			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		}else {
+			return redirect('/shop');
+		}
+	}
+
+	public function categories()
+	{
+		$page_title = "Categories";
+		$user = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $user)->first();
-		$products = Product::where('customizable', 'Yes')->get();
-		$productCount = Product::where('customizable', 'Yes')->get()->count();
+		$categories = Category::all();
+		$womens = Category::where('gender', "Womens")->get();
+		$mens = Category::where('gender', "Mens")->get();
+
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+		return view('boutique/categories', compact('user', 'categories','womens', 'mens', 'page_title', 'boutique', 'notifications', 'notificationsCount'));
+	}
+
+	public function requestCategory(Request $request)
+	{
+		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$gender = $request->input('gender');	
+		$categoryName = $request->input('categoryName');
+
+		$admin = User::where('roles', 'admin')->first();
+        $admin->notify(new NewCategoryRequest($gender, $categoryName, $boutique['id']));
+
+        return redirect('/categories');
 	}
 
 

@@ -38,10 +38,17 @@
     </div>
 @endsection
 
+@section('transactions')
+<!-- User Login Info -->
+    <div class="user-login-info">
+         <a href="{{url('#')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"></a>
+    </div>
+@endsection
+
 @section('userinfo')
 <!-- User Login Info -->
     <div class="user-login-info">
-         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user1.svg') }}"></a>
+         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user.svg') }}"></a>
     </div>
 @endsection
 
@@ -108,7 +115,7 @@
                             <h6>{{ $cart->product['productName'] }}</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
-                            <p class="price">${{ number_format($cart->product['productPrice']) }}</p>
+                            <p class="price">₱{{ number_format($cart->product['productPrice']) }}</p>
                         </div>
                     </a>
                 </div>
@@ -123,7 +130,7 @@
 
                 <h2>Summary</h2>
                 <ul class="summary-table">
-                    <li><span>subtotal:</span> <span>${{ number_format($subtotal, 2) }}</span></li>
+                    <li><span>subtotal:</span> <span>₱{{ number_format($subtotal, 2) }}</span></li>
                     <!-- <li><span>delivery:</span> <span>Free</span></li> -->
                     <!-- <li><span>discount:</span> <span>-15%</span></li> -->
                     <!-- <li><span>total:</span> <span>$232.00</span></li> -->

@@ -69,13 +69,13 @@
         @foreach($notifications as $notification)
         @if($notification->read_at != null)
         <li>
-          <a href="{{ url('notifications/'.$notification->id) }}">
+          <a href="{{ url('rent-notifications/'.$notification->id) }}">
               <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
           </a> 
         </li>
         @else
         <li style="background-color: #e6f2ff;">
-          <a href="{{ url('notifications/'.$notification->id) }}">
+          <a href="{{ url('rent-notifications/'.$notification->id) }}">
               <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
           </a> 
         </li>
@@ -223,7 +223,7 @@
 
     <li class="treeview">
       <a href="#">
-        <i class="fa fa-pie-chart"></i>
+        <i class="fa fa-edit"></i>
         <span>Transactions</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
@@ -232,6 +232,20 @@
       <ul class="treeview-menu">
         <li><a href="/hinimo/public/made-to-orders"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
         <li><a href="/hinimo/public/rents"><i class="fa fa-circle-o"></i> Rent</a></li>
+      </ul>
+    </li>
+
+    <li class="treeview">
+      <a href="#">
+        <i class="fa fa-edit"></i>
+        <span>Etc-name tempo</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li><a href="/hinimo/public/categories"><i class="fa fa-circle-o"></i> Categories</a></li>
+        <li><a href="/hinimo/public/tags"><i class="fa fa-circle-o"></i> Tags</a></li>
       </ul>
     </li>
 

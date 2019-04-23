@@ -6,12 +6,12 @@
 
 <div class="row">
   <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box">
-      <span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>
+    <div class="info-box bg-aqua">
+      <span class="info-box-icon"><i class="ion ion-ios-cart-outline"></i></span>
 
       <div class="info-box-content">
-        <span class="info-box-text">Sales</span>
-        <span class="info-box-number">90<small>%</small></span>
+        <span class="info-box-text">Orders</span>
+        <span class="info-box-number">{{$orderCount}}</span>
       </div>
       <!-- /.info-box-content -->
     </div>
@@ -19,12 +19,12 @@
   </div>
 
   <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box">
-      <span class="info-box-icon bg-green"><i class="ion ion-bag"></i></span>
+    <div class="info-box bg-green">
+      <span class="info-box-icon"><i class="ion ion-bag"></i></span>
 
       <div class="info-box-content">
-        <span class="info-box-text">New Orders</span>
-        <span class="info-box-number">90<small>%</small></span>
+        <span class="info-box-text">Rent</span>
+        <span class="info-box-number">{{$rentCount}}</span>
       </div>
       <!-- /.info-box-content -->
     </div>
@@ -32,12 +32,12 @@
   </div>
 
   <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box">
-      <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people"></i></span>
+    <div class="info-box bg-yellow">
+      <span class="info-box-icon"><i class="ion ion-ios-people"></i></span>
 
       <div class="info-box-content">
-        <span class="info-box-text">New Customers</span>
-        <span class="info-box-number">90<small>%</small></span>
+        <span class="info-box-text">Customers</span>
+        <span class="info-box-number">{{$customerCount}}</span>
       </div>
       <!-- /.info-box-content -->
     </div>
@@ -45,12 +45,12 @@
   </div>
 
   <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box">
-      <span class="info-box-icon bg-red"><i class="ion ion-ios-cart-outline"></i></span>
+    <div class="info-box bg-red">
+      <span class="info-box-icon"><i class="ion ion-ios-cart-outline"></i></span>
 
       <div class="info-box-content">
-        <span class="info-box-text">New Boutiques</span>
-        <span class="info-box-number">90<small>%</small></span>
+        <span class="info-box-text">Boutiques</span>
+        <span class="info-box-number">{{$boutiqueCount}}</span>
       </div>
       <!-- /.info-box-content -->
     </div>

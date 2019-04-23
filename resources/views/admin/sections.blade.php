@@ -3,6 +3,9 @@
   {{$admin['fname'].' | '.$admin['lname']}}
 @endsection
 
+@section('page_title')
+{{$page_title}}
+@endsection
 
 @section('logo')
 <!-- LOGO -->
@@ -52,19 +55,32 @@
 <li class="dropdown notifications-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
     <i class="fa fa-bell-o"></i>
-    <span class="label label-warning">10</span>
+    @if($notificationsCount != null)
+    <span class="label label-danger">{{$notificationsCount}}</span>
+    @else
+    @endif
   </a>
   <ul class="dropdown-menu">
-    <li class="header">You have 10 notifications</li>
+    <li class="header">You have {{$notificationsCount}} notifications</li>
     <li>
       <!-- inner menu: contains the actual data -->
       <ul class="menu">
 
+        @foreach($notifications as $notification)
+        @if($notification->read_at != null)
         <li>
-          <a href="#">
-            <i class="fa fa-users text-aqua"></i> 5 new members joined today
-          </a>
+          <a href="{{ url('categories-notifications/'.$notification->id) }}">
+              <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
+          </a> 
         </li>
+        @else
+        <li style="background-color: #e6f2ff;">
+          <a href="{{ url('categories-notifications/'.$notification->id) }}">
+              <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
+          </a> 
+        </li>
+        @endif
+        @endforeach
 
       </ul>
     </li>
@@ -201,7 +217,7 @@
 
     <li class="treeview">
       <a href="#">
-        <i class="fa fa-pie-chart"></i>
+        <i class="fa fa-edit"></i>
         <span>Transactions</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
@@ -211,6 +227,19 @@
         <li><a href="/hinimo/public/admin-orders"><i class="fa fa-circle-o"></i> Orders</a></li>
         <li><a href="/hinimo/public/admin-made-to-orders"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
         <li><a href="/hinimo/public/admin-rents"><i class="fa fa-circle-o"></i> Rents</a></li>
+      </ul>
+    </li>
+
+        <li class="treeview">
+      <a href="#">
+        <i class="fa fa-gear"></i>
+        <span>Add-ons(?)</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li><a href="/hinimo/public/admin-locations"><i class="fa fa-circle-o"></i> Address</a></li>
       </ul>
     </li>
 

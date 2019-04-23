@@ -35,7 +35,7 @@ Route::get('/user-account', 'CustomerController@useraccount');
 
 Route::middleware(['auth'])->group(function(){
 
-//admin
+//ADMIN--------------------------------------------------------------------------------------------
 Route::get('/admin-dashboard', 'AdminController@dashboard');
 Route::get('/admin-orders', 'AdminController@orders');
 Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
@@ -44,17 +44,19 @@ Route::get('/admin-categories', 'AdminController@categories');
 Route::get('/admin-tags', 'AdminController@tags');
 Route::post('/addTag', 'AdminController@addTag');
 Route::post('/saveCategory', 'AdminController@saveCategory');
+Route::get('/admin-locations', 'AdminController@locations');
+
+Route::get('/categories-notifications/{notificationID}', 'AdminController@viewNotifications');
 
 
-//boutique
+//BOUTIQUE----------------------------------------------------------------------------------------
 Route::get('/dashboard', 'BoutiqueController@dashboard');
-Route::get('/categories/', 'BoutiqueController@categories');
-Route::get('/addCategories', 'BoutiqueController@addCategories');
+Route::get('/categories', 'BoutiqueController@categories');
+Route::post('/requestCategory', 'BoutiqueController@requestCategory');
 // Route::post('/saveCategory', 'BoutiqueController@saveCategory'); naa nani ni boutique
 
-Route::get('/notifications/{notificationID}', 'BoutiqueController@viewNotifications');
 
-
+//crud product
 Route::get('/addproduct', 'BoutiqueController@addProduct');
 Route::post('/saveproduct', 'BoutiqueController@saveProduct');
 Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
@@ -62,7 +64,7 @@ Route::get('/editView/{productID}', 'BoutiqueController@editView');
 Route::post('/editproduct/{productID}', 'BoutiqueController@editProduct');
 Route::get('/delete/{productID}', 'BoutiqueController@delete');
 
-
+//view products
 Route::get('/products', 'BoutiqueController@showProducts');
 Route::get('/products/womens', 'BoutiqueController@getwomens');
 Route::get('/products/mens', 'BoutiqueController@getmens');
@@ -78,6 +80,8 @@ Route::post('/approveRent', 'BoutiqueController@approveRent');
 Route::post('/declineRent', 'BoutiqueController@declineRent');
 Route::post('/updateRentInfo', 'BoutiqueController@updateRentInfo');
 Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
+
+Route::get('/rent-notifications/{notificationID}', 'BoutiqueController@viewNotifications');
 
 
 //TRANSACTIONS-MADE TO ORDERS

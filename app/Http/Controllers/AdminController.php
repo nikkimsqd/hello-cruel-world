@@ -10,6 +10,7 @@ use App\User;
 use App\Order;
 use App\Rent;
 use App\Category;
+use App\Boutique;
 
 
 class AdminController extends Controller
@@ -29,26 +30,62 @@ class AdminController extends Controller
    		});
     }
 
+	public function viewNotifications($notificationID)
+    {
+		$page_title = "Notification";
+    	$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+
+		foreach($notifications as $notification) {
+			if($notification->id == $notificationID) {
+				$notif = $notification;
+				$notification->markAsRead();
+			} else {
+				
+			}
+		}
+		// dd($notification);
+
+		$boutique = Boutique::where('id', $notif->data['boutiqueID'])->first();
+
+		return view('admin/viewNotification', compact('notifications', 'notification', 'notificationsCount', 'page_title', 'admin', 'boutique'));
+    }
 
 	public function dashboard()
 	{
+		$page_title = "Dashboard";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$users = User::all();
 		$orders = Order::all();
 		$rents = Rent::all();
+		$customers = User::where('roles', "customer")->get();
+		$boutique = User::where('roles', "boutique")->get();
+		$customerCount = $customers->count();
+		$boutiqueCount = $boutique->count();
+		$orderCount = $orders->count();
+		$rentCount = $rents->count();
+
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
 
 
-		return view('admin/dashboard', compact('admin', 'users', 'orders', 'rents'));
+		return view('admin/dashboard', compact('admin', 'users', 'orders', 'rents', 'page_title', 'customerCount', 'boutiqueCount', 'orderCount', 'rentCount', 'notifications', 'notificationsCount'));
 	}
 
 	public function orders()
 	{
+		$page_title = "Orders";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$orders = Order::all();
 
-		return view('admin/orders', compact('admin', 'orders'));
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		
+		return view('admin/orders', compact('admin', 'orders', 'page_title', 'notifications', 'notificationsCount'));
 	}
 
     public function addBoutique()
@@ -58,11 +95,14 @@ class AdminController extends Controller
     
     public function tags()
 	{
+		$page_title = "Tags";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$tags = Tag::all();
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
 
-		return view('admin/tags', compact('admin', 'tags'));
+		return view('admin/tags', compact('admin', 'tags', 'page_title', 'notifications', 'notificationsCount'));
 	}
 
 	public function addTag(Request $request)
@@ -76,9 +116,12 @@ class AdminController extends Controller
 
 	public function categories()
 	{
+		$page_title = "Categories";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$tags = Tag::all();
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
 
 
 		$categories = Category::all();
@@ -86,22 +129,7 @@ class AdminController extends Controller
 		$mens = Category::where('gender', "Mens")->get();
 			
 
-		return view('admin/categories',compact('admin', 'categories','womens', 'mens'));
-	}
-
-	public function addCategories()
-	{
-    	$id = Auth()->user()->id;
-		// $products = Product::where('userID', $id)->get();
-		$user = User::find($id);
-		$boutiques = Boutique::where('userID', $id)->get();
-		// dd($user);
-
-		foreach ($boutiques as $boutique) {
-			$boutique;
-		}
-
-		return view('boutique/addCategories' ,compact('user', 'boutique'));
+		return view('admin/categories',compact('admin', 'categories','womens', 'mens', 'page_title', 'notifications', 'notificationsCount'));
 	}
 
 	public function saveCategory(Request $request)
@@ -118,12 +146,26 @@ class AdminController extends Controller
 
 	public function rents()
 	{
+		$page_title = "Rents";
     	$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
 
 		$rents = Rent::all();
 
-		return view('admin/rents', compact('admin', 'rents'));
+		return view('admin/rents', compact('admin', 'rents', 'page_title', 'notifications', 'notificationsCount'));
+	}
+
+	public function locations()
+	{
+		$page_title = "Locations";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$notifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+
+		return view('admin/locations', compact('admin', 'page_title', 'notifications', 'notificationsCount'));
 	}
 
 }

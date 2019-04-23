@@ -45,7 +45,7 @@
               <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
               <div class="row">
-                <a href="viewproduct/<?php echo e($product['productID']); ?>">
+                <a href="<?php echo e(url('viewproduct/'.$product['productID'])); ?>">
                   <h4><?php echo e($product['productName']); ?></h4>
                 </a>
                 <h2></h2>
