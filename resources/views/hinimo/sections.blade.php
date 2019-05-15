@@ -5,9 +5,9 @@
 @section('auth')
 <div class="classynav" style="padding-right: 50px;">
     <ul>
-        <li><a href="login">Login</a></li>  
-        <li><a href="register">Signup</a></li>
-        <li><a href="register-boutique">Sell on Hinimo</a></li>  
+        <li><a href="{{url('login')}}">Login</a></li>  
+        <li><a href="{{url('register')}}">Signup</a></li>
+        <li><a href="{{url('register-boutique')}}">Sell on Hinimo</a></li>  
     </ul>
     
 </div>
@@ -41,7 +41,7 @@
 @section('transactions')
 <!-- User Login Info -->
     <div class="user-login-info">
-         <a href="{{url('#')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"></a>
+         <a href="{{url('/user-transactions')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"><span>2</span></a>
     </div>
 @endsection
 

@@ -57,25 +57,33 @@
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
                 @if ($product['forSale'] == 'true' && $product['forRent'] == 'true')
+                @if($user != null)
                 <div class="add-to-cart-btn">
                     <input type="text" name="productID" value="{{$product['productID']}}" hidden>
                     <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                 </div>
+                @else
+                    <a href="" class="btn essence-btn">Add to Carts</a>&nbsp;
+                @endif
 
-                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal">
+                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['productID']}}">
 
                 <div class="product-favourite ml-4">
                     <a href="#" class="favme fa fa-heart"></a>
                 </div>
 
                 @elseif($product['forRent'] == true)
-                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal">
+                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['productID']}}">
             
                 @elseif($product['forSale'] == true)
+                @if($user != null)
                 <div class="add-to-cart-btn">
                     <input type="text" name="productID" value="{{$product['productID']}}" hidden>
                     <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                 </div>
+                @else
+                    <input type="submit" class="btn essence-btn" value="Add to Carts" data-toggle="modal" data-target="#LoginModal">
+                @endif
                 @endif
                 </div>
 
@@ -98,7 +106,7 @@
 
     <!-- MODAAAAAAAAAAAAAAAL -->
     @if($user != null)
-    <div class="modal fade" id="requestToRentModal" role="dialog">
+    <div class="modal fade" id="requestToRentModal{{$product['productID']}}" role="dialog">
         <div class="modal-dialog modal-lg">
         
           <!-- Modal content-->
@@ -142,7 +150,7 @@
                 <input type="text" name="productID" value="{{$product['productID']}}" hidden>
 
 
-               <!--  <div class="form-group payment-info">
+                <div class="form-group payment-info" style="color: black;">
                     <table style="width: 100%;">
                         <tr>
                             <td><label>Subtotal</label></td>
@@ -150,14 +158,17 @@
                         </tr>
                         <tr>
                             <td><label>Delivery Fee</label></td>
-                            <td class="price"><input type="text" name="deliveryFee"></td>
+                            <td class="price">50</td>
                         </tr>
-                        <tr>
+                        <tr><?php $total = $product['rentPrice'] + 50; ?>
                             <td><label>Total Payment</label></td>
-                            <td class="price">{{$totalPrice}}</td>
+                            <td class="price">{{$total}}</td>
                         </tr>
                     </table>
-                </div> -->
+                    <input type="text" name="subtotal" value="{{$product['rentPrice']}}" hidden>
+                    <input type="text" name="deliveryFee" value="50" hidden>
+                    <input type="text" name="total" value="{{$total}}" hidden>
+                </div>
 
 
 
@@ -175,8 +186,52 @@
     </div>
     <!-- ##### Single Product Details Area End ##### -->
     @else
-        {{route('login')}}
+    <div class="modal fade" id="requestToRentModal{{$product['productID']}}" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title"><b>Login</b></h3>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+              
+            You are required to log in.
+
+            </div>
+
+            <div class="modal-footer">
+                <a href="{{url('login')}}" class="btn essence-btn">Login Here</a>
+            </div>
+          </div>
+        </div>
+    </div>
     @endif
+
+    <div class="modal fade" id="LoginModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title"><b>Login</b></h3>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+              
+            You are required to log in.
+
+            </div>
+
+            <div class="modal-footer">
+                <a href="{{url('login')}}" class="btn essence-btn">Login Here</a>
+            </div>
+          </div>
+        </div>
+    </div>
 
 <style type="text/css">
     .price{text-align: right;}

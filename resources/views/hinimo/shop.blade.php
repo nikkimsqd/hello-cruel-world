@@ -90,8 +90,7 @@
                         </div>
 
                         <!-- ##### Single Widget ##### -->
-                        <div class="widget color mb-50">
-                            <!-- Widget Title 2 -->
+                        <!-- <div class="widget color mb-50">
                             <p class="widget-title2 mb-30">Color</p>
                             <div class="widget-desc">
                                 <ul class="d-flex">
@@ -107,7 +106,7 @@
                                     <li><a href="#" class="color10"></a></li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- ##### Single Widget ##### -->
                         <!-- <div class="widget brands mb-50"> -->
@@ -175,13 +174,13 @@
 	                            @else
                                 @endif
 
-                                @if($product['forRent'] == "true")
-                                    <div class="product-badge new-badge">
-                                        <span>Rentable</span>
-                                    </div>
-                                @elseif($product['productStatus'] == "Not Available")
+                                @if($product['productStatus'] == "Not Available")
                                     <div class="product-badge offer-badge">
                                         <span>NOT AVAILABLE</span>
+                                    </div>
+                                @elseif($product['forRent'] == "true")
+                                    <div class="product-badge new-badge">
+                                        <span>Rentable</span>
                                     </div>
                                 @endif
 	                                <!-- Favourite -->
@@ -230,6 +229,60 @@
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
                     </nav>
+                    <div class="products_list row"> <!-- Products Display -->
+                            @foreach($notAvailables as $notAvailable)
+                            <!-- Single Product -->
+                            <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="single-product-wrapper">
+                                <!-- Product Image -->
+                                <?php 
+                                    $counter = 1;
+                                ?>
+                            
+                            @foreach($notAvailable->productFile as $image)
+                                
+                                <div class="product-img">
+                                @if($counter == 1)    
+                                    <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                @else
+                                @endif
+
+                                    <div class="product-badge offer-badge">
+                                        <span>NOT AVAILABLE</span>
+                                    </div>
+                                    <!-- Favourite -->
+                                    <!-- <div class="product-favourite">
+                                        <a href="#" class="favme fa fa-heart"></a>
+                                    </div> -->
+                                </div>
+                                
+                                <?php $counter++; ?>
+                                @endforeach
+
+                                <!-- Product Description -->
+                                <div class="product-description">
+                                    <span>{{ $notAvailable->owner['boutiqueName'] }}</span>
+                                    <a href="#">
+                                        <h6>{{ $notAvailable['productName'] }}</h6>
+                                    </a>
+                                    <p class="product-price">${{ number_format($notAvailable['productPrice']) }}</p>
+
+                                    <!-- Hover Content -->
+                                    <div class="hover-content">
+                                        <!-- Add to Cart -->
+                                        <div class="add-to-cart-btn">
+                                            <!-- <input type="text" name="productID" value="{{$notAvailable['productID']}}" hidden> -->
+                                            @if($notAvailable['productStatus'] == "Available")
+                                            <a href="single-product-details/{{$notAvailable['productID']}}" class="btn essence-btn">View Product</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            @endforeach
+
+                        </div>
                 </div>
             </div>
         </div>

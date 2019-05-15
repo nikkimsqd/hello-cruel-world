@@ -11,4 +11,5 @@ class City extends Model
 	public $table = 'cities';
 	public $timestamps = false;
 	public $incrementing = false;
+	public $fillable = ['id', 'psgcCode', 'citymunDesc', 'regDesc', 'provCode', 'citymunCode'];
 }

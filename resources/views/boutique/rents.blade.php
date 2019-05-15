@@ -83,7 +83,7 @@
           <tr>
             <td>{{$inprog['rentID']}}</td>
             <td>{{$inprog->customer->lname.', '.$inprog->customer->fname}}</td>
-            <td>{{$inprog['created_at']->format('M d, Y')}}</td>
+            <td>{{$inprog['approved_at']->format('M d, Y')}}</td>
             <td><span class="label label-info">In-Progress</span></td>
             <td><a href="rents/{{$inprog['rentID']}}" class="btn btn-primary btn-sm">View Order</a></td>
           </tr>
@@ -95,6 +95,54 @@
   </div>
 </div> <!-- table row -->
 <br><br>
+
+<div class="row" id="history">
+  <div class="col-md-12">
+    <div class="box box-primary">
+      <div class="box-header">
+        <h3 class="box-title"><b>ON DELIVERY</b></h3>
+
+        <div class="box-tools">
+          <div class="input-group input-group-sm" style="width: 150px;">
+            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+          <tr>
+            <th>Rent ID</th>
+            <th>Customer Name</th>
+            <th>Completed at:</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+          @foreach($ondeliveries as $ondelivery)
+          @if(!empty($ondelivery['status']))
+          <tr>
+            <td>{{$ondelivery['rentID']}}</td>
+            <td>{{$ondelivery->customer->lname.', '.$ondelivery->customer->fname}}</td>
+            <td>{{$ondelivery['created_at']->format('M d, Y')}}</td>
+            <td><span class="label label-primary">On Delivery</span></td>
+            <td><a href="rents/{{$ondelivery['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
+          </tr>
+          @else
+          <tr>
+            <td colspan="5"><i>You have no rent history...</i></td>
+          </tr>
+          @endif
+          @endforeach
+        </table>
+      </div>
+    </div>
+  </div>
+</div> <!-- table row -->
+
 
 <div class="row" id="history">
   <div class="col-md-12">
@@ -135,7 +183,7 @@
               <span class="label label-danger">Declined</span>
               @endif
             </td>
-            <td><input type="submit" class="btn btn-sm-primary" value="View Order" data-toggle="modal" data-target="#myModal"></td>
+            <td><a href="rents/{{$history['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
           </tr>
           @else
           <tr>

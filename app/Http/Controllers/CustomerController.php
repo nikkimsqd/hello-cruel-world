@@ -18,6 +18,7 @@ use App\Profiling;
 use App\Bidding;
 use App\Prodtag;
 use App\Tag;
+use App\Order;
 // use App\Notification;
 use App\Notifications\RentRequest;
 
@@ -90,26 +91,37 @@ class CustomerController extends Controller
 
     public function shop()
     {
-        if (Auth::check()) {
-       		$userID = Auth()->user()->id;
-            $products = Product::all();
-        	$productsCount = Product::all()->count();
-        	$categories = Category::all();
-        	$cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        	$carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
-            $boutiques = Boutique::all();
-            // dd($boutiques);
-      
-        	return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
+        if (Auth::check()) { //check if nay naka login nga user
+            if(Auth()->user()->roles == "customer") {
+                $userID = Auth()->user()->id;
+                $products = Product::where('productStatus', 'Available')->get();
+                $productsCount = $products->count();
+                $categories = Category::all();
+                $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
+                $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+                $boutiques = Boutique::all();
+
+                $notAvailables = Product::where('productStatus', 'Not Available')->get();
+                // dd($notAvailables);
+          
+                return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables'));
+
+            } else if(Auth()->user()->roles == "boutique") {
+                return redirect('/dashboard');
+            } else if(Auth()->user()->roles == "admin") {
+                return redirect('/admin-dashboard');
+            }  		
         }else {
-            $products = Product::all();
-            $productsCount = Product::all()->count();
+            $products = Product::where('productStatus', 'Available')->get();
+            $productsCount = $products->count();
             $categories = Category::all();
             $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
             $carts = Cart::where('userID', "")->where('status', "Pending")->get();
             $boutiques = Boutique::all();
 
-            return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques'));
+            $notAvailables = Product::where('productStatus', 'Not Available')->get();
+
+            return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables'));
         }
     }
 
@@ -123,7 +135,7 @@ class CustomerController extends Controller
         $boutiques = Boutique::all();
         
         $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
-        // dd($totalPrice);
+        // dd($user);
 
     	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice'));
     }
@@ -288,6 +300,9 @@ class CustomerController extends Controller
             'locationToBeUsed' => $request->input('locationToBeUsed'), 
             'addressOfDelivery' => $request->input('addressOfDelivery'),
             'additionalNotes' => $request->input('additionalNotes'),
+            'subtotal' => $request->input('subtotal'),
+            'deliveryFee' => $request->input('deliveryFee'),
+            'total' => $request->input('total'),
             // 'deliveryFee' => $request->input('')
         ]);
 
@@ -357,6 +372,33 @@ class CustomerController extends Controller
         }
 
         return redirect('/biddings');
+    }
+
+    public function usertransactions()
+    {
+        $userID = Auth()->user()->id;
+        $categories = Category::all();
+        $products = Product::all();
+        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
+        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+        $boutiques = Boutique::all();
+
+        $orders = Order::all();
+        $rents = Rent::where('customerID', $userID)->get();
+        foreach ($rents as $rent) {
+            // dd($rent['rentID']);
+            $order = Order::where('rentID', $rent['rentID'])->get();
+            if($order != null){
+                // dd($order);
+            }else{
+                dD("asd");
+            }
+            // dd($rent);
+        }
+        $cart = Cart::where('userID', $userID)->get();
+
+
+        return view('hinimo/transactions', compact('categories', 'products', 'carts', 'cartCount', 'userID', 'boutiques'));
     }
 
 

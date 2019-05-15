@@ -13,6 +13,7 @@ use App\Tag;
 use App\DeclinedRent;
 use App\Prodtag;
 use App\Order;
+use App\Categoryrequest;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 
@@ -312,12 +313,13 @@ class BoutiqueController extends Controller
 	    	$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 			$pendings = Rent::where('boutiqueID', $boutique['id'])->where('status', 'Pending')->get();
 			$inprogress = Rent::where('boutiqueID', $boutique['id'])->where('status', 'In-Progress')->get();
+			$ondeliveries = Rent::where('boutiqueID', $boutique['id'])->where('status', 'On Delivery')->get();
 			$histories = Rent::where('boutiqueID', $boutique['id'])->whereIn('status', ['Declined', 'Completed'])->get();
 			// dd($pendings);
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-			return view('boutique/rents', compact( 'pendings', 'inprogress', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount'));
+			return view('boutique/rents', compact( 'pendings', 'inprogress', 'ondeliveries', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -391,10 +393,9 @@ class BoutiqueController extends Controller
 	public function makeOrderforRent(Request $request)
 	{
 		$rentID = $request->input('rentID');
-		// dd($rentID);
 	
 		$rent = Rent::where('rentID', $rentID)->first();
-		Order::create([
+		$order = Order::create([
 			'subtotal' => $rent['subtotal'],
 			'deliveryfee' => $rent['deliveryFee'],
 			'total' => $rent['total'],
@@ -403,6 +404,12 @@ class BoutiqueController extends Controller
 			'status' => 'For Delivery',
 			'rentID' => $rent['rentID']
 		]);
+		// dd($order['id']);
+
+		$rent->update([
+			'orderID' => $order['id'],
+			'status' => 'On Delivery'
+			]);
 
 		return redirect('rents/'.$rentID);
 	}
@@ -494,11 +501,16 @@ class BoutiqueController extends Controller
 	{
 		$user = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $user)->first();
-		$gender = $request->input('gender');	
-		$categoryName = $request->input('categoryName');
+
+		$categoryRequest = Categoryrequest::create([
+			'boutiqueID' => $boutique['id'],
+			'categoryName' => $request->input('categoryName'),
+			'gender' => $request->input('gender'),
+			'status' => "Pending"
+		]);
 
 		$admin = User::where('roles', 'admin')->first();
-        $admin->notify(new NewCategoryRequest($gender, $categoryName, $boutique['id']));
+        $admin->notify(new NewCategoryRequest($categoryRequest['id']));
 
         return redirect('/categories');
 	}

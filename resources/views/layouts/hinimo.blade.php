@@ -19,6 +19,10 @@
     <!-- <link rel="stylesheet" href="{{ asset('essence/css/bootstrap.min.css') }}"> -->
     <link rel="stylesheet" href="{{ asset('essence/style.css') }}">
 
+    <!-- FROM THIRD PARTY -->
+    <!-- Bootstrap 3.3.7 -->
+    <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css') }}"> -->
+
 </head>
 
 <body>

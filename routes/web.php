@@ -30,6 +30,7 @@ Route::get('/shop/{gender}', 'CustomerController@shopWomens');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
 Route::get('/user-account', 'CustomerController@useraccount');
+Route::get('/user-transactions', 'CustomerController@usertransactions');
 
 
 
@@ -44,7 +45,13 @@ Route::get('/admin-categories', 'AdminController@categories');
 Route::get('/admin-tags', 'AdminController@tags');
 Route::post('/addTag', 'AdminController@addTag');
 Route::post('/saveCategory', 'AdminController@saveCategory');
+Route::get('/declineCategory/{notificationID}', 'AdminController@declineCategory');
+
 Route::get('/admin-locations', 'AdminController@locations');
+Route::get('/admin-getProvince/{regCode}', 'AdminController@getProvince');
+Route::get('/admin-getCity/{provCode}', 'AdminController@getCity');
+Route::get('/admin-getBrgy/{citymunCode}', 'AdminController@getBrgy');
+Route::post('/addLocation', 'AdminController@addLocation');
 
 Route::get('/categories-notifications/{notificationID}', 'AdminController@viewNotifications');
 
@@ -125,6 +132,8 @@ Route::get('/biddings', 'CustomerController@showBiddings');
 Route::get('/biddings/startNewBidding', 'CustomerController@showStartNewBidding');
 Route::post('/savebidding', 'CustomerController@savebidding');
 
+//NOTIFICATIONS
+Route::post('/user-notifications', 'CustomerController@notifications');
 
 
 

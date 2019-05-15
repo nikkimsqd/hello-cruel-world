@@ -36,8 +36,8 @@
 
           <label>Date Item will be used</label>
           <h4>{{ $rent['dateToUse']}}</h4>
-          </div>
-          <div class="col-md-6">
+         <!--  </div>
+          <div class="col-md-6"> -->
 
           <label>Address of Delivery</label>
           <h4>{{ $rent->address['completeAddress']}}</h4>
@@ -57,41 +57,62 @@
           <h4 class="label label-info">{{ $rent['status']}}</h4>
           @elseif($rent['status'] == "Declined")
           <h4 class="label label-danger">{{ $rent['status']}}</h4>
+          @elseif($rent['status'] == "On Delivery")
+          <h4 class="label label-primary">{{ $rent['status']}}</h4>
           @else
-          <h4 class="label label-warning">{{ $rent['status']}}</h4>
+          <h4 class="label label-success">{{ $rent['status']}}</h4>
           @endif
           <br><br>
           @if($rent['dateToBeReturned'] != null)
           <label>Item must be returned on or before:</label>
           <h4>{{ $rent['dateToBeReturned']}}</h4>
           @endif
+
+          @if($rent['status'] == "In-Progress" && $rent['dateToBeReturned'] == null)
+          <div class="form-group">
+              <label>Product should be returned on or before:</label>
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <input type="date" name="dateToBeReturned" class="form-control pull-right" id="datepicker" required>
+              </div>
+            </div>
+          @endif
+
+          <a href="/hinimo/public/rents#in-progress" class="btn btn-lg btn-danger">Ask Customer for measurements</a>
+
         </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6" style="align-items: center;">
+
+
+        <!-- </div> -->
+        <!-- <div class="row"> -->
+          <div class="col-md-6">
             <?php $counter = 1; ?>
             @foreach( $rent->product->productFile as $image)
             @if($counter == 1)
-              <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: auto; object-fit: cover;margin: 10px;">
+              <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
             @else
             @endif
             <?php $counter++; ?>
             @endforeach
+
+              <table class="table borderless">
+                <tr>
+                  <td><label>Subtotal:</label></td>
+                  <td>{{$rent->product['rentPrice']}}</td>
+                </tr>
+                <tr>
+                  <td><label>Delivery Fee:</label></td>
+                  <td>40</td>
+                </tr>
+                <tr><?php $total = $rent->product['rentPrice'] + 40; ?>
+                  <td><label>Total:</label></td>
+                  <td>{{$total}}</td>
+                </tr>
+              </table>
           </div>
-          @if($rent['status'] == "In-Progress" && $rent['dateToBeReturned'] == null)
-          <div class="col-md-6">
-            <br><br><br>
-            <div class="form-group">
-                <label>Product should be returned on or before:</label>
-                <div class="input-group date">
-                  <div class="input-group-addon">
-                    <i class="fa fa-calendar"></i>
-                  </div>
-                  <input type="date" name="dateToBeReturned" class="form-control pull-right" id="datepicker" required>
-                </div>
-              </div>
-          </div>
-          @endif
+          
         </div>
       </div>
 
@@ -108,6 +129,8 @@
             <!-- <input type="submit" name="btn_submit" class="btn btn-primary" value="For Delivery"> -->
             <a href="" data-toggle="modal" data-target="#makeOrderModal{{$rent['rentID']}}" class="btn btn-primary">For Delivery</a>
             @endif
+          @else
+          <a href="/hinimo/public/rents#in-progress" class="btn btn-default">Back to Rents</a>
           @endif
         </form>
       </div>
@@ -115,6 +138,9 @@
     </div>
   </div>
 </div>
+
+
+
 
 
 <!-- DECLINE RENT -->
@@ -167,6 +193,21 @@
 
           <label>Item must be returned on or before:</label>
           <h4>{{ $rent['dateToBeReturned']}}</h4>
+
+          <table class="table borderless">
+            <tr>
+              <td><label>Subtotal:</label></td>
+              <td>{{$rent->product['rentPrice']}}</td>
+            </tr>
+            <tr>
+              <td><label>Delivery Fee:</label></td>
+              <td>40</td>
+            </tr>
+            <tr><?php $total = $rent->product['productPrice'] + 40; ?>
+              <td><label>Total:</label></td>
+              <td>{{$total}}</td>
+            </tr>
+          </table>
       </div>
 
       <div class="modal-footer">
@@ -185,6 +226,7 @@
 
 <style type="text/css">
   h4{ margin-top: 0;}
+  .borderless td, .borderless th {border: none;}
 </style>
 
 

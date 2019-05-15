@@ -11,20 +11,16 @@ class NewCategoryRequest extends Notification
 {
     use Queueable;
 
-    private $gender;
-    private $categoryName;
-    private $boutiqueID;
+    private $categoryRequest;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($gender, $categoryName, $boutiqueID)
+    public function __construct($categoryRequest)
     {
-        $this->gender = $gender;
-        $this->categoryName = $categoryName;
-        $this->boutiqueID = $boutiqueID;
+        $this->categoryRequest = $categoryRequest;
     }
 
     /**
@@ -62,9 +58,7 @@ class NewCategoryRequest extends Notification
     {
         return [
             'text' => "You have a new category request.",
-            'gender' => $this->gender,
-            'categoryName' => $this->categoryName,
-            'boutiqueID' => $this->boutiqueID
+            'categoryRequest' => $this->categoryRequest
         ];
     }
 }

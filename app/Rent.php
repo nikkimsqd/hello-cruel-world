@@ -9,7 +9,7 @@ class Rent extends Model
 	protected $primaryKey = 'rentID';
     protected $dates = ['approved_at'];
 
-    protected $fillable = ['boutiqueID', 'customerID', 'status', 'productID', 'dateToUse', 'locationToBeUsed', 'addressOfDelivery', 'additionalNotes', 'dateToBeReturned', 'approved_at', 'completed_at'];
+    protected $fillable = ['boutiqueID', 'customerID', 'status', 'productID', 'dateToUse', 'locationToBeUsed', 'addressOfDelivery', 'additionalNotes', 'dateToBeReturned', 'approved_at', 'completed_at', 'orderID', 'subtotal', 'deliveryFee', 'total'];
 
 
     public function customer()

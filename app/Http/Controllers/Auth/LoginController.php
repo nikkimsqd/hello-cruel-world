@@ -55,7 +55,7 @@ class LoginController extends Controller
         } else if ($user['roles'] === "customer") {
             $this->redirectTo = '/shop';
             // dd($this->redirectPath());
-        } else {
+        } else if ($user['roles'] === "admin") {
             $this->redirectTo = '/admin-dashboard';
         }
     }

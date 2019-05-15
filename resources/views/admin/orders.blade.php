@@ -35,7 +35,11 @@
           <tr>
             <td>{{$order['id']}}</td>
             <td>{{$order->boutique['boutiqueName']}}</td>
-            <td>{{$order->cart->owner['fname'].' '.$order->cart->owner['lname']}}</td>
+            @if($order['cartID'] != null)
+            <td>{{$order['cartID']}}</td>
+            @else
+            <td>{{$order['status']}}</td>
+            @endif
             <td>{{$order['created_at']}}</td>
             @if ($order['status'] == "Pending")
             <td><span class="label label-warning">{{$order['status']}}</span></td>

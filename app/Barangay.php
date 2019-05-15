@@ -11,4 +11,5 @@ class Barangay extends Model
 	public $table = 'barangays';
 	public $timestamps = false;
 	public $incrementing = false;
+	public $fillable = ['id', 'brgyCode', 'brgyDesc', 'regCode', 'provCode', 'citymunCode'];
 }
