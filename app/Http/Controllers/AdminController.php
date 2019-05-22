@@ -20,6 +20,9 @@ use App\RefProvince;
 use App\RefRegion;
 use App\RefCity;
 use App\RefBrgy;
+use App\Measurement;
+use App\Measurementtype;
+use App\Categorymeasurement;
 
 
 class AdminController extends Controller
@@ -61,8 +64,6 @@ class AdminController extends Controller
 				
 			}
 		} //endforeach
-
-					// dd($notification);
 
 		$notificationsCount = $admin->unreadNotifications->count();
 		return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin'));
@@ -167,8 +168,6 @@ class AdminController extends Controller
 			return redirect('categories-notifications/'.$notificationID);
 		}
 
-		// Categoryrequest::where('')
-
 		return redirect('/admin-categories');
 	}
 
@@ -190,8 +189,6 @@ class AdminController extends Controller
 				
 			}
 		} //endforeach
-
-		// dd($categoryRequest);
 
 		return redirect('categories-notifications/'.$notificationID);
 	}
@@ -221,7 +218,6 @@ class AdminController extends Controller
         $provinces = Province::all();
         $barangays = Barangay::all();
         $cities = City::all();
-        // dd($refbrgys);
 
 		return view('admin/locations', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'refregions', 'cities', 'barangays', 'regions', 'provinces'));
 	}
@@ -258,7 +254,6 @@ class AdminController extends Controller
     	$provCode = $request->input('province');
     	$citymunCode = $request->input('city');
     	$brgyCodes = $request->input('barangays');
-    	// dd($brgyCode);
 
     	//REGION------------------------------------------------------------------
         $refregion = RefRegion::where('regCode', $regCode)->first();
@@ -317,6 +312,35 @@ class AdminController extends Controller
     	
 
     	return redirect('/admin-locations');
+    }
+
+    public function measurements()
+    {
+    	$page_title = "Locations";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$categories = Category:: all();
+		$measurements = Categorymeasurement::all();
+		$categoryArray = [];
+
+		foreach ($measurements as $measurement) {
+			$category = $measurement->getCategory['categoryName'];
+			$categoryArray[$category][] = $measurement['mName'];
+		}
+
+		return view('admin/measurements', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount'	, 'categories', 'categoryArray'));
+    }
+
+    public function addMeasurement(Request $request)
+    {
+    	Categorymeasurement::create([
+    		'categoryID' => $request->input('category'),
+    		'mName' => $request->input('mName')
+    	]);
+
+    	return redirect('admin-measurements');
     }
 
 }

@@ -54,6 +54,8 @@
 
 
 <!-- MODAL -->
+<a href="" class="btn essence-btn" data-toggle="modal" data-target="#madeToOrderModal">[name here]</a>
+
 <div class="modal fade" id="requestToRentModal{{$product['productID']}}" role="dialog">
     <div class="modal-dialog modal-lg">
       <!-- Modal content-->

@@ -2,13 +2,10 @@
 @extends('hinimo.sections')
 
 
-@section('titletext')
-	Hinimo
-@endsection
-
-
 @section('body')
 <!-- ##### Single Product Details Area Start ##### -->
+    <a href="" class="back_to_page"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+
     <section class="single_product_details_area d-flex align-items-center">
 
         <!-- Single Product Thumb -->
@@ -236,6 +233,8 @@
 <style type="text/css">
     .price{text-align: right;}
     .payment-info{color: #0000;}
+    .back_to_page{background-color: #ff084e; border-radius: 0;  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3); color: #ffffff; font-size: 18px;  height: 40px; line-height: 40px; right: 60px; left: 20px; top: 110px; text-align: center;  width: 40px; position: fixed; z-index: 2147483647; display: block;}
+    a:hover{font-size: 18px; color: #ffffff;}
 </style>
 
 @endsection

@@ -34,17 +34,15 @@
                                 <label for="productType" class="col-md-4 col-form-label text-md-right">Product Category</label>
 
                                 <div class="col-md-6">
-                                    <select id="productType" class="{{ $errors->has('gender') ? ' is-invalid' : '' }}" name="productType" required autofocus>
-                                        @foreach ($categories as $category)
-                                        <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
-                                        @endforeach
-                                    </select>
+                                    <select class="form-control" name="gender" id="gender-select" required autofocus>
+                                        <option selected="selected"> </option>
+                                        <option value="Womens">Womens</option>
+                                        <option value="Mens">Mens</option>
+                                    </select><br><br><br>
 
-                                    @if ($errors->has('productType'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('productType') }}</strong>
-                                        </span>
-                                    @endif
+                                    <select class="form-control" id="category-select" name="categoryName" required disabled>
+                                        <option value=""></option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -52,28 +50,15 @@
                                 <label for="startingprice" class="col-md-4 col-form-label text-md-right">Starting Bidding Price</label>
 
                                 <div class="col-md-6">
-                                    <input id="startingprice" type="number" min="1" class="form-control{{ $errors->has('startingprice') ? ' is-invalid' : '' }}" name="startingprice" value="{{ old('startingprice') }}" required autofocus>
-
-                                    @if ($errors->has('startingprice'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('startingprice') }}</strong>
-                                        </span>
-                                    @endif
+                                    <input id="startingprice" type="number" min="1" class="form-control" name="startingprice" value="{{ old('startingprice') }}" required>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="notes" class="col-md-4 col-form-label text-md-right">Notes </label>
+                                <label for="notes" class="col-md-4 col-form-label text-md-right">Notes</label>
 
                                 <div class="col-md-6">
-                                    <!-- <input id="notes" type="text" class="form-control{{ $errors->has('notes') ? ' is-invalid' : '' }}" name="notes" value="{{ old('notes') }}" required autofocus> -->
-                                    <textarea class="form-control{{ $errors->has('notes') ? ' is-invalid' : '' }}" name="notes"></textarea>
-
-                                    @if ($errors->has('notes'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('notes') }}</strong>
-                                        </span>
-                                    @endif
+                                    <textarea class="form-control" name="notes"></textarea>
                                 </div>
                             </div>
 
@@ -81,13 +66,7 @@
                                 <label for="bidImg" class="col-md-4 col-form-label text-md-right">Image</label>
 
                                 <div class="col-md-6">
-                                    <input id="bidImg" type="file" class="form-control{{ $errors->has('bidImg') ? ' is-invalid' : '' }}" name="bidImg" value="{{ old('bidImg') }}" required autofocus>
-
-                                    @if ($errors->has('bidImg'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('bidImg') }}</strong>
-                                        </span>
-                                    @endif
+                                    <input id="bidImg" type="file" class="form-control{{ $errors->has('bidImg') ? ' is-invalid' : '' }}" name="bidImg" value="{{ old('bidImg') }}" required>
                                 </div>
                             </div>
 
@@ -95,13 +74,7 @@
                                 <label for="endDate" class="col-md-4 col-form-label text-md-right">Bidding End Date</label>
 
                                 <div class="col-md-6">
-                                    <input id="endDate" type="date" class="form-control{{ $errors->has('endDate') ? ' is-invalid' : '' }}" name="endDate" value="{{ old('endDate') }}" required autofocus>
-
-                                    @if ($errors->has('endDate'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('endDate') }}</strong>
-                                        </span>
-                                    @endif
+                                    <input id="endDate" type="date" class="form-control{{ $errors->has('endDate') ? ' is-invalid' : '' }}" name="endDate" value="{{ old('endDate') }}" required>
                                 </div>
                             </div>
 
@@ -127,14 +100,6 @@
                                     <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
                                     <label for="{{$tag['name']}}">{{$tag['name']}}</label>
                                     @endforeach
-
-                                    <!-- <input id="tags" data-role="tagsinput" type="text" class="form-control{{ $errors->has('tags') ? ' is-invalid' : '' }}" name="tags" required> -->
-
-                                    @if ($errors->has('tags'))
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('tags') }}</strong>
-                                        </span>
-                                    @endif
                                 </div>
                             </div>
 
@@ -143,6 +108,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         Start Bidding
                                     </button>
+                                    <a href="{{url('biddings')}}" class="btn btn-primary">Submit dummy</a>
                                 </div>
                             </div>
                         </form>
@@ -174,10 +140,37 @@
   background-color: #ef1717;
   color: #fff;
 }
-</style>
 
+</style>
 @endsection
 
+
+
 @section('scripts')
+<script type="text/javascript">
+
+$('#gender-select').on('change', function(){
+
+    $('#category-select').empty();
+    $('#category-select').next().find('.list').empty();
+    $('#category-select').next().find('.current').val("-----------------");
+
+    var gender = $(this).val();
+
+    $('#category-select').prop('disabled',false);
+    $('.nice-select').removeClass('disabled');
+
+    $.ajax({
+        url: "/hinimo/public/getCategory/"+gender,
+        success:function(data){ 
+            data.categories.forEach(function(category){
+                $('#category-select').append('<option value="'+category.id+'">'+category.categoryName+'</option>');
+                $('#category-select').next().find('.list').append('<li data-value="'+category.id+'" class="option">'+category.categoryName+'</li>');
+            });
+        }
+    });
+});  
+
+</script>
 
 @endsection

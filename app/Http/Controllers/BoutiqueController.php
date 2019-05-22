@@ -14,8 +14,14 @@ use App\DeclinedRent;
 use App\Prodtag;
 use App\Order;
 use App\Categoryrequest;
+use App\Mto;
+use App\Measurementtype;
+use App\Measurement;
+use App\MeasurementRequest;
+use App\Categorymeasurement;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
+use App\Notifications\MeasurementRequests;
 
 
 class BoutiqueController extends Controller
@@ -33,22 +39,37 @@ class BoutiqueController extends Controller
 
 		foreach($notifications as $notification) {
 			if($notification->id == $notificationID) {
-				$notif = $notification;
-				$notification->markAsRead();
-				// dd($notif);
-				// break;
-			} else {
-				
+
+				if($notification->type == 'App\Notifications\RentRequest'){
+					$notif = $notification;
+					// $notification->markAsRead();
+
+					$rent = Rent::where('rentID', $notif->data['rentID'])->first();
+
+					return view('boutique/rentNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'rent'));
+
+				}elseif ($notification->type == 'App\Notifications\NewMTO') {
+					$notif = $notification;
+					// $notification->markAsRead();
+					$mto = Mto::where('id', $notif->data['mtoID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/made-to-orders/'.$mto['id']);
+				}
 			}
 		}
 
-		$rents = Rent::where('rentID', $notif->data['rentID'])->get();
-		foreach ($rents as $rent) {
-			$rent;
-		}
+		
+	}
 
-
-		return view('boutique/viewNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'rent'));
+	public function getnotifications()
+	{
+		$page_title = "Notification";
+   		$id = Auth()->user()->id;
+		$user = User::find($id);
+    	$boutique = Boutique::where('userID', $id)->first();
+		$notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
 	}
 
 	public function dashboard()
@@ -63,6 +84,7 @@ class BoutiqueController extends Controller
 
 			$notifications = $user->notifications;
 			$notificationsCount = $user->unreadNotifications->count();
+			// dd($notifications);
 
 			// foreach($notifications as $notification) {
 			// 	foreach ($notification['data'] as $value) {
@@ -73,7 +95,7 @@ class BoutiqueController extends Controller
 	        $rentArray = $rents->toArray();
 	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'product', 'requestedDate', 'approvedDate', 'completedDate', 'page_title', 'notifications', 'notificationsCount')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount')); 
 		}else {
 			return redirect('/shop');
 		}
@@ -284,23 +306,6 @@ class BoutiqueController extends Controller
 
 		return redirect('/products');
 
-	}
-
-	public function madeToOrders()
-	{
-		if(Auth()->user()->roles == "boutique") {
-	    	$page_title = "Made-to-Orders";
-	   		$id = Auth()->user()->id;
-			$boutique = Boutique::where('userID', $id)->first();
-			$products = Product::where('boutiqueID', $boutique['id'])->get();
-			$productCount = Product::where('boutiqueID', $boutique['id'])->get()->count();
-			$notifications = Auth()->user()->notifications;
-			$notificationsCount = Auth()->user()->unreadNotifications->count();
-
-			return view('boutique/madetoorders',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
-		}else {
-			return redirect('/shop');
-		}
 	}
 
 	public function rents()
@@ -514,6 +519,85 @@ class BoutiqueController extends Controller
 
         return redirect('/categories');
 	}
+
+	public function madeToOrders()
+	{
+    	$page_title = "Made-to-Orders";
+   		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$mtos = Mto::where('boutiqueID', $boutique['id'])->get();
+
+
+		$pendings = Mto::where('boutiqueID', $boutique['id'])->where('status', "Pending")->get();
+		$intransactions = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Transaction")->get();
+		$inprogress = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Progress")->get();
+
+		// dd($inprogress);
+
+		return view('boutique/madetoorders',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos', 'pendings', 'intransactions', 'inprogress'));
+	}
+
+    public function getMadeToOrder($mtoID)
+    {
+    	$page_title = "View Made-to-Order";
+        $id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$mto = Mto::where('id', $mtoID)->first();
+
+		$measurementNames = Categorymeasurement::where('categoryID', $mto['categoryID'])->get();
+
+
+        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurementNames'));
+    }
+
+    public function halfapproveMto($mtoID)
+    {
+		$mto = Mto::where('id', $mtoID)->first();
+
+		Mto::where('id', $mtoID)->update([
+			'status' => 'In-Transaction'
+		]);
+
+		return redirect('/made-to-orders/'.$mto['id']);    	
+    }
+
+    public function addOfferPrice(Request $request)
+    {
+    	$mtoID = $request->input('mtoID');
+
+    	Mto::where('id', $mtoID)->update([
+    		'offerPrice' => $request->input('offerPrice')
+    	]);
+
+    	return redirect('/made-to-orders/'.$mtoID);
+    }
+
+    public function requestCustomer(Request $request)
+    {
+    	$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+
+    	$customer = User::where('id', $request->input('customerID'))->first();
+    	$mtoID = $request->input('mtoID');
+    	$measurement = $request->input('measurements');
+        $data = json_encode($measurement);
+
+    	$measurementrequest = Measurementrequest::create([
+    		'mtoID' => $mtoID,
+    		'mtID' => $data
+    	]);
+        
+        $customer->notify(new MeasurementRequests($measurementrequest['id'], $boutique['boutiqueName']));
+
+
+    	// dd($request->input('measurements'));
+    	return redirect('/made-to-orders/'.$mtoID);
+    }
+
 
 
 }

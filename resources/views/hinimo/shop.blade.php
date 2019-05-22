@@ -2,11 +2,6 @@
 @extends('hinimo.sections')
 
 
-@section('titletext')
-	Hinimo | Shop
-@endsection
-
-
 @section('body')
 <div class="page">
 
@@ -16,7 +11,7 @@
             <div class="row h-100 align-items-center">
                 <div class="col-12">
                     <div class="page-title text-center">
-                        <h2>dresses</h2>
+                        <h2>{{$page_title}}</h2>
                     </div>
                 </div>
             </div>
@@ -206,7 +201,7 @@
 	                                    <div class="add-to-cart-btn">
 	                                    	<!-- <input type="text" name="productID" value="{{$product['productID']}}" hidden> -->
                                             @if($product['productStatus'] == "Available")
-	                                        <a href="single-product-details/{{$product['productID']}}" class="btn essence-btn">View Product</a>
+	                                        <a href="{{url('single-product-details/').'/'.$product['productID']}}" class="btn essence-btn">View Product</a>
                                             @endif
 	                                    </div>
 	                                </div>

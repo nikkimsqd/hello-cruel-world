@@ -31,6 +31,9 @@ Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
 Route::get('/user-account', 'CustomerController@useraccount');
 Route::get('/user-transactions', 'CustomerController@usertransactions');
+Route::get('/view-order/{orderID}', 'CustomerController@viewOrder');
+Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');
+Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
 
 
 
@@ -54,6 +57,9 @@ Route::get('/admin-getBrgy/{citymunCode}', 'AdminController@getBrgy');
 Route::post('/addLocation', 'AdminController@addLocation');
 
 Route::get('/categories-notifications/{notificationID}', 'AdminController@viewNotifications');
+
+Route::get('/admin-measurements', 'AdminController@measurements');
+Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 
 
 //BOUTIQUE----------------------------------------------------------------------------------------
@@ -88,11 +94,16 @@ Route::post('/declineRent', 'BoutiqueController@declineRent');
 Route::post('/updateRentInfo', 'BoutiqueController@updateRentInfo');
 Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
 
-Route::get('/rent-notifications/{notificationID}', 'BoutiqueController@viewNotifications');
+Route::get('/boutique-notifications', 'BoutiqueController@getnotifications');
+Route::get('/view-notifications/{notificationID}', 'BoutiqueController@viewNotifications');
 
 
 //TRANSACTIONS-MADE TO ORDERS
 Route::get('/made-to-orders', 'BoutiqueController@madeToOrders');
+Route::get('/made-to-orders/{mtoID}', 'BoutiqueController@getMadeToOrder'); 
+// Route::post('/requestCustomer', 'BoutiqueController@requestCustomer');
+Route::get('/halfapproveMto/{mtoID}', 'BoutiqueController@halfapproveMto');
+Route::post('/addOfferPrice', 'BoutiqueController@addOfferPrice');
 
 	
 
@@ -106,6 +117,8 @@ Route::get('/user-profiling/done', 'CustomerController@profilingDone');
 
 Route::get('/sortBy/{condition}', 'CustomerController@sortBy');
 Route::get('/getProducts/{condition}', 'CustomerController@getProducts');
+
+Route::get('/getMeasurements/{categoryID}', 'CustomerController@getMeasurements');
 
 
 //REQUEST FOR RENT
@@ -131,10 +144,19 @@ Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
 Route::get('/biddings', 'CustomerController@showBiddings');
 Route::get('/biddings/startNewBidding', 'CustomerController@showStartNewBidding');
 Route::post('/savebidding', 'CustomerController@savebidding');
+Route::get('/getCategory/{genderCategory}', 'CustomerController@getCategory');
+
 
 //NOTIFICATIONS
-Route::post('/user-notifications', 'CustomerController@notifications');
+Route::get('/user-notifications', 'CustomerController@notifications');
+Route::get('/user-notifications/{notificationID}', 'CustomerController@viewNotification');
 
+
+
+//BOUTIQUE PROFILE
+Route::get('/boutique/{boutiqueID}', 'CustomerController@getBoutique');
+Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
+Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
 
 
 Route::view('/autocomplete', 'hinimo.autocomplete');

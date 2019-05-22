@@ -8,4 +8,8 @@ class Category extends Model
 {
     protected $fillable = ['boutiqueID', 'categoryName', 'gender'];
     
+    public function getMeasurements()
+    {
+        return $this->hasMany('App\Categorymeasurement', 'id', 'categoryID');
+    }
 }

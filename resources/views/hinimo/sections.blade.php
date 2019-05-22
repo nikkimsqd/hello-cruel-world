@@ -1,5 +1,5 @@
 @section('titletext')
-	Hinimo | Shop
+	Hinimo | {{$page_title}}
 @endsection
 
 @section('auth')
@@ -16,7 +16,7 @@
 @section('boutiques')
     <ul class="dropdown">
     	@foreach($boutiques as $boutique)
-        <li><a href="{{url('/boutiques').'/'.$boutique['id']}}">{{$boutique['boutiqueName']}}</a></li>
+        <li><a href="{{url('/boutique').'/'.$boutique['id']}}">{{$boutique['boutiqueName']}}</a></li>
         @endforeach
     </ul>
 @endsection
@@ -41,7 +41,7 @@
 @section('transactions')
 <!-- User Login Info -->
     <div class="user-login-info">
-         <a href="{{url('/user-transactions')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"><span>2</span></a>
+         <a href="{{url('/user-transactions')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"><span>{{$notificationsCount}}</span></a>
     </div>
 @endsection
 

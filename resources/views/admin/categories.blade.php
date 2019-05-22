@@ -35,7 +35,7 @@
             {{ csrf_field() }}
               
               Gender:
-                <select class="form-control select2" name="gender" id="gender-select">
+                <select class="form-control select2" name="gender" id="gender-select" autofocus>
                   <option selected="selected"> </option>
                   <option value="Womens">Womens</option>
                   <option value="Mens">Mens</option>

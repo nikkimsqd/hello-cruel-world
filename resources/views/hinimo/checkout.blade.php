@@ -1,13 +1,6 @@
 @extends('layouts.hinimo')
 
 
-@section('titletext')
-	My Account
-@endsection
-
-
-
-
 @section('body')
 
 <div class="page">
@@ -17,7 +10,7 @@
             <div class="row h-100 align-items-center">
                 <div class="col-12">
                     <div class="page-title text-center">
-                        <h2>CHEKOUT</h2>
+                        <h2>{{$page_title}}</h2>
                     </div>
                 </div>
             </div>

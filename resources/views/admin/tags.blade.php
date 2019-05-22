@@ -24,7 +24,7 @@
           {{csrf_field()}}
           <div class="form-group">
             <label>Enter a tag name:</label>
-            <input type="text" name="tag" class="input form-control">
+            <input type="text" name="tag" class="input form-control" autofocus>
           </div>
 
         </div>

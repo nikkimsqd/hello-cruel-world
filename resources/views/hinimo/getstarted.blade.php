@@ -2,7 +2,7 @@
 
 
 @section('titletext')
-	Hinimo
+	{{$page_title}}
 @endsection
 
 

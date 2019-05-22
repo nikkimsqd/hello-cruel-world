@@ -215,6 +215,7 @@
       <ul class="treeview-menu">
         <li><a href="/hinimo/public/admin-categories"><i class="fa fa-circle-o"></i> Categories</a></li>
         <li><a href="/hinimo/public/admin-tags"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <li><a href="/hinimo/public/admin-measurements"><i class="fa fa-circle-o"></i> Measurements</a></li>
       </ul>
     </li>
 

@@ -69,13 +69,13 @@
         @foreach($notifications as $notification)
         @if($notification->read_at != null)
         <li>
-          <a href="{{ url('rent-notifications/'.$notification->id) }}">
+          <a href="{{ url('view-notifications/'.$notification->id) }}">
               <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
           </a> 
         </li>
         @else
         <li style="background-color: #e6f2ff;">
-          <a href="{{ url('rent-notifications/'.$notification->id) }}">
+          <a href="{{ url('view-notifications/'.$notification->id) }}">
               <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
           </a> 
         </li>

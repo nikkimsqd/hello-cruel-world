@@ -12,8 +12,7 @@
       </div>
 
       <div class="box-body">
-<!--         <div class="col-md-6">
-       
+        <!-- <div class="col-md-6">
           @foreach($regions as $region)
             <label>{{$region->regDesc}}</label> <br>
             @foreach($provinces as $province)
@@ -40,43 +39,44 @@
               @endif
             @endforeach
           @endforeach
-
         </div> -->
-
-        <div class="col-md-5">
-          <form action="{{ url('/addLocation') }}" method="post">
-            {{ csrf_field() }}
-              
-              <label>Select Region:</label>
-                <select name="region" class="form-control" id="region-select">
-                  <option selected="selected"> </option>
-                  @foreach($refregions as $refregion)
-                  <option value="{{$refregion['regCode']}}">{{$refregion['regDesc']}}</option>
-                  @endforeach
-                </select>
-                <br>
-        </div>
-        <div class="col-md-3">
-              <label>Select Province:</label>
-                <select name="province" class="form-control" id="province-select" disabled>
-                  <option selected="selected"> </option>
-                </select>
-                <br>
-        </div>
-        <div class="col-md-4">
-              <label>Select City:</label>
-                <select name="city" class="form-control" id="city-select" disabled>
-                  <option selected="selected"></option>
-                </select><br>
-
-              <label id="barangay-id" hidden>Select Barangays:</label>
-              <div name="barangays" id="brgy-select" style="column-count: 2">
-                <!-- append js code here -->
-    <!-- <label class="custom-control-label" for="id">name</label> -->
-
-              </div>
+        <div class="row">
+          <div class="col-md-5">
+            <form action="{{ url('/addLocation') }}" method="post">
+              {{ csrf_field() }}
                 
+                <label>Select Region:</label>
+                  <select name="region" class="form-control" id="region-select" autofocus>
+                    <option selected="selected"> </option>
+                    @foreach($refregions as $refregion)
+                    <option value="{{$refregion['regCode']}}">{{$refregion['regDesc']}}</option>
+                    @endforeach
+                  </select>
+                  <br>
+          </div>
+          <div class="col-md-3">
+                <label>Select Province:</label>
+                  <select name="province" class="form-control" id="province-select" disabled>
+                    <option selected="selected"> </option>
+                  </select>
+                  <br>
+          </div>
+          <div class="col-md-4">
+                <label>Select City:</label>
+                  <select name="city" class="form-control" id="city-select" disabled>
+                    <option selected="selected"></option>
+                  </select><br>
+          </div>
+        </div> <!-- row -->
 
+        <div class="row">
+          <div class="col-md-12">
+            <label id="barangay-id" hidden>Select Barangays:</label>
+            <div name="barangays" id="brgy-select" style="column-count: 3">
+              <!-- append js code here -->
+              <!-- <label class="custom-control-label" for="id">name</label> -->
+            </div>
+          </div>
         </div>
 
       </div>
@@ -84,7 +84,6 @@
        <input type="submit" name="btn_submit" value="Add Category" class="btn btn-primary">
       </form>
       </div>
-      <!-- </form> -->
     </div>
   </div>
 </div>

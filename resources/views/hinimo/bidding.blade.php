@@ -195,9 +195,9 @@
                                     <div class="hover-content">
                                         <!-- Add to Cart -->
                                         <div class="add-to-cart-btn">
-                                            <!-- <input type="text" name="productID" value="{{$product['productID']}}" hidden> -->
+                                            <!-- <input type="text" name="productID" value="{{$bidding['productID']}}" hidden> -->
                                             @if($bidding['productStatus'] == "Available")
-                                            <a href="single-product-details/{{$product['productID']}}" class="btn essence-btn">View Product</a>
+                                            <a href="single-product-details/{{$bidding['productID']}}" class="btn essence-btn">View Product</a>
                                             @endif
                                         </div>
                                     </div>

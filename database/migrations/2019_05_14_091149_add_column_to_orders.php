@@ -13,7 +13,9 @@ class AddColumnToOrders extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('orders', function($table) {
+            $table->string('userID');
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class AddColumnToOrders extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('orders', function($table) {
+            $table->dropColumn('userID');
+        });
     }
 }
