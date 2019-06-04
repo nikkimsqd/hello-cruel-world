@@ -10,6 +10,6 @@ class Category extends Model
     
     public function getMeasurements()
     {
-        return $this->hasMany('App\Categorymeasurement', 'id', 'categoryID');
+        return $this->hasMany('App\Categorymeasurement', 'categoryID', 'id');
     }
 }

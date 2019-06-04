@@ -57,7 +57,7 @@
 </head>
 
 
-<body class="hold-transitionen sidebar-mini skin-green"> <!-- butngan ra ug skin-green para nay color -->
+<body class="hold-transitionen sidebar-mini skin-green-light">
 <div class="wrapper">
 
 
@@ -129,12 +129,12 @@
 
 
     <!-- Main content -->
-    <section class="content">
+    <!-- <section class="content">  ADD THIS TO ALL PAGES--> 
       <!-- Info boxes -->
       @yield('content')
      
 
-    </section>
+    <!-- </section> -->
     <!-- /.content --> 
 
   </div>

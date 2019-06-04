@@ -3,91 +3,117 @@
 
 @section('content')
 
-<div class="row">
-  <div class="col-md-12">
-    <div class="box">
-      <div class="box-header">
-        <h3 class="box-title">MTO ID: {{$mto['id']}}</h3>
-      </div>
-      <!-- /.box-header -->
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">MTO ID: {{$mto['id']}}</h3>
+        </div>
+        <!-- /.box-header -->
 
-      <div class="box-body">
-        <div class="row">
-        <div class="col-md-6">
-        <!-- if($mto['status'] == "Pending")
-        <form action="/hinimo/public/approveMto" method="post">
-        elseif($mto['status'] == "In-Transaction")
-        <form action="/hinimo/public/updateRentInfo" method="post"> -->
-  
-        <!-- endif -->
-          {{csrf_field()}}
-          <?php 
-            $measurements = json_decode($mto->measurement['data'])
-          ?>
+        <div class="box-body">
+          <div class="row">
+          <div class="col-md-6">
+          <!-- if($mto['status'] == "Pending")
+          <form action="/hinimo/public/approveMto" method="post">
+          elseif($mto['status'] == "In-Transaction")
+          <form action="/hinimo/public/updateRentInfo" method="post"> -->
+    
+          <!-- endif -->
+            {{csrf_field()}}
+            <?php 
+              $measurements = json_decode($mto->measurement['data'])
+            ?>
 
-          <label>Customer Name:</label>
-          <h4>{{$mto->customer['fname'].' '.$mto->customer['lname']}}</h4>
+            <label>Customer Name:</label>
+            <h4>{{$mto->customer['fname'].' '.$mto->customer['lname']}}</h4>
 
-          <label>Date request placed:</label>
-          <h4>{{$mto['created_at']->format('M d, Y')}}</h4>
+            <label>Date request placed:</label>
+            <h4>{{$mto['created_at']->format('M d, Y')}}</h4>
 
-          <label>Date of item's use:</label>
-          <h4>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</h4>
+            <label>Date of item's use:</label>
+            <h4>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</h4>
 
-          <label>Customer's Notes/Instructions:</label>
-          <h4>{{$mto['notes']}}</h4>
+            <label>Customer's Notes/Instructions:</label>
+            <h4>{{$mto['notes']}}</h4>
 
-          <label>Customer's Height:</label>
-          <h4>{{$mto['height']}}</h4><br>
+            <label>Customer's Height:</label>
+            <h4>{{$mto['height']}}</h4><br>
+          </div>
+
+            <div class="col-md-6">
+              <label>Customer's Measurements:</label>
+              @foreach($measurementNames as $measurementName)
+              <h4>{{$measurementName['mName']}}</h4>
+              @endforeach
+              
+              @foreach($measurements as $meas)
+              <h5>{{$meas}}</h5>
+              @endforeach
+            </div>
+          </div> <!-- row -->
+
+            <div class="row">
+              <div class="col-md-5">
+                  <img src="{{ asset('/pics_for_upload/short/x.jpg')}}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
+              </div>
+            </div>
+
+            @if($mto['finalPrice'] == null)
+              @if($mto['offerPrice'] != null)
+              <div class="row">
+                <div class="col-md-3">
+                  <h4>Your current offer: </h4>
+                </div>
+                <div class="col-md-3">
+                  <h4>{{$mto['offerPrice']}}</h4>
+                </div>
+              </div>
+              @endif
+            <div class="row">
+              <div class="col-md-6">
+                <form action="{{url('/addOfferPrice')}}" method="post">
+                  {{csrf_field()}}
+                  <label>Submit an offer:</label>
+                  <input type="number" name="offerPrice" class="input form-control"><br>
+                  <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
+
+                  <input type="submit" name="btn_submit" value="Place Offer" class="btn btn-primary">
+                </form>
+              </div>
+            </div>
+            @else
+            <div class="row">
+              <div class="col-md-3">
+                <h4>Final Price: </h4>
+              </div>
+              <div class="col-md-3">
+                <h4>{{$mto['finalPrice']}}</h4>
+              </div>
+            </div>
+            @endif
         </div>
 
-          <div class="col-md-6">
-            <label>Customer's Measurements:</label>
-            @foreach($measurementNames as $measurementName)
-            <h4>{{$measurementName['mName']}}</h4>
-            @endforeach
-            
-            @foreach($measurements as $meas)
-            <h5>{{$meas}}</h5>
-            @endforeach
-          </div>
-        </div> <!-- row -->
-
-          <div class="row">
-            <div class="col-md-5">
-                <img src="{{ asset('/pics_for_upload/short/x.jpg')}}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <form action="{{url('/addOfferPrice')}}" method="post">
-                {{csrf_field()}}
-                <label>Submit an offer:</label>
-                <input type="number" name="offerPrice" class="input form-control"><br>
-                <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
-
-                <input type="submit" name="btn_submit" value="Place Offer" class="btn btn-primary">
-              </form>
-            </div>
-          </div>
+        <div class="box-footer" style="text-align: right;">
+            <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
+            <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
+          @if($mto['status'] == "Pending")
+            <a href="{{url('halfapproveMto/'.$mto['id'])}}" class="btn btn-primary">Contact customer for negotiations</a>
+            @elseif($mto['status'] == "In-Transaction")
+              @if($mto['finalPrice'] != null)
+              <a href="" class="btn btn-success">Accept Request</a>
+              @else
+              <input type="submit" name="btn_submit" class="btn btn-success" disabled value="Accept Request">
+              @endif
+            @endif
+          <!-- </form> -->
+        </div>
 
       </div>
-
-      <div class="box-footer" style="text-align: right;">
-          <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
-          <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
-        @if($mto['status'] == "Pending")
-          <a href="{{url('halfapproveMto/'.$mto['id'])}}" class="btn btn-primary">Contact customer for negotiations</a>
-          @elseif($mto['status'] == "In-Transaction")
-          <a href="" class="btn btn-success">Accept Request</a>
-          @endif
-        <!-- </form> -->
-      </div>
-
     </div>
   </div>
-</div>
+</section>
 
 <!-- DECLINE RENT -->
 <div class="modal fade" id="declineModal" role="dialog">

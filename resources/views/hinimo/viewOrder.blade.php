@@ -42,7 +42,7 @@
 
 
                                 <li><span>Subtotal</span> <span>{{$order['subtotal']}}</span></li>
-                                <li><span>Deliver Fee</span> <span>{{$order['deliveryfee']}}</span></li>
+                                <li><span>Delivery Fee</span> <span>{{$order['deliveryfee']}}</span></li>
                                 <li><span>Total</span> <span>{{$order['total']}}</span></li>
                             </ul>
                         </div> <!-- card closing -->

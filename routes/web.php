@@ -29,11 +29,7 @@ Route::get('/index', 'CustomerController@index');
 Route::get('/shop/{gender}', 'CustomerController@shopWomens');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
-Route::get('/user-account', 'CustomerController@useraccount');
-Route::get('/user-transactions', 'CustomerController@usertransactions');
-Route::get('/view-order/{orderID}', 'CustomerController@viewOrder');
-Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');
-Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
+
 
 
 
@@ -93,6 +89,9 @@ Route::post('/approveRent', 'BoutiqueController@approveRent');
 Route::post('/declineRent', 'BoutiqueController@declineRent');
 Route::post('/updateRentInfo', 'BoutiqueController@updateRentInfo');
 Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
+Route::get('/rentReturned/{rentID}', 'BoutiqueController@rentReturned');
+
+Route::get('/get-paypal-transaction/{orderId}', 'BoutiqueController@getPaypalOrder');
 
 Route::get('/boutique-notifications', 'BoutiqueController@getnotifications');
 Route::get('/view-notifications/{notificationID}', 'BoutiqueController@viewNotifications');
@@ -123,6 +122,7 @@ Route::get('/getMeasurements/{categoryID}', 'CustomerController@getMeasurements'
 
 //REQUEST FOR RENT
 Route::post('/requestToRent', 'CustomerController@requestToRent');
+Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
 
 
 //CART
@@ -157,6 +157,20 @@ Route::get('/user-notifications/{notificationID}', 'CustomerController@viewNotif
 Route::get('/boutique/{boutiqueID}', 'CustomerController@getBoutique');
 Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
 Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
+
+
+//TRANSACTIONS
+Route::get('/user-account', 'CustomerController@useraccount');
+Route::get('/user-transactions', 'CustomerController@usertransactions');
+Route::get('/view-order/{orderID}', 'CustomerController@viewOrder');
+Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');
+Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
+
+//PAYPAL TRANSACTION
+Route::post('/paypal-transaction-complete', 'CustomerController@paypalpaypalTransactionComplete');
+// Route::get('/get-paypal-transaction/{orderId}', 'CustomerController@getPaypalOrder');
+
+
 
 
 Route::view('/autocomplete', 'hinimo.autocomplete');

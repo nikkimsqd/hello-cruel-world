@@ -37,7 +37,7 @@
             <!-- Form -->
             <!-- <form action="" class="cart-form clearfix" method="post"> -->
                 <!-- Select Box -->
-               <!--  <div class="select-box d-flex mt-50 mb-30">
+                <div class="select-box d-flex mt-50 mb-30">
                     <select name="select" id="productSize" class="mr-5">
                         <option value="value">Size: XL</option>
                         <option value="value">Size: X</option>
@@ -50,7 +50,7 @@
                         <option value="value">Color: Red</option>
                         <option value="value">Color: Purple</option>
                     </select>
-                </div> -->
+                </div>
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
                 @if ($product['forSale'] == 'true' && $product['forRent'] == 'true')
@@ -114,34 +114,79 @@
             </div>
 
             <div class="modal-body">
+            <div class="row justify-content-center">
+            <div class="col-md-11">
               <form action="/hinimo/public/requestToRent" method="post">
                 {{csrf_field()}}
-                <label>Name:</label>
-                <input type="text" name="customerName" class="form-control" value="{{$user['lname'].', '.$user['fname']}}" disabled><br> 
 
-                <label>Email Address:</label>
-                <input type="text" name="email" class="form-control" value="{{$user['email']}}" disabled><br> 
+                {{$product->getCategory->getMeasurements}}
 
-                <label>Contact Number:</label>
-                <input type="text" name="phoneNumber" class="form-control"><br> 
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Name:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="customerName" class="form-control" value="{{$user['lname'].', '.$user['fname']}}" disabled><br> 
+                    </div>
+                </div>
 
-                <label>Date Item will be used:</label>
-                <input type="date" name="dateToUse" class="form-control"><br> 
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Email Address:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="email" class="form-control" value="{{$user['email']}}" disabled><br> 
+                    </div>
+                </div>
 
-                <label>Location Item will be used:</label>
-                <input type="text" name="locationToBeUsed" class="form-control"><br> 
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Contact Number:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="phoneNumber" class="form-control"><br> 
+                    </div>
+                </div>
 
-                <label>Address of delivery:</label>
-                <!-- <input type="text" name="addressOfDelivery" class="form-control"><br> -->
-                <select name="addressOfDelivery">
-                    <option>&nbsp;</option>
-                    @foreach($addresses as $address)
-                    <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
+                <div class="form-group row">
+                    <label class="col-md-8 col-form-label text-md-right">Submit Measurements</label>
+                </div>
+
+                <div class="form-group row">
+                    @foreach($product->getCategory->getMeasurements as $measurements)
+                    <label class="col-md-4 col-form-label text-md-right">{{$measurements['mName']}}:</label>
+                    <div class="col-md-6" id="measurement-input">
+                        <input type="text" name="measurement[{{$measurements['mName']}}]" class="form-control"><br> 
+                    </div>
                     @endforeach
-                </select><br><br><br>
+                </div><br>
 
-                <label>Additional Notes:</label>
-                <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Date Item will be used:</label>
+                    <div class="col-md-6">
+                        <input type="date" name="dateToUse" class="form-control"><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Location Item will be used:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="locationToBeUsed" class="form-control"><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
+                    <div class="col-md-6">
+                        <select name="addressOfDelivery">
+                            <option>&nbsp;</option>
+                            @foreach($addresses as $address)
+                            <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
+                            @endforeach
+                        </select><br><br><br><br>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Additional Notes:</label>
+                    <div class="col-md-6">
+                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
+                    </div>
+                </div>
 
                 <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
                 <input type="text" name="productID" value="{{$product['productID']}}" hidden>
@@ -167,9 +212,9 @@
                     <input type="text" name="total" value="{{$total}}" hidden>
                 </div>
 
-
-
             </div>
+            </div>
+            </div> <!-- modal body -->
 
             <div class="modal-footer">
               <input type="submit" class="btn essence-btn" value="Place Request">

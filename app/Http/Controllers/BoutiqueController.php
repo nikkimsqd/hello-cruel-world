@@ -21,7 +21,12 @@ use App\MeasurementRequest;
 use App\Categorymeasurement;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
-use App\Notifications\MeasurementRequests;
+use App\Notifications\ContactCustomer;
+use App\Notifications\MtoUpdateForCustomer;
+use App\Notifications\RentApproved;
+use App\Notifications\RentUpdateForCustomer;
+use Sample\PayPalClient;
+use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
 
 class BoutiqueController extends Controller
@@ -338,10 +343,12 @@ class BoutiqueController extends Controller
 	    	$boutique = Boutique::where('userID', $id)->first();
 
 			$rent = Rent::where('rentID', $rentID)->first();
+        	$measurements = json_decode($rent->measurement->data);
+
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 		
-			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'measurements'));
 		}else {
 			return redirect('/shop');
 		}
@@ -349,33 +356,49 @@ class BoutiqueController extends Controller
 
 	public function approveRent(Request $request)
 	{
-		if(Auth()->user()->roles == "boutique") {
-			$rentID = $request->input('rentID');
-			$currentDate = date('Y-m-d');
-			$rent = rent::where('rentID', $rentID)->first();
+		$id = Auth()->user()->id;
+    	$boutique = Boutique::where('userID', $id)->first();
+		$currentDate = date('Y-m-d');
+		$rentID = $request->input('rentID');
+		$customerID = $request->input('customerID');
+		$customer = User::where('id', $customerID)->first();
+		$rent = rent::where('rentID', $rentID)->first();
 
-			$product = Product::where('productID', $rent['productID'])->update([
-				'productStatus' => "Not Available"
-			]);
+		$product = Product::where('productID', $rent['productID'])->update([
+			'productStatus' => "Not Available"
+		]);
 
-			Rent::where('rentID', $rentID)->update([
-				'approved_at' => $currentDate,
-				'status' => "In-Progress"
-			]);
+		Rent::where('rentID', $rentID)->update([
+			'approved_at' => $currentDate,
+			'status' => "In-Progress"
+		]);
+    	
 
-			return redirect('/rents');
-		}else {
-			return redirect('/shop');
-		}
+    	$customer->notify(new RentApproved($rentID, $boutique['boutiqueName']));
+
+		return redirect('/rents/'.$rent['rentID']);
 	}
 
 	public function updateRentInfo(Request $request)
 	{
+		$id = Auth()->user()->id;
+    	$boutique = Boutique::where('userID', $id)->first();
+		$customerID = $request->input('customerID');
+		$customer = User::where('id', $customerID)->first();
 		$rentID = $request->input('rentID');
+		$rent = Rent::where('rentID', $rentID)->first();
+		$newTotal = $rent['total'] + $request->input('amountDeposit');
 	
-		Rent::where('rentID', $rentID)->update([
-			'dateToBeReturned' => $request->input('dateToBeReturned')
+		// dd($request->input('amountPenalty'));
+
+		$rent->update([
+			'dateToBeReturned' => $request->input('dateToBeReturned'),
+			'amountDeposit' => $request->input('amountDeposit'),
+			'amountPenalty' => $request->input('amountPenalty'),
+			'total' => $newTotal
 		]);
+		
+    	$customer->notify(new RentUpdateForCustomer($rentID, $boutique['boutiqueName']));
 
 		return redirect('rents/'.$rentID);
 	}
@@ -406,17 +429,33 @@ class BoutiqueController extends Controller
 			'total' => $rent['total'],
 			'boutiqueID' => $rent['boutiqueID'],
 			'deliveryAddress' => $rent->address['completeAddress'],
-			'status' => 'For Delivery',
-			'rentID' => $rent['rentID']
+			'status' => 'For Pickup',
+			'rentID' => $rent['rentID'],
+			'userID' => $rent['customerID'],
+			'paymentStatus' => $rent['paymentStatus']
 		]);
 		// dd($order['id']);
 
 		$rent->update([
 			'orderID' => $order['id'],
-			'status' => 'On Delivery'
+			'status' => 'For Pickup'
 			]);
 
 		return redirect('rents/'.$rentID);
+	}
+
+	public function rentReturned($rentID)
+	{
+		$rent = Rent::where('rentID', $rentID)->first();
+        $rent->update([
+            'status' => "Completed"
+        ]);
+
+        $order = Order::where('rentID', $rentID)->update([
+        	'status' => "Completed"
+        ]);
+
+        return redirect('/rents/'.$rent['$rentID']);
 	}
 
 	public function getwomens()
@@ -562,40 +601,84 @@ class BoutiqueController extends Controller
 			'status' => 'In-Transaction'
 		]);
 
+		$customer = $mto->customer;
+        $customer->notify(new ContactCustomer($mto['id'], $mto->boutique['boutiqueName']));
+
 		return redirect('/made-to-orders/'.$mto['id']);    	
     }
 
     public function addOfferPrice(Request $request)
     {
     	$mtoID = $request->input('mtoID');
-
+		$mto = Mto::where('id', $mtoID)->first();
+    	$customer = $mto->customer;
+	
     	Mto::where('id', $mtoID)->update([
     		'offerPrice' => $request->input('offerPrice')
     	]);
 
+        $customer->notify(new MtoUpdateForCustomer($mtoID, $mto->boutique['boutiqueName']));
+
     	return redirect('/made-to-orders/'.$mtoID);
     }
 
-    public function requestCustomer(Request $request)
-    {
-    	$id = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $id)->first();
+  //   public function requestCustomer(Request $request)
+  //   {
+  //   	$id = Auth()->user()->id;
+		// $boutique = Boutique::where('userID', $id)->first();
+  //   	$customer = User::where('id', $request->input('customerID'))->first();
 
-    	$customer = User::where('id', $request->input('customerID'))->first();
-    	$mtoID = $request->input('mtoID');
-    	$measurement = $request->input('measurements');
-        $data = json_encode($measurement);
+  //   	$mtoID = $request->input('mtoID');
+  //   	$measurement = $request->input('measurements');
+  //       $data = json_encode($measurement);
 
-    	$measurementrequest = Measurementrequest::create([
-    		'mtoID' => $mtoID,
-    		'mtID' => $data
-    	]);
+  //   	$measurementrequest = Measurementrequest::create([
+  //   		'mtoID' => $mtoID,
+  //   		'mtID' => $data
+  //   	]);
         
-        $customer->notify(new MeasurementRequests($measurementrequest['id'], $boutique['boutiqueName']));
+  //       $customer->notify(new MeasurementRequests($measurementrequest['id'], $boutique['boutiqueName']));
+
+  //   	return redirect('/made-to-orders/'.$mtoID);
+  //   }
+
+    public static function getPaypalOrder($orderId)
+    {
+    	$page_title = "Paypal Order";
+   		$id = Auth()->user()->id;
+		$user = User::find($id);
+    	$boutique = Boutique::where('userID', $id)->first();
+    	$rent = Rent::where('paypalOrderID', $orderId)->first();
+
+		$notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
 
 
-    	// dd($request->input('measurements'));
-    	return redirect('/made-to-orders/'.$mtoID);
+        // 3. Call PayPal to get the transaction details
+        $client = PayPalClient::client();
+        $response = $client->execute(new OrdersGetRequest($orderId));
+        /**
+         *Enable the following line to print complete response as JSON.
+         */
+        // print json_encode($response->result);
+        // print "Status Code: {$response->statusCode}\n";
+        // print "Status: {$response->result->status}\n";
+        // print "Order ID: {$response->result->id}\n";
+        // print "Intent: {$response->result->intent}\n";
+        // print "Links:\n";
+        // foreach($response->result->links as $link)
+        // {
+        //   print "\t{$link->rel}: {$link->href}\tCall Type: {$link->method}\n";
+        // }
+        // 4. Save the transaction in your database. Implement logic to save transaction to your database for future reference.
+        // print "Gross Amount: {$response->result->purchase_units[0]->amount->currency_code} {$response->result->purchase_units[0]->amount->value}\n";
+
+        // To print the whole response body, uncomment the following line
+        // $order = json_encode($response->result, JSON_PRETTY_PRINT);
+        $order = $response->result;
+        // dd($order);
+
+        return view('boutique/paypalOrderDetails', compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'order', 'rent'));
     }
 
 

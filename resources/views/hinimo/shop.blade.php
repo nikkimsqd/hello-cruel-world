@@ -104,19 +104,17 @@
                         </div> -->
 
                         <!-- ##### Single Widget ##### -->
-                        <!-- <div class="widget brands mb-50"> -->
+                        <div class="widget brands mb-50">
                             <!-- Widget Title 2 -->
-                            <!-- <p class="widget-title2 mb-30">Brands</p>
+                            <p class="widget-title2 mb-30">Boutiques</p>
                             <div class="widget-desc">
                                 <ul>
-                                    <li><a href="#">Asos</a></li>
-                                    <li><a href="#">Mango</a></li>
-                                    <li><a href="#">River Island</a></li>
-                                    <li><a href="#">Topshop</a></li>
-                                    <li><a href="#">Zara</a></li>
+                                    @foreach($boutiques as $boutique)
+                                    <li><a href="{{url('/boutique').'/'.$boutique['id']}}">{{$boutique['boutiqueName']}}</a></li>
+                                    @endforeach
                                 </ul>
-                            </div> -->
-                        <!-- </div> -->
+                            </div>
+                        </div>
 
 
                     </div>

@@ -66,6 +66,7 @@
                     <li><span><b>${{ number_format($subtotal, 2) }}</b></span></li>
                 </ul>
                 <div class="checkout-btn mt-100">
+                	<p>Shipping & taxes calculated at checkout</p>
                     <a href="checkout" class="btn essence-btn">proceed to check out</a>
                 </div>
             </div>

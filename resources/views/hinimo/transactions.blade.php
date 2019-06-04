@@ -25,13 +25,13 @@
                 <div class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
 
-                	<div class="notif-area cart-area" style="text-align: right;">
+                	<!-- <div class="notif-area cart-area" style="text-align: right;">
                     	<a href="" class="btn essence-btn" data-toggle="modal" data-target="#notificationsModal">View Notifications here</a>
                     	<br><br><br>
-                	</div>
-                    @if($orders != null)
-                        <table class="table table-hover table-bordered">
-                        	<col width="70"><col width="390"><col width="100"><col width="20">
+                	</div> -->
+                    @if(count($orders) > 0)
+                        <table class="table table-hover ">
+                        	<col width="100"><col width="582"><col width="170"><col width="150">
             				<thead>
                         	<tr>
                         		<th style="text-align: center;">Order ID</th>
@@ -49,39 +49,48 @@
                                 <td>{{$order->rent->product['productName']}}</td>
                                 @endif
                         		<td style="text-align: center;">{{$order['status']}}</td>
-                        		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Transaction</a></td>
+                        		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Order</a></td>
                         	</tr>
                             @endforeach
                         </table>
-                        @endif
-
-                        @if($rents != null)
                         <br><br><br>
+                    @endif
+
+                    @if(count($rents) > 0)
                         <table class="table table-hover table-bordered">
-                            <col width="70"><col width="390"><col width="100"><col width="20">
+                            <col width="100"><col width="582"><col width="170"><col width="150">
                             <thead>
                             <tr>
-                                <th style="text-align: center;">Rent ID</th>
+                                <th style="text-align: center;">RENT ID</th>
                                 <th style="text-align: center;">Product/s</th> <!-- kwaon ang naa sa cart/ or rent transac -->
                                 <th style="text-align: center;">Status</th>
                                 <th></th>
                             </tr>
                             </thead>
                             @foreach($rents as $rent)
+                            @if($rent['status'] == "Pending" || $rent['status'] == "In-Progress")
                             <tr>
                                 <td style="text-align: center;">{{$rent['rentID']}}</td>
                                 <td>{{$rent->product['productName']}}</td>
                                 <td style="text-align: center;">{{$rent['status']}}</td>
                                 <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Transaction</a></td>
                             </tr>
+                            @else
+                            <tr>
+                                <td style="text-align: center;">{{$rent['rentID']}}</td>
+                                <td>{{$rent->product['productName']}}</td>
+                                <td style="text-align: center;">{{$rent['status']}}</td>
+                                <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Order</a></td>
+                            </tr>
+                            @endif
                             @endforeach
                         </table>
-                        @endif
-
-                        @if($mtos != null)
                         <br><br><br>
+                    @endif
+
+                    @if(count($mtos) > 0)
                         <table class="table table-hover table-bordered">
-                            <col width="70"><col width="390"><col width="100"><col width="20">
+                            <col width="100"><col width="582"><col width="170"><col width="150">
                             <thead>
                             <tr>
                                 <th style="text-align: center;">MTO ID</th>
@@ -99,7 +108,7 @@
                             </tr>
                             @endforeach
                         </table>
-                        @endif
+                    @endif
                     </div>
                 </div>
             </div>

@@ -24,40 +24,54 @@
 <div class="checkout_area section-padding-70">
     <div class="container">
         <div class="row">
-            <div class="col-12 col-md-11">
+            <div class="col-12 col-md-12">
                 <div class="checkout_details_area mt-50 clearfix">
                     <div class="row">
-                        <div class="col-md-7 cart-page-heading mb-30">
-                            <h3>Account Details</h3>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-7 cart-page-heading mb-30">
+                                    <h3>Account Details</h3>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <a href=""><u>Edit Details</u></a>
+                                </div>
+                            </div>
+                            <br>
+
+                            <form action="" method="">
+                                <div class="row">
+                                    <div class="col-md-9 mb-3">
+                                        <label for="first_name">Name</label>
+                                        <input type="text" class="form-control" id="first_name" value="{{$user['fname'].' '.$user['lname']}}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-9 mb-3">
+                                        <label for="first_name">Username</label>
+                                        <input type="text" class="form-control" id="first_name" value="{{$user['username']}}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-9 mb-3">
+                                        <label for="first_name">Email</label>
+                                        <input type="text" class="form-control" id="first_name" value="{{$user['email']}}" disabled>
+                                    </div>
+                                </div>
+                                <!-- <input type="submit" name="btn_submit" value=""> -->
+                            </form>
                         </div>
 
                         <div class="col-md-3">
-                            <a href=""><u>Edit Details</u></a>
+                            <div class="order-details-confirmation"> <!-- card opening -->
+
+                                <ul class="order-details-form mb-4">
+                                    <li><a href="" data-toggle="modal" data-target="#notificationsModal">View Notifications</a><span>{{$notificationsCount}}</span></li>
+                                    <li><a href="{{url('/user-transactions')}}">View Transactions</a></li>
+                                </ul>
+                            </div> <!-- card closing -->
                         </div>
                     </div>
-                    <br>
-
-                    <form action="" method="">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="first_name">Name</label>
-                                <input type="text" class="form-control" id="first_name" value="{{$user['fname'].' '.$user['lname']}}" disabled>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="first_name">Username</label>
-                                <input type="text" class="form-control" id="first_name" value="{{$user['username']}}" disabled>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="first_name">Email</label>
-                                <input type="text" class="form-control" id="first_name" value="{{$user['email']}}" disabled>
-                            </div>
-                        </div>
-                        <!-- <input type="submit" name="btn_submit" value=""> -->
-                    </form>
                 </div>
             </div>
         </div> <!-- first row -->
@@ -175,9 +189,6 @@
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
 
-
-
-
 <div class="modal fade" id="editAddress" role="dialog">
     <div class="modal-dialog modal-lg">
     
@@ -222,10 +233,50 @@
     </div> <!-- modal-content -->
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
+
+<div class="modal fade" id="notificationsModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title"><b>Notifications</b></h3>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    @foreach($notifications as $notification)
+                    @if($notification->read_at != null)
+                    <tr>
+                        <td>
+                            <a href="{{ url('user-notifications/'.$notification->id) }}">{{$notification->data['text']}}</a> 
+                        </td>
+                    </tr>
+                    @else
+                    <tr>
+                        <td style="background-color: #e6f2ff;">
+                            <a href="{{ url('user-notifications/'.$notification->id) }}">{{$notification->data['text']}}</a> 
+                        </td>
+                    </tr>
+                    @endif
+                    @endforeach
+                </table>
+            </div>
+
+            <div class="modal-footer">
+              <!-- <input type="submit" class="btn essence-btn" value="Place Request"> -->
+              <input type="" class="btn btn-danger" data-dismiss="modal" value="Close">
+            </div>
+        </div> 
+    </div>
+</div>
+
 </div> <!-- page -->
 
 <style type="text/css">
     .nice-select .list{width: inherit; max-height: 250px; overflow-y: scroll;}
+    span{color: #0315ff;}
+    a{color: #000;}
 </style>
 
 @endsection

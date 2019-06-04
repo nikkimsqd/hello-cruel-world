@@ -26,7 +26,8 @@ use App\MeasurementRequest;
 use App\Categorymeasurement;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
-
+use Sample\PayPalClient;
+use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
 
 class CustomerController extends Controller
@@ -34,10 +35,10 @@ class CustomerController extends Controller
 
     public function getNotifications(&$notifications, &$notificationsCount)
     {
-            $userID = Auth()->user()->id;
-            $user = User::find($userID);
-            $notifications = $user->notifications;
-            $notificationsCount = $user->unreadNotifications->count();
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
     }
 
     public function welcome()
@@ -206,7 +207,9 @@ class CustomerController extends Controller
 
     public function checkout()
     {
-    	return view('hinimo/checkout');
+        $page_title = "checkout";
+
+    	return view('hinimo/checkout', compact('page_title'));
     }
 
     public function useraccount()
@@ -214,19 +217,19 @@ class CustomerController extends Controller
         $page_title = "My Account";
         $id = Auth()->user()->id;
         $user = User::find($id);
-
         $categories = Category::all();
         $products = Product::all();
         $cartCount = Cart::where('userID', $id)->where('status',"Pending")->count();
         $carts = Cart::where('userID', $id)->where('status', "Pending")->get();
         $addresses = Address::where('userID', $id)->get();
         $boutiques = Boutique::all();
-
         $cities = City::where('provCode', '0722')->orderBy('citymunDesc', 'ASC')->get();
         $barangays = Barangay::all();
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
 
-        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'cities', 'barangays', 'addresses', 'boutiques', 'page_title'));
-
+        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'cities', 'barangays', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
     }
 
     public function getBrgy($citymunCode)
@@ -266,7 +269,6 @@ class CustomerController extends Controller
         ]);
 
         return redirect('/user-account#addresses');
-
     }
 
     public function sortBy($condition)
@@ -284,7 +286,6 @@ class CustomerController extends Controller
         }
 
         return redirect('/shop');
-
     }
 
     public function getProducts($condition)
@@ -310,13 +311,15 @@ class CustomerController extends Controller
         return response()->json([
             'products' => $productsArray
         ]);
-
     }
 
     public function requestToRent(Request $request)
     {
         $id = Auth()->user()->id;
         $user = User::find($id);
+
+        $measurement = $request->input('measurement');
+        $mName = json_encode($measurement);
 
         $rent = Rent::create([
             'boutiqueID' => $request->input('boutiqueID'),
@@ -330,7 +333,18 @@ class CustomerController extends Controller
             'subtotal' => $request->input('subtotal'),
             'deliveryFee' => $request->input('deliveryFee'),
             'total' => $request->input('total'),
-            // 'deliveryFee' => $request->input('')
+            'paymentStatus' => "Not Yet Paid"
+        ]);
+
+        $measurement = Measurement::create([
+            'userID' => $id,
+            'type' => 'rent',
+            'typeID' => $rent['rentID'],
+            'data' => $mName
+        ]);
+
+        Rent::where('rentID', $rent['rentID'])->update([
+            'measurementID' => $measurement['id']
         ]);
 
         $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
@@ -339,6 +353,16 @@ class CustomerController extends Controller
         $boutiqueseller->notify(new RentRequest($rent));
 
         return redirect('/shop');
+    }
+
+    public function receiveRent($rentID)
+    {
+        $rent = Rent::where('rentID', $rentID)->first();
+        $rent->update([
+            'status' => "On Rent"
+        ]);
+
+        return redirect('/view-rent/'.$rent['rentID']);
     }
 
     public function showBiddings()
@@ -438,13 +462,23 @@ class CustomerController extends Controller
         foreach($notifications as $notification) {
             if($notification->id == $notificationID) {
 
-                if($notification->type == 'App\Notifications\MeasurementRequests'){
+                if($notification->type == 'App\Notifications\RentApproved'){
                     $notif = $notification;
-                    // $notification->markAsRead();
+                    $notification->markAsRead();
 
-                    $measurementrequest = MeasurementRequest::where('id', $notif->data['measurementrequest'])->first();
+                    return redirect('/view-rent/'.$notification->data['rentID']);
+                    
+                }elseif($notification->type == 'App\Notifications\RentUpdateForCustomer'){
+                    $notif = $notification;
+                    $notification->markAsRead();
 
-                    return view('hinimo/madetoorder', compact('categories', 'products', 'carts', 'cartCount', 'userID', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'measurementrequest', 'notif'));
+                    return redirect('/view-rent/'.$notification->data['rentID'].'#rent-details');
+
+                }elseif($notification->type == 'App\Notifications\MtoUpdateForCustomer'){
+                    $notif = $notification;
+                    $notification->markAsRead();
+
+                    return redirect('/view-mto/'.$notification->data['mtoID']);
                 }
             }
         }
@@ -483,9 +517,9 @@ class CustomerController extends Controller
 
         $measurement = $request->input('measurement');
         $mCategories = $request->input('mCategory');
+        // dd($measurement);
 
         $mName = json_encode($measurement);
-        // dd($measurement);
        
         $mto = Mto::create([
             'userID' => $userID,
@@ -494,7 +528,8 @@ class CustomerController extends Controller
             'dateOfUse' => $request->input('dateOfUse'),
             'height' => $request->input('height'),
             'categoryID' => $request->input('category'),
-            'status' => "Pending"
+            'status' => "Pending",
+            'paymentStatus' => 'Not Yet Paid'
             ]);
 
         $measurement = Measurement::create([
@@ -552,21 +587,8 @@ class CustomerController extends Controller
         $orders = Order::where('userID', $userID)->get();
         $rents = Rent::where('customerID', $userID)->get();
         $mtos = Mto::where('userID', $userID)->get();
-
-        foreach ($rents as $rent) {
-            // dd($rent['rentID']);
-            $order = Order::where('rentID', $rent['rentID'])->get();
-            if($order != null){
-                // dd($rent);
-            }else{
-                // dD("asd");
-            }
-        }
-
-        // dd($orders);
         
         $cart = Cart::where('userID', $userID)->get();
-
 
         return view('hinimo/transactions', compact('carts', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount'));
     }
@@ -616,8 +638,49 @@ class CustomerController extends Controller
         $notificationsCount = $user->unreadNotifications->count();
 
         $mto = Mto::find($mtoID);
+        $measurement = json_decode($mto->measurement->data);
+        // dd($measurement);
 
         return view('hinimo/viewMto', compact('carts', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto'));
+    }
+
+    public function paypalpaypalTransactionComplete(Request $request)
+    {
+        $rent = Rent::where('rentID', $request->rentID)->first();
+
+        // print_r($request->orderID);
+        $rent->update([
+            'paymentStatus' => 'Paid',
+            'paypalOrderID' => $request->orderID
+        ]);
+
+        return redirect('/view-rent/'.$rent['rentID']);
+    }
+
+    public static function getPaypalOrder($orderId)
+    {
+
+        // 3. Call PayPal to get the transaction details
+        $client = PayPalClient::client();
+        $response = $client->execute(new OrdersGetRequest($orderId));
+        /**
+         *Enable the following line to print complete response as JSON.
+         */
+        print json_encode($response->result);
+        print "Status Code: {$response->statusCode}\n";
+        print "Status: {$response->result->status}\n";
+        print "Order ID: {$response->result->id}\n";
+        print "Intent: {$response->result->intent}\n";
+        print "Links:\n";
+        foreach($response->result->links as $link)
+        {
+          print "\t{$link->rel}: {$link->href}\tCall Type: {$link->method}\n";
+        }
+        // 4. Save the transaction in your database. Implement logic to save transaction to your database for future reference.
+        print "Gross Amount: {$response->result->purchase_units[0]->amount->currency_code} {$response->result->purchase_units[0]->amount->value}\n";
+
+        // To print the whole response body, uncomment the following line
+        print_r(json_encode($response->result, JSON_PRETTY_PRINT));
     }
 
 

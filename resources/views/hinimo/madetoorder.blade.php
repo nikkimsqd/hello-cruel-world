@@ -153,7 +153,7 @@ $('#category-select').on('change', function(){
         success:function(data){
             data.measurements.forEach(function(measurement){
                 $('#measurement-input').append('<input type="text" name="mCategory[]" class="form-control" value="'+measurement.id+'" hidden>');
-                $('#measurement-input').append('<input type="text" name="measurement[]" class="form-control" placeholder="'+measurement.mName+'"><br>');
+                $('#measurement-input').append('<input type="text" name="measurement['+measurement.mName +']" class="form-control" placeholder="'+measurement.mName+'"><br>');
             });
         }
     });

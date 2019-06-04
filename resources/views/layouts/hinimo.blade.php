@@ -250,6 +250,8 @@
     <script src="{{ asset('essence/js/classy-nav.min.js') }}"></script>
     <!-- Active js -->
     <script src="{{ asset('essence/js/active.js') }}"></script>
+    <!-- Paypal Script -->
+    <!-- <script src="https://www.paypal.com/sdk/js?client-id=SB_CLIENT_ID"></script> -->
 
     @yield('scripts')
 

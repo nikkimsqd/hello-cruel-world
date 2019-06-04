@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class RentRequest extends Notification
+class RentRequest extends Notification //FOR BOUTIQUE
 {
     use Queueable;
 

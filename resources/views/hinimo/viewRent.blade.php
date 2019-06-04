@@ -18,16 +18,61 @@
 <!-- ##### Breadcumb Area End ##### -->
 
 <div class="single-blog-wrapper">
-
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-11">
-                <div class="regular-page-content-wrapper section-padding-80">
+                <div id="rent-details" class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
+
+                        @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent['status'] == "Completed")
+                        <div class="order-details-confirmation"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5>Your Order Details</h5>
+                            </div>
+
+                            <ul class="order-details-form mb-4">
+                                <li><span>Order ID</span> <span>{{$rent->order['id']}}</span></li>
+                                <li><span>Product/s</span>
+                                    @if($rent->order['cartID'] != null)
+                                    <span>$rent->order->cart['id']</span>
+                                    @elseif($rent->order['rentID'] != null)
+                                    <span>{{$rent->product['productName']}}</span>
+                                    @endif
+                                </li>
+                                <li><span>Date to be returned</span><span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span>
+                                </li>
+                                <li><span>Status</span> 
+                                    @if($rent['status'] == "On Rent")
+                                    <span style="color: #0315ff;">{{$rent['status']}}</span></li>
+                                    @else
+                                    <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
+                                    @endif
+
+                                <li><span></span><span>Payment Info</span><span></span></li>
+                                <li><span>Subtotal</span> <span>{{$rent->order['subtotal']}}</span></li>
+                                <li><span>Deposit Amount</span> <span>{{$rent['amountDeposit']}}</span></li>
+                                <li><span>Delivery Fee</span> <span>{{$rent->order['deliveryfee']}}</span></li>
+                                <li><span>Total</span> <span>{{$rent->order['total']}}</span></li>
+                                <li><span>Payment Status</span>
+                                    <span style="color: red; text-align: right;">{{$rent['paymentStatus']}}</span>
+                                </li>
+                            </ul>
+                            @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                            </div>
+                            @elseif($rent->order['status'] == "On Delivery")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <a href="{{url('receiveRent/'.$rent['rentID'])}}" class="btn essence-btn">Item Recieved</a>
+                            </div>
+                            @elseif($rent['status'] == "On Rent")
+                            @endif
+                        </div> <!-- card closing --><br><br>
+                        @endif
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Your Order</h5>
+                                <h5>Your Rent Details</h5>
                             </div>
 
                             <ul class="order-details-form mb-4">
@@ -43,24 +88,95 @@
                                     <span><i>(Date not yet set by seller)</i></span>
                                     @endif
                                 </li>
-                                <li><span>Status</span> <span>{{$rent['status']}}</span></li>
-
-
-                                <li><span>Subtotal</span> <span>{{$rent['subtotal']}}</span></li>
-                                <li><span>Deliver Fee</span> <span>{{$rent['deliveryFee']}}</span></li>
-                                <li><span>Total</span> <span>{{$rent['total']}}</span></li>
+                                <li><span>Required Deposit Amount</span> 
+                                    @if($rent['amountDeposit'] != null)
+                                    <span>{{$rent['amountDeposit']}}</span>
+                                    @else
+                                    <span><i>(Amount not yet set by seller)</i></span>
+                                    @endif
+                                </li>
+                                <li><span>Penalty Amount</span> 
+                                    @if($rent['amountPenalty'] != null)
+                                    <span>{{$rent['amountPenalty']}}</span>
+                                    @else
+                                    <span><i>(Amount not yet set by seller)</i></span>
+                                    @endif
+                                </li>
+                                <li><span>Status</span> <span style="color: #0315ff;">{{$rent['status']}}</span></li>
+                                @if($rent['status'] == "In-Progress")
+                                    <li><span></span><span>Payment Info</span><span></span></li>
+                                    <li><span>Subtotal</span> <span>{{$rent['subtotal']}}</span></li>
+                                    @if($rent['amountDeposit'] != null)
+                                    <li><span>Deposit Amount</span> <span>{{$rent['amountDeposit']}}</span></li>
+                                    @endif
+                                    <li><span>Delivery Fee</span> <span>{{$rent['deliveryFee']}}</span></li>
+                                    <li><span>Total</span> <span>{{$rent['total']}}</span></li>
+                                    <li><span>Payment Status</span> 
+                                        @if($rent['paymentStatus'] == "Not Yet Paid")
+                                        <span style="color: red; text-align: right;">{{$rent['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
+                                        @else
+                                        <span>{{$rent['paymentStatus']}}</span>
+                                        @endif
+                                    </li>
+                                @endif
                             </ul>
-                        </div> <!-- card closing -->
+                        </div> <!-- card closing --> <br>
 
+                        
+
+                        @if($rent['amountPenalty'] != null && $rent['paymentStatus'] == "Not Yet Paid")
+                        <div class="col-md-3" id="paypal-button-container">
+                            <input type="text" id="rentID" value="{{$rent['rentID']}}" hidden>
+                            Pay here<br>
+                        </div>
+                        @endif
                     </div>
                 </div>
-            </div>b
+            </div>
         </div>
     </div>
 </div>
 
 <!-- </div> -->
+@endsection
 
+@section('scripts')
 
+<script src="https://www.paypal.com/sdk/js?client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
+<script>
+    
+    var rentID = document.getElementById('rentID').value;
+    // console.log(rentID);
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+          // Set up the transaction
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '0.01'
+              }
+            }]
+          });
+        },
+        onApprove: function(data, actions) {
+          // Capture the funds from the transaction
+          return actions.order.capture().then(function(details) {
+            // Show a success message to your buyer
+            // alert('Transaction completed by ' + details.payer.name.given_name);
+            // alert('Transaction completed by ' + details.payer);
+            return fetch('/hinimo/public/paypal-transaction-complete', {
+
+              method: 'post',
+              headers: {
+                'content-type': 'application/json'
+              },
+              body: JSON.stringify({
+                orderID: data.orderID,
+                rentID: rentID
+              })
+            });
+          });
+        }
+    }).render('#paypal-button-container');</script>
 
 @endsection

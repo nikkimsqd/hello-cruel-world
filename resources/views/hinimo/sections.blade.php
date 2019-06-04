@@ -40,15 +40,15 @@
 
 @section('transactions')
 <!-- User Login Info -->
-    <div class="user-login-info">
-         <a href="{{url('/user-transactions')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"><span>{{$notificationsCount}}</span></a>
-    </div>
+   <!--  <div class="user-login-info">
+         <a href="{{url('/user-transactions')}}"><img src="{{ asset('essence/img/core-img/view.svg') }}"><span></span></a>
+    </div> -->
 @endsection
 
 @section('userinfo')
 <!-- User Login Info -->
     <div class="user-login-info">
-         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user.svg') }}"></a>
+         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user.svg') }}"><span>{{$notificationsCount}}</span></a>
     </div>
 @endsection
 
@@ -111,16 +111,16 @@
                         <!-- Cart Item Desc -->
                         <div class="cart-item-desc">
                           <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">{{ $cart->product->owner['boutiqueName'] }}</span>
-                            <h6>{{ $cart->product['productName'] }}</h6>
+                            <span class="badge">bname here</span>
+                            <h6>pname here</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
-                            <p class="price">₱{{ number_format($cart->product['productPrice']) }}</p>
+                            <p class="price">₱ price here</p>
                         </div>
                     </a>
                 </div>
                 <?php
-                	$subtotal += $cart->product['productPrice'];
+                	// $subtotal += $cart->product['productPrice'];
                 ?>
                 @endforeach
             </div>
