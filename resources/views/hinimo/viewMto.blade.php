@@ -20,8 +20,8 @@
 <div class="single-blog-wrapper">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-12">
-                <div class="regular-page-content-wrapper section-padding-80">
+            <div class="col-md-11">
+                <div id="mto-details" class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
 
                         <div class="notif-area cart-area" style="text-align: right;">
@@ -29,7 +29,44 @@
                             <br><br><br>
                         </div>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
+                                @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed")
+                                <div class="order-details-confirmation"> <!-- card opening -->
+                                    <div class="cart-page-heading">
+                                        <h5>Your Order Details</h5>
+                                    </div>
+
+                                    <ul class="order-details-form mb-4">
+                                        <li><span>Order ID</span> <span>{{$mto->order['id']}}</span></li>
+                                        <li><span>Status</span> 
+                                            @if($mto['status'] == "On Rent")
+                                            <span style="color: #0315ff;">{{$mto['status']}}</span></li>
+                                            @else
+                                            <span style="color: #0315ff;">{{$mto->order['status']}}</span></li>
+                                            @endif
+
+                                        <li><span></span><span>Payment Info</span><span></span></li>
+                                        <li><span>Subtotal</span> <span>{{$mto->order['subtotal']}}</span></li>
+                                        <li><span>Delivery Fee</span> <span>{{$mto->order['deliveryfee']}}</span></li>
+                                        <li><span>Total</span> <span>{{$mto->order['total']}}</span></li>
+                                        <li><span>Payment Status</span>
+                                            <span style="color: red; text-align: right;">{{$mto['paymentStatus']}}</span>
+                                        </li>
+                                    </ul>
+                                    @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery")
+                                    <div class="notif-area cart-area" style="text-align: right;">
+                                        <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                                    </div>
+                                    @elseif($mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered")
+                                    <div class="notif-area cart-area" style="text-align: right;">
+                                        <a href="{{url('receiveRent/'.$mto['id'])}}" class="btn essence-btn">Item Recieved</a>
+                                    </div>
+                                    <!-- elseif($mto['status'] == "On Rent") -->
+                                    @endif
+                                </div> <!-- card closing --><br><br>
+                                @endif
+
+
                                 <div class="order-details-confirmation">
                                     <div class="cart-page-heading">
                                         <h5>Your Made to Order</h5>
@@ -51,57 +88,88 @@
                                             </span></li>
 
                                         <li><span>Instructions/Notes</span> <span>{{$mto['notes']}}</span></li>
-                                        @if($mto['finalPrice'] != null)
-                                        <li><span>Price</span> <span>{{$mto['finalPrice']}}</span></li>
+                                        @if($mto['deliveryAddress'] != null)
+                                            <li><span>Delivery Address</span> <span>{{$mto['deliveryAddress']}}</span></li>
                                         @endif
+                                        @if($mto['finalPrice'] != null)
+                                            <li><span>Price</span> <span>{{$mto['finalPrice']}}</span></li>
+                                        @endif
+                                        <li><span>Status</span> <span style="color: #0315ff;">{{$mto['status']}}</span></li>
+
+                                        <li><span></span><span>Payment Info</span><span></span></li>
+                                        <li><span>Subtotal</span> <span>{{$mto['subtotal']}}</span></li>
+                                        <li><span>Delivery Fee</span> <span>{{$mto['deliveryFee']}}</span></li>
+                                        <li><span>Total</span> <span>{{$mto['total']}}</span></li>
+                                        <li><span>Payment Status</span>
+                                            <span style="color: red; text-align: right;">{{$mto['paymentStatus']}}</span>
+                                        </li>
                                     </ul>
                                 </div><br><br>
 
                                  <!------------- SA UBOS NANI --------------->
                                 @if($mto['offerPrice'] != null && $mto['finalPrice'] == null)
-                                <div class="row">
+                                <div id="offer-price" class="row">
                                     <div class="col-md-6">
                                         <h5 for="first_name">Boutique's offer price:</h5>
                                     </div>
                                     <div class="col-md-3">
+                                        <form action="{{url('acceptOffer')}}" method="post">
+                                            {{csrf_field()}}
                                         <h5 for="first_name">{{$mto['offerPrice']}}</h5>
+
+                                        <input type="text" name="offerPrice" value="{{$mto['offerPrice']}}" hidden>
+                                        <input type="text" name="boutiqueID" value="{{$mto->boutique['id']}}" hidden>
+                                        <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="" class="btn essence-btn">Accept offer</a>
+                                        <input type="submit" name="btn_submit" class="btn essence-btn" value="Accept offer">
+                                    </form>
+                                        <!-- <a href="" class="btn essence-btn">Accept offer</a> -->
                                     </div>
                                 </div>
                                 @endif
-                                @if($mto['status'] == "In-Progress")
-                                <!-- insert code here if naa nay address & payment si customer -->
-                                    <h5>Add address for delivery:</h5>
+
+                                @if($mto['finalPrice'] != null && $mto['deliveryAddress'] == null)
+                                    <h5>Add address for delivery:</h5>(address is not working as of the moment kay wala pa ang api)
                                     <div class="row">
                                         <div class="col-md-7">
-                                            <input type="text" name="address" class="form-control">
+                                            <form action="{{url('/submitAddress')}}" method="post">
+                                                {{csrf_field()}}
+                                            <input type="text" name="address" class="form-control" required>
+                                            <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
                                         </div>
                                         <div class="col-md-4">
                                             <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit">
+                                        </form>
                                         </div>
                                     </div><br><br>
+                                @endif
+
+
+
+                                @if($mto['status'] == "In-Progress")
+                                @if($mto['paymentStatus'] == "Not Yet Paid" && $mto['total'] != null)
                                     <h5>Pay here:</h5>
-                                    @if($mto['paymentStatus'] == "Not Yet Paid")
                                     <div class="col-md-3" id="paypal-button-container">
                                         <input type="text" id="mtoID" value="{{$mto['id']}}" hidden>
                                     </div>
-                                    @endif
                                 @endif
+                                @endif
+
+                                
                             </div>
 
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <div class="order-details-confirmation"> 
                                     <div class="cart-page-heading">
                                         <h5>Chat</h5>
                                     </div>
 
                                     <ul class="order-details-form mb-4">
-                                        <!-- <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li> -->
+
                                     </ul>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
 
                     </div>
@@ -158,7 +226,6 @@
           return actions.order.capture().then(function(details) {
             // Show a success message to your buyer
             // alert('Transaction completed by ' + details.payer.name.given_name);
-            alert('Transaction completed by ' + details.payer);
             return fetch('/hinimo/public/paypal-transaction-complete', {
 
               method: 'post',

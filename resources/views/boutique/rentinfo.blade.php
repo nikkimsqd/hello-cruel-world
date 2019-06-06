@@ -142,7 +142,6 @@
               @foreach( $rent->product->productFile as $image)
               @if($counter == 1)
                 <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
-              @else
               @endif
               <?php $counter++; ?>
               @endforeach

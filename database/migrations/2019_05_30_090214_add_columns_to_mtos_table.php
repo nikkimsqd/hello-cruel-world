@@ -15,7 +15,7 @@ class AddColumnsToMtosTable extends Migration
     {
         Schema::table('mtos', function (Blueprint $table) {
             $table->string('paymentStatus');
-            $table->string('paypalOrderID')->nullablle();
+            $table->string('paypalOrderID')->nullable();
         });
     }
 

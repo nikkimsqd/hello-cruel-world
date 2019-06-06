@@ -213,11 +213,11 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/hinimo/public/products/"><i class="fa fa-circle-o"></i> All Products</a></li>
-        <li><a href="/hinimo/public/products/womens"><i class="fa fa-circle-o"></i> Womens</a></li>
-        <li><a href="/hinimo/public/products/mens"><i class="fa fa-circle-o"></i> Mens</a></li>
-        <li><a href="/hinimo/public/products/embellishments"><i class="fa fa-circle-o"></i> Embellishments</a></li>
-        <li><a href="/hinimo/public/products/customizable"><i class="fa fa-circle-o"></i> Customizable Items</a></li>
+        <li><a href="{{url('products')}}'"><i class="fa fa-circle-o"></i> All Products</a></li>
+        <!-- <li><a href="/hinimo/public/products/womens"><i class="fa fa-circle-o"></i> Womens</a></li> -->
+        <!-- <li><a href="/hinimo/public/products/mens"><i class="fa fa-circle-o"></i> Mens</a></li> -->
+        <!-- <li><a href="/hinimo/public/products/embellishments"><i class="fa fa-circle-o"></i> Embellishments</a></li> -->
+        <li><a href="{{url('products/customizable')}}"><i class="fa fa-circle-o"></i> Customizable Items</a></li>
       </ul>
     </li>
 
@@ -230,8 +230,10 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/hinimo/public/made-to-orders"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-        <li><a href="/hinimo/public/rents"><i class="fa fa-circle-o"></i> Rent</a></li>
+        <li><a href="{{url('orders')}}"><i class="fa fa-circle-o"></i> Orders</a></li>
+        <li><a href="{{url('rents')}}"><i class="fa fa-circle-o"></i> Rents</a></li>
+        <li><a href="{{url('made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
+        <li><a href=""><i class="fa fa-circle-o"></i> Biddings</a></li>
       </ul>
     </li>
 
@@ -244,8 +246,8 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/hinimo/public/categories"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li><a href="/hinimo/public/tags"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <li><a href="{{url('categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
+        <li><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
       </ul>
     </li>
 

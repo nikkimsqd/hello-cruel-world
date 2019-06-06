@@ -41,16 +41,22 @@
                         	</tr>
                         	</thead>
                             @foreach($orders as $order)
+                            @if($order['cartID'] != null)
                         	<tr>
                         		<td style="text-align: center;">{{$order['id']}}</td>
                                 @if($order['cartID'] != null)
-                        		<td>$order->cart['id']</td>
+                                <td>
+                                @foreach($order->cart->items as $item)
+                        		  {{$item->product['productName']}} 
+                                @endforeach
+                                </td>
                                 @elseif($order['rentID'] != null)
                                 <td>{{$order->rent->product['productName']}}</td>
                                 @endif
                         		<td style="text-align: center;">{{$order['status']}}</td>
                         		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Order</a></td>
                         	</tr>
+                            @endif
                             @endforeach
                         </table>
                         <br><br><br>

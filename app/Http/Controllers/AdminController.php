@@ -316,7 +316,7 @@ class AdminController extends Controller
 
     public function measurements()
     {
-    	$page_title = "Locations";
+    	$page_title = "Measurements";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$adminNotifications = $admin->notifications;
@@ -327,9 +327,21 @@ class AdminController extends Controller
 
 		foreach ($measurements as $measurement) {
 			$category = $measurement->getCategory['categoryName'];
-			$categoryArray[$category][] = $measurement['mName'];
+			$categoryGender = $measurement->getCategory['gender'];
+			$categoryArray[$categoryGender][$category][$measurement['id']] = $measurement['mName'];
 		}
-
+		foreach($categoryArray as $categoriesName => $cats){
+			if($categoriesName == "Womens"){
+				foreach($cats as $cat => $measures){
+					// foreach($measurements as $measurement){
+						// dd($measures);
+					// }	
+				}
+			}
+						// dd($categoryArray);
+			
+		}
+		// dd($categoryArray);
 		return view('admin/measurements', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount'	, 'categories', 'categoryArray'));
     }
 

@@ -35,9 +35,9 @@
         <strong>{{$order->payer->name->given_name}}</strong><br>
         {{$order->payer->address->country_code}}<br>
         San Francisco, CA 94107<br>
-        @if($order->payer->phone->phone_number->national_number != null)
-        Phone: {{$order->payer->phone->phone_number->national_number}}<br>
-        @endif
+        <!-- if($order->payer->phone)
+        Phone: $order->payer->phone->phone_number->national_number<br>
+        endif -->
         Email: {{$order->payer->email_address}}
       </address>
     </div>
@@ -56,6 +56,7 @@
   <!-- Table row -->
   <div class="row">
     <div class="col-xs-12 table-responsive">
+      @if($rent != null)
       <table class="table table-striped">
         <thead>
         <tr>
@@ -63,7 +64,7 @@
           <th>Product</th>
           <th>Product ID #</th>
           <th>Description</th>
-          <th>Subtotal</th>
+          <th>Price</th>
         </tr>
         </thead>
         <tbody>
@@ -76,6 +77,27 @@
         </tr>
         </tbody>
       </table>
+      @endif
+
+      @if($mto != null)
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>MTO ID #</th>
+          <th>Notes</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>{{$mto['id']}}</td>
+          <td>{{$mto['notes']}}</td>
+          <td>{{$mto['finalPrice']}}</td>
+        </tr>
+        </tbody>
+      </table>
+      @endif
+
     </div>
     <!-- /.col -->
   </div>
@@ -97,6 +119,7 @@
       <!-- <p class="lead">Amount Due 2/22/2014</p> -->
 
       <div class="table-responsive">
+      @if($rent != null)
         <table class="table">
           <tr>
             <th style="width:50%">Subtotal:</th>
@@ -111,6 +134,24 @@
             <td>{{$rent['total']}}</td>
           </tr>
         </table>
+      @endif
+
+      @if($mto != null)
+        <table class="table">
+          <tr>
+            <th style="width:50%">Subtotal:</th>
+            <td>{{$mto['subtotal']}}</td>
+          </tr>
+          <tr>
+            <th>Shipping:</th>
+            <td>{{$mto['deliveryFee']}}</td>
+          </tr>
+          <tr>
+            <th>Total:</th>
+            <td>{{$mto['total']}}</td>
+          </tr>
+        </table>
+      @endif
       </div>
     </div>
     <!-- /.col -->
@@ -124,7 +165,11 @@
       <button type="button" class="btn btn-primary pull-right">
         <i class="fa fa-download"></i> Generate PDF
       </button>
+      @if($rent != null)
       <a href="{{url('rents/'.$rent['rentID'])}}" class="btn btn-default pull-right" style="margin-right: 5px;"><i class="fa fa-arrow-left"></i> Back</a>
+      @else
+      <a href="{{url('made-to-orders/'.$mto['id'])}}" class="btn btn-default pull-right" style="margin-right: 5px;"><i class="fa fa-arrow-left"></i> Back</a>
+      @endif
       <!-- <button type="button" class="btn btn-default pull-right" style="margin-right: 5px;"> Back -->
       </button>
     </div>

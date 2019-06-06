@@ -48,7 +48,11 @@
 @section('userinfo')
 <!-- User Login Info -->
     <div class="user-login-info">
-         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user.svg') }}"><span>{{$notificationsCount}}</span></a>
+         <a href="{{url('/user-account')}}"><img src="{{ asset('essence/img/core-img/user.svg') }}">
+            @if($notificationsCount > 0)
+                <span>{{$notificationsCount}}</span>
+            @endif
+        </a>
     </div>
 @endsection
 
@@ -59,7 +63,6 @@
         <a href="#" id="essenceCartBtn"><img src="{{ asset('essence/img/core-img/bag.svg') }}" alt="">
         @if($cartCount > 0)
     		<span>{{$cartCount}}</span>
-        @else
         @endif
         </a>
     </div>
@@ -80,6 +83,7 @@
 
 
 @section('cart')
+<!-- if($userID != null) -->
 <!-- ##### Right Side Cart Area ##### -->
     <div class="cart-bg-overlay"></div>
 
@@ -103,26 +107,30 @@
                 <?php
                 	$subtotal = 0;
                 ?>
-                @foreach($carts as $cart)
+                @if($cart != null)
+                @foreach($cart->items as $item)
                 <div class="single-cart-item">
                     <a href="#" class="product-image">
-                        <img src="{{ asset('/uploads').$cart->productFile['filename'] }}" class="cart-thumb" alt="">
+                        @foreach($item->product->productFile as $file)
+                        <img src="{{ asset('/uploads').$file['filename'] }}" class="cart-thumb" alt="">
+                        @endforeach
 
                         <!-- Cart Item Desc -->
                         <div class="cart-item-desc">
                           <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">bname here</span>
-                            <h6>pname here</h6>
+                            <span class="badge">{{$item->product->owner['boutiqueName']}}</span>
+                            <h6>{{$item->product['productName']}}</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
-                            <p class="price">₱ price here</p>
+                            <p class="price">₱ {{$item->product['productPrice']}}</p>
                         </div>
                     </a>
                 </div>
                 <?php
-                	// $subtotal += $cart->product['productPrice'];
+                	$subtotal += $item->product['productPrice'];
                 ?>
                 @endforeach
+                @endif
             </div>
 
             <!-- Cart Summary -->
@@ -136,12 +144,17 @@
                     <!-- <li><span>total:</span> <span>$232.00</span></li> -->
                 </ul>
                 <div class="checkout-btn mt-100">
-                    <a href="/hinimo/public/cart" class="btn essence-btn">open cart</a>
+                    <a href="{{url('checkout')}}" class="btn essence-btn">proceed to checkout</a>
                 </div>
             </div>
         </div>
     </div>
 <!-- ##### Right Side Cart End ##### -->
+<!-- endif -->
+
+<style type="text/css">
+    .price{bottom: 20px; position: absolute;}
+</style>
 
 
 @endsection

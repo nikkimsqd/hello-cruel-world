@@ -24,7 +24,7 @@
                 <div id="rent-details" class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
 
-                        @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent['status'] == "Completed")
+                        @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
                                 <h5>Your Order Details</h5>
@@ -42,8 +42,8 @@
                                 <li><span>Date to be returned</span><span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span>
                                 </li>
                                 <li><span>Status</span> 
-                                    @if($rent['status'] == "On Rent")
-                                    <span style="color: #0315ff;">{{$rent['status']}}</span></li>
+                                    @if($rent->order['status'] == "On Rent")
+                                    <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
                                     @else
                                     <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
                                     @endif
@@ -61,11 +61,14 @@
                             <div class="notif-area cart-area" style="text-align: right;">
                                 <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
                             </div>
-                            @elseif($rent->order['status'] == "On Delivery")
+                            @elseif($rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
                                 <a href="{{url('receiveRent/'.$rent['rentID'])}}" class="btn essence-btn">Item Recieved</a>
                             </div>
-                            @elseif($rent['status'] == "On Rent")
+                            @elseif($rent->order['status'] == "On Rent")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <input type="submit" class="btn essence-btn" hidden value="Item Recieved">
+                            </div>
                             @endif
                         </div> <!-- card closing --><br><br>
                         @endif
@@ -103,21 +106,27 @@
                                     @endif
                                 </li>
                                 <li><span>Status</span> <span style="color: #0315ff;">{{$rent['status']}}</span></li>
-                                @if($rent['status'] == "In-Progress")
+                                @if($rent['status'] == "Pending" || $rent['status'] == "In-Progress")
                                     <li><span></span><span>Payment Info</span><span></span></li>
                                     <li><span>Subtotal</span> <span>{{$rent['subtotal']}}</span></li>
                                     @if($rent['amountDeposit'] != null)
                                     <li><span>Deposit Amount</span> <span>{{$rent['amountDeposit']}}</span></li>
+                                    @else
+                                    <li><span>Deposit Amount</span> <span>(Deposit amount not yet set by seller)</span></li>
                                     @endif
                                     <li><span>Delivery Fee</span> <span>{{$rent['deliveryFee']}}</span></li>
-                                    <li><span>Total</span> <span>{{$rent['total']}}</span></li>
-                                    <li><span>Payment Status</span> 
-                                        @if($rent['paymentStatus'] == "Not Yet Paid")
-                                        <span style="color: red; text-align: right;">{{$rent['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
-                                        @else
-                                        <span>{{$rent['paymentStatus']}}</span>
-                                        @endif
-                                    </li>
+                                    @if($rent['status'] == "Pending")
+                                        <li><span>Total</span> <span>---</span></li>
+                                    @elseif($rent['status'] == "In-Progress")
+                                        <li><span>Total</span> <span>{{$rent['total']}}</span></li>
+                                        <li><span>Payment Status</span> 
+                                            @if($rent['paymentStatus'] == "Not Yet Paid")
+                                            <span style="color: red; text-align: right;">{{$rent['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
+                                            @else
+                                            <span>{{$rent['paymentStatus']}}</span>
+                                            @endif
+                                        </li>
+                                    @endif
                                 @endif
                             </ul>
                         </div> <!-- card closing --> <br>
@@ -125,9 +134,9 @@
                         
 
                         @if($rent['amountPenalty'] != null && $rent['paymentStatus'] == "Not Yet Paid")
+                        <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="rentID" value="{{$rent['rentID']}}" hidden>
-                            Pay here<br>
                         </div>
                         @endif
                     </div>
@@ -177,6 +186,7 @@
             });
           });
         }
-    }).render('#paypal-button-container');</script>
+    }).render('#paypal-button-container');
+</script>
 
 @endsection

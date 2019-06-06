@@ -10,7 +10,7 @@ use App\User;
 use App\Boutique;
 use App\Rent;
 use App\Tag;
-use App\DeclinedRent;
+use App\Declinedtransaction;
 use App\Prodtag;
 use App\Order;
 use App\Categoryrequest;
@@ -156,7 +156,6 @@ class BoutiqueController extends Controller
     		'productDesc' => $request->input('productDesc'),
     		'productPrice' => $request->input('productPrice'),
     		'rentPrice' => $request->input('rentPrice'),
-    		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
     		'productStatus' => "Available",
     		'forRent' => $request->input('forRent'),
@@ -272,7 +271,6 @@ class BoutiqueController extends Controller
     		'productDesc' => $request->input('productDesc'),
     		'productPrice' => $productPrice,
     		'rentPrice' => $rentPrice,
-    		'gender' => $request->input('gender'),
     		'category' => $request->input('category'),
     		'productStatus' => $request->input('productStatus'),
     		'forRent' => $request->input('forRent'),
@@ -428,7 +426,7 @@ class BoutiqueController extends Controller
 			'deliveryfee' => $rent['deliveryFee'],
 			'total' => $rent['total'],
 			'boutiqueID' => $rent['boutiqueID'],
-			'deliveryAddress' => $rent->address['completeAddress'],
+			'deliveryAddress' => $rent->address['id'],
 			'status' => 'For Pickup',
 			'rentID' => $rent['rentID'],
 			'userID' => $rent['customerID'],
@@ -464,10 +462,15 @@ class BoutiqueController extends Controller
 			$page_title = "Womens";
 	   		$user = Auth()->user()->id;
 			$boutique = Boutique::where('userID', $user)->first();
-			$products = Product::where('gender', 'Womens')->get();
-			$productCount = Product::where('gender', 'Womens')->get()->count();
+			// $products = Product::where('gender', 'Womens')->get();
+			$products = Product::all();
+			// $productCount = Product::where('gender', 'Womens')->get()->count();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
+
+			foreach($products as $product){
+				dd($products->getCategory);
+			}
 
 			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
 		}else {
@@ -559,6 +562,11 @@ class BoutiqueController extends Controller
         return redirect('/categories');
 	}
 
+	public function tags()
+	{
+
+	}
+
 	public function madeToOrders()
 	{
     	$page_title = "Made-to-Orders";
@@ -622,6 +630,55 @@ class BoutiqueController extends Controller
     	return redirect('/made-to-orders/'.$mtoID);
     }
 
+    public function acceptMto($mtoID)
+    {
+    	$mto = Mto::where('id', $mtoID)->first();
+    	$mto->update([
+    		'status' => 'In-Progress'
+    	]);
+
+    	return redirect('/made-to-orders/'.$mto['id']);
+    }
+
+    public function declineMto(Request $request)
+    {
+    	$mtoID = $request->input('mtoID');
+
+    	Declinedtransaction::create([
+    		'type' => 'mto',
+    		'typeID' => $mtoID,
+    		'reason' => $request->input('reason')
+    	]);
+
+    	return redirect('/made-to-orders/'.$mtoID);
+    }
+
+    public function submitMTO($mtoID)
+    {
+    	$mto = Mto::where('id', $mtoID)->first();
+    	$mto->update([
+    		'status' => 'For Pickup'
+    	]);
+
+    	$order = Order::create([
+    		'userID' => $mto['userID'],
+    		'subtotal' => $mto['subtotal'],
+    		'deliveryfee' => $mto['deliveryFee'],
+    		'total' => $mto['total'],
+    		'boutiqueID' => $mto['boutiqueID'],
+    		'deliveryAddress' => $mto['deliveryAddress'],
+    		'status' => $mto['status'],
+    		'paymentStatus' => $mto['paymentStatus'],
+    		'mtoID' => $mto['id']
+    	]);
+
+    	$mto->update([
+    		'orderID' => $order['id']
+    	]);
+
+    	return redirect('made-to-orders/'.$mtoID);
+    }
+
   //   public function requestCustomer(Request $request)
   //   {
   //   	$id = Auth()->user()->id;
@@ -648,37 +705,30 @@ class BoutiqueController extends Controller
    		$id = Auth()->user()->id;
 		$user = User::find($id);
     	$boutique = Boutique::where('userID', $id)->first();
-    	$rent = Rent::where('paypalOrderID', $orderId)->first();
-
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
 
+    	$rent = Rent::where('paypalOrderID', $orderId)->first();
+    	$mto = Mto::where('paypalOrderID', $orderId)->first();
+    	// $order = Order::where('paypalOrderID', $orderId)->first();
 
-        // 3. Call PayPal to get the transaction details
-        $client = PayPalClient::client();
-        $response = $client->execute(new OrdersGetRequest($orderId));
-        /**
-         *Enable the following line to print complete response as JSON.
-         */
-        // print json_encode($response->result);
-        // print "Status Code: {$response->statusCode}\n";
-        // print "Status: {$response->result->status}\n";
-        // print "Order ID: {$response->result->id}\n";
-        // print "Intent: {$response->result->intent}\n";
-        // print "Links:\n";
-        // foreach($response->result->links as $link)
-        // {
-        //   print "\t{$link->rel}: {$link->href}\tCall Type: {$link->method}\n";
-        // }
-        // 4. Save the transaction in your database. Implement logic to save transaction to your database for future reference.
-        // print "Gross Amount: {$response->result->purchase_units[0]->amount->currency_code} {$response->result->purchase_units[0]->amount->value}\n";
+    	if($rent != null){
+    		$client = PayPalClient::client();
+	        $response = $client->execute(new OrdersGetRequest($orderId));
+	        $order = $response->result;
 
-        // To print the whole response body, uncomment the following line
-        // $order = json_encode($response->result, JSON_PRETTY_PRINT);
-        $order = $response->result;
-        // dd($order);
+        	return view('boutique/paypalOrderDetails', compact('user', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'rent', 'mto', 'order'));
 
-        return view('boutique/paypalOrderDetails', compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'order', 'rent'));
+    	}elseif($mto != null){
+    		$client = PayPalClient::client();
+	        $response = $client->execute(new OrdersGetRequest($orderId));
+	        $order = $response->result;
+        	
+        	return view('boutique/paypalOrderDetails', compact('user', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'rent', 'mto', 'order'));
+    	}
+
+        
+
     }
 
 

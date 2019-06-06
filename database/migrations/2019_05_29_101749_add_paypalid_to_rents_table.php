@@ -14,7 +14,7 @@ class AddPaypalidToRentsTable extends Migration
     public function up()
     {
         Schema::table('rents', function (Blueprint $table) {
-            $table->string('paypalOrderID')->nullablle();
+            $table->string('paypalOrderID')->nullable();
         });
     }
 

@@ -61,8 +61,8 @@ Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 //BOUTIQUE----------------------------------------------------------------------------------------
 Route::get('/dashboard', 'BoutiqueController@dashboard');
 Route::get('/categories', 'BoutiqueController@categories');
+Route::get('/tags', 'BoutiqueController@tags');
 Route::post('/requestCategory', 'BoutiqueController@requestCategory');
-// Route::post('/saveCategory', 'BoutiqueController@saveCategory'); naa nani ni boutique
 
 
 //crud product
@@ -100,9 +100,12 @@ Route::get('/view-notifications/{notificationID}', 'BoutiqueController@viewNotif
 //TRANSACTIONS-MADE TO ORDERS
 Route::get('/made-to-orders', 'BoutiqueController@madeToOrders');
 Route::get('/made-to-orders/{mtoID}', 'BoutiqueController@getMadeToOrder'); 
+Route::post('/declineMto', 'BoutiqueController@declineMto');
 // Route::post('/requestCustomer', 'BoutiqueController@requestCustomer');
 Route::get('/halfapproveMto/{mtoID}', 'BoutiqueController@halfapproveMto');
 Route::post('/addOfferPrice', 'BoutiqueController@addOfferPrice');
+Route::get('/submitMTO/{mtoID}', 'BoutiqueController@submitMTO');
+Route::get('/acceptMto/{mtoID}', 'BoutiqueController@acceptMto');
 
 	
 
@@ -124,6 +127,10 @@ Route::get('/getMeasurements/{categoryID}', 'CustomerController@getMeasurements'
 Route::post('/requestToRent', 'CustomerController@requestToRent');
 Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
 
+//ORDER
+Route::post('/placeOrder', 'CustomerController@placeOrder');
+
+
 
 //CART
 Route::get('/addtoCart/{productID}', 'CustomerController@addtoCart');
@@ -133,11 +140,11 @@ Route::get('/getCart/{productID}', 'CustomerController@getCart');
 Route::get('/removeItem/{cartID}', 'CustomerController@removeItem');
 
 //ADDRESS
-Route::get('/addAddress/{userID}', 'CustomerController@addAddress');
 Route::get('/getCity/{provCode}', 'CustomerController@getCity');
 Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
 Route::post('/addAddress', 'CustomerController@addAddress');
 Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
+Route::post('/submitAddress', 'CustomerController@submitAddress');
 
 
 //BIDDING
@@ -155,8 +162,13 @@ Route::get('/user-notifications/{notificationID}', 'CustomerController@viewNotif
 
 //BOUTIQUE PROFILE
 Route::get('/boutique/{boutiqueID}', 'CustomerController@getBoutique');
+
+
+//MADE-TO-ORDER
 Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
 Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
+Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
+Route::post('/acceptOffer', 'CustomerController@acceptOffer');
 
 
 //TRANSACTIONS

@@ -37,7 +37,7 @@
             <!-- Form -->
             <!-- <form action="" class="cart-form clearfix" method="post"> -->
                 <!-- Select Box -->
-                <div class="select-box d-flex mt-50 mb-30">
+              <!--   <div class="select-box d-flex mt-50 mb-30">
                     <select name="select" id="productSize" class="mr-5">
                         <option value="value">Size: XL</option>
                         <option value="value">Size: X</option>
@@ -50,7 +50,7 @@
                         <option value="value">Color: Red</option>
                         <option value="value">Color: Purple</option>
                     </select>
-                </div>
+                </div> -->
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
                 @if ($product['forSale'] == 'true' && $product['forRent'] == 'true')
@@ -119,8 +119,6 @@
               <form action="/hinimo/public/requestToRent" method="post">
                 {{csrf_field()}}
 
-                {{$product->getCategory->getMeasurements}}
-
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Name:</label>
                     <div class="col-md-6">
@@ -143,7 +141,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-md-8 col-form-label text-md-right">Submit Measurements</label>
+                    <label class="col-md-8 col-form-label text-md-right">Submit Measurements (inches)</label>
                 </div>
 
                 <div class="form-group row">
@@ -191,25 +189,25 @@
                 <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
                 <input type="text" name="productID" value="{{$product['productID']}}" hidden>
 
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Subtotal:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="subtotal" class="form-control" value="{{$product['rentPrice']}}" disabled>
+                    </div>
+                </div>
 
-                <div class="form-group payment-info" style="color: black;">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td><label>Subtotal</label></td>
-                            <td class="price">{{$product['rentPrice']}}</td>
-                        </tr>
-                        <tr>
-                            <td><label>Delivery Fee</label></td>
-                            <td class="price">50</td>
-                        </tr>
-                        <tr><?php $total = $product['rentPrice'] + 50; ?>
-                            <td><label>Total Payment</label></td>
-                            <td class="price">{{$total}}</td>
-                        </tr>
-                    </table>
-                    <input type="text" name="subtotal" value="{{$product['rentPrice']}}" hidden>
-                    <input type="text" name="deliveryFee" value="50" hidden>
-                    <input type="text" name="total" value="{{$total}}" hidden>
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Delivery Fee:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="deliveryFee" class="form-control" value="50" disabled>
+                    </div>
+                </div>
+                <?php $total = $product['rentPrice'] + 50; ?>
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Total Payment:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="total" class="form-control" value="{{$total}}" disabled>
+                    </div>
                 </div>
 
             </div>
@@ -218,7 +216,7 @@
 
             <div class="modal-footer">
               <input type="submit" class="btn essence-btn" value="Place Request">
-              <!-- <input type="" class="btn btn-danger" data-dismiss="modal" value="Cancel"> -->
+              <!-- <input type="" class="btn essence-btn" data-dismiss="modal" value="Cancel"> -->
               </form>
 
             </div>

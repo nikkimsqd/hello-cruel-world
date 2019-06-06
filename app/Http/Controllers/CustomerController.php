@@ -22,10 +22,12 @@ use App\Order;
 use App\File;
 use App\Mto;
 use App\Measurement;
-use App\MeasurementRequest;
+// use App\MeasurementRequest;
 use App\Categorymeasurement;
+use App\Cartitem;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
+use App\Notifications\CustomerAcceptsOffer;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -94,18 +96,22 @@ class CustomerController extends Controller
     	$categories = Category::all();
     	$products = Product::where('boutiqueID', $boutiqueID)->where('productStatus', 'Available')->get();
         $productsCount = $products->count();
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $boutique = Boutique::where('id', $boutiqueID)->first();
         $page_title = $boutique['boutiqueName'];
         $notAvailables = Product::where('boutiqueID', $boutiqueID)->where('productStatus', 'Not Available')->get();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
 
-    	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'carts', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+    	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
     }
 
     public function shop()
@@ -117,16 +123,20 @@ class CustomerController extends Controller
                 $products = Product::where('productStatus', 'Available')->get();
                 $productsCount = $products->count();
                 $categories = Category::all();
-                $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-                $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
                 $boutiques = Boutique::all();
                 $notAvailables = Product::where('productStatus', 'Not Available')->get();
+                $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+                if($cart != null){
+                    $cartCount = $cart->items->count();
+                }else{
+                    $cartCount = 0;
+                }
 
                 $notifications;
                 $notificationsCount;
                 $this->getNotifications($notifications, $notificationsCount);
           
-                return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
 
             } else if(Auth()->user()->roles == "boutique") {
                 return redirect('/dashboard');
@@ -135,24 +145,25 @@ class CustomerController extends Controller
             }  		
         }else {
             $page_title = "Shop";
+            $userID = null;
             $products = Product::where('productStatus', 'Available')->get();
             $productsCount = $products->count();
             $categories = Category::all();
-            $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
-            $carts = Cart::where('userID', "")->where('status', "Pending")->get();
+            // $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
+            $cart = null;
+            $cartCount = null;
             $boutiques = Boutique::all();
             $notAvailables = Product::where('productStatus', 'Not Available')->get();
             $notificationsCount = null;
+                // dd($cart);
 
-            return view('hinimo/shop', compact('products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount'));
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount'));
         }
     }
 
     public function productDetails($productID)
     {
         $user = Auth()->user();
-        $cartCount = Cart::where('userID', $user['id'])->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $user['id'])->where('status', "Pending")->get();
     	$product = Product::where('productID', $productID)->first();
         $addresses = Address::where('userID', $user['id'])->get();
         $boutiques = Boutique::all();
@@ -160,20 +171,44 @@ class CustomerController extends Controller
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $user['id'])->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
         
         $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-    	return view('hinimo/single-product-details', compact('product', 'carts', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice', 'page_title', 'notifications', 'notificationsCount'));
+    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice', 'page_title', 'notifications', 'notificationsCount'));
     }
 
     public function addtoCart($productID)
     {
    		$userID = Auth()->user()->id;
-    	$cart = Cart::create([
-    		'productID' => $productID,
-    		'userID' => $userID,
-    		'status' => "Pending"
-    	]);
+        $cart = Cart::where('userID', $userID)->first();
+
+        if($cart == null){
+            Cart::create([
+                'userID' => $userID,
+                'status' => "Active"
+            ]);
+
+        }else{
+            if($cart['status'] == "Inactive"){
+                Cart::create([
+                    'userID' => $userID,
+                    'status' => "Active"
+                ]);
+            }
+            
+        }
+
+        Cartitem::create([
+            'cartID' => $cart['id'],
+            'productID' => $productID
+        ]);
+    	
 
     	return redirect('/shop');
     }
@@ -182,10 +217,15 @@ class CustomerController extends Controller
     {
         $page_title = "Cart";
    		$userID = Auth()->user()->id;
-    	$carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
     	
-    	return view('hinimo/cart', compact('carts', 'boutiques', 'page_title'));
+    	return view('hinimo/cart', compact('cart', 'boutiques', 'page_title'));
     }
 
     public function removeItem($cartID)
@@ -205,11 +245,56 @@ class CustomerController extends Controller
     		]);
     }
 
+    public function placeOrder(Request $request)
+    {
+        $order = Order::create([
+            'userID' => $request->input('userID'),
+            'cartID' => $request->input('cartID'),
+            'subtotal' => $request->input('subtotal'),
+            'deliveryfee' => $request->input('deliveryfee'),
+            'total' => $request->input('total'),
+            'boutiqueID' => $request->input('boutiqueID'),
+            'deliveryAddress' => $request->input('deliveryAddress'),
+            'status' => 'In-Progress',
+            'paymentStatus' => 'Not Yet Paid'
+        ]);
+
+        $cart = Cart::where('id', $order['cartID'])->first();
+        $cart->update([
+            'status' => 'Inactive'
+        ]);
+        foreach($cart->items as $item){
+            Product::where('productID', $item->product['productID'])->update([
+                'productStatus' => "Not Available"
+            ]);
+        }
+
+        
+
+        //add churva for add address here
+
+        return redirect('/view-order/'.$order['id']);
+    }
+
     public function checkout()
     {
-        $page_title = "checkout";
+        $page_title = "Checkout";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notAvailables = Product::where('productStatus', 'Not Available')->get();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
-    	return view('hinimo/checkout', compact('page_title'));
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+
+    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount'));
     }
 
     public function useraccount()
@@ -219,8 +304,6 @@ class CustomerController extends Controller
         $user = User::find($id);
         $categories = Category::all();
         $products = Product::all();
-        $cartCount = Cart::where('userID', $id)->where('status',"Pending")->count();
-        $carts = Cart::where('userID', $id)->where('status', "Pending")->get();
         $addresses = Address::where('userID', $id)->get();
         $boutiques = Boutique::all();
         $cities = City::where('provCode', '0722')->orderBy('citymunDesc', 'ASC')->get();
@@ -228,8 +311,15 @@ class CustomerController extends Controller
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $id)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
-        return view('hinimo/useraccount', compact('categories', 'products', 'carts', 'cartCount', 'user', 'cities', 'barangays', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
+
+        return view('hinimo/useraccount', compact('categories', 'products', 'cart', 'cartCount', 'user', 'cities', 'barangays', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
     }
 
     public function getBrgy($citymunCode)
@@ -273,10 +363,10 @@ class CustomerController extends Controller
 
     public function sortBy($condition)
     {
-        $userID = Auth()->user()->id;
-        $categories = Category::all();
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
+        // $userID = Auth()->user()->id;
+        // $categories = Category::all();
+        // $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
+        // $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         // dd($carts);
 
         if ($condition == "newest") {
@@ -361,6 +451,9 @@ class CustomerController extends Controller
         $rent->update([
             'status' => "On Rent"
         ]);
+        $order = Order::where('rentID', $rentID)->update([
+            'status' => "On Rent"
+        ]);
 
         return redirect('/view-rent/'.$rent['rentID']);
     }
@@ -375,15 +468,19 @@ class CustomerController extends Controller
         $products = [];
         $productsCount = Bidding::all()->count();
         $categories = Category::all();
-        $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
-        $carts = Cart::where('userID', "")->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $biddings = Bidding::all();
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
-        return view('hinimo/bidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'biddings', 'notificationsCount', 'notifications'));
+        return view('hinimo/bidding', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'biddings', 'notificationsCount', 'notifications'));
     }
 
     public function showStartNewBidding()
@@ -393,15 +490,19 @@ class CustomerController extends Controller
         $products = [];
         $productsCount = Product::all()->count();
         $categories = Category::all();
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $tags = Tag::all();
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
-        return view('hinimo/bidding-newBidding', compact('page_title', 'products', 'categories', 'carts', 'cartCount', 'userID', 'productsCount', 'boutiques', 'tags', 'notifications', 'notificationsCount'));
+        return view('hinimo/bidding-newBidding', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'tags', 'notifications', 'notificationsCount'));
     }
 
     public function savebidding(Request $request)
@@ -434,51 +535,58 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $products = Product::all();
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
-
         $user = User::find($userID);
         $notifications = $user->notifications;
         $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
-        return view('hinimo/notifications', compact('categories', 'products', 'carts', 'cartCount', 'userID', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
+        return view('hinimo/notifications', compact('categories', 'products', 'cart', 'cartCount', 'userID', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
     }
 
     public function viewNotification($notificationID)
     {
         $page_title = "View Notification";
         $userID = Auth()->user()->id;
-        $categories = Category::all();
-        $products = Product::all();
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
-
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        // $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        // if($cart != null){
+        //     $cartCount = $cart->items->count();
+        // }else{
+        //     $cartCount = 0;
+        // }
 
         foreach($notifications as $notification) {
             if($notification->id == $notificationID) {
 
                 if($notification->type == 'App\Notifications\RentApproved'){
-                    $notif = $notification;
                     $notification->markAsRead();
 
                     return redirect('/view-rent/'.$notification->data['rentID']);
                     
                 }elseif($notification->type == 'App\Notifications\RentUpdateForCustomer'){
-                    $notif = $notification;
                     $notification->markAsRead();
 
                     return redirect('/view-rent/'.$notification->data['rentID'].'#rent-details');
 
                 }elseif($notification->type == 'App\Notifications\MtoUpdateForCustomer'){
-                    $notif = $notification;
                     $notification->markAsRead();
 
-                    return redirect('/view-mto/'.$notification->data['mtoID']);
+                    return redirect('/view-mto/'.$notification->data['mtoID'].'#mto-details');
+
+                }elseif($notification->type == 'App\Notifications\ContactCustomer'){
+                    // $notif = $notification;
+                    $notification->markAsRead();
+
+                    return redirect('/view-mto/'.$notification->data['mtoID'].'#mto-details');
                 }
             }
         }
@@ -497,17 +605,21 @@ class CustomerController extends Controller
         $page_title = $boutique['boutiqueName'];
         $userID = Auth()->user()->id;
         $categories = Category::all();
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $notAvailables = Product::where('boutiqueID', $boutique['id'])->where('productStatus', 'Not Available')->get();
         $measurements = Categorymeasurement::all();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
         
-        return view('hinimo/madetoorder', compact('categories', 'carts', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'categoryArray'));
+        return view('hinimo/madetoorder', compact('categories', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'categoryArray'));
     }
 
     public function saveMadeToOrder(Request $request)
@@ -529,7 +641,8 @@ class CustomerController extends Controller
             'height' => $request->input('height'),
             'categoryID' => $request->input('category'),
             'status' => "Pending",
-            'paymentStatus' => 'Not Yet Paid'
+            'paymentStatus' => 'Not Yet Paid',
+            'budget' => $request->input('budget')
             ]);
 
         $measurement = Measurement::create([
@@ -578,19 +691,21 @@ class CustomerController extends Controller
         $page_title = "Transactions";
         $userID = Auth()->user()->id;
         $user = User::find($userID);
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $notifications = $user->notifications;
         $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
         $orders = Order::where('userID', $userID)->get();
         $rents = Rent::where('customerID', $userID)->get();
         $mtos = Mto::where('userID', $userID)->get();
-        
-        $cart = Cart::where('userID', $userID)->get();
 
-        return view('hinimo/transactions', compact('carts', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount'));
+        return view('hinimo/transactions', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount'));
     }
 
     public function viewOrder($orderID)
@@ -598,16 +713,19 @@ class CustomerController extends Controller
         $page_title = "Order Details";
         $userID = Auth()->user()->id;
         $user = User::find($userID);
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $notifications = $user->notifications;
         $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
         $order = Order::find($orderID);
-        // dd($order);
 
-        return view('hinimo/viewOrder', compact('carts', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order'));
+        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order'));
     }
 
     public function viewRent($rentID)
@@ -615,15 +733,19 @@ class CustomerController extends Controller
         $page_title = "Rent Details";
         $userID = Auth()->user()->id;
         $user = User::find($userID);
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $notifications = $user->notifications;
         $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
         $rent = Rent::find($rentID);
 
-        return view('hinimo/viewRent', compact('carts', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent'));
+        return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent'));
     }
 
     public function viewMto($mtoID)
@@ -631,30 +753,86 @@ class CustomerController extends Controller
         $page_title = "MTO Details";
         $userID = Auth()->user()->id;
         $user = User::find($userID);
-        $cartCount = Cart::where('userID', $userID)->where('status', "Pending")->count();
-        $carts = Cart::where('userID', $userID)->where('status', "Pending")->get();
         $boutiques = Boutique::all();
         $notifications = $user->notifications;
         $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
 
         $mto = Mto::find($mtoID);
         $measurement = json_decode($mto->measurement->data);
         // dd($measurement);
 
-        return view('hinimo/viewMto', compact('carts', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto'));
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto'));
+    }
+
+    public function acceptOffer(Request $request)
+    {
+        $mtoID = $request->input('mtoID');
+        $mto = Mto::where('id', $mtoID)->first();
+        
+        Mto::where('id', $mtoID)->update([
+            'finalPrice' => $request->input('offerPrice')
+        ]);
+
+        $boutique = Boutique::where('id', $request->input('boutiqueID'))->first();
+        $boutiqueseller = User::where('id', $boutique->owner['id'])->first();
+        $boutiqueseller->notify(new CustomerAcceptsOffer($mto));
+
+        return redirect('/view-mto/'.$mtoID);
+    }
+
+    public function submitAddress(Request $request)
+    {
+        if($request->input('mtoID') != null){
+            $mto = Mto::where('id', $request->input('mtoID'))->first();
+            $mto->update([
+                'subtotal' => $mto['finalPrice'],
+                'deliveryFee' => 50, //dummy pa ni
+                'total' => $mto['finalPrice'] + 50,
+                'deliveryAddress' => $request->input('address')
+            ]);
+
+            return redirect('/view-mto/'.$mto['id']);
+        }
+
     }
 
     public function paypalpaypalTransactionComplete(Request $request)
     {
-        $rent = Rent::where('rentID', $request->rentID)->first();
+        // print_r($request->mtoID);
 
-        // print_r($request->orderID);
-        $rent->update([
-            'paymentStatus' => 'Paid',
-            'paypalOrderID' => $request->orderID
-        ]);
+        if($request->rentID != null){
+            $rent = Rent::where('rentID', $request->rentID)->first();
 
-        return redirect('/view-rent/'.$rent['rentID']);
+            $rent->update([
+                'paymentStatus' => 'Paid',
+                'paypalOrderID' => $request->orderID
+            ]);
+
+            return redirect('/view-rent/'.$rent['rentID']);
+
+        }elseif($request->mtoID != null){
+            $mto = Mto::where('id', $request->mtoID)->first();
+            $mto->update([
+                'paymentStatus' => 'Paid',
+                'paypalOrderID' => $request->orderID
+            ]);
+
+            return redirect('/view-mto/'.$mto['id']);
+
+        }elseif($request->orderTransactionID != null){
+            $order = Order::where('id', $request->orderTransactionID)->first();
+            $order->update([
+                'paymentStatus' => 'Paid',
+                'paypalOrderID' => $request->orderID
+            ]);
+        }
+        
     }
 
     public static function getPaypalOrder($orderId)
@@ -681,6 +859,28 @@ class CustomerController extends Controller
 
         // To print the whole response body, uncomment the following line
         print_r(json_encode($response->result, JSON_PRETTY_PRINT));
+    }
+
+    public function mixnmatch($boutiqueID)
+    {
+        $page_title = "Mix & Match";
+        $userID = Auth()->user()->id;
+        $categories = Category::all();
+        $products = Product::all();
+        $boutiques = Boutique::all();
+        $boutique = Boutique::where('id', $boutiqueID)->first();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+
+        return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount'));
     }
 
 

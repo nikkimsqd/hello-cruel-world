@@ -33,19 +33,28 @@
                             <ul class="order-details-form mb-4">
                                 <li><span>Order ID</span> <span>{{$order['id']}}</span></li>
                                 <li><span>Product/s</span>
-                                    @if($order['cartID'] != null)
-                                    <span>$order->cart['id']</span>
-                                    @elseif($order['rentID'] != null)
-                                    <span>{{$order->rent->product['productName']}}</span>
-                                    @endif
+                                    <span>
+                                        @foreach($order->cart->items as $item)
+                                        {{$item->product['productName']}}, 
+                                        @endforeach
+                                    </span>
                                 </li>
 
 
                                 <li><span>Subtotal</span> <span>{{$order['subtotal']}}</span></li>
                                 <li><span>Delivery Fee</span> <span>{{$order['deliveryfee']}}</span></li>
                                 <li><span>Total</span> <span>{{$order['total']}}</span></li>
+                                <li><span>Status</span> <span style="color: #0315ff;">{{$order['status']}}</span></li>
+                                <li><span>Payment Status</span> <span style="color: red;">{{$order['paymentStatus']}}</span></li>
                             </ul>
-                        </div> <!-- card closing -->
+                        </div><br><br> <!-- card closing -->
+
+                        @if($order['paymentStatus'] == "Not Yet Paid")
+                        <h5>Pay here:</h5>
+                        <div class="col-md-3" id="paypal-button-container">
+                            <input type="text" id="orderTransactionID" value="{{$order['id']}}" hidden>
+                        </div>
+                        @endif
 
                     </div>
                 </div>
@@ -55,7 +64,47 @@
 </div>
 
 <!-- </div> -->
+@endsection
 
 
+@section('scripts')
+
+<script src="https://www.paypal.com/sdk/js?client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
+<script>
+    
+    var orderTransactionID = document.getElementById('orderTransactionID').value;
+    // console.log(orderTransactionID);
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+          // Set up the transaction
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '0.01'
+              }
+            }]
+          });
+        },
+        onApprove: function(data, actions) {
+          // Capture the funds from the transaction
+          return actions.order.capture().then(function(details) {
+            // Show a success message to your buyer
+            // alert('Transaction completed by ' + details.payer.name.given_name);
+            // alert('Transaction completed by ' + details.payer);
+            return fetch('/hinimo/public/paypal-transaction-complete', {
+
+              method: 'post',
+              headers: {
+                'content-type': 'application/json'
+              },
+              body: JSON.stringify({
+                orderID: data.orderID,
+                orderTransactionID: orderTransactionID
+              })
+            });
+          });
+        }
+    }).render('#paypal-button-container');
+</script>
 
 @endsection

@@ -1,11 +1,6 @@
 @extends('layouts.hinimo')
 @extends('hinimo.sections')
 
-@section('titletext')
-	Hinimo | {{ $page_title }}
-@endsection
-
-
 @section('body')
 <!-- ##### Breadcumb Area Start ##### -->
     <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
@@ -28,7 +23,7 @@
                 <div class="regular-page-content-wrapper">
                     <div class="regular-page-text">
                         <form method="post" action="{{url('/saveMadeToOrder')}}"  enctype="multipart/form-data">
-                            {{csrf_field()}}
+                            {{ csrf_field() }}
 
                             <h2 class="form-group row">Submit your "churva" here</h2>
                             <p>The boutique still needs to confirm your request before proceeding to the much more details about your item.</p>
@@ -53,7 +48,7 @@
                                 <label class="col-md-4 col-form-label text-md-right">Height (cm)</label>
 
                                 <div class="col-md-6">
-                                    <input name="height" type="text" class="form-control" required placeholder="Ex: 165 cm">
+                                    <input name="height" type="number" class="form-control" required placeholder="Ex: 165 cm">
                                 </div>
                             </div>
 
@@ -93,6 +88,13 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label text-md-right">Budget</label>
+
+                                <div class="col-md-6" id="measurement-input">
+                                    <input type="number" name="budget" class="form-control" required>
+                                </div>
+                            </div>
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">

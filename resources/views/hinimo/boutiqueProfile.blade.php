@@ -88,7 +88,8 @@
                 <div class="col-12 col-md-4 col-lg-3">
                     <div class="shop_sidebar_area">
                        
-                        <a href="{{url($boutique['id'].'/made-to-order')}}" class="btn essence-btn">made to orders here</a><br><br><br>
+                        <a href="{{url($boutique['id'].'/made-to-order')}}" class="btn essence-btn">made to orders here</a><br><br>
+                        <a href="{{url($boutique['id'].'/mixnmatch')}}" class="btn essence-btn">mix&match items here</a><br><br><br>
                         <!-- <a href="" class="btn essence-btn" data-toggle="modal" data-target="#madeToOrderModal">made to orders here</a><br><br><br> -->
                 
                         <div class="widget catagory mb-50">

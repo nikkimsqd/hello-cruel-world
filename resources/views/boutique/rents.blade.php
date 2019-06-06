@@ -6,7 +6,7 @@
 <section class="content">
   <div class="row" id="rents">
     <div class="col-md-12">
-      <div class="box box-default">
+      <div class="box">
 
         <div class="box-header with-border">
           <h3 class="box-title"><b>RENT REQUESTS</b></h3>
@@ -25,58 +25,58 @@
 
         <div class="box-body">
           <div class="row">
-          <div class="col-md-12">
-          <table id="rents-table" class="table table-hover">
-            <thead>
-            <tr>
-              <th>Rent ID</th>
-              <th>Customer Name</th>
-              <th>Request Placed at:</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-            @foreach($rents as $rent)
-            @if(!empty($rent['status']))
-            <tr>
-              <td>{{$rent['rentID']}}</td>
-              <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-              <td>{{$rent['created_at']->format('M d, Y')}}</td>
-              @if($rent['status'] == "Pending")
-                <td><span class="label label-warning">{{$rent['status']}}</span></td>
+            <div class="col-md-12">
+              <table id="rents-table" class="table table-hover">
+                <thead>
+                <tr>
+                  <th>Rent ID</th>
+                  <th>Customer Name</th>
+                  <th>Request Placed at:</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+                </thead>
+                @foreach($rents as $rent)
+                @if(!empty($rent['status']))
+                <tr>
+                  <td>{{$rent['rentID']}}</td>
+                  <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
+                  <td>{{$rent['created_at']->format('M d, Y')}}</td>
+                  @if($rent['status'] == "Pending")
+                    <td><span class="label label-warning">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "In-Progress")
-                <td><span class="label label-info">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "In-Progress")
+                    <td><span class="label label-info">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "For Pickup")
-                <td><span class="label bg-teal">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "For Pickup")
+                    <td><span class="label bg-teal">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "For Delivery")
-                <td><span class="label bg-olive">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "For Delivery")
+                    <td><span class="label bg-olive">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "On Delivery")
-                <td><span class="label label-navy">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "On Delivery")
+                    <td><span class="label label-navy">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "On Rent")
-                <td><span class="label bg-maroon">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "On Rent")
+                    <td><span class="label bg-maroon">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "Completed")
-                <td><span class="label label-success">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "Completed")
+                    <td><span class="label label-success">{{$rent['status']}}</span></td>
 
-              @elseif($rent['status'] == "Declined")
-                <td><span class="label label-danger">{{$rent['status']}}</span></td>
-              @endif
-              <td><a href="rents/{{$rent['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
-            </tr>
-            @else
-            <tr>
-              <td colspan="5"><i>You have no rent requests...</i></td>
-            </tr>
-            @endif
-            @endforeach
-          </table>
-        </div>
-        </div>
+                  @elseif($rent['status'] == "Declined")
+                    <td><span class="label label-danger">{{$rent['status']}}</span></td>
+                  @endif
+                  <td><a href="rents/{{$rent['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
+                </tr>
+                @else
+                <tr>
+                  <td colspan="5"><i>You have no rent requests...</i></td>
+                </tr>
+                @endif
+                @endforeach
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="box">
-        <div class="box-header">
+        <div class="box-header with-border">
           <h3 class="box-title"><b>Made-to-Orders</b></h3>
 
           <div class="box-tools">
@@ -21,34 +21,69 @@
         </div>
         <!-- /.box-header -->
 
-        <div class="box-body table-responsive no-padding">
-          <table id="pending-table" class="table table-hover">
-            <col width="70">
-            <col width="200">
-            <col width="120">
-            <col width="170">
-            <col width="140">
-            <col width="100">
-            <tr>
-              <th>MTO ID</th>
-              <th>Customer Name</th>
-              <th>Date of Use</th>
-              <th>Request Placed at:</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-            @foreach($pendings as $pending)
-            <tr>
-              <td>{{$pending['id']}}</td>
-              <td>{{$pending->customer['fname'].' '.$pending->customer['lname']}}</td>
-              <td>{{date('M d, Y',strtotime($pending['dateOfUse']))}}</td>
-              <td>{{$pending['created_at']->format('M d, Y')}}</td>
-              <td><label class="label label-warning">{{$pending['status']}}</label></td>
-              <td><a href="{{url('made-to-orders/'.$pending['id'])}}" class="btn btn-primary btn-sm">View Order</a></td>
-            </tr>
-            @endforeach
-           
-          </table>
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12">
+              <table id="mtos-table" class="table table-hover">
+                <thead>
+                <tr>
+                  <th>MTO ID</th>
+                  <th>Customer Name</th>
+                  <th>Date of Use</th>
+                  <th>Request Placed at:</th>
+                  <th>Payment Status</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+                </thead>
+                @foreach($mtos as $mto)
+                @if(!empty($mto['status']))
+                <tr>
+                  <td>{{$mto['id']}}</td>
+                  <td>{{$mto->customer->lname.', '.$mto->customer->fname}}</td>
+                  <td>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</td>
+                  <td>{{$mto['created_at']->format('M d, Y')}}</td>
+                  @if($mto['paymentStatus'] == "Not Yet Paid")
+                    <td style="color: red">{{$mto['paymentStatus']}}</td>
+                  @else
+                    <td style="color: #0315ff;">{{$mto['paymentStatus']}}</td>
+                  @endif
+
+                  @if($mto['status'] == "Pending")
+                    <td><span class="label label-warning">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "In-Transaction")
+                    <td><span class="label bg-teal">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "In-Progress")
+                    <td><span class="label label-info">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "For Pickup")
+                    <td><span class="label bg-navy">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "For Delivery")
+                    <td><span class="label bg-olive">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "On Delivery")
+                    <td><span class="label label-maroon">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "Completed")
+                    <td><span class="label label-success">{{$mto['status']}}</span></td>
+
+                  @elseif($mto['status'] == "Declined")
+                    <td><span class="label label-danger">{{$mto['status']}}</span></td>
+                  @endif
+                  <td><a href="made-to-orders/{{$mto['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                </tr>
+                @else
+                <tr>
+                  <td colspan="5"><i>You have no rent requests...</i></td>
+                </tr>
+                @endif
+                @endforeach
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -56,7 +91,7 @@
 
 
   <!-- IN-TRANSACTIONS -->
-  <div class="row">
+<!--   <div class="row">
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
@@ -72,7 +107,6 @@
             </div>
           </div>
         </div>
-        <!-- /.box-header -->
 
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
@@ -111,10 +145,10 @@
         </div>
       </div>
     </div>
-  </div> <!-- table row -->
+  </div> -->
 
 
-  <div class="row">
+<!--   <div class="row">
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
@@ -130,7 +164,6 @@
             </div>
           </div>
         </div>
-        <!-- /.box-header -->
 
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
@@ -170,7 +203,7 @@
         </div>
       </div>
     </div>
-  </div> <!-- table row -->
+  </div> -->
 </section>
 
 @endsection
@@ -178,16 +211,18 @@
 @section('scripts')
 
 <script type="text/javascript">
+
 $(function () {
-    $('#pending-table').DataTable({
-      'paging'      : true,
-      'lengthChange': true,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  });
+  $('#mtos-table').DataTable({
+    'paging'      : true,
+    'lengthChange': true,
+    'searching'   : false,
+    'ordering'    : true,
+    'info'        : true,
+    'autoWidth'   : false
+  })
+});
+
 </script>
 
 @endsection
