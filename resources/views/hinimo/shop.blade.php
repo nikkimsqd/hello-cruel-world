@@ -171,9 +171,13 @@
                                     <div class="product-badge offer-badge">
                                         <span>NOT AVAILABLE</span>
                                     </div>
-                                @elseif($product['forRent'] == "true")
+                                @elseif($product['rpID'] != null && $product['price'] != null)
                                     <div class="product-badge new-badge">
                                         <span>Rentable</span>
+                                    </div>
+                                @elseif($product['rpID'] != null && $product['price'] == null)
+                                    <div class="product-badge new-badge">
+                                        <span>FOR RENT ONLY</span>
                                     </div>
                                 @endif
 	                                <!-- Favourite -->
@@ -191,15 +195,19 @@
 	                                <a href="#">
 	                                    <h6>{{ $product['productName'] }}</h6>
 	                                </a>
-	                                <p class="product-price">${{ number_format($product['productPrice']) }}</p>
+                                    @if($product['price'] != null)
+	                                <p class="product-price">${{ number_format($product['price']) }}</p>
+                                    @else
+                                    <p class="product-price">${{ number_format($product->rentDetails['price']) }}</p>
+                                    @endif
 
 	                                <!-- Hover Content -->
 	                                <div class="hover-content">
 	                                    <!-- Add to Cart -->
 	                                    <div class="add-to-cart-btn">
-	                                    	<!-- <input type="text" name="productID" value="{{$product['productID']}}" hidden> -->
+	                                    	<!-- <input type="text" name="productID" value="{{$product['id']}}" hidden> -->
                                             @if($product['productStatus'] == "Available")
-	                                        <a href="{{url('single-product-details/').'/'.$product['productID']}}" class="btn essence-btn">View Product</a>
+	                                        <a href="{{url('single-product-details/').'/'.$product['id']}}" class="btn essence-btn">View Product</a>
                                             @endif
 	                                    </div>
 	                                </div>
@@ -264,9 +272,9 @@
                                     <div class="hover-content">
                                         <!-- Add to Cart -->
                                         <div class="add-to-cart-btn">
-                                            <!-- <input type="text" name="productID" value="{{$notAvailable['productID']}}" hidden> -->
+                                            <!-- <input type="text" name="productID" value="{{$notAvailable['id']}}" hidden> -->
                                             @if($notAvailable['productStatus'] == "Available")
-                                            <a href="single-product-details/{{$notAvailable['productID']}}" class="btn essence-btn">View Product</a>
+                                            <a href="single-product-details/{{$notAvailable['id']}}" class="btn essence-btn">View Product</a>
                                             @endif
                                         </div>
                                     </div>

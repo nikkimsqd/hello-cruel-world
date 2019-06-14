@@ -32,6 +32,7 @@
                   <th>Rent ID</th>
                   <th>Customer Name</th>
                   <th>Request Placed at:</th>
+                  <th>Payment Status</th>
                   <th>Status</th>
                   <th></th>
                 </tr>
@@ -42,6 +43,11 @@
                   <td>{{$rent['rentID']}}</td>
                   <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
                   <td>{{$rent['created_at']->format('M d, Y')}}</td>
+                  @if($rent['paymentStatus'] == "Not Yet Paid")
+                    <td style="color: red">{{$rent['paymentStatus']}}</td>
+                  @else
+                    <td style="color: #0315ff;">{{$rent['paymentStatus']}}</td>
+                  @endif
                   @if($rent['status'] == "Pending")
                     <td><span class="label label-warning">{{$rent['status']}}</span></td>
 
@@ -249,6 +255,9 @@ $(function () {
     'autoWidth'   : false
   })
 });
+
+$('.transactions').addClass("active");
+$('.rents').addClass("active");
 
 </script>
 @endsection

@@ -63,3 +63,13 @@
 
 @endsection
 
+@section('scripts')
+<script type="text/javascript">
+
+$('.etc').addClass("active");
+$('.categories').addClass("active");
+
+</script>
+
+
+@endsection

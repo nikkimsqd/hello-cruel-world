@@ -43,12 +43,12 @@
           @endforeach
 
           <div class="row">
-            <a href="{{ url('viewproduct/'.$product['productID']) }}">
+            <a href="{{ url('viewproduct/'.$product['id']) }}">
               <h4>{{ $product['productName'] }}</h4>
             </a>
             <h2></h2>
 
-            <a href="{{ url('viewproduct/'.$product['productID']) }}" class="btn btn-block btn-primary">View Product</a>
+            <a href="{{ url('viewproduct/'.$product['id']) }}" class="btn btn-block btn-primary">View Product</a>
           </div>
         </div>
       </div>
@@ -60,3 +60,14 @@
 
 @endsection
 
+
+@section('scripts')
+<script type="text/javascript">
+
+$('.products').addClass("active");
+$('.allproducts').addClass("active");
+
+</script>
+
+
+@endsection

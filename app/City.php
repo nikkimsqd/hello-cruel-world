@@ -12,4 +12,9 @@ class City extends Model
 	public $timestamps = false;
 	public $incrementing = false;
 	public $fillable = ['id', 'psgcCode', 'citymunDesc', 'regDesc', 'provCode', 'citymunCode'];
+
+	public function province()
+    {
+        return $this->hasOne('App\Province', 'provCode', 'provCode');
+    }
 }

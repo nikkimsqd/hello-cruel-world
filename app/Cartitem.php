@@ -16,6 +16,6 @@ class Cartitem extends Model
 
  	public function product()
  	{
-        return $this->hasOne('App\Product', 'productID', 'productID');
+        return $this->hasOne('App\Product', 'id', 'productID');
  	}
 }

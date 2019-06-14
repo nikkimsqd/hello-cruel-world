@@ -24,13 +24,14 @@
                 <div id="mto-details" class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
 
-                        <div class="notif-area cart-area" style="text-align: right;">
+                       <!--  <div class="notif-area cart-area" style="text-align: right;">
                             <a href="" class="btn essence-btn" data-toggle="modal" data-target="#notificationsModal">Chat with seller here</a>
                             <br><br><br>
-                        </div>
+                        </div> -->
                         <div class="row">
                             <div class="col-md-12">
-                                @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed")
+                             <!--    if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed") -->
+                             @if($mto['orderID'] != null)
                                 <div class="order-details-confirmation"> <!-- card opening -->
                                     <div class="cart-page-heading">
                                         <h5>Your Order Details</h5>
@@ -69,17 +70,19 @@
 
                                 <div class="order-details-confirmation">
                                     <div class="cart-page-heading">
-                                        <h5>Your Made to Order</h5>
+                                        <h5>Your Made-to-Order</h5>
                                     </div>
                                     <?php
-                                        $measurements = json_decode($mto->measurement->data)
+                                        $measurements = json_decode($mto->measurement->data);
+                                        $fabricChoice = json_decode($mto['fabricChoice']);
+                                        $fabricSuggestion = json_decode($mto['fabricSuggestion']);
                                     ?>
 
                                     <ul class="order-details-form mb-4">
                                         <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
                                         <li><span>Date of use of the product</span> <span>{{$mto['dateOfUse']}}</span></li>
-                                        <li><span>Height</span> <span>{{$mto['height']}} cm</span></li>
                                         <li><span>Category of item</span> <span>{{$mto->category['categoryName']}}</span></li>
+                                        <li><span>Height</span> <span>{{$mto['height']}} cm</span></li>
                                         <li><span>Measurements</span> 
                                             <span style="text-align: right;">
                                                 @foreach($measurements as $measurementName => $measurement)
@@ -88,24 +91,75 @@
                                             </span></li>
 
                                         <li><span>Instructions/Notes</span> <span>{{$mto['notes']}}</span></li>
-                                        @if($mto['deliveryAddress'] != null)
-                                            <li><span>Delivery Address</span> <span>{{$mto['deliveryAddress']}}</span></li>
+                                        @if($mto['price'] != null)
+                                            <li><span>Price</span> <span style="color: #0315ff;">{{$mto['price']}}</span></li>
+                                        @else
+                                            <li><span>Price</span> <span style="color: #0315ff;">Boutique has not set a price yet.</span></li>
                                         @endif
-                                        @if($mto['finalPrice'] != null)
-                                            <li><span>Price</span> <span>{{$mto['finalPrice']}}</span></li>
-                                        @endif
-                                        <li><span>Status</span> <span style="color: #0315ff;">{{$mto['status']}}</span></li>
-
-                                        <li><span></span><span>Payment Info</span><span></span></li>
-                                        <li><span>Subtotal</span> <span>{{$mto['subtotal']}}</span></li>
-                                        <li><span>Delivery Fee</span> <span>{{$mto['deliveryFee']}}</span></li>
-                                        <li><span>Total</span> <span>{{$mto['total']}}</span></li>
-                                        <li><span>Payment Status</span>
-                                            <span style="color: red; text-align: right;">{{$mto['paymentStatus']}}</span>
-                                        </li>
                                     </ul>
                                 </div><br><br>
 
+                                @if($mto['price'] != null)
+                                <h5>Boutique's price for item with the fabric of your choice:</h5>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        @if($mto['fabricID'] != null && $mto['fabricChoice'] == null)
+                                            @foreach($fabrics as $fabric)
+                                            @if($fabric['id'] == $mto['fabricID'])
+                                                <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
+                                                <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
+                                                <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                            @endif
+                                            @endforeach
+                                        @elseif($mto['fabricID'] == null && $mto['fabricChoice'] != null)
+                                            <h5 class="normal">Fabric Type: <b>{{ucfirst($fabricChoice->fabricType)}}</b><h5>
+                                            <h5 class="normal">Fabric Color: <b>{{ucfirst($fabricChoice->fabricColor)}}</b><h5>
+                                            <h5 class="normal">Price: <b>{{$mto['price']}}</b></h5>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-3">
+                                        <form>
+                                            @if($mto['fabricID'] != null && $mto['fabricChoice'] == null)
+                                                @foreach($fabrics as $fabric)
+                                                @if($fabric['id'] == $mto['fabricID'])
+                                                <input name="fabricID" value="{{$fabric['id']}}">
+                                                    <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
+                                                    <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
+                                                    <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                                @endif
+                                                @endforeach
+                                            @elseif($mto['fabricID'] == null && $mto['fabricChoice'] != null)
+                                                <h5 class="normal">Fabric Type: <b>{{ucfirst($fabricChoice->fabricType)}}</b><h5>
+                                                <h5 class="normal">Fabric Color: <b>{{ucfirst($fabricChoice->fabricColor)}}</b><h5>
+                                                <h5 class="normal">Price: <b>{{$mto['price']}}</b></h5>
+                                            @endif
+                                            <input type="submit" name="" class="btn essence-btn" value="Accept Offer">
+                                        </form>
+                                    </div>
+                                </div>
+                                @endif
+
+                                @if($mto['fabricSuggestion'] != null && $mto['orderID'] == null)
+                                <h5>Boutique Recommends you this:</h5>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        @foreach($fabrics as $fabric)
+                                        @if($fabric['id'] == $fabricSuggestion->fabricID)
+                                            <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
+                                            <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
+                                            <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                        @endif
+                                        @endforeach
+                                    </div>
+                                    <div class="col-md-3">
+                                        <form action="" method="get">
+                                            <input name="fabricSuggestion" value="{{$fabricSuggestion->price}}" hidden>
+                                            <input name="priceSuggestion" value="{{$fabricSuggestion->price}}" hidden>
+                                            <input type="submit" name="" class="btn essence-btn" value="Accept Offer">
+                                        </form>
+                                    </div>
+                                </div>
+                                @endif
                                  <!------------- SA UBOS NANI --------------->
                                 @if($mto['offerPrice'] != null && $mto['finalPrice'] == null)
                                 <div id="offer-price" class="row">
@@ -199,6 +253,10 @@
         </div> 
     </div>
 </div>
+
+<style type="text/css">
+    .normal{font-weight: normal;}
+</style>
 
 <!-- </div> -->
 @endsection

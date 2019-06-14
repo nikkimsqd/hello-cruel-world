@@ -32,6 +32,11 @@
 	    </div>
 
       <div class="form-group">
+        <label>Add Image:</label>
+        <input type="file" name="file[]" multiple>
+      </div>
+
+      <div class="form-group">
         <label>Product Category</label>
         <select class="form-control select2" name="gender" id="gender-select">
           <option selected="selected"> </option>
@@ -39,50 +44,78 @@
           <option value="Mens">Mens</option>
         </select>
         <br>
-        <select class="form-control select2" name="category">
+        <select class="form-control select2" name="category" id="category-select" disabled>
           <option> </option>
-          @foreach($categories as $category)
+          <!-- @foreach($categories as $category)
           <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
-          @endforeach
+          @endforeach -->
         </select>
       </div>
-  	</div>
-
-  	<div class="col-md-6">
-      <div class="form-group">
-       <label>Item Availability:</label><br>
-       <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
-       <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
-      </div>
-
-      <div class="form-group">
-        <label>Retail Price</label>
-        <input type="number" id="forSalePrice" name="productPrice" class="input form-control" disabled>
-      </div>
-
-      <div class="form-group">
-        <label>Rent Price</label>
-        <input type="number" id="forRentPrice" name="rentPrice" class="input form-control" disabled>
-      </div>
-
-      <div class="form-group">
-       <label>Is item customizable?</label><br>
-         <input type="radio" name="customizable" class="minimal-red" value="Yes"> Yes
-         <input type="radio" name="customizable" class="minimal-red" value="No"> No
-      </div>
-
-	    <div class="form-group">
-	     <label>Add Image:</label>
-			 <input type="file" name="file[]" multiple>
-	    </div>
-
+      
       <label>Add Tags:</label>
       <div class="form-group tags">
-       @foreach($tags as $tag)
-       <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-       <label for="{{$tag['name']}}">{{$tag['name']}}</label>
-       @endforeach
+         @foreach($tags as $tag)
+         <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
+         <label for="{{$tag['name']}}">{{$tag['name']}}</label>
+         @endforeach
       </div>
+    </div> <!-- column closing -->
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Item Availability:</label><br>
+        <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
+      </div>
+
+      <div class="form-group" id="forSalePrice" hidden>
+        <label>Retail Price</label>
+        <input type="number" name="retailPrice" class="input form-control"><br>
+      </div>
+
+      <div class="form-group" id="forRentPrice" hidden>
+        <label>Rent Price</label> <br>
+        <input type="number" name="rentPrice" class="input form-control"><br>
+
+        <label>Deposit Amount</label>
+        <input type="number" name="depositAmount" class="input form-control">
+
+        <label>Penalty Amount</label>
+        <input type="number" name="penaltyAmount" class="input form-control">
+
+        <label>Days item available for rent</label>
+        <input type="number" name="limitOfDays" class="input form-control">
+
+        <label>Amount of fine incase item is lost by user</label>
+        <input type="number" name="fine" class="input form-control">
+
+        <label>Locations item is available for rent</label><br>
+
+        <label>Select Region:</label>
+        <select name="region" class="form-control" id="region-select">
+          <option selected="selected"> </option>
+          @foreach($regions as $region)
+          <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
+          @endforeach
+        </select>
+
+        <label>Select Province:</label>
+        <select name="province" class="form-control" id="province-select" disabled>
+          <option selected="selected"> </option>
+        </select>
+
+        <label>Select City:</label>
+        <select name="city" class="form-control" id="city-select" disabled>
+          <option selected="selected"></option>
+        </select><br>
+
+        <label id="barangay-id" hidden>Select Barangays:</label>
+        <div name="barangays" id="brgy-select" style="column-count: 3">
+          <!-- append js code here -->
+          <!-- <label class="custom-control-label" for="id">name</label> -->
+        </div>
+      </div>
+
   	</div>
   </div><!-- /.box-body -->
 
@@ -135,25 +168,118 @@
 
 <script type="text/javascript">
 
-  $('#forRent').on('change', function() {
-      $('#forRentPrice').attr('disabled',!this.checked)
+$('.products').addClass("active");
+$('.allproducts').addClass("active");
+
+$('#forRent').on('change', function() {
+  $('#forRentPrice').attr('hidden',!this.checked)
+});
+
+$('#forSale').on('change', function() {
+    $('#forSalePrice').attr('hidden',!this.checked)
+  // if(this.checked){
+  //   $('#forSalePrice').append('<label>Retail Price</label> <br> <input type="number" id="forSalePrice" name="productPrice" class="input form-control">');
+  // }else{
+  //   $('#forSalePrice').empty();
+  // }
+});
+
+$('#gender-select').on('change', function(){
+  $('#measurement-input').empty();
+  $('#category-select').empty();
+  $('#category-select').next().find('.list').empty();
+  $('#category-select').next().find('.current').val("-----------------");
+
+  var gender = $(this).val();
+
+  $('#category-select').prop('disabled',false);
+  $('.nice-select').removeClass('disabled');
+
+  $.ajax({
+    url: "/hinimo/public/getCategory/"+gender,
+    success:function(data){ 
+      data.categories.forEach(function(category){
+        $('#category-select').append('<option value="'+category.id+'">'+category.categoryName+'</option>');
+        $('#category-select').next().find('.list').append('<li data-value="'+category.id+'" class="option">'+category.categoryName+'</li>');
+      });
+    }
   });
+});
 
-  $('#forSale').on('change', function() {
-      $('#forSalePrice').attr('disabled',!this.checked)
+// LOCATIONS-----------------------------------------------------------------------------
+$("#region-select").on('change', function(){
+  $('#province-select').empty();
+  // $('#province-select').val("Select");
+  $('#city-select').empty();
+  $('#brgy-select').empty();
+  var regCode = $(this).val();
+
+  $('#city-select').prop('disabled',true);
+  $('#province-select').prop('disabled',false);
+            
+
+  $.ajax({
+    url: "/hinimo/public/boutique-getProvince/"+regCode,
+    success:function(data){
+      $('#province-select').append('<option value=""></option>');
+
+        data.provinces.forEach(function(province){
+          $('#province-select').append(
+              '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
+              );
+        });
+    }
   });
+});
 
-  $('#gender-select').on('change', function(){
-    var gender = $(this).val();
 
-    $.ajax({
-      url: "getGender/"+gender,
-        success:function(data){
+$('#province-select').on('change', function(){
+  $('#city-select').empty();
+  $('#brgy-select').empty();
+  var provCode = $(this).val();
+  
+  // $('#city-select').prop('disabled',false);;
 
+  $.ajax({
+    url: "/hinimo/public/boutique-getCity/"+provCode,
+    success:function(data){
+      $('#city-select').append('<option value=""></option>');
+        data.cities.forEach(function(city){
+
+        if(city === null){
+        console.log(provCode);
+        }else{
+          $('#city-select').prop('disabled',false);
+          $('#city-select').append(
+          '<option value="'+city.citymunCode+'">'+city.citymunDesc+'</option>'
+          );
         }
-    });
+      });
+    }
+  }); //ajaxclosing
+});
 
+
+$('#city-select').on('change', function(){
+  // console.log("adadad");
+
+  $('#brgy-select').empty();
+
+  var citymunCode = $(this).val();
+
+  $.ajax({
+     url: "/hinimo/public/boutique-getBrgy/"+citymunCode,
+    success:function(data){
+      $('#barangay-id').prop('hidden',false);
+
+      data.brgys.forEach(function(brgy){
+        $('#brgy-select').append(
+        '<input type="checkbox" name="locationsAvailable[]" value="'+brgy.brgyCode+'" id="'+brgy.brgyDesc+'"> '+brgy.brgyDesc+'<br>'
+        );
+      });
+    }
   });
+});
 
 </script>
 @endsection

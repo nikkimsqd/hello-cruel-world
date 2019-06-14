@@ -19,6 +19,16 @@ use App\Measurementtype;
 use App\Measurement;
 use App\MeasurementRequest;
 use App\Categorymeasurement;
+use App\Province;
+use App\Region;
+use App\City;
+use App\Barangay;
+use App\RefProvince;
+use App\RefRegion;
+use App\RefCity;
+use App\RefBrgy;
+use App\Rentableproduct;
+use App\Fabric;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -117,7 +127,7 @@ class BoutiqueController extends Controller
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/products', compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -128,69 +138,131 @@ class BoutiqueController extends Controller
 		if(Auth()->user()->roles == "boutique") {
 			$page_title = "Add Product";
 			$user = Auth()->user()->id;
-			$boutiques = Boutique::where('userID', $user)->get();
+			$boutique = Boutique::where('userID', $user)->first();
 			$categories = Category::all();
 			$tags = Tag::all();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
+	        $regions = Region::all();
 
-			foreach ($boutiques as $boutique) {
-				$boutique;
-			}
+			// foreach ($boutiques as $boutique) {
+			// 	$boutique;
+			// }
 
 
-			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount'));
+			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions'));
 		}else {
 			return redirect('/shop');
 		}
 	}
+
+	public function getProvince($regCode)
+    {
+        $userid = Auth()->user()->id;
+        $provinces = Province::where('regCode', $regCode)->get();
+
+        return response()->json(['provinces' => $provinces]);
+    }
+
+	public function getCity($provCode)
+    {
+        $userid = Auth()->user()->id;
+        $cities = City::where('provCode', $provCode)->get();
+        
+        return response()->json(['cities' => $cities]);
+    }
+
+    public function getBrgy($citymunCode)
+    {
+        $barangays = Barangay::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
+        
+        // $brgys = Brgy::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
+
+        return response()->json(['brgys' => $barangays]);
+    }
 
 	public function saveProduct(Request $request)
 	{
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
     	
-    	$products = Product::create([
+    	$product = Product::create([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
-    		'productPrice' => $request->input('productPrice'),
-    		'rentPrice' => $request->input('rentPrice'),
+    		'price' => $request->input('retailPrice'),
     		'category' => $request->input('category'),
-    		'productStatus' => "Available",
-    		'forRent' => $request->input('forRent'),
-    		'forSale' => $request->input('forSale'),
-    		'customizable' => $request->input('customizable')
+    		'productStatus' => "Available"
     		]);
 
+		// $arrayloc = array();
+		// array_push($arrayloc, $request->input('locationsAvailable'));
+		// $locations = json_encode($arrayloc);
+		// $locs = json_decode($locations);
+		// dd($locs);
+
+    	if($request->input('rentPrice') != null){
+			$locations = json_encode($request->input('locationsAvailable'));
+	    	$rp = Rentableproduct::create([
+	    		'price' => $request->input('rentPrice'),
+	    		'depositAmount' => $request->input('depositAmount'),
+	    		'penaltyAmount' => $request->input('penaltyAmount'),
+	    		'limitOfDays' => $request->input('limitOfDays'),
+	    		'fine' => $request->input('fine'),
+	    		'locationsAvailable' => $locations
+	    	]);
+
+	    	$product->update([
+	    		'rpID' => $rp['id']
+	    	]);
+    	}
 
     	$tags = $request->input('tags');
-
         foreach($tags as $tag) {
 	    	Prodtag::create([
 	    		'tagID' => $tag,
-	    		'productID' => $products['productID']
+	    		'productID' => $product['id']
 	    	]);
 		}
 
-    	$uploads = $request->file('file');
 
+		$randomKey = str_random(10);
+		// dd($randomKey);
+
+    	$uploads = $request->file('file');
     	if($request->hasFile('file')) {
     	foreach($uploads as $upload){
     		$files = new File();
-    		$name = $upload->getClientOriginalName();
+    		// $name = $upload->getClientOriginalName();
 	        $destinationPath = public_path('uploads');
-	        // $filename = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$file->getClientOriginalName();
-	        $filename = $destinationPath.'\\'. $name;
+	        $random = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
+	        $filename = $destinationPath.'\\'. $random;
 	        $upload->move($destinationPath, $filename);
 
 	       	$files->userID = $id;
-	       	$files->productID = $products['productID'];
-	        $files->filename = "/".$name;
+	       	$files->productID = $product['id'];
+	        $files->filename = "/".$random;
 	      	$files->save();
-	      	$filename = "/".$name;
+	      	$filename = "/".$random;
     	}
       }
+
+     //  if($request->hasFile('file')) {
+    	// foreach($uploads as $upload){
+    	// 	$files = new File();
+    	// 	$name = $upload->getClientOriginalName();
+	    //     $destinationPath = public_path('uploads');
+	    //     // $filename = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$file->getClientOriginalName();
+	    //     $filename = $destinationPath.'\\'. $name;
+	    //     $upload->move($destinationPath, $filename);
+
+	    //    	$files->userID = $id;
+	    //    	$files->productID = $product['id'];
+	    //     $files->filename = "/".$name;
+	    //   	$files->save();
+	    //   	$filename = "/".$name;
+    	// }
+     //  }
 
     	return redirect('/products');
 	}
@@ -201,7 +273,7 @@ class BoutiqueController extends Controller
 			$page_title = "View Product";
 			$user = Auth()->user()->id;
 			$boutiques = Boutique::where('userID', $user)->get();
-			$product = Product::where('productID', $productID)->first();
+			$product = Product::where('id', $productID)->first();
 			$category = Category::where('id', $product['category'])->first();
 			$tags = ProdTag::where('productID', $productID)->get();
 			$notifications = Auth()->user()->notifications;
@@ -224,7 +296,7 @@ class BoutiqueController extends Controller
 			$page_title = "Edit Product";
 			$user = Auth()->user()->id;
 			$boutiques = Boutique::where('userID', $user)->get();
-			$product = Product::where('productID', $productID)->first();
+			$product = Product::where('id', $productID)->first();
 			$categories = Category::all();
 			$tags = Tag::all();
 			$prodtags = ProdTag::where('productID', $productID)->get();
@@ -305,7 +377,7 @@ class BoutiqueController extends Controller
 
 	public function delete($productID)
 	{
-		$product = Product::where('productID', $productID)->delete();
+		$product = Product::where('id', $productID)->delete();
 
 		return redirect('/products');
 
@@ -362,7 +434,7 @@ class BoutiqueController extends Controller
 		$customer = User::where('id', $customerID)->first();
 		$rent = rent::where('rentID', $rentID)->first();
 
-		$product = Product::where('productID', $rent['productID'])->update([
+		$product = Product::where('id', $rent['productID'])->update([
 			'productStatus' => "Not Available"
 		]);
 
@@ -577,13 +649,13 @@ class BoutiqueController extends Controller
 		$mtos = Mto::where('boutiqueID', $boutique['id'])->get();
 
 
-		$pendings = Mto::where('boutiqueID', $boutique['id'])->where('status', "Pending")->get();
-		$intransactions = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Transaction")->get();
-		$inprogress = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Progress")->get();
+		// $pendings = Mto::where('boutiqueID', $boutique['id'])->where('status', "Pending")->get();
+		// $intransactions = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Transaction")->get();
+		// $inprogress = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Progress")->get();
 
 		// dd($inprogress);
 
-		return view('boutique/madetoorders',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos', 'pendings', 'intransactions', 'inprogress'));
+		return view('boutique/madetoorders',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos'));
 	}
 
     public function getMadeToOrder($mtoID)
@@ -594,11 +666,14 @@ class BoutiqueController extends Controller
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 		$mto = Mto::where('id', $mtoID)->first();
+		$fabrics = Fabric::where('boutiqueID', $boutique['id'])->get();
+        $fabs = $fabrics->groupBy('name');
 
-		$measurementNames = Categorymeasurement::where('categoryID', $mto['categoryID'])->get();
+		// $measurementNames = Categorymeasurement::where('categoryID', $mto['categoryID'])->get();
+		$measurements = Measurement::where('typeID', $mto['id'])->first();
 
 
-        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurementNames'));
+        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics'));
     }
 
     public function halfapproveMto($mtoID)
@@ -615,18 +690,33 @@ class BoutiqueController extends Controller
 		return redirect('/made-to-orders/'.$mto['id']);    	
     }
 
-    public function addOfferPrice(Request $request)
+    public function addPrice(Request $request)
     {
     	$mtoID = $request->input('mtoID');
 		$mto = Mto::where('id', $mtoID)->first();
     	$customer = $mto->customer;
 	
     	Mto::where('id', $mtoID)->update([
-    		'offerPrice' => $request->input('offerPrice')
+    		'price' => $request->input('price')
     	]);
 
         $customer->notify(new MtoUpdateForCustomer($mtoID, $mto->boutique['boutiqueName']));
 
+    	return redirect('/made-to-orders/'.$mtoID);
+    }
+
+    public function recommendFabric(Request $request)
+    {
+    	$mtoID = $request->input('mtoID');
+		$mto = Mto::where('id', $mtoID)->first();
+
+		$fabricSuggestion = $request->input('fabricSuggestion');
+        $fabSuggestion = json_encode($fabricSuggestion);
+        // dd($fabSuggestion);
+
+    	Mto::where('id', $mtoID)->update([
+    		'fabricSuggestion' => $fabSuggestion
+    	]);
     	return redirect('/made-to-orders/'.$mtoID);
     }
 
@@ -679,6 +769,40 @@ class BoutiqueController extends Controller
     	return redirect('made-to-orders/'.$mtoID);
     }
 
+    public function getOrders()
+    {
+    	$page_title = "Orders";
+   		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->get();
+
+		return view('boutique/orders', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'orders'));
+    }
+
+    public function getOrder($orderID)
+    {
+    	$page_title = "View Order";
+   		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$order = Order::where('id', $orderID)->first();
+
+		return view('boutique/orderinfo', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'order'));
+    }
+
+    public function submitOrder($orderID)
+    {
+    	$order = Order::where('id', $orderID)->first();
+    	$order->update([
+    		'status' => 'For Pickup'
+    	]);
+
+    	return redirect('/orders/'.$order['id']);
+    }
+
   //   public function requestCustomer(Request $request)
   //   {
   //   	$id = Auth()->user()->id;
@@ -726,11 +850,56 @@ class BoutiqueController extends Controller
         	
         	return view('boutique/paypalOrderDetails', compact('user', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'rent', 'mto', 'order'));
     	}
-
-        
-
     }
 
+    public function fabrics()
+    {
+    	$page_title = "Paypal Order";
+   		$id = Auth()->user()->id;
+		$user = User::find($id);
+    	$boutique = Boutique::where('userID', $id)->first();
+		$notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
+		$fabrics = Fabric::where('boutiqueID', $boutique['id'])->get();
 
+    	return view('boutique/fabrics', compact('user', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'fabrics'));
+    }
+
+    public function addFabric(Request $request)
+    {
+   		$id = Auth()->user()->id;
+    	$boutique = Boutique::where('userID', $id)->first();
+
+    	$name = ucfirst($request->input('fabricName'));
+    	$color = ucfirst($request->input('fabricColor'));
+    	$nameQuery = Fabric::where('name', $name)->first();
+    	$colorQuery = Fabric::where('color', $color)->first();
+
+	    	// dd($colorQuery);
+	    // if(empty($nameQuery) && !empty($colorQuery)){
+	    // 	dd($nameQuery);
+	    // }
+	    // elseif($nameQuery != null && $colorQuery != null){
+	    // 	dd($colorQuery);
+	    // }else{
+	    // 	dd("oops");
+	    // }
+
+    	// if($nameQuery == null && $colorQuery == null){
+	    // 	Fabric::create([
+	    // 		'boutiqueID' => $boutique['id'],
+	    // 		'name' => $name,
+	    // 		'color' => $color
+	    // 	]);
+	    // }elseif($nameQuery != null && $colorQuery == null){
+	    	Fabric::create([
+	    		'boutiqueID' => $boutique['id'],
+	    		'name' => $name,
+	    		'color' => $color
+	    	]);
+	    // }
+
+    	return redirect('/fabrics');
+    }
 
 }

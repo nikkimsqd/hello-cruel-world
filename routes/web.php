@@ -61,9 +61,14 @@ Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 //BOUTIQUE----------------------------------------------------------------------------------------
 Route::get('/dashboard', 'BoutiqueController@dashboard');
 Route::get('/categories', 'BoutiqueController@categories');
-Route::get('/tags', 'BoutiqueController@tags');
 Route::post('/requestCategory', 'BoutiqueController@requestCategory');
+Route::get('/tags', 'BoutiqueController@tags');
+Route::get('/fabrics', 'BoutiqueController@fabrics');
+Route::post('/addFabric', 'BoutiqueController@addFabric');
 
+Route::get('/boutique-getProvince/{regCode}', 'BoutiqueController@getProvince');
+Route::get('/boutique-getCity/{provCode}', 'BoutiqueController@getCity');
+Route::get('/boutique-getBrgy/{citymunCode}', 'BoutiqueController@getBrgy');
 
 //crud product
 Route::get('/addproduct', 'BoutiqueController@addProduct');
@@ -103,11 +108,17 @@ Route::get('/made-to-orders/{mtoID}', 'BoutiqueController@getMadeToOrder');
 Route::post('/declineMto', 'BoutiqueController@declineMto');
 // Route::post('/requestCustomer', 'BoutiqueController@requestCustomer');
 Route::get('/halfapproveMto/{mtoID}', 'BoutiqueController@halfapproveMto');
-Route::post('/addOfferPrice', 'BoutiqueController@addOfferPrice');
+Route::post('/addPrice', 'BoutiqueController@addPrice');
+Route::post('/recommendFabric', 'BoutiqueController@recommendFabric');
 Route::get('/submitMTO/{mtoID}', 'BoutiqueController@submitMTO');
 Route::get('/acceptMto/{mtoID}', 'BoutiqueController@acceptMto');
 
-	
+//TRANSACTIONS-ORDERS
+Route::get('/orders', 'BoutiqueController@getOrders');
+Route::get('/orders/{orderID}', 'BoutiqueController@getOrder');
+Route::get('/submitOrder/{orderID}', 'BoutiqueController@submitOrder');
+
+
 
 
 //CUSTOMER--------------------------------------------------------------------------------------------
@@ -140,8 +151,8 @@ Route::get('/getCart/{productID}', 'CustomerController@getCart');
 Route::get('/removeItem/{cartID}', 'CustomerController@removeItem');
 
 //ADDRESS
-Route::get('/getCity/{provCode}', 'CustomerController@getCity');
-Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
+// Route::get('/getCity/{provCode}', 'CustomerController@getCity');
+// Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
 Route::post('/addAddress', 'CustomerController@addAddress');
 Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
 Route::post('/submitAddress', 'CustomerController@submitAddress');
@@ -151,7 +162,7 @@ Route::post('/submitAddress', 'CustomerController@submitAddress');
 Route::get('/biddings', 'CustomerController@showBiddings');
 Route::get('/biddings/startNewBidding', 'CustomerController@showStartNewBidding');
 Route::post('/savebidding', 'CustomerController@savebidding');
-Route::get('/getCategory/{genderCategory}', 'CustomerController@getCategory');
+Route::get('/getCategory/{genderCategory}', 'CustomerController@getCategory'); //also used in boutique's side
 
 
 //NOTIFICATIONS
@@ -169,6 +180,7 @@ Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
 Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
 Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
 Route::post('/acceptOffer', 'CustomerController@acceptOffer');
+Route::get('/getFabricColor/{type}', 'CustomerController@getFabricColor');
 
 
 //TRANSACTIONS

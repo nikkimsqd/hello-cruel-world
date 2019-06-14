@@ -141,3 +141,10 @@
 
 @endsection
 
+@section('scripts')
+<script type="text/javascript">
+
+$('.dashboard').addClass("active");
+
+</script>
+@endsection

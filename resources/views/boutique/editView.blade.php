@@ -13,10 +13,9 @@
 				  <h3 class="box-title">Edit Product</h3>
 				</div>
 
-				<form action="/hinimo/public/editproduct/{{$product['productID']}}" method="post" enctype="multipart/form-data">
+				<form action="/hinimo/public/editproduct/{{$product['id']}}" method="post" enctype="multipart/form-data">
 					{{ csrf_field() }}
 				  <div class="box-body">
-
 					<div class="col-md-6">
 					    <div class="form-group">
 					      <label>Product Name</label>
@@ -116,26 +115,24 @@
 					    </div>
 
 					    <div class="form-group">
-							<label>Is item customizable?</label><br>
-							@if($product['customizable'] == "Yes")
-							<input type="radio" id="yes" name="customizable" class="" value="Yes" checked> <label for="yes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" id="no" name="customizable" class="" value="No"> <label for="no">No</label>
-							@else
-							<input type="radio" id="yes" name="customizable" class="" value="Yes"> <label for="yes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" id="no" name="customizable" class="" value="No" checked> <label for="no">No</label>
-							@endif
-				      	</div>
-
-					    <div class="form-group">
 					    	<label>Add Image:</label>
 							<input type="file" name="file[]" multiple>
 					    </div>
 
 					    <label>Add Tags:</label>
 					    <div class="form-group tags">
+					       @foreach($prodtags as $prodtag)
+					       @if($prodtag['productID'] == $product['id'])
+					       <input type="checkbox" name="tags[]" id="{{$prodtag->tag['name']}}" value="{{$prodtag->tag['id']}}" checked>
+					       <label for="{{$prodtag->tag['name']}}">{{$prodtag->tag['name']}}</label>
+					       @endif
+					       @endforeach
+
 					       @foreach($tags as $tag)
+					       @if($tag['id'] != $prodtag->tag['id'])
 					       <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-					       <label for="{{$tag['name']}}">{{$tag['name']}}</label>
+					       <label for="{{$prodtag['tagID']}}">{{$tag['name']}}</label>
+					       @endif
 					       @endforeach
 					      </div>
 						</div>
@@ -153,7 +150,7 @@
 				  </div> <!-- box-body -->
 
 				  <div class="box-footer" style="text-align: right;">
-				  	<a href="/hinimo/public/viewproduct/{{$product['productID']}}" class="btn btn-warning"><i class="fa fa-arrow-left"> Back</i></a>
+				  	<a href="/hinimo/public/viewproduct/{{$product['id']}}" class="btn btn-warning"><i class="fa fa-arrow-left"> Back</i></a>
 					<input type="submit" name="btn_add" value="Update Product" class="btn btn-primary">
 				  </div>
 	<section class="content">
@@ -164,6 +161,30 @@
 		</div> <!-- main column -->
 	</div> <!-- row -->
 </section>
+
+<style type="text/css">
+
+.tags label {
+  display: inline-block;
+  width: auto;
+  padding: 10px;
+  border: solid 1px #ccc;
+  transition: all 0.3s;
+  background-color: #e3e2e2;
+  border-radius: 5px;
+}
+
+.tags input[type="checkbox"] {
+  display: none;
+}
+
+.tags input[type="checkbox"]:checked + label {
+  border: solid 1px #e7e7e7;
+  background-color: #ef1717;
+  color: #fff;
+}
+
+</style>
 @endsection
 
 

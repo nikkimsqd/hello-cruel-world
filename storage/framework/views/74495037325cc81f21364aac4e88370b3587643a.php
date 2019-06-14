@@ -39,12 +39,12 @@
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
           <div class="row">
-            <a href="<?php echo e(url('viewproduct/'.$product['productID'])); ?>">
+            <a href="<?php echo e(url('viewproduct/'.$product['id'])); ?>">
               <h4><?php echo e($product['productName']); ?></h4>
             </a>
             <h2></h2>
 
-            <a href="<?php echo e(url('viewproduct/'.$product['productID'])); ?>" class="btn btn-block btn-primary">View Product</a>
+            <a href="<?php echo e(url('viewproduct/'.$product['id'])); ?>" class="btn btn-block btn-primary">View Product</a>
           </div>
         </div>
       </div>
@@ -56,6 +56,17 @@
 
 <?php $__env->stopSection(); ?>
 
+
+<?php $__env->startSection('scripts'); ?>
+<script type="text/javascript">
+
+$('.products').addClass("active");
+$('.allproducts').addClass("active");
+
+</script>
+
+
+<?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('boutique.sections', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 <?php echo $__env->make('layouts.boutique', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

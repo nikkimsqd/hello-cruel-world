@@ -3,29 +3,31 @@
 
 
 @section('content')
-<div class="row">
-  <div class="col-md-12">
-    <div class="box box-success">
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-success">
 
-      <div class="box-header with-border">
-        <h3 class="box-title">Categories</h3>
-      </div>
-
-      <div class="box-body">
-        <div class="col-md-5"> 
+        <div class="box-header with-border">
+          <h3 class="box-title">Categories</h3>
         </div>
 
-        <div class="col-md-5">
-        </div>
+        <div class="box-body">
+          <div class="col-md-5"> 
+          </div>
 
-      </div>
-      <div class="box-footer" style="text-align: right;">
-       <a class="btn btn-warning" href="/hinimo/public/dashboard/"><i class="fa fa-arrow-left"> Back to dasboard</i></a>
-       <a class="btn btn-primary" href="/hinimo/public/addCategories/"><i class="fa fa-plus"> Add a Category</i></a>
+          <div class="col-md-5">
+          </div>
+
+        </div>
+        <div class="box-footer" style="text-align: right;">
+         <a class="btn btn-warning" href="/hinimo/public/dashboard/"><i class="fa fa-arrow-left"> Back to dasboard</i></a>
+         <a class="btn btn-primary" href="/hinimo/public/addCategories/"><i class="fa fa-plus"> Add a Category</i></a>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 
 <!-- collapsible box -->

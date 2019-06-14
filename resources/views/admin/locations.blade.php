@@ -13,34 +13,6 @@
         </div>
 
         <div class="box-body">
-          <!-- <div class="col-md-6">
-            @foreach($regions as $region)
-              <label>{{$region->regDesc}}</label> <br>
-              @foreach($provinces as $province)
-                @if($region->regCode == $province->regCode)
-                  <ul>
-                    <li>{{$province->provDesc}}</li>
-
-                    @foreach($cities as $city)
-                      @if($province->provCode == $city->provCode)
-                        <ul>
-                          <li>{{$city->citymunDesc}}
-
-                          @foreach($barangays as $barangay)
-                            @if($city->citymunCode == $barangay->citymunCode)
-                            <ul>
-                              <li>{{$barangay->brgyDesc}}
-                            </ul>
-                            @endif
-                          @endforeach
-                          </ul>
-                      @endif
-                    @endforeach
-                  </ul>
-                @endif
-              @endforeach
-            @endforeach
-          </div> -->
           <div class="row">
             <div class="col-md-5">
               <form action="{{ url('/addLocation') }}" method="post">
@@ -180,6 +152,7 @@ $("#region-select").on('change', function(){
   $.ajax({
       url: "/hinimo/public/admin-getProvince/"+regCode,
       success:function(data){
+      console.log(data);
         $('#province-select').append('<option value=""></option>');
 
           data.provinces.forEach(function(province){

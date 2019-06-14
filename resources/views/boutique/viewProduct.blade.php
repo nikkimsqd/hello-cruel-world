@@ -46,24 +46,21 @@
 
 
               <h4>Product Category</h4>
-              <p>{{ $product->gender.', '.$product->getCategory['categoryName']}}<p>
+              <p>{{ $product->getCategory['gender'].', '.$product->getCategory['categoryName']}}<p>
 
               <h4>Product Status</h4>
               <p>{{ $product['productStatus'] }}</p>
 
               <h4>Item Availability:</h4>
-              @if($product['forRent'] == true && $product['forSale'])
+              @if($product['rpID'] != null && $product['price'] != null)
               <p>Item is for RENT & for SALE.</p>
-              @elseif($product['forSale'] == true)
+              @elseif($product['rpID'] == null && $product['price'] != null)
               <p>Item is for SALE only.</p>
-              @elseif($product['forRent'] == true)
+              @elseif($product['rpID'] != null && $product['price'] == null)
               <p>Item is for RENT only.</p>
               @else
               <p>You have not yet set the availability for this item.</p>
               @endif
-
-              <h4>Is item customizable?</h4>
-              <p>{{$product['customizable']}}</p>
 
               <h4>Tags:</h4>
               @foreach($tags as $tag)
@@ -86,8 +83,8 @@
 
         <div class="box-footer" style="text-align: right;">
           <a href="/hinimo/public/products" class="btn btn-warning"><i class="fa fa-arrow-left"> Back to products</i></a>
-          <a href="/hinimo/public/editView/{{$product['productID']}}" class="btn btn-success"><i class="fa fa-edit"> Edit</i></a>
-          <a href="/hinimo/public/delete/{{$product['productID']}}" class="btn btn-danger"><i class="fa fa-trash"> Delete</i></a>
+          <a href="/hinimo/public/editView/{{$product['id']}}" class="btn btn-success"><i class="fa fa-edit"> Edit</i></a>
+          <a href="/hinimo/public/delete/{{$product['id']}}" class="btn btn-danger"><i class="fa fa-trash"> Delete</i></a>
         </div>
       </div>
     </div>

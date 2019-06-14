@@ -14,128 +14,108 @@
 
         <div class="box-body">
           <div class="row">
-          <div class="col-md-6">
-          @if($rent['status'] == "Pending")
-          <form action="/hinimo/public/approveRent" method="post">
-          @elseif($rent['status'] == "In-Progress")
-          <form action="/hinimo/public/updateRentInfo" method="post">
-    
-          @endif
-            {{csrf_field()}}
-
-            <label>Product Name</label>
-            <h4>{{ $rent->product['productName'] }}</h4>
-
-            <label>Boutique Name</label>
-            <h4>{{ $rent->product->owner['boutiqueName'] }}</h4>
-
-            <label>Customer Name</label>
-            <h4>{{ $rent->customer['fname']}}</h4>
-
-            <label>Location item will be used</label>
-            <h4>{{ $rent['locationToBeUsed']}}</h4>
-
-            <label>Date Item will be used</label>
-            <h4>{{ $rent['dateToUse']}}</h4>
-
-            <label>Address of Delivery</label>
-            <h4>{{ $rent->address['completeAddress']}}</h4>
-
-            <label>Request placed at</label>
-            <h4>{{ $rent['created_at']->format('M d, Y')}}</h4>
-
-            @if($rent['approved_at'] != null)
-            <label>Request Approved at</label>
-            <h4>{{ $rent['approved_at']->format('M d, Y')}}</h4>
-            @endif
-
-            <label>Status</label><br>
-            @if($rent['status'] == "Pending")
-            <h4 class="label label-warning">{{ $rent['status']}}</h4>
-            @elseif($rent['status'] == "In-Progress")
-            <h4 class="label label-info">{{ $rent['status']}}</h4>
-            @elseif($rent['status'] == "Declined")
-            <h4 class="label label-danger">{{ $rent['status']}}</h4>
-            @elseif($rent['status'] == "On Delivery")
-            <h4 class="label label-primary">{{ $rent['status']}}</h4>
-            @elseif($rent['status'] == "For Pickup")
-            <td><span class="label bg-teal">{{$rent['status']}}</span></td>
-            @elseif($rent['status'] == "For Delivery")
-            <td><span class="label bg-olive">{{$rent['status']}}</span></td>
-            @elseif($rent['status'] == "On Delivery")
-            <td><span class="label label-navy">{{$rent['status']}}</span></td>
-            @elseif($rent['status'] == "On Rent")
-            <td><span class="label bg-maroon">{{$rent['status']}}</span></td>
-            @else
-            <h4 class="label label-default">{{ $rent['status']}}</h4>
-            @endif
-            <br><br>
-
-            </div>
             <div class="col-md-6">
+              @if($rent['status'] == "Pending")
+              <form action="/hinimo/public/approveRent" method="post">
+              @elseif($rent['status'] == "In-Progress")
+              <form action="/hinimo/public/updateRentInfo" method="post">
+        
+              @endif
+              {{csrf_field()}}
 
-            <label>Measurements</label>
-            @foreach($measurements as $mName => $measurement)
-              <h4>{{$mName.': '.$measurement}}</h4>
-            @endforeach
+              <label>Product Name</label>
+              <h4>{{ $rent->product['productName'] }}</h4>
 
-            <label>Payment Status</label><br>
-            @if($rent['paymentStatus'] == "Not Yet Paid")
-            <h4 class="label label-danger">{{$rent['paymentStatus']}}</h4>
-            @else
-            <h4 class="label label-success">{{$rent['paymentStatus']}}</h4> &nbsp;
-            <a href="{{url('get-paypal-transaction/'.$rent['paypalOrderID'])}}">View Payment Info</a>
-            @endif <br><br>
+              <label>Boutique Name</label>
+              <h4>{{ $rent->product->owner['boutiqueName'] }}</h4>
 
-            @if($rent['status'] == "In-Progress" && $rent['dateToBeReturned'] == null)
-            <div class="form-group">
+              <label>Customer Name</label>
+              <h4>{{ $rent->customer['fname']}}</h4>
+
+              <label>Date Item will be used</label>
+              <h4>{{ $rent['dateToUse']}}</h4>
+
+              <label>Address of Delivery</label>
+              <h4>{{ $rent->order['deliveryAddress']}}</h4>
+
+              <label>Request placed at</label>
+              <h4>{{ $rent['created_at']->format('M d, Y')}}</h4>
+
+              @if($rent['approved_at'] != null)
+              <label>Request Approved at</label>
+              <h4>{{ $rent['approved_at']->format('M d, Y')}}</h4>
+              @endif
+
+              <label>Status</label><br>
+              @if($rent['status'] == "Pending")
+              <h4 class="label label-warning">{{ $rent['status']}}</h4>
+              @elseif($rent['status'] == "In-Progress")
+              <h4 class="label label-info">{{ $rent['status']}}</h4>
+              @elseif($rent['status'] == "Declined")
+              <h4 class="label label-danger">{{ $rent['status']}}</h4>
+              @elseif($rent['status'] == "On Delivery")
+              <h4 class="label label-primary">{{ $rent['status']}}</h4>
+              @elseif($rent['status'] == "For Pickup")
+              <td><span class="label bg-teal">{{$rent['status']}}</span></td>
+              @elseif($rent['status'] == "For Delivery")
+              <td><span class="label bg-olive">{{$rent['status']}}</span></td>
+              @elseif($rent['status'] == "On Delivery")
+              <td><span class="label label-navy">{{$rent['status']}}</span></td>
+              @elseif($rent['status'] == "On Rent")
+              <td><span class="label bg-maroon">{{$rent['status']}}</span></td>
+              @else
+              <h4 class="label label-default">{{ $rent['status']}}</h4>
+              @endif
+              <br><br>
+            </div>
+
+            <div class="col-md-6">
+              <label>Measurements</label>
+              @foreach($measurements as $mName => $measurement)
+                <h4>{{$mName.': '.$measurement}}</h4>
+              @endforeach
+
+              <label>Payment Status</label><br>
+              @if($rent->order['paymentStatus'] == "Not Yet Paid")
+              <h4 class="label label-danger">{{$rent->order['paymentStatus']}}</h4>
+              @else
+              <h4 class="label label-success">{{$rent->order['paymentStatus']}}</h4> &nbsp;
+              <a href="{{url('get-paypal-transaction/'.$rent->order['paypalOrderID'])}}">View Payment Info</a>
+              @endif <br><br>
+
               <label>Item must be returned on or before:</label>
-              <div class="col-md-6 input-group date">
-                <div class="input-group-addon">
-                  <i class="fa fa-calendar"></i>
-                </div>
-                <input type="date" name="dateToBeReturned" class="form-control pull-right" id="datepicker" required>
-              </div>
+              <h4>{{ $rent['dateToBeReturned']}}</h4>
+
+              <label>Penalty Amount:</label>
+              <h4>{{ $rent->product->rentDetails['penaltyAmount']}}</h4>
+
+              <input type="text" name="customerID" value="{{$rent->customer['id']}}" hidden>
             </div>
-
-            <div class="form-group">
-              <label>Set Deposit Amount:</label>
-              <div class="col-md-6 input-group">
-                <input type="number" name="amountDeposit" class="form-control pull-right" required>
-              </div>
-            </div>
-
-            <!-- <div class="form-group">
-              <label>Set Penalty Amount: (if item is lost)</label>
-              <div class="col-md-6 input-group date">
-                <input type="number" name="amountPenalty" class="form-control pull-right" required>
-              </div>
-            </div> -->
-
-            <div class="form-group">
-              <label>Set Penalty Amount: (if item not returned on expected date)</label>
-              <div class="col-md-6 input-group date">
-                <input type="number" name="amountPenalty" class="form-control pull-right" required>
-              </div>
-            </div>
-
-            @elseif($rent['dateToBeReturned'] != null)
-            <label>Item must be returned on or before:</label>
-            <h4>{{ $rent['dateToBeReturned']}}</h4>
-
-            <label>Required Deposit Amount:</label>
-            <h4>{{ $rent['amountDeposit']}}</h4>
-
-            <label>Penalty Amount:</label>
-            <h4>{{ $rent['amountPenalty']}}</h4>
-
-            @endif
-            <input type="text" name="customerID" value="{{$rent->customer['id']}}" hidden>
-
           </div>
 
-
+          <div class="row">
+            <div class="col-md-6">
+              <table class="table">
+                <tr>
+                  <td>Subtotal</td>
+                  <td>{{$rent->order['subtotal']}}</td>
+                </tr>
+                <tr>
+                  <td>Deposit Amount</td>
+                  <td>{{$rent->product->rentDetails['depositAmount']}}</td>
+                </tr>
+                <tr>
+                  <td>Delivery Fee</td>
+                  <td>{{$rent->order['deliveryfee']}}</td>
+                </tr>
+                <tr>
+                  <td>Total</td>
+                  <td>{{$rent->order['total']}}</td>
+                </tr>
+              </table>
+            </div>
           </div>
+
           <div class="row">
             <div class="col-md-6">
               <?php $counter = 1; ?>
@@ -266,19 +246,14 @@
 </style>
 
 
-
-
 @endsection
 
 
 @section('scripts')
-
 <script type="text/javascript">
-//Date picker
-// $('#datepicker').datepicker({
-//   autoclose: true
-// })
+
+$('.transactions').addClass("active");
+$('.rents').addClass("active");
+
 </script>
-
 @endsection
-

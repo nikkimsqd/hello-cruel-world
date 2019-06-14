@@ -20,24 +20,20 @@
         <!-- Single Product Description -->
         <div class="single_product_desc clearfix">
             <span>{{$product->owner->boutiqueName}}</span>
-            <!-- <a href="cart.html"> -->
-                <h2>{{ $product['productName'] }}</h2>
-            <!-- </a> -->
-            @if($product['forSale'] != null && $product['forRent'] != null)
-            <p class="product-price">Retail Price: ₱{{ $product['productPrice'] }}</p>
-            <p class="product-price">Rent Price: ₱{{ $product['rentPrice'] }}</p>
-            @elseif($product['forSale'] != null)
-            <p class="product-price">Retail Price: ₱{{ $product['productPrice'] }}</p>
-            @elseif($product['forRent'] != null)
-            <p class="product-price">Rent Price: ₱{{ $product['rentPrice'] }}</p>
-            
+            <h2>{{ $product['productName'] }}</h2>
+            @if($product['price'] != null && $product['rpID'] != null)
+            <p class="product-price">Retail Price: ₱{{ $product['price'] }}</p>
+            <p class="product-price">Rent Price: ₱{{ $product->rentDetails['price'] }}</p>
+            @elseif($product['price'] != null)
+            <p class="product-price">Retail Price: ₱{{ $product['price'] }}</p>
+            @elseif($product['rpID'] != null)
+            <p class="product-price">Rent Price: ₱{{ $product->rentDetails['price'] }}</p>
             @endif
             <p class="product-desc">{{ $product['productDesc'] }}</p>
 
-            <!-- Form -->
-            <!-- <form action="" class="cart-form clearfix" method="post"> -->
+                <!-- elseif($product['rpID'] != null) -->
                 <!-- Select Box -->
-              <!--   <div class="select-box d-flex mt-50 mb-30">
+             <!--    <div class="select-box d-flex mt-50 mb-30">
                     <select name="select" id="productSize" class="mr-5">
                         <option value="value">Size: XL</option>
                         <option value="value">Size: X</option>
@@ -53,57 +49,43 @@
                 </div> -->
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
-                @if ($product['forSale'] == 'true' && $product['forRent'] == 'true')
+                @if ($product['price'] != null && $product['rpID'] != null)
                 @if($user != null)
                 <div class="add-to-cart-btn">
-                    <input type="text" name="productID" value="{{$product['productID']}}" hidden>
+                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
                     <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                 </div>
                 @else
-                    <a href="" class="btn essence-btn">Add to Carts</a>&nbsp;
+                    <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                 @endif
 
-                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['productID']}}">
+                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['id']}}">
 
                 <div class="product-favourite ml-4">
                     <a href="#" class="favme fa fa-heart"></a>
                 </div>
 
-                @elseif($product['forRent'] == true)
-                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['productID']}}">
+                @elseif($product['rpID'] != null)
+                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['id']}}">
             
-                @elseif($product['forSale'] == true)
+                @elseif($product['price'] != null)
                 @if($user != null)
                 <div class="add-to-cart-btn">
-                    <input type="text" name="productID" value="{{$product['productID']}}" hidden>
+                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
                     <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                 </div>
                 @else
-                    <input type="submit" class="btn essence-btn" value="Add to Carts" data-toggle="modal" data-target="#LoginModal">
+                    <input type="submit" class="btn essence-btn" value="Add to Cart" data-toggle="modal" data-target="#LoginModal">
                 @endif
                 @endif
                 </div>
 
-
-              <!--   <div class="cart-fav-box d-flex align-items-center">
-                    <div class="add-to-cart-btn">
-                    <input type="text" name="productID" value="{{$product['productID']}}" hidden>
-                    <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
-
-                    </div>
-                    <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal">
-                    
-                    <div class="product-favourite ml-4">
-                        <a href="#" class="favme fa fa-heart"></a>
-                    </div>
-                </div>
-            <!-- </form> -->
         </div>
     </section>
 
     <!-- MODAAAAAAAAAAAAAAAL -->
     @if($user != null)
-    <div class="modal fade" id="requestToRentModal{{$product['productID']}}" role="dialog">
+    <div class="modal fade" id="requestToRentModal{{$product['id']}}" role="dialog">
         <div class="modal-dialog modal-lg">
         
           <!-- Modal content-->
@@ -118,6 +100,58 @@
             <div class="col-md-11">
               <form action="/hinimo/public/requestToRent" method="post">
                 {{csrf_field()}}
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Product Rent Price:</label>
+                    <div class="col-md-6">
+                        <label class="col-form-label">{{$product->rentDetails['price']}}</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Required Deposit Amount:</label>
+                    <div class="col-md-6">
+                        <label class="col-form-label">{{$product->rentDetails['depositAmount']}}</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Required Penalty Amount:</label>
+                    <div class="col-md-6">
+                        <label class="col-form-label">{{$product->rentDetails['penaltyAmount']}}</label> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Days item is available for rent:</label>
+                    <div class="col-md-6">
+                        <label class="col-form-label">{{$product->rentDetails['limitOfDays']}}</label> 
+                        <input type="text" name="limitOfDays" class="form-control" value="{{$product->rentDetails['limitOfDays']}}" hidden><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Fine incase item is lost:</label>
+                    <div class="col-md-6">
+                        <label class="col-form-label">{{$product->rentDetails['fine']}}</label> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Item is only allowed to be rented on these locations:</label>
+                    <div class="col-md-6">
+                        <?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
+                        @foreach($locs as $loc)
+                            @foreach($barangays as $barangay)
+                            @if($barangay['brgyCode'] == $loc)
+                            <label class="col-form-label">{{$barangay['brgyDesc']}}</label>
+                            @endif
+                            @endforeach 
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- // -->
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Name:</label>
@@ -161,19 +195,12 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Location Item will be used:</label>
-                    <div class="col-md-6">
-                        <input type="text" name="locationToBeUsed" class="form-control"><br> 
-                    </div>
-                </div>
-
-                <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
                     <div class="col-md-6">
                         <select name="addressOfDelivery">
                             <option>&nbsp;</option>
                             @foreach($addresses as $address)
-                            <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
+                            <option value="{{$address['completeAddress']}}">{{$address['completeAddress']}}</option>
                             @endforeach
                         </select><br><br><br><br>
                     </div>
@@ -187,26 +214,38 @@
                 </div>
 
                 <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
-                <input type="text" name="productID" value="{{$product['productID']}}" hidden>
+                <input type="text" name="productID" value="{{$product['id']}}" hidden>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Subtotal:</label>
                     <div class="col-md-6">
-                        <input type="text" name="subtotal" class="form-control" value="{{$product['rentPrice']}}" disabled>
+                        <label class="col-form-label">{{$product->rentDetails['price']}}</label>
+                        <input type="text" name="subtotal" class="form-control" value="{{$product->rentDetails['price']}}" hidden>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Required Deposit Amount:</label>
+                    <div class="col-md-6">
+                        <label class="col-form-label">{{$product->rentDetails['depositAmount']}}</label>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Delivery Fee:</label>
                     <div class="col-md-6">
-                        <input type="text" name="deliveryFee" class="form-control" value="50" disabled>
+                        <label class="col-form-label">50</label>
+                        <input type="text" name="deliveryfee" class="form-control" value="50" hidden>
                     </div>
                 </div>
-                <?php $total = $product['rentPrice'] + 50; ?>
+
+                <hr>
+                <?php $total = $product->rentDetails['price'] + $product->rentDetails['depositAmount'] + 50; ?> <!-- replace 50 with delveryfee -->
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Total Payment:</label>
                     <div class="col-md-6">
-                        <input type="text" name="total" class="form-control" value="{{$total}}" disabled>
+                        <label class="col-form-label">{{$total}}</label>
+                        <input type="text" name="total" class="form-control" value="{{$total}}" hidden>
                     </div>
                 </div>
 
@@ -226,7 +265,7 @@
     </div>
     <!-- ##### Single Product Details Area End ##### -->
     @else
-    <div class="modal fade" id="requestToRentModal{{$product['productID']}}" role="dialog">
+    <div class="modal fade" id="requestToRentModal{{$product['id']}}" role="dialog">
         <div class="modal-dialog modal-lg">
 
             <!-- Modal content-->
@@ -277,7 +316,7 @@
     .price{text-align: right;}
     .payment-info{color: #0000;}
     .back_to_page{background-color: #ff084e; border-radius: 0;  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3); color: #ffffff; font-size: 18px;  height: 40px; line-height: 40px; right: 60px; left: 20px; top: 110px; text-align: center;  width: 40px; position: fixed; z-index: 2147483647; display: block;}
-    a:hover{font-size: 18px; color: #ffffff;}
+    /*a:hover{font-size: 18px; color: #ffffff;}*/
 </style>
 
 @endsection

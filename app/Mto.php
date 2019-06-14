@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mto extends Model
 {
-    protected $fillable = ['userID', 'boutiqueID', 'notes', 'dateOfUse', 'measurementID', 'height', 'categoryID', 'status', 'paymentStatus', 'paypalOrderID', 'budget', 'subtotal', 'deliveryFee', 'total', 'deliveryAddress', 'orderID'];
+    protected $fillable = ['userID', 'boutiqueID', 'notes', 'dateOfUse', 'measurementID', 'height', 'categoryID', 'fabricID', 'fabricSuggestion', 'fabricChoice', 'price', 'orderID'];
 
     public function customer()
     {
@@ -36,5 +36,10 @@ class Mto extends Model
     public function order()
     {
         return $this->hasOne('App\Order', 'id', 'orderID');
+    }
+
+    public function fabric()
+    {
+        return $this->hasOne('App\Fabric', 'id', 'fabricID');
     }
 }

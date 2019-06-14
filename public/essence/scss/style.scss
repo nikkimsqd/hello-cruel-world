@@ -28,7 +28,7 @@
 }
 
 body {
-    font-family: $font-poppins;
+    font-family: $font-poppins !important;
     font-size: 14px;
     background-color: $white-color;
     margin-top: 85px;

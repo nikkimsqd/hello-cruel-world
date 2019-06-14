@@ -19,7 +19,7 @@ class Rent extends Model
 
     public function product()
     {
-        return $this->hasOne('App\Product', 'productID', 'productID');
+        return $this->hasOne('App\Product', 'id', 'productID');
     }
 
     public function address()
@@ -35,5 +35,10 @@ class Rent extends Model
     public function order()
     {
         return $this->hasOne('App\Order', 'id', 'orderID');
+    }
+
+    public function brgys()
+    {
+        return $this->hasMany('App\Barangays', 'brgyCode', 'locationsAvailable');
     }
 }

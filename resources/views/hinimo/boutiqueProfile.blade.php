@@ -218,7 +218,7 @@
                                     <div class="hover-content">
                                         <div class="add-to-cart-btn">
                                             @if($product['productStatus'] == "Available")
-                                            <a href="{{url('single-product-details/').'/'.$product['productID']}}" class="btn essence-btn">View Product</a>
+                                            <a href="{{url('single-product-details/').'/'.$product['id']}}" class="btn essence-btn">View Product</a>
                                             @endif
                                         </div>
                                     </div>
@@ -279,7 +279,7 @@
                                     <div class="hover-content">
                                         <div class="add-to-cart-btn">
                                             @if($notAvailable['productStatus'] == "Available")
-                                            <a href="single-product-details/{{$notAvailable['productID']}}" class="btn essence-btn">View Product</a>
+                                            <a href="single-product-details/{{$notAvailable['id']}}" class="btn essence-btn">View Product</a>
                                             @endif
                                         </div>
                                     </div>

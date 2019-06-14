@@ -12,4 +12,9 @@ class Province extends Model
 	public $timestamps = false;
 	public $incrementing = false;
 	public $fillable = ['id', 'psgcCode', 'provDesc', 'regCode', 'provCode'];
+
+	public function region()
+    {
+        return $this->hasOne('App\Region', 'regCode', 'regCode');
+    }
 }

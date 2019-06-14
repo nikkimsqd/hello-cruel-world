@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-	protected $primaryKey = 'productID';
-    protected $fillable = ['boutiqueID', 'fileID', 'productName', 'productDesc', 'productPrice', 'rentPrice', 'category', 'productStatus', 'forRent', 'forSale', 'customizable'];
+	// protected $primaryKey = 'productID';
+    protected $fillable = ['boutiqueID', 'productName', 'productDesc', 'price', 'category', 'productStatus', 'rpID'];
 
     public function productFile()
     {
-        return $this->hasMany('App\File', 'productID', 'productID');
+        return $this->hasMany('App\File', 'productID', 'id');
     }
 
     public function owner()
@@ -27,5 +27,10 @@ class Product extends Model
     public function getTags()
     {
         return $this->hasOne('App\Tag', 'id', 'tags');
+    }
+
+    public function rentDetails()
+    {
+        return $this->hasOne('App\Rentableproduct', 'id', 'rpID');
     }
 }

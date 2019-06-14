@@ -25,6 +25,7 @@ use App\Measurement;
 // use App\MeasurementRequest;
 use App\Categorymeasurement;
 use App\Cartitem;
+use App\Fabric;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -49,11 +50,13 @@ class CustomerController extends Controller
 
     public function getStarted()
     {
-        return view('hinimo/getstarted');
+        $page_title = "profiling";
+        return view('hinimo/getstarted', compact('page_title'));
     }
 
     public function profiling(Request $request)
     {
+        $page_title = "profiling";
         $userID = Auth()->user()->id;
 
         $tops = $request->input('tops');
@@ -135,7 +138,7 @@ class CustomerController extends Controller
                 $notifications;
                 $notificationsCount;
                 $this->getNotifications($notifications, $notificationsCount);
-          
+
                 return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
 
             } else if(Auth()->user()->roles == "boutique") {
@@ -164,7 +167,7 @@ class CustomerController extends Controller
     public function productDetails($productID)
     {
         $user = Auth()->user();
-    	$product = Product::where('productID', $productID)->first();
+    	$product = Product::where('id', $productID)->first();
         $addresses = Address::where('userID', $user['id'])->get();
         $boutiques = Boutique::all();
         $page_title = "Shop";
@@ -177,10 +180,14 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
+
+        $barangays = Barangay::all();
+
+        // dd($product->rentDetails->locations);
         
         $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice', 'page_title', 'notifications', 'notificationsCount'));
+    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice', 'page_title', 'notifications', 'notificationsCount', 'barangays'));
     }
 
     public function addtoCart($productID)
@@ -264,7 +271,7 @@ class CustomerController extends Controller
             'status' => 'Inactive'
         ]);
         foreach($cart->items as $item){
-            Product::where('productID', $item->product['productID'])->update([
+            Product::where('id', $item->product['id'])->update([
                 'productStatus' => "Not Available"
             ]);
         }
@@ -411,19 +418,18 @@ class CustomerController extends Controller
         $measurement = $request->input('measurement');
         $mName = json_encode($measurement);
 
+        $dateuse = $request->input('dateToUse');
+        $toadd = $request->input('limitOfDays');
+        $dateToBeReturned = date('Y-m-d', strtotime($dateuse.'+'.$toadd.' days'));
+
         $rent = Rent::create([
             'boutiqueID' => $request->input('boutiqueID'),
             'customerID' => $id, 
             'status' => "Pending", 
             'productID' => $request->input('productID'), 
             'dateToUse' => $request->input('dateToUse'), 
-            'locationToBeUsed' => $request->input('locationToBeUsed'), 
-            'addressOfDelivery' => $request->input('addressOfDelivery'),
-            'additionalNotes' => $request->input('additionalNotes'),
-            'subtotal' => $request->input('subtotal'),
-            'deliveryFee' => $request->input('deliveryFee'),
-            'total' => $request->input('total'),
-            'paymentStatus' => "Not Yet Paid"
+            'dateToBeReturned' => $dateToBeReturned, 
+            'additionalNotes' => $request->input('additionalNotes')
         ]);
 
         $measurement = Measurement::create([
@@ -431,6 +437,22 @@ class CustomerController extends Controller
             'type' => 'rent',
             'typeID' => $rent['rentID'],
             'data' => $mName
+        ]);
+
+        $order = Order::create([
+            'userID' => $id,
+            'rentID' => $rent['rentID'],
+            'boutiqueID' => $request->input('boutiqueID'),
+            'subtotal' => $request->input('subtotal'),
+            'deliveryfee' => $request->input('deliveryfee'),
+            'total' => $request->input('total'),
+            'deliveryAddress' => $request->input('addressOfDelivery'),
+            'status' => "Pending",
+            'paymentStatus' => "Not Yet Paid"
+        ]);
+
+        $rent->update([
+            'orderID' => $order['id']
         ]);
 
         Rent::where('rentID', $rent['rentID'])->update([
@@ -614,36 +636,57 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
-
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+
+        $fabrics = Fabric::where('boutiqueID', $boutiqueID)->get();
+        $fabs = $fabrics->groupBy('name');
+        // dd($fabs);
         
-        return view('hinimo/madetoorder', compact('categories', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'categoryArray'));
+        return view('hinimo/madetoorder', compact('categories', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'categoryArray', 'fabrics', 'fabs'));
+    }
+
+    public function getFabricColor($type)
+    {
+        $colors = Fabric::where('name', $type)->get();
+
+        return response()->json(['colors' => $colors]);
     }
 
     public function saveMadeToOrder(Request $request)
     {
         $userID = Auth()->user()->id;
         $boutiqueID = $request->input('boutiqueID');
-
         $measurement = $request->input('measurement');
         $mCategories = $request->input('mCategory');
-        // dd($measurement);
+        $fabricChoice = $request->input('fabricChoice');
 
+        $fabChoice = json_encode($fabricChoice);
         $mName = json_encode($measurement);
        
         $mto = Mto::create([
             'userID' => $userID,
             'boutiqueID' => $boutiqueID,
-            'notes' => $request->input('notes'),
             'dateOfUse' => $request->input('dateOfUse'),
+            'notes' => $request->input('notes'),
             'height' => $request->input('height'),
             'categoryID' => $request->input('category'),
-            'status' => "Pending",
-            'paymentStatus' => 'Not Yet Paid',
-            'budget' => $request->input('budget')
+            'fabricChoice' => $fabChoice,
+            'price' => $request->input('price'),
+            'orderID' => $request->input('orderID'),
             ]);
+
+        if($request->input('fabric') == "suggest"){
+            $mto->update([
+                'suggestFabric' => "true"
+            ]);
+
+        }elseif($request->input('fabric') == "choose"){
+            $mto->update([
+                'fabricID' => $request->input('fabricID')
+            ]);
+        }
 
         $measurement = Measurement::create([
             'userID' => $userID,
@@ -660,8 +703,9 @@ class CustomerController extends Controller
 
         if($request->hasFile('file')) {
             $files = new File();
-            $name = $upload->getClientOriginalName();
+            // $name = $upload->getClientOriginalName();
             $destinationPath = public_path('uploads');
+            $name = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
             $filename = $destinationPath.'\\'. $name;
             $upload->move($destinationPath, $filename);
 
@@ -765,9 +809,10 @@ class CustomerController extends Controller
 
         $mto = Mto::find($mtoID);
         $measurement = json_decode($mto->measurement->data);
-        // dd($measurement);
+        $fabrics = Fabric::where('boutiqueID', $mto->boutique['id'])->get();
+        // dd($fabrics);
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto'));
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics'));
     }
 
     public function acceptOffer(Request $request)

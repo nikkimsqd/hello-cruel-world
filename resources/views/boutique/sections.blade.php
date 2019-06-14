@@ -195,7 +195,7 @@
   <ul class="sidebar-menu" data-widget="tree">
     <li class="header">MAIN NAVIGATION</li>
    
-    <li>
+    <li class="dashboard">
       <a href="/hinimo/public/dashboard">
         <i class="fa fa-th"></i> <span>Dashboard</span>
         <span class="pull-right-container">
@@ -204,7 +204,7 @@
       </a>
     </li>
 
-    <li class="treeview">
+    <li class="treeview products">
       <a href="#">
         <i class="fa fa-pie-chart"></i>
         <span>Products</span>
@@ -213,15 +213,15 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="{{url('products')}}'"><i class="fa fa-circle-o"></i> All Products</a></li>
+        <li class="allproducts"><a href="{{url('products')}}"><i class="fa fa-circle-o"></i> All Products</a></li>
         <!-- <li><a href="/hinimo/public/products/womens"><i class="fa fa-circle-o"></i> Womens</a></li> -->
         <!-- <li><a href="/hinimo/public/products/mens"><i class="fa fa-circle-o"></i> Mens</a></li> -->
         <!-- <li><a href="/hinimo/public/products/embellishments"><i class="fa fa-circle-o"></i> Embellishments</a></li> -->
-        <li><a href="{{url('products/customizable')}}"><i class="fa fa-circle-o"></i> Customizable Items</a></li>
+        <!-- <li><a href="{{url('products/customizable')}}"><i class="fa fa-circle-o"></i> Customizable Items</a></li> -->
       </ul>
     </li>
 
-    <li class="treeview">
+    <li class="treeview transactions">
       <a href="#">
         <i class="fa fa-edit"></i>
         <span>Transactions</span>
@@ -230,14 +230,14 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="{{url('orders')}}"><i class="fa fa-circle-o"></i> Orders</a></li>
-        <li><a href="{{url('rents')}}"><i class="fa fa-circle-o"></i> Rents</a></li>
-        <li><a href="{{url('made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-        <li><a href=""><i class="fa fa-circle-o"></i> Biddings</a></li>
+        <li class="orders"><a href="{{url('orders')}}"><i class="fa fa-circle-o"></i> Orders</a></li>
+        <li class="rents"><a href="{{url('rents')}}"><i class="fa fa-circle-o"></i> Rents</a></li>
+        <li class="mtos"><a href="{{url('made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
+        <li class="biddings"><a href=""><i class="fa fa-circle-o"></i> Biddings</a></li>
       </ul>
     </li>
 
-    <li class="treeview">
+    <li class="treeview etc">
       <a href="#">
         <i class="fa fa-edit"></i>
         <span>Etc-name tempo</span>
@@ -246,8 +246,9 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="{{url('categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <li class="categories"><a href="{{url('categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
+        <li class="tags"><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <li class="fabrics"><a href="{{url('fabrics')}}"><i class="fa fa-circle-o"></i> Available Fabrics</a></li>
       </ul>
     </li>
 

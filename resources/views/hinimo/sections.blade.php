@@ -101,13 +101,10 @@
 
         <div class="cart-content d-flex">
 
+            <?php $subtotal = 0; ?>
+            @if($cart != null)
             <!-- Cart List Area -->
             <div class="cart-list">
-                <!-- Single Cart Item -->
-                <?php
-                	$subtotal = 0;
-                ?>
-                @if($cart != null)
                 @foreach($cart->items as $item)
                 <div class="single-cart-item">
                     <a href="#" class="product-image">
@@ -130,9 +127,7 @@
                 	$subtotal += $item->product['productPrice'];
                 ?>
                 @endforeach
-                @endif
             </div>
-
             <!-- Cart Summary -->
             <div class="cart-amount-summary">
 
@@ -147,6 +142,13 @@
                     <a href="{{url('checkout')}}" class="btn essence-btn">proceed to checkout</a>
                 </div>
             </div>
+            @else
+            <div class="cart-amount-summary">
+
+                <h2>You have nothing on your cart</h2>
+                
+            </div>
+            @endif
         </div>
     </div>
 <!-- ##### Right Side Cart End ##### -->

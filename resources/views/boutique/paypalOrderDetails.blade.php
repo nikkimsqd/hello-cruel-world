@@ -71,7 +71,7 @@
         <tr>
           <td>1</td>
           <td>{{$rent->product['productName']}}</td>
-          <td>{{$rent->product['productID']}}</td>
+          <td>{{$rent->product['id']}}</td>
           <td>{{$rent->product['productDesc']}}</td>
           <td>{{$rent['subtotal']}}</td>
         </tr>
