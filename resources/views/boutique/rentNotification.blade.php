@@ -25,15 +25,12 @@
               <label>Customer Name</label>
               <h4>{{ $rent->customer['fname']}}</h4>
 
-              <label>Location item will be used</label>
-              <h4>{{ $rent['locationToBeUsed']}}</h4>
-
               <label>Date Item will be used</label>
               <h4>{{ $rent['dateToUse']}}</h4>
             </div>
             <div class="col-md-6">
               <label>Address of Delivery</label>
-              <h4>{{ $rent->address['completeAddress']}}</h4>
+              <h4>{{ $rent->order['deliveryAddress']}}</h4>
 
               <label>Request placed at</label>
               <h4>{{ $rent['created_at']->format('M d, Y')}}</h4>

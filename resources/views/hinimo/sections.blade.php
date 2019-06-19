@@ -119,12 +119,12 @@
                             <h6>{{$item->product['productName']}}</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
-                            <p class="price">₱ {{$item->product['productPrice']}}</p>
+                            <p class="price">₱{{$item->product['price']}}</p>
                         </div>
                     </a>
                 </div>
                 <?php
-                	$subtotal += $item->product['productPrice'];
+                	$subtotal += $item->product['price'];
                 ?>
                 @endforeach
             </div>

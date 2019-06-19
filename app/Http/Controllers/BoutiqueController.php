@@ -57,15 +57,24 @@ class BoutiqueController extends Controller
 
 				if($notification->type == 'App\Notifications\RentRequest'){
 					$notif = $notification;
-					// $notification->markAsRead();
+					$notification->markAsRead();
 
 					$rent = Rent::where('rentID', $notif->data['rentID'])->first();
 
-					return view('boutique/rentNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'rent'));
+					// return view('boutique/rentNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'rent'));
+					return redirect('/rents/'.$rent['rentID']);
 
 				}elseif ($notification->type == 'App\Notifications\NewMTO') {
 					$notif = $notification;
-					// $notification->markAsRead();
+					$notification->markAsRead();
+					$mto = Mto::where('id', $notif->data['mtoID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/made-to-orders/'.$mto['id']);
+
+				}elseif ($notification->type == 'App\Notifications\CustomerAcceptsOffer') {
+					$notif = $notification;
+					$notification->markAsRead();
 					$mto = Mto::where('id', $notif->data['mtoID'])->first();
 
 					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
@@ -449,75 +458,77 @@ class BoutiqueController extends Controller
 		return redirect('/rents/'.$rent['rentID']);
 	}
 
-	public function updateRentInfo(Request $request)
-	{
-		$id = Auth()->user()->id;
-    	$boutique = Boutique::where('userID', $id)->first();
-		$customerID = $request->input('customerID');
-		$customer = User::where('id', $customerID)->first();
-		$rentID = $request->input('rentID');
-		$rent = Rent::where('rentID', $rentID)->first();
-		$newTotal = $rent['total'] + $request->input('amountDeposit');
+	// public function updateRentInfo(Request $request)
+	// {
+	// 	$id = Auth()->user()->id;
+ //    	$boutique = Boutique::where('userID', $id)->first();
+	// 	$customerID = $request->input('customerID');
+	// 	$customer = User::where('id', $customerID)->first();
+	// 	$rentID = $request->input('rentID');
+	// 	$rent = Rent::where('rentID', $rentID)->first();
+	// 	$newTotal = $rent['total'] + $request->input('amountDeposit');
 	
-		// dd($request->input('amountPenalty'));
+	// 	// dd($request->input('amountPenalty'));
 
-		$rent->update([
-			'dateToBeReturned' => $request->input('dateToBeReturned'),
-			'amountDeposit' => $request->input('amountDeposit'),
-			'amountPenalty' => $request->input('amountPenalty'),
-			'total' => $newTotal
-		]);
+	// 	$rent->update([
+	// 		'dateToBeReturned' => $request->input('dateToBeReturned'),
+	// 		'amountDeposit' => $request->input('amountDeposit'),
+	// 		'amountPenalty' => $request->input('amountPenalty'),
+	// 		'total' => $newTotal
+	// 	]);
 		
-    	$customer->notify(new RentUpdateForCustomer($rentID, $boutique['boutiqueName']));
+ //    	$customer->notify(new RentUpdateForCustomer($rentID, $boutique['boutiqueName']));
 
-		return redirect('rents/'.$rentID);
-	}
+	// 	return redirect('rents/'.$rentID);
+	// }
 
-	public function declineRent(Request $request)
-	{
-		$declinedrent = DeclinedRent::create([
-			'rentID' => $request->input('rentID'),
-			'reason' => $request->input('reason')
-		]);
-		// dd($declinedrent);
+	// public function declineRent(Request $request)
+	// {
+	// 	$declinedrent = DeclinedRent::create([
+	// 		'rentID' => $request->input('rentID'),
+	// 		'reason' => $request->input('reason')
+	// 	]);
+	// 	// dd($declinedrent);
 
-		Rent::where('rentID', $request->input('rentID'))->update([
-			'status' => "Declined"
-		]);
+	// 	Rent::where('rentID', $request->input('rentID'))->update([
+	// 		'status' => "Declined"
+	// 	]);
 
-		return redirect('/rents');
-	}
+	// 	return redirect('/rents');
+	// }
 
-	public function makeOrderforRent(Request $request)
-	{
-		$rentID = $request->input('rentID');
+	// public function makeOrderforRent(Request $request)
+	// {
+	// 	$rentID = $request->input('rentID');
 	
-		$rent = Rent::where('rentID', $rentID)->first();
-		$order = Order::create([
-			'subtotal' => $rent['subtotal'],
-			'deliveryfee' => $rent['deliveryFee'],
-			'total' => $rent['total'],
-			'boutiqueID' => $rent['boutiqueID'],
-			'deliveryAddress' => $rent->address['id'],
-			'status' => 'For Pickup',
-			'rentID' => $rent['rentID'],
-			'userID' => $rent['customerID'],
-			'paymentStatus' => $rent['paymentStatus']
-		]);
-		// dd($order['id']);
+	// 	$rent = Rent::where('rentID', $rentID)->first();
+	// 	$order = Order::create([
+	// 		'subtotal' => $rent['subtotal'],
+	// 		'deliveryfee' => $rent['deliveryFee'],
+	// 		'total' => $rent['total'],
+	// 		'boutiqueID' => $rent['boutiqueID'],
+	// 		'deliveryAddress' => $rent->address['id'],
+	// 		'status' => 'For Pickup',
+	// 		'rentID' => $rent['rentID'],
+	// 		'userID' => $rent['customerID'],
+	// 		'paymentStatus' => $rent['paymentStatus']
+	// 	]);
+	// 	// dd($order['id']);
 
-		$rent->update([
-			'orderID' => $order['id'],
-			'status' => 'For Pickup'
-			]);
+	// 	$rent->update([
+	// 		'orderID' => $order['id'],
+	// 		'status' => 'For Pickup'
+	// 		]);
 
-		return redirect('rents/'.$rentID);
-	}
+	// 	return redirect('rents/'.$rentID);
+	// }
 
 	public function rentReturned($rentID)
 	{
+		$currentDate = date('Y-m-d');
 		$rent = Rent::where('rentID', $rentID)->first();
         $rent->update([
+        	'completed_at' => $currentDate,
             'status' => "Completed"
         ]);
 

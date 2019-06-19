@@ -74,21 +74,12 @@
                             </tr>
                             </thead>
                             @foreach($rents as $rent)
-                            @if($rent['status'] == "Pending" || $rent['status'] == "In-Progress")
                             <tr>
                                 <td style="text-align: center;">{{$rent['rentID']}}</td>
                                 <td>{{$rent->product['productName']}}</td>
-                                <td style="text-align: center;">{{$rent['status']}}</td>
+                                <td style="text-align: center;">{{$rent->order['status']}}</td>
                                 <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Transaction</a></td>
                             </tr>
-                            @else
-                            <tr>
-                                <td style="text-align: center;">{{$rent['rentID']}}</td>
-                                <td>{{$rent->product['productName']}}</td>
-                                <td style="text-align: center;">{{$rent['status']}}</td>
-                                <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Order</a></td>
-                            </tr>
-                            @endif
                             @endforeach
                         </table>
                         <br><br><br>
@@ -109,7 +100,7 @@
                             <tr>
                                 <td style="text-align: center;">{{$mto['id']}}</td>
                                 <td>{{$mto['notes']}}</td>
-                                <td style="text-align: center;">{{$mto['status']}}</td>
+                                <td style="text-align: center;">{{$mto->order['status']}}</td>
                                 <td style="text-align: center;"><a href="{{url('/view-mto/'.$mto['id'])}}">View Transaction</a></td>
                             </tr>
                             @endforeach

@@ -91,9 +91,9 @@ Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 Route::get('/rents', 'BoutiqueController@rents');
 Route::get('/rents/{rentID}', 'BoutiqueController@getRentInfo');
 Route::post('/approveRent', 'BoutiqueController@approveRent');
-Route::post('/declineRent', 'BoutiqueController@declineRent');
-Route::post('/updateRentInfo', 'BoutiqueController@updateRentInfo');
-Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
+// Route::post('/declineRent', 'BoutiqueController@declineRent');
+// Route::post('/updateRentInfo', 'BoutiqueController@updateRentInfo');
+// Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
 Route::get('/rentReturned/{rentID}', 'BoutiqueController@rentReturned');
 
 Route::get('/get-paypal-transaction/{orderId}', 'BoutiqueController@getPaypalOrder');
@@ -136,10 +136,11 @@ Route::get('/getMeasurements/{categoryID}', 'CustomerController@getMeasurements'
 
 //REQUEST FOR RENT
 Route::post('/requestToRent', 'CustomerController@requestToRent');
-Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
+// Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
 
 //ORDER
 Route::post('/placeOrder', 'CustomerController@placeOrder');
+Route::get('/receiveOrder/{orderID}', 'CustomerController@receiveOrder');
 
 
 
@@ -155,7 +156,7 @@ Route::get('/removeItem/{cartID}', 'CustomerController@removeItem');
 // Route::get('/getBrgy/{citymunCode}', 'CustomerController@getBrgy');
 Route::post('/addAddress', 'CustomerController@addAddress');
 Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
-Route::post('/submitAddress', 'CustomerController@submitAddress');
+// Route::post('/submitAddress', 'CustomerController@submitAddress');
 
 
 //BIDDING
@@ -179,8 +180,11 @@ Route::get('/boutique/{boutiqueID}', 'CustomerController@getBoutique');
 Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
 Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
 Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
-Route::post('/acceptOffer', 'CustomerController@acceptOffer');
 Route::get('/getFabricColor/{type}', 'CustomerController@getFabricColor');
+// Route::post('/acceptOffer', 'CustomerController@acceptOffer');
+Route::get('/inputAddress/{mtoID}', 'CustomerController@inputAddress');
+Route::post('/makeOrderforMTO', 'CustomerController@makeOrderforMTO');
+// Route::get('/receiveMto/{orderID}', 'CustomerController@receiveMto');
 
 
 //TRANSACTIONS
@@ -193,6 +197,10 @@ Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
 //PAYPAL TRANSACTION
 Route::post('/paypal-transaction-complete', 'CustomerController@paypalpaypalTransactionComplete');
 // Route::get('/get-paypal-transaction/{orderId}', 'CustomerController@getPaypalOrder');
+
+
+//MIX&MATCH
+Route::get('/getMProduct/{productID}', 'CustomerController@getMProduct');
 
 
 

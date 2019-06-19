@@ -55,7 +55,7 @@
               @if($mto['fabricSuggestion'] != null)
               <h4>Your Fabric Recommendation</h4>
               @foreach($fabrics as $fabric)
-              @if($fabric['id'] == $fabricSuggestion->FabricID)
+              @if($fabric['id'] == $fabricSuggestion->fabricID)
                 <h4>Fabric Type: <b>{{$fabric['name']}}</b></h4>
                 <h4>Fabric Color: <b>{{$fabric['color']}}</b></h4>
               @endif
@@ -66,8 +66,10 @@
                   <!-- <h4>{{$fabSuggestion}}: <b>{{ucfirst($value)}}</b></h4> -->
               <!-- @endforeach -->
               @endif
-              <a href="" data-toggle="modal" data-target="#recommendFabricModal">Recommend fabric to use with price here.</a>
-              <hr>
+                @if($mto['orderID'] == null)
+                <a href="" data-toggle="modal" data-target="#recommendFabricModal">Recommend fabric to use with price here.</a>
+                <hr>
+                @endif
               @if($mto['orderID'] == null)
               <form action="{{url('/addPrice')}}" method="post">
                 {{csrf_field()}}
@@ -88,25 +90,12 @@
         </div>
 
         <div class="box-footer" style="text-align: right;">
+          @if($mto['orderID'] == null)
             <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
             <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
-          @if($mto['status'] == "Pending")
-            <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
-            <a href="{{url('halfapproveMto/'.$mto['id'])}}" class="btn btn-primary">Contact customer for negotiations</a>
-          @elseif($mto['status'] == "In-Transaction")
-            @if($mto['finalPrice'] != null)
-            <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
-            <a href="{{url('/acceptMto/'.$mto['id'])}}" class="btn btn-success">Accept Request</a>
-            @else
-            <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
-            <input type="submit" class="btn btn-success" disabled value="Accept Request">
-            @endif
-          @elseif($mto['status'] == "In-Progress")
-            @if($mto['paymentStatus'] == "Not Yet Paid")
-              <input type="submit" class="btn btn-primary" value="For Pickup" disabled>
-            @else
-              <a href="" class="btn btn-primary" data-toggle="modal" data-target="#forPickupModal">For Pickup</a>
-            @endif
+          @else
+            <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
+            <a href="{{url('orders/'.$mto->order['id'])}}" class="btn btn-primary">View Order Details</a>
           @endif
         </div>
 

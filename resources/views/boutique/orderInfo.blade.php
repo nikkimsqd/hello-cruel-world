@@ -14,93 +14,92 @@
 
         <div class="box-body">
           <div class="col-md-12"> 
-            <table class="table table-striped">
-              <col width="250">
-              <col width="150">
-              <col width="250">
-              <col width="70">
-              <thead>
-              <tr>
-                <th>Customer Name</th>
-                <th>Boutique Name</th>
-                <th>Delivery Address</th>
-                <th>Status</th>
-              </tr>
-              </thead>
-              <tr>
-                <td>{{$order->customer['fname'].' '.$order->customer['lname']}}</td>
-                <td>{{$order->boutique['boutiqueName']}}</td>
-                <td>{{$order['deliveryAddress']}}</td>
-                @if($order['status'] == "Pending")
-                <td><span class="label label-warning">{{$order['status']}}</span></td>
+            <h4>Customer Name: <b>{{$order->customer['fname'].' '.$order->customer['lname']}}</b></h4>
+            <h4>Boutique Name: <b>{{$order->boutique['boutiqueName']}}</b></h4>
+            <h4>Delivery Address: <b>{{$order['deliveryAddress']}}</b></h4>
+            <h4>Status: 
+              @if($order['status'] == "In-Progress")
+              <span class="label label-info">{{$order['status']}}</span>
 
-                @elseif($order['status'] == "In-Progress")
-                <td><span class="label label-info">{{$order['status']}}</span></td>
+              @elseif($order['status'] == "For Pickup")
+              <span class="label bg-navy">{{$order['status']}}</span>
 
-                @elseif($order['status'] == "For Pickup")
-                <td><span class="label bg-navy">{{$order['status']}}</span></td>
+              @elseif($order['status'] == "For Delivery")
+              <span class="label bg-olive">{{$order['status']}}</span>
 
-                @elseif($order['status'] == "For Delivery")
-                <td><span class="label bg-olive">{{$order['status']}}</span></td>
+              @elseif($order['status'] == "On Delivery")
+              <span class="label bg-maroon">{{$order['status']}}</span>
 
-                @elseif($order['status'] == "On Delivery")
-                <td><span class="label label-maroon">{{$order['status']}}</span></td>
+              @elseif($order['status'] == "Delivered")
+              <span class="label label-success">{{$order['status']}}</span>
 
-                @elseif($mto['status'] == "Delivered")
-                <td><span class="label label-success">{{$mto['status']}}</span></td>
+              @elseif($order['status'] == "Completed")
+              <span class="label label-success">{{$order['status']}}</span>
+              @endif
+            </h4>
+            <h4>Order Type: 
+              @if($order['cartID'] != null)
+                <b>Purchase</b>
+              @elseif($order['rentID'] != null)
+                <b>Rent</b>
+              @elseif($order['mtoID'] != null)
+                <b>MTO</b>
+              @endif
+            </h4>
+            <br>
 
-                @elseif($order['status'] == "Completed")
-                <td><span class="label label-success">{{$order['status']}}</span></td>
-
-                @endif
-              </tr>
-              <!-- <tr>
-                <td>Customer Name</td>
-                <td>{{$order->customer['fname'].' '.$order->customer['lname']}}</td>
-              </tr>
-              <tr>
-                <td>Boutique Name</td>
-                <td>{{$order->boutique['boutiqueName']}}</td>
-              </tr>
-              <tr>
-                <td>Delivery Address</td>
-                <td>{{$order['deliveryAddress']}}</td>
-              </tr>
-              <tr>
-                <td>Status</td>
-                <td>{{$order['status']}}</td>
-              </tr> -->
-            </table><br><br>
-
-            <table class="table table-striped">
-              <col width="250">
-              <col width="150">
-              <col width="250">
-              <col width="70">
-              <thead>
-              <tr>
-                <th>Qty</th>
-                <th>Product Name</th>
-                <th>Product Description</th>
-                <th>Price</th>
-              </tr>
-              </thead>
-              @foreach($order->cart->items as $item)
-              <tr>
-                <td>1</td>
-                <td>{{$item->product['productName']}}</td>
-                <td>{{$item->product['productDesc']}}</td>
-                <td>{{$item->product['productPrice']}}</td>
-              </tr>
-              @endforeach
-            </table><br><br>
+            @if($order['cartID'] != null)
+              <table class="table table-striped">
+                <!-- <col width="250">
+                <col width="150">
+                <col width="250">
+                <col width="70"> -->
+                <thead>
+                <tr>
+                  <th>Qty</th>
+                  <th>Product Name</th>
+                  <th>Product Description</th>
+                  <th>Price</th>
+                </tr>
+                </thead>
+                  @foreach($order->cart->items as $item)
+                  <tr>
+                    <td>1</td>
+                    <td>{{$item->product['productName']}}</td>
+                    <td>{{$item->product['productDesc']}}</td>
+                    <td>{{$item->product['productPrice']}}</td>
+                  </tr>
+                  @endforeach
+              </table><br><br>
+            @elseif($order['rentID'] != null)
+              <table class="table table-striped">
+                <!-- <col width="250">
+                <col width="150">
+                <col width="250">
+                <col width="70"> -->
+                <thead>
+                <tr>
+                  <th>Qty</th>
+                  <th>Product Name</th>
+                  <th>Product Description</th>
+                  <th>Rent Price</th>
+                </tr>
+                </thead>
+                  <tr>
+                    <td>1</td>
+                    <td>{{$order->rent->product['productName']}}</td>
+                    <td>{{$order->rent->product['productDesc']}}</td>
+                    <td>{{$order->rent->product->rentDetails['price']}}</td>
+                  </tr>
+              </table><br><br>
+            @endif
           </div>
 
-          <div class="col-md-5">
+          <div class="col-md-4" style="text-align: right">
 
-            <table class="table ">
-              <col width="200">
-              <col width="350">
+            <table class="table">
+              <col width="162">
+              <col width="130">
               <tr>
                 <th>Subtotal</th>
                 <td>{{$order['subtotal']}}</td>
@@ -116,9 +115,9 @@
               <tr>
                 <th>Payment Status</th>
                 @if($order['paymentStatus'] == "Not Yet Paid")
-                  <td style="color: red">{{$order['paymentStatus']}}</td>
+                  <td><span class="label label-danger">{{ $order['paymentStatus']}}</span></td>
                 @else
-                  <td style="color: #0315ff;">{{$order['paymentStatus']}}</td>
+                  <td><span class="label label-success">{{ $order['paymentStatus']}}</span></td>
                 @endif
               </tr>
             </table>
@@ -126,12 +125,18 @@
 
         </div>
         <div class="box-footer" style="text-align: right;">
-         <a class="btn btn-default" href="{{url('orders')}}"> Back</a>
-         @if($order['paymentStatus'] == "Paid")
-         <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
-         @else
-         <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
-         @endif
+        @if($order['cartID'] != null)
+          <a class="btn btn-default" href="{{url('orders')}}"> Back</a>
+        @elseif($order['rentID'] != null)
+          <a class="btn btn-default" href="{{url('rents/'.$order->rent['rentID'])}}"> Back to Rent Details</a>
+        @elseif($order['mtoID'] != null)
+          <a class="btn btn-default" href="{{url('made-to-orders/'.$order->mto['id'])}}"> Back to MTO Details</a>
+        @endif
+        @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress")
+          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
+        @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress")
+          <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
+        @endif
         </div>
       </div>
     </div>

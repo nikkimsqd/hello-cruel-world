@@ -43,7 +43,7 @@
                   <td>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</td>
                   <td>{{$mto['created_at']->format('M d, Y')}}</td>
                   @if($mto['orderID'] != null)
-                    <td><a href="made-to-orders/{{$mto->order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                    <td><a href="orders/{{$mto->order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                   @else
                     <td style="color: red;">MTO has no order data yet</td>
                   @endif

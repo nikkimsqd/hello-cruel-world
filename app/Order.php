@@ -29,6 +29,11 @@ class Order extends Model
         return $this->hasOne('App\Rent', 'rentID', 'rentID');
     }
 
+    public function mto()
+    {
+        return $this->hasOne('App\Mto', 'id', 'mtoID');
+    }
+
     public function customer()
     {
         return $this->hasOne('App\User', 'id', 'userID');

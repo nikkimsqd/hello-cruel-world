@@ -23,11 +23,52 @@
                 <div class="regular-page-content-wrapper">
                     <div class="regular-page-text">
                         <div class="row">
-                            <div class="col-md-7">
-                                ssds
+                            <div class="col-md-8">
+                                <div class="row tops-div">
+                                    @foreach($products as $product)
+                                    @if($product->getCategory['categoryName'] == "Top")
+                                    <div class="col-md-3">
+                                        <?php $counter = 1; ?>
+                                        @foreach( $product->productFile as $image)
+                                        @if($counter == 1)
+                                        <label class="product-top product-top{{$product['id']}}">
+                                            <input type="radio" name="product" class="productTop" value="{{$product['id']}}">
+                                            <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">
+                                        </label>
+
+                                        @endif
+                                        <?php $counter++; ?>
+                                        @endforeach
+                                    </div>
+                                    @endif
+                                    @endforeach
+                                </div>
+                                <div class="row bottoms-div">
+                                    @foreach($products as $product)
+                                    <div class="col-md-3">
+                                        <?php $counter = 1; ?>
+                                        @foreach( $product->productFile as $image)
+                                        @if($counter == 1)
+                                        <label class="product-bottom product-bottom{{$product['id']}}">
+                                            <input type="radio" name="product" class="productBottom" value="{{$product['id']}}">
+                                            <img src="{{ asset('/uploads').$image['filename'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </label>
+                                        @endif
+                                        <?php $counter++; ?>
+                                        @endforeach
+                                    </div>
+                                    @endforeach
+                                </div>
                             </div>
-                            <div class="col-md-5">
-                               asdsd 
+                            <div class="col-md-4">
+                               <div class="row">
+                                   <div class="col-md-12 view-top">
+                                       
+                                   </div>
+                               </div>
+                               <div class="row view-bottom">
+                                   
+                               </div>
                             </div>
                         </div>
 
@@ -41,7 +82,51 @@
 
 <style type="text/css">
 
+    .tops-div{
+        height: 350px;
+        border: 1px solid black;
+    }
 
+    .bottoms-div{
+        height: 350px;
+        border: 1px solid black;
+        overflow-y: scroll;
+    }
+
+    .view-top{
+        height: 350px;
+        border: 1px solid black;
+    }
+
+    .view-bottom{
+        height: 350px;
+        border: 1px solid black;
+    }
+
+    .product-top, .product-bottom{
+        height: 150px;
+        width: 150px;
+        overflow: hidden;
+    }
+
+    [type=radio] { 
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    [type=radio] + img {
+      cursor: pointer;
+    }
+
+    /*[type=radio]:checked + img {
+      outline: 2px solid #f00;
+    }*/
+
+    .selected-item{
+        outline: 2px solid #f00;
+    }
 </style>
 @endsection
 
@@ -49,6 +134,36 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+
+$('.productTop').on('change', function(){
+    var productID = $(this).val();
+    $('.product-top').removeClass('selected-item');
+    $('.product-top'+productID).addClass('selected-item');
+
+    var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
+    var imageSource = "asset('/uploads')";
+
+    $.ajax({
+        url: "/hinimo/public/getMProduct/"+productID,
+        success:function(data){
+            console.log(data.files)
+            data.files.forEach(function(file){
+            $('.view-top').append('<img src="'+ imageSource + file.filename +'" style="width:100%; height: 100%; object-fit: cover;">');
+                $('.view-top').append('<p>'+ imageSource + file.filename +'</p>');
+            });
+        }
+    });
+
+    $('.view-top'+productID).append('<img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">');
+});
+
+$('.productBottom').on('change', function(){
+    var productID = $(this).val();
+    $('.product-bottom').removeClass('selected-item');
+    $('.product-bottom'+productID).addClass('selected-item');
+});
+
 
 </script>
 

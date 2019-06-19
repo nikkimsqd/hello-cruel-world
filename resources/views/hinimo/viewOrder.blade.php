@@ -44,7 +44,13 @@
                                 <li><span>Subtotal</span> <span>{{$order['subtotal']}}</span></li>
                                 <li><span>Delivery Fee</span> <span>{{$order['deliveryfee']}}</span></li>
                                 <li><span>Total</span> <span>{{$order['total']}}</span></li>
-                                <li><span>Status</span> <span style="color: #0315ff;">{{$order['status']}}</span></li>
+                                <li><span>Status</span> 
+                                    @if($order['status'] == "For Pickup")
+                                    <span style="color: #0315ff;">To be picked up by courier</span>
+                                    @else
+                                    <span style="color: #0315ff;">{{$order['status']}}</span>
+                                    @endif
+                                </li>
                                 <li><span>Payment Status</span> <span style="color: red;">{{$order['paymentStatus']}}</span></li>
                             </ul>
                         </div><br><br> <!-- card closing -->

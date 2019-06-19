@@ -23,100 +23,49 @@
               @endif
               {{csrf_field()}}
 
-              <label>Product Name</label>
-              <h4>{{ $rent->product['productName'] }}</h4>
+              <h4>Customer Name: <b>{{$rent->customer['fname'].' '.$rent->customer['lname']}}</b></h4>
+              <h4>Request placed at: <b>{{$rent['created_at']->format('M d, Y')}}</b></h4>
+              <h4>Address of Delivery: <b>{{$rent->order['deliveryAddress']}}</b></h4>
 
-              <label>Boutique Name</label>
-              <h4>{{ $rent->product->owner['boutiqueName'] }}</h4>
+              <hr>
+              <h4><b>Rent Details</b></h4>
+              <h4>Product Name: <b>{{$rent->product['productName']}}</b></h4>
+              <h4>Date Item will be used: <b>{{date('M d, Y',strtotime($rent['dateToUse']))}}</b></h4>
+              <h4>Item must be returned on or before: <b>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</b></h4>
+              <h4>Penalty Amount: <b>{{$rent->product->rentDetails['penaltyAmount']}}</b></h4>
 
-              <label>Customer Name</label>
-              <h4>{{ $rent->customer['fname']}}</h4>
+              <hr>
+              <h4><b>Customer's Measurements Details</b></h4>
+              @foreach($measurements as $mName => $measurement)
+              <h4>{{$mName}}: <b>{{$measurement}} inches</b></h4>
+              @endforeach
 
-              <label>Date Item will be used</label>
-              <h4>{{ $rent['dateToUse']}}</h4>
+              <hr>
+              <h4>Status: 
+                @if($rent['status'] == "Pending")
+                <span class="label label-warning">{{ $rent['status']}}</span>
+                @elseif($rent['status'] == "In-Progress")
+                <span class="label label-info">{{ $rent['status']}}</span>
+                @elseif($rent['status'] == "Declined")
+                <span class="label label-danger">{{ $rent['status']}}</span>
+                @elseif($rent['status'] == "On Delivery")
+                <span class="label label-primary">{{ $rent['status']}}</span>
+                @elseif($rent['status'] == "For Pickup")
+                <span class="label bg-teal">{{$rent['status']}}</span>
+                @elseif($rent['status'] == "For Delivery")
+                <span class="label bg-olive">{{$rent['status']}}</span>
+                @elseif($rent['status'] == "On Delivery")
+                <span class="label label-navy">{{$rent['status']}}</span>
+                @elseif($rent['status'] == "On Rent")
+                <span class="label bg-maroon">{{$rent['status']}}</span><
+                @else
+                <span class="label label-default">{{ $rent['status']}}</span>
+                @endif
+              </h4>
 
-              <label>Address of Delivery</label>
-              <h4>{{ $rent->order['deliveryAddress']}}</h4>
-
-              <label>Request placed at</label>
-              <h4>{{ $rent['created_at']->format('M d, Y')}}</h4>
-
-              @if($rent['approved_at'] != null)
-              <label>Request Approved at</label>
-              <h4>{{ $rent['approved_at']->format('M d, Y')}}</h4>
-              @endif
-
-              <label>Status</label><br>
-              @if($rent['status'] == "Pending")
-              <h4 class="label label-warning">{{ $rent['status']}}</h4>
-              @elseif($rent['status'] == "In-Progress")
-              <h4 class="label label-info">{{ $rent['status']}}</h4>
-              @elseif($rent['status'] == "Declined")
-              <h4 class="label label-danger">{{ $rent['status']}}</h4>
-              @elseif($rent['status'] == "On Delivery")
-              <h4 class="label label-primary">{{ $rent['status']}}</h4>
-              @elseif($rent['status'] == "For Pickup")
-              <td><span class="label bg-teal">{{$rent['status']}}</span></td>
-              @elseif($rent['status'] == "For Delivery")
-              <td><span class="label bg-olive">{{$rent['status']}}</span></td>
-              @elseif($rent['status'] == "On Delivery")
-              <td><span class="label label-navy">{{$rent['status']}}</span></td>
-              @elseif($rent['status'] == "On Rent")
-              <td><span class="label bg-maroon">{{$rent['status']}}</span></td>
-              @else
-              <h4 class="label label-default">{{ $rent['status']}}</h4>
-              @endif
               <br><br>
             </div>
 
-            <div class="col-md-6">
-              <label>Measurements</label>
-              @foreach($measurements as $mName => $measurement)
-                <h4>{{$mName.': '.$measurement}}</h4>
-              @endforeach
-
-              <label>Payment Status</label><br>
-              @if($rent->order['paymentStatus'] == "Not Yet Paid")
-              <h4 class="label label-danger">{{$rent->order['paymentStatus']}}</h4>
-              @else
-              <h4 class="label label-success">{{$rent->order['paymentStatus']}}</h4> &nbsp;
-              <a href="{{url('get-paypal-transaction/'.$rent->order['paypalOrderID'])}}">View Payment Info</a>
-              @endif <br><br>
-
-              <label>Item must be returned on or before:</label>
-              <h4>{{ $rent['dateToBeReturned']}}</h4>
-
-              <label>Penalty Amount:</label>
-              <h4>{{ $rent->product->rentDetails['penaltyAmount']}}</h4>
-
-              <input type="text" name="customerID" value="{{$rent->customer['id']}}" hidden>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <table class="table">
-                <tr>
-                  <td>Subtotal</td>
-                  <td>{{$rent->order['subtotal']}}</td>
-                </tr>
-                <tr>
-                  <td>Deposit Amount</td>
-                  <td>{{$rent->product->rentDetails['depositAmount']}}</td>
-                </tr>
-                <tr>
-                  <td>Delivery Fee</td>
-                  <td>{{$rent->order['deliveryfee']}}</td>
-                </tr>
-                <tr>
-                  <td>Total</td>
-                  <td>{{$rent->order['total']}}</td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
-          <div class="row">
             <div class="col-md-6">
               <?php $counter = 1; ?>
               @foreach( $rent->product->productFile as $image)
@@ -125,43 +74,17 @@
               @endif
               <?php $counter++; ?>
               @endforeach
-
-                <table class="table borderless">
-                  <tr>
-                    <td><label>Subtotal:</label></td>
-                    <td>{{$rent->product['rentPrice']}}</td>
-                  </tr>
-                  <tr>
-                    <td><label>Delivery Fee:</label></td>
-                    <td>40</td>
-                  </tr>
-                  <tr><?php $total = $rent->product['rentPrice'] + 40; ?>
-                    <td><label>Total:</label></td>
-                    <td>{{$total}}</td>
-                  </tr>
-                </table>
+              <!-- <input type="text" name="customerID" value="{{$rent->customer['id']}}" hidden> -->
             </div>
-            
           </div>
+
         </div>
 
         <div class="box-footer" style="text-align: right;">
           <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
-          @if($rent['status'] == "Pending")
-          <input type="submit" name="btn_submit" class="btn btn-success" value="Accept Request">
-          <a href="" data-toggle="modal" data-target="#declineModal{{$rent['rentID']}}" class="btn btn-danger">Decline Request</a>
-          @elseif($rent['status'] == "In-Progress")
           <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a>
-            @if($rent['dateToBeReturned'] == null)
-            <input type="submit" name="btn_submit" class="btn btn-success" value="Update Rent">
-            @elseif($rent['paymentStatus'] == "Paid")
-            <a href="" data-toggle="modal" data-target="#makeOrderModal{{$rent['rentID']}}" class="btn btn-primary">For Pickup</a>
-            @endif
-          @elseif($rent['status'] == "On Rent")
-          <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a>
-          <a href="{{url('rentReturned/'.$rent['rentID'])}}" class="btn btn-success">Product returned</a>
-          @else
-          <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a>
+          @if($rent['orderID'] != null)
+          <a href="{{url('orders/'.$rent->order['id'])}}" class="btn btn-primary">View Order Details</a>
           @endif
           </form>
         </div>

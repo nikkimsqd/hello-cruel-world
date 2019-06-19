@@ -35,13 +35,61 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
 class CustomerController extends Controller
 {
+    public function shop() //ipa una n para mo check una sa auth
+    {
+        if (Auth::check()) { //check if nay naka login nga user
+            if(Auth()->user()->roles == "customer") {
+                $page_title = "Shop";
+                $userID = Auth()->user()->id;
+                $products = Product::where('productStatus', 'Available')->get();
+                $productsCount = $products->count();
+                $categories = Category::all();
+                $boutiques = Boutique::all();
+                $notAvailables = Product::where('productStatus', 'Not Available')->get();
+                $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+                if($cart != null){
+                    $cartCount = $cart->items->count();
+                }else{
+                    $cartCount = 0;
+                }
+
+                $notifications;
+                $notificationsCount;
+                $this->getNotifications($notifications, $notificationsCount);
+
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+
+            } else if(Auth()->user()->roles == "boutique") {
+                return redirect('/dashboard');
+            } else if(Auth()->user()->roles == "admin") {
+                return redirect('/admin-dashboard');
+            }       
+        }else {
+            $page_title = "Shop";
+            $userID = null;
+            $products = Product::where('productStatus', 'Available')->get();
+            $productsCount = $products->count();
+            $categories = Category::all();
+            // $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
+            $cart = null;
+            $cartCount = null;
+            $boutiques = Boutique::all();
+            $notAvailables = Product::where('productStatus', 'Not Available')->get();
+            $notificationsCount = null;
+                // dd($cart);
+
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount'));
+        }
+    }
 
     public function getNotifications(&$notifications, &$notificationsCount)
     {
-        $userID = Auth()->user()->id;
-        $user = User::find($userID);
-        $notifications = $user->notifications;
-        $notificationsCount = $user->unreadNotifications->count();
+        if (Auth::check()) {
+            $userID = Auth()->user()->id;
+            $user = User::find($userID);
+            $notifications = $user->notifications;
+            $notificationsCount = $user->unreadNotifications->count();
+        }
     }
 
     public function welcome()
@@ -92,7 +140,6 @@ class CustomerController extends Controller
         return view('hinimo/profiling-done', compact('boutiques'));
     }
 
-
     public function getBoutique($boutiqueID)
     {
         $userID = Auth()->user()->id;
@@ -115,53 +162,6 @@ class CustomerController extends Controller
         $this->getNotifications($notifications, $notificationsCount);
 
     	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
-    }
-
-    public function shop()
-    {
-        if (Auth::check()) { //check if nay naka login nga user
-            if(Auth()->user()->roles == "customer") {
-                $page_title = "Shop";
-                $userID = Auth()->user()->id;
-                $products = Product::where('productStatus', 'Available')->get();
-                $productsCount = $products->count();
-                $categories = Category::all();
-                $boutiques = Boutique::all();
-                $notAvailables = Product::where('productStatus', 'Not Available')->get();
-                $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
-                if($cart != null){
-                    $cartCount = $cart->items->count();
-                }else{
-                    $cartCount = 0;
-                }
-
-                $notifications;
-                $notificationsCount;
-                $this->getNotifications($notifications, $notificationsCount);
-
-                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
-
-            } else if(Auth()->user()->roles == "boutique") {
-                return redirect('/dashboard');
-            } else if(Auth()->user()->roles == "admin") {
-                return redirect('/admin-dashboard');
-            }  		
-        }else {
-            $page_title = "Shop";
-            $userID = null;
-            $products = Product::where('productStatus', 'Available')->get();
-            $productsCount = $products->count();
-            $categories = Category::all();
-            // $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
-            $cart = null;
-            $cartCount = null;
-            $boutiques = Boutique::all();
-            $notAvailables = Product::where('productStatus', 'Not Available')->get();
-            $notificationsCount = null;
-                // dd($cart);
-
-            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount'));
-        }
     }
 
     public function productDetails($productID)
@@ -193,17 +193,17 @@ class CustomerController extends Controller
     public function addtoCart($productID)
     {
    		$userID = Auth()->user()->id;
-        $cart = Cart::where('userID', $userID)->first();
+        $cart = Cart::where('userID', $userID)->orderBy('created_at', 'DESC')->first();
 
         if($cart == null){
-            Cart::create([
+            $cart = Cart::create([
                 'userID' => $userID,
                 'status' => "Active"
             ]);
 
         }else{
             if($cart['status'] == "Inactive"){
-                Cart::create([
+                $cart = Cart::create([
                     'userID' => $userID,
                     'status' => "Active"
                 ]);
@@ -425,7 +425,7 @@ class CustomerController extends Controller
         $rent = Rent::create([
             'boutiqueID' => $request->input('boutiqueID'),
             'customerID' => $id, 
-            'status' => "Pending", 
+            'status' => "In-Progress", 
             'productID' => $request->input('productID'), 
             'dateToUse' => $request->input('dateToUse'), 
             'dateToBeReturned' => $dateToBeReturned, 
@@ -447,16 +447,17 @@ class CustomerController extends Controller
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
             'deliveryAddress' => $request->input('addressOfDelivery'),
-            'status' => "Pending",
+            'status' => "In-Progress",
             'paymentStatus' => "Not Yet Paid"
         ]);
 
         $rent->update([
-            'orderID' => $order['id']
+            'orderID' => $order['id'],
+            'measurementID' => $measurement['id']
         ]);
 
-        Rent::where('rentID', $rent['rentID'])->update([
-            'measurementID' => $measurement['id']
+        Product::where('id', $rent['productID'])->update([
+            'productStatus' => "Not Available"
         ]);
 
         $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
@@ -748,6 +749,16 @@ class CustomerController extends Controller
         $orders = Order::where('userID', $userID)->get();
         $rents = Rent::where('customerID', $userID)->get();
         $mtos = Mto::where('userID', $userID)->get();
+        // dd($orders);
+
+        $transactions = array();
+        array_push($transactions, $orders);
+        array_push($transactions, $rents);
+        array_push($transactions, $mtos);
+        // dd($transactions);
+
+        // $productsArray = $products->toArray();
+        // array_multisort(array_column($transactions, "created_at"), SORT_DESC, $transactions);
 
         return view('hinimo/transactions', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount'));
     }
@@ -815,58 +826,115 @@ class CustomerController extends Controller
         return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics'));
     }
 
-    public function acceptOffer(Request $request)
+    public function inputAddress($mtoID)
     {
-        $mtoID = $request->input('mtoID');
-        $mto = Mto::where('id', $mtoID)->first();
+        $page_title = "Submit Address";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $mto = Mto::find($mtoID);  
         
-        Mto::where('id', $mtoID)->update([
-            'finalPrice' => $request->input('offerPrice')
+        return view('hinimo/inputAddress', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto'));
+
+    }
+
+    public function makeOrderforMTO(Request $request)
+    {
+        $userID = Auth()->user()->id;
+        $mtoID = $request->input('mtoID');
+        $mto = Mto::find($mtoID);
+
+        $order = Order::create([
+            'userID' => $userID,
+            'mtoID' => $mtoID,
+            'boutiqueID' => $mto->boutique['id'],
+            'subtotal' => $request->input('subtotal'),
+            'deliveryfee' => $request->input('deliveryfee'),
+            'total' => $request->input('total'),
+            'deliveryAddress' => $request->input('deliveryAddress'),
+            'status' => "In-Progress",
+            'paymentStatus' => "Not Yet Paid"           
         ]);
 
-        $boutique = Boutique::where('id', $request->input('boutiqueID'))->first();
-        $boutiqueseller = User::where('id', $boutique->owner['id'])->first();
+        $mto->update([
+            'orderID' => $order['id']
+        ]);
+
+        $boutique = Boutique::where('id', $mto->boutique['id'])->first();
+        $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
         $boutiqueseller->notify(new CustomerAcceptsOffer($mto));
 
         return redirect('/view-mto/'.$mtoID);
     }
 
-    public function submitAddress(Request $request)
+    public function receiveOrder($orderID)
     {
-        if($request->input('mtoID') != null){
-            $mto = Mto::where('id', $request->input('mtoID'))->first();
-            $mto->update([
-                'subtotal' => $mto['finalPrice'],
-                'deliveryFee' => 50, //dummy pa ni
-                'total' => $mto['finalPrice'] + 50,
-                'deliveryAddress' => $request->input('address')
-            ]);
+        $order = Order::find($orderID);
+        $order->update([
+            'status' => 'Completed'
+        ]);
+        // dd($order);
+        
+        //add notification to boutique
+        //informing that completed na nag transaction 
+        //nya dapat diri sad nga part makuha na ni boutique iyang bayad
 
-            return redirect('/view-mto/'.$mto['id']);
+        if($order['cartID'] != null){
+            return redirect('/view-order/'.$order['id']);
         }
-
+        elseif($order['rentID'] != null){
+            return redirect('/view-rent/'.$order->rent['rentID']);
+        }
+        elseif($order['mtoID'] != null){
+            return redirect('/view-mto/'.$order->mto['id']);
+        }
+        
     }
+
+    // public function submitAddress(Request $request)
+    // {
+    //     if($request->input('mtoID') != null){
+    //         $mto = Mto::where('id', $request->input('mtoID'))->first();
+    //         $mto->update([
+    //             'subtotal' => $mto['finalPrice'],
+    //             'deliveryFee' => 50, //dummy pa ni
+    //             'total' => $mto['finalPrice'] + 50,
+    //             'deliveryAddress' => $request->input('address')
+    //         ]);
+
+    //         return redirect('/view-mto/'.$mto['id']);
+    //     }
+
+    // }
 
     public function paypalpaypalTransactionComplete(Request $request)
     {
-        // print_r($request->mtoID);
+        // print_r($request->mtoOrderID);
 
         if($request->rentID != null){
             $rent = Rent::where('rentID', $request->rentID)->first();
-
-            $rent->update([
+            $order = Order::where('id', $request->rentOrderID)->update([
                 'paymentStatus' => 'Paid',
-                'paypalOrderID' => $request->orderID
+                'paypalOrderID' => $request->paypalOrderID
             ]);
 
             return redirect('/view-rent/'.$rent['rentID']);
 
-        }elseif($request->mtoID != null){
-            $mto = Mto::where('id', $request->mtoID)->first();
-            $mto->update([
+        }elseif($request->mtoOrderID != null){
+            $order = Order::where('id', $request->mtoOrderID)->update([
                 'paymentStatus' => 'Paid',
-                'paypalOrderID' => $request->orderID
+                'paypalOrderID' => $request->paypalOrderID
             ]);
+            $mto = Mto::where('id', $request->mtoID)->first();
 
             return redirect('/view-mto/'.$mto['id']);
 
@@ -874,7 +942,7 @@ class CustomerController extends Controller
             $order = Order::where('id', $request->orderTransactionID)->first();
             $order->update([
                 'paymentStatus' => 'Paid',
-                'paypalOrderID' => $request->orderID
+                'paypalOrderID' => $request->paypalOrderID
             ]);
         }
         
@@ -908,7 +976,6 @@ class CustomerController extends Controller
 
     public function mixnmatch($boutiqueID)
     {
-        $page_title = "Mix & Match";
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $products = Product::all();
@@ -920,12 +987,22 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
+        $page_title = "Mix & Match by ".$boutique['boutiqueName'];
 
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
 
         return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount'));
+    }
+
+    public function getMProduct($productID)
+    {
+        $product = Product::where('id', $productID)->first();
+
+        return response()->json(['product' => $product,
+                                'files' => $product->productFile
+                                    ]);
     }
 
 

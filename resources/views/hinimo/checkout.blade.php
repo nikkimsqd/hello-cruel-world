@@ -93,9 +93,9 @@
                     <ul class="order-details-form mb-4">
                         <li><span>Product</span> <span>Total</span></li>
                         @foreach($cart->items as $item)
-                        <li><span>{{$item->product['productName']}}</span> <span>₱{{$item->product['productPrice']}}</span></li>
+                        <li><span>{{$item->product['productName']}}</span> <span>₱{{$item->product['price']}}</span></li>
                         <?php 
-                            $subtotal += $item->product['productPrice'];
+                            $subtotal += $item->product['price'];
                             $total = $subtotal + $deliveryfee;
                             ?>
                         @endforeach

@@ -4,7 +4,7 @@
 
 @section('body')
 <!-- ##### Single Product Details Area Start ##### -->
-    <a href="" class="back_to_page"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+    <a href="{{url('shop')}}" class="back_to_page"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
 
     <section class="single_product_details_area d-flex align-items-center">
 
@@ -83,8 +83,9 @@
         </div>
     </section>
 
-    <!-- MODAAAAAAAAAAAAAAAL -->
-    @if($user != null)
+
+    <!-- MODAAAAAAAAAAAAAAAL-------------------------------->
+    @if($user != null && $product['rpiID'] != null)
     <div class="modal fade" id="requestToRentModal{{$product['id']}}" role="dialog">
         <div class="modal-dialog modal-lg">
         
@@ -195,21 +196,16 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
+                    <label class="col-md-4 col-form-label text-md-right">Additional Notes:</label>
                     <div class="col-md-6">
-                        <select name="addressOfDelivery">
-                            <option>&nbsp;</option>
-                            @foreach($addresses as $address)
-                            <option value="{{$address['completeAddress']}}">{{$address['completeAddress']}}</option>
-                            @endforeach
-                        </select><br><br><br><br>
+                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Additional Notes:</label>
+                    <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
                     <div class="col-md-6">
-                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
+                        <input type="text" name="addressOfDelivery" class="input form-control"><br>
                     </div>
                 </div>
 
@@ -246,6 +242,14 @@
                     <div class="col-md-6">
                         <label class="col-form-label">{{$total}}</label>
                         <input type="text" name="total" class="form-control" value="{{$total}}" hidden>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <!-- <label class="col-md-4 col-form-label text-md-right">Total Payment:</label> -->
+                    <input type="checkbox" id="t&c" class="form-control col-md-4" required>
+                    <div class="col-md-6">
+                        <label for="t&c">I agree to Terms & Conditions</label>
                     </div>
                 </div>
 

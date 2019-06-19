@@ -57,7 +57,7 @@ class CustomerAcceptsOffer extends Notification
     public function toArray($notifiable)
     {
         return [
-            'text' => $this->mto->customer['fname'].' '.$this->mto->customer['lname'].' has accepted your offer.',
+            'text' => $this->mto->customer['fname'].' '.$this->mto->customer['lname'].' has placed an order for MTO.',
             'mtoID' => $this->mto['id']
         ];
     }
