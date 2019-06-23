@@ -24,94 +24,116 @@
 <div class="blog-wrapper" style="padding-top: 30px; padding-bottom: 30px;">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="regular-page-content-wrapper">
+            <div class="col-md-12">
+                <div class="regular-page-content-wrapper checkout_details_area">
                     <div class="regular-page-text">
-                        <form method="post" action="{{url('/savebidding')}}">
-                            {{csrf_field()}}
+                        <div class="row justify-content-center">
+                            <div class="col-md-5">
+                                <form method="post" action="{{url('/savebidding')}}">
+                                    {{csrf_field()}}
 
-                            <div class="form-group row">
-                                <label for="productType" class="col-md-4 col-form-label text-md-right">Product Category</label>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Product Category</label>
+                                        <select class="form-control" name="gender" id="gender-select" required autofocus>
+                                            <option selected="selected"> </option>
+                                            <option value="Womens">Womens</option>
+                                            <option value="Mens">Mens</option>
+                                        </select>
 
-                                <div class="col-md-6">
-                                    <select class="form-control" name="gender" id="gender-select" required autofocus>
-                                        <option selected="selected"> </option>
-                                        <option value="Womens">Womens</option>
-                                        <option value="Mens">Mens</option>
-                                    </select><br><br><br>
+                                        <select class="form-control" id="category-select" name="categoryName" required disabled>
+                                            <option value=""></option>
+                                        </select>
+                                    </div><br><br><br><br>
 
-                                    <select class="form-control" id="category-select" name="categoryName" required disabled>
-                                        <option value=""></option>
-                                    </select>
-                                </div>
-                            </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Starting Bidding Price</label>
+                                        <input name="startingprice" type="number" class="form-control">
+                                    </div>
 
-                            <div class="form-group row">
-                                <label for="startingprice" class="col-md-4 col-form-label text-md-right">Starting Bidding Price</label>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Image</label>
+                                        <input name="file" type="file" class="form-control">
+                                    </div>
 
-                                <div class="col-md-6">
-                                    <input id="startingprice" type="number" min="1" class="form-control" name="startingprice" value="{{ old('startingprice') }}" required>
-                                </div>
-                            </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Date of use of the product</label>
+                                        <input name="dateOfUse" type="date" class="form-control" >
+                                    </div>
 
-                            <div class="form-group row">
-                                <label for="notes" class="col-md-4 col-form-label text-md-right">Notes</label>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Height (cm)</label>
+                                        <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm">
+                                    </div>
 
-                                <div class="col-md-6">
-                                    <textarea class="form-control" name="notes"></textarea>
-                                </div>
-                            </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Category of item  <span>*</span></label>
+                                        <select class="mb-3" name="gender" id="gender-select">
+                                            <option value=""></option>
+                                            <option value="mens">Mens</option>
+                                            <option value="womens">Womens</option>
+                                        </select><br><br><br>
 
-                            <div class="form-group row">
-                                <label for="bidImg" class="col-md-4 col-form-label text-md-right">Image</label>
+                                        <select class="mb-3" name="category" id="category-select" disabled>
+                                            <option></option>
+                                            <!-- @foreach($categories as $category)
+                                            <option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+                                            @endforeach -->
+                                        </select>
+                                    </div><br><br>
 
-                                <div class="col-md-6">
-                                    <input id="bidImg" type="file" class="form-control{{ $errors->has('bidImg') ? ' is-invalid' : '' }}" name="bidImg" value="{{ old('bidImg') }}" required>
-                                </div>
-                            </div>
+                                    <!-- <hr> -->
+                                    <div class="col-md-12 mb-3">
+                                        <label>Measurements (inches)</label>
+                                        <div class="mb-3" id="measurement-input">
+                                        </div>
+                                    </div>
 
-                            <div class="form-group row">
-                                <label for="endDate" class="col-md-4 col-form-label text-md-right">Bidding End Date</label>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Choose Fabric</label><br>
+                                            <input id="suggest" class="fabric-radio" type="radio" name="fabric" value="suggest">
+                                            <label for="suggest"> Ask boutique for fabric suggestions</label> <br>
 
-                                <div class="col-md-6">
-                                    <input id="endDate" type="date" class="form-control{{ $errors->has('endDate') ? ' is-invalid' : '' }}" name="endDate" value="{{ old('endDate') }}" required>
-                                </div>
-                            </div>
+                                            <input id="choose" class="fabric-radio" type="radio" name="fabric" value="choose">
+                                            <label for="choose"> Choose available fabric from boutique</label> <br>
+                                    </div>
 
-                            <div class="form-group row">
-                                <label for="gender" class="col-md-4 col-form-label text-md-right">Deadline for the product</label>
+                                    <div class="col-md-12 mb-3" id="fabric-select" hidden="">
+                                        <input type="text" name="fabricChoice[Fabric Type]" class="form-control mb-3" placeholder="Fabric Type">
+                                        <input type="text" name="fabricChoice[Fabric Color]" class="form-control" placeholder="Fabric Color">
+                                    </div>
 
-                                <div class="col-md-6">
-                                    <input id="dateOfUse" type="date" class="form-control{{ $errors->has('dateOfUse') ? ' is-invalid' : '' }}" name="dateOfUse" value="{{ old('dateOfUse') }}" required>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Instructions/Notes</label>
+                                            <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of cloth for your item etc."></textarea>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label>Bidding End Date</label>
+                                        <input type="date" name="endDate" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label>Deadline for the product</label>
+                                        <input type="date" name="dateOfUse" class="form-control">
+                                    </div>
+
+                                    <label>Tags</label><br>
+                                    <div class="col-md-12 mb-3 tags">
+                                        @foreach($tags as $tag)
+                                            <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
+                                            <label for="{{$tag['name']}}">{{$tag['name']}}</label>
+                                        @endforeach
+                                    </div>
 
 
-
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>errrrrrrrrrr</strong>
-                                        </span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="tags" class="col-md-4 col-form-label text-md-right">Tags</label>
-
-                                <div class="col-md-6 tags">
-                                    @foreach($tags as $tag)
-                                    <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-                                    <label for="{{$tag['name']}}">{{$tag['name']}}</label>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="form-group row mb-0">
-                                <div class="col-md-6 offset-md-4">
                                     <button type="submit" class="btn btn-primary">
                                         Start Bidding
                                     </button>
                                     <a href="{{url('biddings')}}" class="btn btn-primary">Submit dummy</a>
-                                </div>
+                                        
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

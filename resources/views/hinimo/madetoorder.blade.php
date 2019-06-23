@@ -30,7 +30,7 @@
 
                             <div class="col-md-8 mb-3">
                                 <label>Image</label>
-                                <input name="file" type="file" class="form-control" >
+                                <input name="file" type="file" class="form-control">
                             </div>
 
                             <div class="col-md-8 mb-3">
@@ -95,8 +95,8 @@
                                 </select>
 
                                 <label>Cannot find the right fabric and color? Type it below!</label>
-                                <input type="text" name="fabricChoice[Fabric Type]" class="form-control mb-3" placeholder="Fabric Type">
-                                <input type="text" name="fabricChoice[Fabric Color]" class="form-control" placeholder="Fabric Color">
+                                <input type="text" name="fabricChoice[fabricType]" class="form-control mb-3" placeholder="Fabric Type">
+                                <input type="text" name="fabricChoice[fabricColor]" class="form-control" placeholder="Fabric Color">
                             </div>
 
                             <div class="col-md-8 mb-3">

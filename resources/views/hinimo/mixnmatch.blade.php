@@ -26,49 +26,62 @@
                             <div class="col-md-8">
                                 <div class="row tops-div">
                                     @foreach($products as $product)
-                                    @if($product->getCategory['categoryName'] == "Top")
-                                    <div class="col-md-3">
-                                        <?php $counter = 1; ?>
-                                        @foreach( $product->productFile as $image)
-                                        @if($counter == 1)
-                                        <label class="product-top product-top{{$product['id']}}">
-                                            <input type="radio" name="product" class="productTop" value="{{$product['id']}}">
-                                            <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">
-                                        </label>
-
+                                        @if($product->getCategory['categoryName'] == "Top")
+                                        <div class="col-md-3">
+                                            <?php $counter = 1; ?>
+                                            @foreach( $product->productFile as $image)
+                                                @if($counter == 1)
+                                                    <label class="product-top product-top{{$product['id']}}">
+                                                        <input type="radio" name="product" class="productTop" value="{{$product['id']}}">
+                                                        <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">
+                                                    </label>
+                                                @endif
+                                                <?php $counter++; ?>
+                                            @endforeach
+                                        </div>
                                         @endif
-                                        <?php $counter++; ?>
-                                        @endforeach
-                                    </div>
-                                    @endif
                                     @endforeach
                                 </div>
                                 <div class="row bottoms-div">
                                     @foreach($products as $product)
-                                    <div class="col-md-3">
-                                        <?php $counter = 1; ?>
-                                        @foreach( $product->productFile as $image)
-                                        @if($counter == 1)
-                                        <label class="product-bottom product-bottom{{$product['id']}}">
-                                            <input type="radio" name="product" class="productBottom" value="{{$product['id']}}">
-                                            <img src="{{ asset('/uploads').$image['filename'] }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                        </label>
+                                        @if($product->getCategory['categoryName'] == "Shorts" || 
+                                        $product->getCategory['categoryName'] == "Trousers" || 
+                                        $product->getCategory['categoryName'] == "Pants")
+
+                                        <div class="col-md-3">
+                                            <?php $counter = 1; ?>
+                                            @foreach( $product->productFile as $image)
+                                                @if($counter == 1)
+                                                    <label class="product-bottom product-bottom{{$product['id']}}">
+                                                        <input type="radio" name="product" class="productBottom" value="{{$product['id']}}">
+                                                        <img src="{{ asset('/uploads').$image['filename'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    </label>
+                                                @endif
+                                                <?php $counter++; ?>
+                                            @endforeach
+                                        </div>
                                         @endif
-                                        <?php $counter++; ?>
-                                        @endforeach
-                                    </div>
                                     @endforeach
                                 </div>
                             </div>
                             <div class="col-md-4">
-                               <div class="row">
-                                   <div class="col-md-12 view-top">
-                                       
+                                <!-- <form action="{{url('submitMixnmatch')}}" method="post"> -->
+                                    <!-- {{csrf_field()}} -->
+                                   <div class="row">
+                                       <div class="col-md-12 view-top">
+                                       </div>
                                    </div>
-                               </div>
-                               <div class="row view-bottom">
-                                   
-                               </div>
+                                   <div class="row">
+                                       <div class="col-md-12 view-bottom">
+                                       </div>
+                                   </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="text-align: right;"><br><br>
+                                <input type="submit" name="btn" value="submit" class="btn essence-btn">
+                                <!-- </form> -->
                             </div>
                         </div>
 
@@ -141,28 +154,39 @@ $('.productTop').on('change', function(){
     $('.product-top').removeClass('selected-item');
     $('.product-top'+productID).addClass('selected-item');
 
-    var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
-    var imageSource = "asset('/uploads')";
-
     $.ajax({
         url: "/hinimo/public/getMProduct/"+productID,
         success:function(data){
-            console.log(data.files)
             data.files.forEach(function(file){
-            $('.view-top').append('<img src="'+ imageSource + file.filename +'" style="width:100%; height: 100%; object-fit: cover;">');
-                $('.view-top').append('<p>'+ imageSource + file.filename +'</p>');
+            $('.view-top').empty();
+            $('.view-top').append('<img src="{{asset("/uploads")}}.'+file.filename+'" style="width:100%; height: 100%; object-fit: cover;">');
+            $('.view-top').append('<input type="text" name="top" value="'+ data.product.id +'" hidden>');
             });
         }
     });
-
-    $('.view-top'+productID).append('<img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">');
 });
 
 $('.productBottom').on('change', function(){
     var productID = $(this).val();
     $('.product-bottom').removeClass('selected-item');
     $('.product-bottom'+productID).addClass('selected-item');
+
+    $.ajax({
+        url: "/hinimo/public/getMProduct/"+productID,
+        success:function(data){
+            data.files.forEach(function(file){
+            $('.view-bottom').empty();
+            $('.view-bottom').append('<img src="{{asset("/uploads")}}.'+file.filename+'" style="width:100%; height: 100%; object-fit: cover;">');
+            $('.view-bottom').append('<input type="text" name="bottom" value="'+ data.product.id +'" hidden>');
+            });
+            // var bots = $('.productBottom').val();  
+        }
+    });
 });
+
+//  var top = $('.productTop').find("input").val();
+// console.log(top);
+
 
 
 </script>

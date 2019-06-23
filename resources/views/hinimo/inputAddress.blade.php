@@ -17,7 +17,7 @@
 
                         <div class="col-md-12 mb-3">
                             <label>Delivery Address</label>
-                            <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress">
+                            <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required>
                             (apply api here)<br><br>
                         </div>
                         
@@ -31,8 +31,8 @@
                                 <!-- <h5>Your Made-to-Order</h5> -->
                             </div>
                             <ul class="order-details-form mb-4">
-                                <li><span>MTO Price</span> <span>{{$mto['price']}}</span></li>
-                                <li><span>Subtotal</span> <span>{{$mto['price']}}</span></li>
+                                <li><span>MTO Price</span> <span>{{$mtoPrice}}</span></li>
+                                <li><span>Subtotal</span> <span>{{$mtoPrice}}</span></li>
                                 <li><span>Delivery Fee</span> <span><i>[delivery fee here]</i></span></li>
                                 <li><span>Total</span> <span style="color: #0315ff;"><i>[total here]</i></span></li>
                             </ul>
@@ -60,6 +60,8 @@
  - maoy ipa da sa jquery para ma kwenta ang distance
  - then calculates total
  - lastly, show bill
+
+ - dili sa ipakita ang total details if wala pa na locate ang location
 -->
 
 @section('scripts')

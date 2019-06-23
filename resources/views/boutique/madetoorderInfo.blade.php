@@ -70,7 +70,7 @@
                 <a href="" data-toggle="modal" data-target="#recommendFabricModal">Recommend fabric to use with price here.</a>
                 <hr>
                 @endif
-              @if($mto['orderID'] == null)
+              @if($mto['orderID'] == null && $mto['suggestFabric'] == null)
               <form action="{{url('/addPrice')}}" method="post">
                 {{csrf_field()}}
                 <h4>Add price of item:</h4>
@@ -119,18 +119,18 @@
         {{csrf_field()}}
 
           <h4>Fabric Type:</h4> 
-          <select id="fabric-type" class="form-control mb-3">
+          <select id="fabric-type" class="form-control mb-3" required>
             <option disabled selected>Choose fabric type</option>
             @foreach($fabs as $fab => $name)
             <option value="{{$fab}}">{{$fab}}</option>
             @endforeach
           </select><br>
           <h4>Fabric Color:</h4> 
-          <select id="fabric-color" class="form-control mb-3" name="fabricSuggestion[fabricID]" disabled>
+          <select id="fabric-color" class="form-control mb-3" name="fabricSuggestion[fabricID]" disabled required>
             <option disabled selected="selected">Select Fabric Type first</option>
           </select><br>
           <h4>Price:</h4> 
-          <input type="text" name="fabricSuggestion[price]" class="form-control" placeholder="Price">
+          <input type="text" name="fabricSuggestion[price]" class="form-control" placeholder="Price" required>
           <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
       </div>
 

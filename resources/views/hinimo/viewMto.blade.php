@@ -111,9 +111,11 @@
                                         @endif
                                     </ul>
                                 </div><br><br>
+                                
 
                         @if($mto['orderID'] == null) <!-- IF WALA PAY ORDER ANG MTO -->
-                            @if($mto['fabricID'] != null && $mto['price'] != null) <!-- mtoID: 2 -->
+                            <!-- if naay chosen fabric & naghatag ug price si boutique -->
+                            @if($mto['fabricID'] != null && $mto['price'] != null)
                                 <h5>Boutique's price for item with their fabric of your choice:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
@@ -126,12 +128,11 @@
                                         @endforeach
                                     </div>
                                     <div class="col-md-3">
-                                        <form action="{{url('acceptOffer')}}" method="post">
-                                        <input name="mtoID" value="{{$mto['id']}}" hidden><br>
-                                        <input type="submit" name="" class="btn essence-btn" value="Accept Offer">
-                                        </form>
+                                        <br>
+                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFPrice')}}" class="btn essence-btn">Accept Offer</a>
                                     </div>
-                                </div>
+                                </div><br>
+                            <!-- if ni hatag si customer ug fabric nga wala ni boutique and ni hatag nasad ug price si boutique -->
                             @elseif($mto['fabricChoice'] != null && $mto['price'] != null) <!-- mtoID: 1 -->
                                 <h5>Boutique's price for item with the fabric of your choice:</h5>
                                 <div class="row">
@@ -142,33 +143,55 @@
                                     </div>
                                     <div class="col-md-3">
                                         <br>
-                                        <a href="{{url('inputAddress/'.$mto['id'])}}" class="btn essence-btn">Accept Offer</a>
+                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFCPrice')}}" class="btn essence-btn">Accept Offer</a>
                                     </div>
-                                </div>
+                                </div><br>
                             @endif
 
+                            <!-- if nangayo ug suggestion si user & naay gi suggest si boutique nga fabric -->
                             @if($mto['fabricSuggestion'] != null && $mto['suggestFabric'] != null)
-                                <h5>Boutique's :</h5>
+                                <h5>Boutique's suggestion of fabric with price:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
                                         @foreach($fabrics as $fabric)
-                                        @if($fabric['id'] == $mto['fabricID']) 
+                                        @if($fabric['id'] == $fabricSuggestion->fabricID) 
                                             <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
                                             <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>{{ucfirst($mto['price'])}}</b></h5>
+                                            <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
                                         @endif
                                         @endforeach
                                     </div>
                                     <div class="col-md-3">
-                                        <form action="{{url('acceptOffer')}}" method="post">
-                                        <input name="mtoID" value="{{$mto['id']}}" hidden><br>
-                                        <input type="submit" name="" class="btn essence-btn" value="Accept Offer">
-                                        </form>
+                                        <!-- <br> -->
+                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptSFPrice')}}" class="btn essence-btn">Accept Offer</a><br><br>
                                     </div>
-                                </div>
-
+                                </div><br>
+                            @elseif($mto['fabricSuggestion'] != null && $mto['suggestFabric'] == null)
+                                <h5>Boutique has a suggestion you might like & consider:</h5>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        @foreach($fabrics as $fabric)
+                                        @if($fabric['id'] == $fabricSuggestion->fabricID) 
+                                            <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
+                                            <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
+                                            <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                        @endif
+                                        @endforeach
+                                    </div>
+                                    <div class="col-md-3">
+                                        <br>
+                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFSPrice')}}" class="btn essence-btn">Accept Offer</a>
+                                    </div>
+                                </div><br>
                             @endif
                         @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
+
+                            @if($mto['orderID'] == null)
+                            <div class="cart-area" style="text-align: right;">
+                                <a href="{{url('cancelMto/'.$mto['id'])}}" class="btn essence-btn">Cancel MTO</a>
+                                <br><br>
+                            </div>
+                            @endif
 
                             </div>
                         </div>

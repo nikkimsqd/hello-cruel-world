@@ -179,12 +179,12 @@ Route::get('/boutique/{boutiqueID}', 'CustomerController@getBoutique');
 //MADE-TO-ORDER
 Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
 Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
-Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
 Route::get('/getFabricColor/{type}', 'CustomerController@getFabricColor');
 // Route::post('/acceptOffer', 'CustomerController@acceptOffer');
-Route::get('/inputAddress/{mtoID}', 'CustomerController@inputAddress');
 Route::post('/makeOrderforMTO', 'CustomerController@makeOrderforMTO');
 // Route::get('/receiveMto/{orderID}', 'CustomerController@receiveMto');
+Route::get('/inputAddress/{mtoID}/{type}', 'CustomerController@inputAddress');
+Route::get('/cancelMto/{type}', 'CustomerController@cancelMto');
 
 
 //TRANSACTIONS
@@ -200,7 +200,9 @@ Route::post('/paypal-transaction-complete', 'CustomerController@paypalpaypalTran
 
 
 //MIX&MATCH
+Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
 Route::get('/getMProduct/{productID}', 'CustomerController@getMProduct');
+Route::post('/submitMixnmatch', 'CustomerController@submitMixnmatch');
 
 
 

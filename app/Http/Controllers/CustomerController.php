@@ -666,6 +666,13 @@ class CustomerController extends Controller
         $fabChoice = json_encode($fabricChoice);
         $mName = json_encode($measurement);
        
+        // dd($request->input('fabric'));
+        // if($fabChoice == null){
+        // dd("sud");
+        // }else{
+        //     dd($fabricChoice);
+        // }
+
         $mto = Mto::create([
             'userID' => $userID,
             'boutiqueID' => $boutiqueID,
@@ -676,6 +683,7 @@ class CustomerController extends Controller
             'fabricChoice' => $fabChoice,
             'price' => $request->input('price'),
             'orderID' => $request->input('orderID'),
+            'status' => "Active"
             ]);
 
         if($request->input('fabric') == "suggest"){
@@ -748,7 +756,7 @@ class CustomerController extends Controller
 
         $orders = Order::where('userID', $userID)->get();
         $rents = Rent::where('customerID', $userID)->get();
-        $mtos = Mto::where('userID', $userID)->get();
+        $mtos = Mto::where('userID', $userID)->where('status', 'Active')->get();
         // dd($orders);
 
         $transactions = array();
@@ -826,7 +834,7 @@ class CustomerController extends Controller
         return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics'));
     }
 
-    public function inputAddress($mtoID)
+    public function inputAddress($mtoID, $type)
     {
         $page_title = "Submit Address";
         $userID = Auth()->user()->id;
@@ -842,8 +850,25 @@ class CustomerController extends Controller
         }
 
         $mto = Mto::find($mtoID);  
+        $measurements = json_decode($mto->measurement->data);
+        $fabricChoice = json_decode($mto['fabricChoice']);
+        $fabricSuggestion = json_decode($mto['fabricSuggestion']);
+
+        if($type == "acceptFPrice"){
+            $mtoPrice = $mto['price'];
+
+        }elseif($type == "acceptFCPrice"){ //fabricChoice
+            $mtoPrice = $mto['price'];
+
+        }elseif($type == "acceptSFPrice"){ //suggestFabric
+            $mtoPrice = $fabricSuggestion->price;
+
+        }elseif($type == "acceptFSPrice"){ //fabricSuggestion
+            $mtoPrice = $fabricSuggestion->price;
+
+        }
         
-        return view('hinimo/inputAddress', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto'));
+        return view('hinimo/inputAddress', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice'));
 
     }
 
@@ -874,6 +899,22 @@ class CustomerController extends Controller
         $boutiqueseller->notify(new CustomerAcceptsOffer($mto));
 
         return redirect('/view-mto/'.$mtoID);
+    }
+
+    public function cancelMto($mtoID)
+    {
+        $mto = Mto::where('id', $mtoID)->first();
+        // $mto->update([
+        //     'status' => "Cancelled"
+        // ]);
+
+        //send notif to boutiquedat u cencelledt
+        // $boutique = Boutique::where('id', $mto->boutique['id'])->first();
+        $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
+        dd($boutiqueseller);
+        $boutiqueseller->notify(new CustomerAcceptsOffer($mto));
+
+        return redirect('/user-transactions');
     }
 
     public function receiveOrder($orderID)
@@ -992,7 +1033,7 @@ class CustomerController extends Controller
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
-
+        // dd($products);
         return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount'));
     }
 
@@ -1003,6 +1044,14 @@ class CustomerController extends Controller
         return response()->json(['product' => $product,
                                 'files' => $product->productFile
                                     ]);
+    }
+
+    public function submitMixnmatch(Request $request)
+    {
+        $top = $request->input('top');
+        $bottom = $request->input('bottom');
+
+        
     }
 
 
