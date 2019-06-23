@@ -49,10 +49,10 @@
                                         </li>
 
                                         <li><span></span><span>Payment Info</span><span></span></li>
-                                        <li><span>MTO Item</span> <span>{{$mto['price']}}</span></li>
+                                        <li><span>MTO Item</span> <span>₱{{$mto['price']}}</span></li>
                                         <!-- <li><span>Subtotal</span> <span>{{$mto->order['subtotal']}}</span></li> -->
-                                        <li><span>Delivery Fee</span> <span>{{$mto->order['deliveryfee']}}</span></li>
-                                        <li><span>Total</span> <span style="color: #0315ff;">{{$mto->order['total']}}</span></li>
+                                        <li><span>Delivery Fee</span> <span>₱{{$mto->order['deliveryfee']}}</span></li>
+                                        <li><span>Total</span> <span style="color: #0315ff;">₱{{$mto->order['total']}}</span></li>
                                         <li><span>Payment Status</span>
                                             <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}</span>
                                         </li>
@@ -90,6 +90,11 @@
                                     ?>
 
                                     <ul class="order-details-form mb-4">
+                                        @if($mto['status'] == "Cancelled")
+                                            <li><span></span><span style="color: red;">MTO has been cancelled</span><span></span></li>
+                                        @elseif($mto['status'] != "Cancelled" && $mto['status'] != "Active")
+                                            <li style="color: red;"><span>MTO has been declined</span><span>Reason: {{$mto->declineDetails['reason']}}</span></li>
+                                        @endif
                                         <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
                                         <li><span>Date of use of the product</span> <span>{{$mto['dateOfUse']}}</span></li>
                                         <li><span>Category of item</span> <span>{{$mto->category['categoryName']}}</span></li>
@@ -105,7 +110,7 @@
                                         @if($mto['price'] != null && $mto['orderID'] == null)
                                             <li><span>Price</span> <span style="color: #0315ff;">Final Price will be shown here</span></li>
                                         @elseif($mto['price'] != null && $mto['orderID'] != null)
-                                            <li><span>Price</span> <span style="color: #0315ff;">{{$mto['price']}}</span></li>
+                                            <li><span>Price</span> <span style="color: #0315ff;">₱{{$mto['price']}}</span></li>
                                         @else
                                             <li><span>Price</span> <span style="color: #0315ff;">Boutique has not set a price yet</span></li>
                                         @endif
@@ -113,17 +118,17 @@
                                 </div><br><br>
                                 
 
-                        @if($mto['orderID'] == null) <!-- IF WALA PAY ORDER ANG MTO -->
+                        @if($mto['orderID'] == null && $mto['status'] == "Active") <!-- IF WALA PAY ORDER ANG MTO -->
                             <!-- if naay chosen fabric & naghatag ug price si boutique -->
                             @if($mto['fabricID'] != null && $mto['price'] != null)
-                                <h5>Boutique's price for item with their fabric of your choice:</h5>
+                                <h5 class="normal">Boutique's price for item with the fabric of your choice:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
                                         @foreach($fabrics as $fabric)
                                         @if($fabric['id'] == $mto['fabricID']) 
                                             <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
                                             <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>{{ucfirst($mto['price'])}}</b></h5>
+                                            <h5 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h5>
                                         @endif
                                         @endforeach
                                     </div>
@@ -134,12 +139,12 @@
                                 </div><br>
                             <!-- if ni hatag si customer ug fabric nga wala ni boutique and ni hatag nasad ug price si boutique -->
                             @elseif($mto['fabricChoice'] != null && $mto['price'] != null) <!-- mtoID: 1 -->
-                                <h5>Boutique's price for item with the fabric of your choice:</h5>
+                                <h5 class="normal">Boutique's price for item with the fabric of your choice:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
                                         <h5 class="normal">Fabric Type: <b>{{ucfirst($fabricChoice->fabricType)}}</b></h5>
                                         <h5 class="normal">Fabric Color: <b>{{ucfirst($fabricChoice->fabricColor)}}</b></h5>
-                                        <h5 class="normal">Price: <b>{{ucfirst($mto['price'])}}</b></h5>
+                                        <h5 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h5>
                                     </div>
                                     <div class="col-md-3">
                                         <br>
@@ -150,14 +155,14 @@
 
                             <!-- if nangayo ug suggestion si user & naay gi suggest si boutique nga fabric -->
                             @if($mto['fabricSuggestion'] != null && $mto['suggestFabric'] != null)
-                                <h5>Boutique's suggestion of fabric with price:</h5>
+                                <h5 class="normal">Boutique's suggestion of fabric with price:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
                                         @foreach($fabrics as $fabric)
                                         @if($fabric['id'] == $fabricSuggestion->fabricID) 
                                             <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
                                             <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                            <h5 class="normal">Price: <b>₱{{ucfirst($fabricSuggestion->price)}}</b></h5>
                                         @endif
                                         @endforeach
                                     </div>
@@ -167,14 +172,14 @@
                                     </div>
                                 </div><br>
                             @elseif($mto['fabricSuggestion'] != null && $mto['suggestFabric'] == null)
-                                <h5>Boutique has a suggestion you might like & consider:</h5>
+                                <h5 class="normal">Boutique has a suggestion you might like & consider:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
                                         @foreach($fabrics as $fabric)
                                         @if($fabric['id'] == $fabricSuggestion->fabricID) 
                                             <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
                                             <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                            <h5 class="normal">Price: <b>₱{{ucfirst($fabricSuggestion->price)}}</b></h5>
                                         @endif
                                         @endforeach
                                     </div>
@@ -184,14 +189,13 @@
                                     </div>
                                 </div><br>
                             @endif
-                        @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
 
-                            @if($mto['orderID'] == null)
                             <div class="cart-area" style="text-align: right;">
                                 <a href="{{url('cancelMto/'.$mto['id'])}}" class="btn essence-btn">Cancel MTO</a>
                                 <br><br>
                             </div>
-                            @endif
+                        @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
+
 
                             </div>
                         </div>

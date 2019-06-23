@@ -184,7 +184,7 @@ Route::get('/getFabricColor/{type}', 'CustomerController@getFabricColor');
 Route::post('/makeOrderforMTO', 'CustomerController@makeOrderforMTO');
 // Route::get('/receiveMto/{orderID}', 'CustomerController@receiveMto');
 Route::get('/inputAddress/{mtoID}/{type}', 'CustomerController@inputAddress');
-Route::get('/cancelMto/{type}', 'CustomerController@cancelMto');
+Route::get('/cancelMto/{mtoID}', 'CustomerController@cancelMto');
 
 
 //TRANSACTIONS

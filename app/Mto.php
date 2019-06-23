@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mto extends Model
 {
-    protected $fillable = ['userID', 'boutiqueID', 'notes', 'dateOfUse', 'measurementID', 'height', 'categoryID', 'fabricID', 'suggestFabric', 'fabricSuggestion', 'fabricChoice', 'price', 'orderID'];
+    protected $fillable = ['userID', 'boutiqueID', 'notes', 'dateOfUse', 'measurementID', 'height', 'categoryID', 'fabricID', 'suggestFabric', 'fabricSuggestion', 'fabricChoice', 'price', 'orderID', 'status'];
 
     public function customer()
     {
@@ -41,5 +41,10 @@ class Mto extends Model
     public function fabric()
     {
         return $this->hasOne('App\Fabric', 'id', 'fabricID');
+    }
+
+    public function declineDetails()
+    {
+        return $this->hasOne('App\Declinedtransaction', 'id', 'status');
     }
 }

@@ -19,6 +19,8 @@
     <!-- <link rel="stylesheet" href="{{ asset('essence/css/bootstrap.min.css') }}"> -->
     <link rel="stylesheet" href="{{ asset('essence/style.css') }}">
 
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" type="text/css" media="all">
+
     <!-- FROM THIRD PARTY -->
     <!-- Bootstrap 3.3.7 -->
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css') }}"> -->
@@ -28,7 +30,6 @@
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/Ionicons/css/ionicons.min.css') }}"> -->
     <!-- Font Awesome -->
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/font-awesome/css/font-awesome.min.css') }}"> -->
-
   
 </head>
 
@@ -252,6 +253,9 @@
     <script src="{{ asset('essence/js/active.js') }}"></script>
     <!-- Paypal Script -->
     <!-- <script src="https://www.paypal.com/sdk/js?client-id=SB_CLIENT_ID"></script> -->
+    <!-- Date Picker -->
+<!--     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
 
     @yield('scripts')
 

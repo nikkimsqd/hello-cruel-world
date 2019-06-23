@@ -29,6 +29,7 @@ use App\Fabric;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
+use App\Notifications\CustomerCancelMto;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -610,6 +611,11 @@ class CustomerController extends Controller
                     $notification->markAsRead();
 
                     return redirect('/view-mto/'.$notification->data['mtoID'].'#mto-details');
+
+                }elseif($notification->type == 'App\Notifications\BoutiqueDeclinesMto'){
+                    $notification->markAsRead();
+
+                    return redirect('/view-mto/'.$notification->data['mtoID'].'#mto-details');
                 }
             }
         }
@@ -756,7 +762,7 @@ class CustomerController extends Controller
 
         $orders = Order::where('userID', $userID)->get();
         $rents = Rent::where('customerID', $userID)->get();
-        $mtos = Mto::where('userID', $userID)->where('status', 'Active')->get();
+        $mtos = Mto::where('userID', $userID)->get();
         // dd($orders);
 
         $transactions = array();
@@ -894,7 +900,7 @@ class CustomerController extends Controller
             'orderID' => $order['id']
         ]);
 
-        $boutique = Boutique::where('id', $mto->boutique['id'])->first();
+        // $boutique = Boutique::where('id', $mto->boutique['id'])->first();
         $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
         $boutiqueseller->notify(new CustomerAcceptsOffer($mto));
 
@@ -904,15 +910,13 @@ class CustomerController extends Controller
     public function cancelMto($mtoID)
     {
         $mto = Mto::where('id', $mtoID)->first();
-        // $mto->update([
-        //     'status' => "Cancelled"
-        // ]);
+        Mto::where('id', $mtoID)->update([
+            'status' => "Cancelled"
+        ]);
 
         //send notif to boutiquedat u cencelledt
-        // $boutique = Boutique::where('id', $mto->boutique['id'])->first();
         $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
-        dd($boutiqueseller);
-        $boutiqueseller->notify(new CustomerAcceptsOffer($mto));
+        $boutiqueseller->notify(new CustomerCancelMto($mto));
 
         return redirect('/user-transactions');
     }
@@ -976,6 +980,9 @@ class CustomerController extends Controller
                 'paypalOrderID' => $request->paypalOrderID
             ]);
             $mto = Mto::where('id', $request->mtoID)->first();
+
+            $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
+            $boutiqueseller->notify(new CustomerPaysMto($mto));
 
             return redirect('/view-mto/'.$mto['id']);
 

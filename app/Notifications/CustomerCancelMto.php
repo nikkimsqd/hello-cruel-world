@@ -11,14 +11,16 @@ class CustomerCancelMto extends Notification
 {
     use Queueable;
 
+    private $mto;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($mto)
     {
-        //
+        $this->mto = $mto;
     }
 
     /**
@@ -29,7 +31,7 @@ class CustomerCancelMto extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -55,7 +57,8 @@ class CustomerCancelMto extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'text' => 'A customer has cancelled his/her Made-to-order.',
+            'mtoID' => $this->mto['id']
         ];
     }
 }

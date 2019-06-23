@@ -394,6 +394,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Mto' => __DIR__ . '/../..' . '/app/Mto.php',
         'App\\Notifications\\ContactCustomer' => __DIR__ . '/../..' . '/app/Notifications/ContactCustomer.php',
         'App\\Notifications\\CustomerAcceptsOffer' => __DIR__ . '/../..' . '/app/Notifications/CustomerAcceptsOffer.php',
+        'App\\Notifications\\CustomerCancelMto' => __DIR__ . '/../..' . '/app/Notifications/CustomerCancelMto.php',
         'App\\Notifications\\MeasurementRequests' => __DIR__ . '/../..' . '/app/Notifications/MeasurementRequests.php',
         'App\\Notifications\\MtoUpdateForCustomer' => __DIR__ . '/../..' . '/app/Notifications/MtoUpdateForCustomer.php',
         'App\\Notifications\\NewCategoryRequest' => __DIR__ . '/../..' . '/app/Notifications/NewCategoryRequest.php',

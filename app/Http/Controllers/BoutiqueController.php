@@ -35,6 +35,7 @@ use App\Notifications\ContactCustomer;
 use App\Notifications\MtoUpdateForCustomer;
 use App\Notifications\RentApproved;
 use App\Notifications\RentUpdateForCustomer;
+use App\Notifications\BoutiqueDeclinesMto;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -744,12 +745,20 @@ class BoutiqueController extends Controller
     public function declineMto(Request $request)
     {
     	$mtoID = $request->input('mtoID');
+    	$mto = Mto::where('id', $mtoID)->first();
 
-    	Declinedtransaction::create([
+    	$dt = Declinedtransaction::create([
     		'type' => 'mto',
     		'typeID' => $mtoID,
     		'reason' => $request->input('reason')
     	]);
+
+    	Mto::where('id', $mtoID)->update([
+    		'status' => $dt['id']
+    	]);
+
+    	$customer = User::where('id', $mto->customer['id'])->first();
+        $customer->notify(new BoutiqueDeclinesMto($mto));
 
     	return redirect('/made-to-orders/'.$mtoID);
     }

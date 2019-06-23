@@ -44,6 +44,7 @@ return array(
     'App\\Mto' => $baseDir . '/app/Mto.php',
     'App\\Notifications\\ContactCustomer' => $baseDir . '/app/Notifications/ContactCustomer.php',
     'App\\Notifications\\CustomerAcceptsOffer' => $baseDir . '/app/Notifications/CustomerAcceptsOffer.php',
+    'App\\Notifications\\CustomerCancelMto' => $baseDir . '/app/Notifications/CustomerCancelMto.php',
     'App\\Notifications\\MeasurementRequests' => $baseDir . '/app/Notifications/MeasurementRequests.php',
     'App\\Notifications\\MtoUpdateForCustomer' => $baseDir . '/app/Notifications/MtoUpdateForCustomer.php',
     'App\\Notifications\\NewCategoryRequest' => $baseDir . '/app/Notifications/NewCategoryRequest.php',

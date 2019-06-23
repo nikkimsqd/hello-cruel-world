@@ -42,10 +42,14 @@
                   <td>{{$mto->customer->lname.', '.$mto->customer->fname}}</td>
                   <td>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</td>
                   <td>{{$mto['created_at']->format('M d, Y')}}</td>
-                  @if($mto['orderID'] != null)
+                  @if($mto['orderID'] != null && $mto['status'] == "Active")
                     <td><a href="orders/{{$mto->order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                  @elseif($mto['orderID'] == null && $mto['status'] == "Active")
+                    <td style="color: #0315ff;">MTO has no order data yet</td>
+                  @elseif($mto['orderID'] == null && $mto['status'] == "Cancelled")
+                    <td style="color: red;">MTO has been cancelled</td>
                   @else
-                    <td style="color: red;">MTO has no order data yet</td>
+                    <td style="color: red;">MTO has been declined</td>
                   @endif
                   <td><a href="made-to-orders/{{$mto['id']}}" class="btn btn-default btn-sm">View MTO</a></td>
                 </tr>

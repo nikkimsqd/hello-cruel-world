@@ -8,7 +8,13 @@
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
+          @if($mto['status'] == "Active")
           <h3 class="box-title">MTO ID: {{$mto['id']}}</h3>
+          @elseif($mto['status'] == "Cancelled")
+          <h3 class="box-title">MTO ID: {{$mto['id']}} | <label class="label label-danger">Cancelled</label></h3>
+          @else
+          <h3 class="box-title">MTO ID: {{$mto['id']}} | <label class="label label-danger">Declined</label></h3>
+          @endif
         </div>
         <!-- /.box-header -->
 
@@ -28,17 +34,19 @@
               <h4><b>MTO Details</b></h4>
               <h4>Date of item's use: <b>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</b></h4>
               <h4>Fabric Choice:</h4>
+
               @if($mto['fabricID'] != null)
                 <h4>Fabric Type: <b>{{$mto->fabric['name']}}</b></h4>
                 <h4>Fabric Color: <b>{{$mto->fabric['color']}}</b></h4>
+
               @elseif($mto['suggestFabric'] != null)
                 <h4><i>User wants you to recommend which type of fabric to use.</i></h4>
-                <!-- if($mto['suggestFabric'] != null) -->
+
               @elseif($mto['fabricChoice'] != null)
-                @foreach($fabricChoice as $fabChoice =>$value)
-                  <h4>{{$fabChoice}}: <b>{{ucfirst($value)}}</b></h4>
-                @endforeach
+                <h4>Fabric Type: <b>{{ucfirst($fabricChoice->fabricType)}}</b></h4>
+                <h4>Fabric Color: <b>{{ucfirst($fabricChoice->fabricColor)}}</b></h4>
               @endif
+
               <h4>Customer's Notes/Instructions: <b>{{$mto['notes']}}</b></h4>
               @if($mto['price'] != null)
                 <h4>Price: <b>{{$mto['price']}}</b></h4>
@@ -50,27 +58,23 @@
                 <h4>{{$measurementName}}: <b>{{$value}} inches</b></h4>
               @endforeach
               <h4>Customer's Height: <b>{{$mto['height']}} cm</b></h4>
-
-              <hr>
+              
               @if($mto['fabricSuggestion'] != null)
-              <h4>Your Fabric Recommendation</h4>
-              @foreach($fabrics as $fabric)
-              @if($fabric['id'] == $fabricSuggestion->fabricID)
-                <h4>Fabric Type: <b>{{$fabric['name']}}</b></h4>
-                <h4>Fabric Color: <b>{{$fabric['color']}}</b></h4>
-              @endif
-              @endforeach
-              <h4>Price: <b>{{$fabricSuggestion->price}}</b></h4>
-
-              <!-- @foreach($fabricSuggestion as $fabSuggestion =>$value) -->
-                  <!-- <h4>{{$fabSuggestion}}: <b>{{ucfirst($value)}}</b></h4> -->
-              <!-- @endforeach -->
-              @endif
-                @if($mto['orderID'] == null)
-                <a href="" data-toggle="modal" data-target="#recommendFabricModal">Recommend fabric to use with price here.</a>
                 <hr>
+                <h4>Your Fabric Recommendation</h4>
+                @foreach($fabrics as $fabric)
+                @if($fabric['id'] == $fabricSuggestion->fabricID)
+                  <h4>Fabric Type: <b>{{$fabric['name']}}</b></h4>
+                  <h4>Fabric Color: <b>{{$fabric['color']}}</b></h4>
                 @endif
-              @if($mto['orderID'] == null && $mto['suggestFabric'] == null)
+                @endforeach
+                <h4>Price: <b>{{$fabricSuggestion->price}}</b></h4>
+              @endif
+
+              @if($mto['orderID'] == null && $mto['status'] == "Active")
+              <hr>
+              <a href="" data-toggle="modal" data-target="#recommendFabricModal">Recommend fabric to use with price here.</a>
+              <hr>
               <form action="{{url('/addPrice')}}" method="post">
                 {{csrf_field()}}
                 <h4>Add price of item:</h4>
@@ -79,6 +83,11 @@
 
                 <input type="submit" name="btn_submit" value="Place Offer" class="btn btn-primary">
               </form>
+              @endif
+
+              @if($mto['status'] != "Active" && $mto['status'] != "Cancelled")
+              <hr>
+              <h4><i>Your reason for declining: {{$mto->declineDetails['reason']}}</i></h4>
               @endif
 
             </div>
@@ -90,12 +99,14 @@
         </div>
 
         <div class="box-footer" style="text-align: right;">
-          @if($mto['orderID'] == null)
-            <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
+          @if($mto['orderID'] == null && $mto['status'] == "Active")
             <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
-          @else
+            <a href="" data-toggle="modal" data-target="#declineModal" class="btn btn-danger">Decline Request</a>
+          @elseif($mto['orderID'] != null && $mto['status'] == "Active")
             <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
             <a href="{{url('orders/'.$mto->order['id'])}}" class="btn btn-primary">View Order Details</a>
+          @else
+            <a href="{{url('made-to-orders')}}" class="btn btn-default">Back to MTOs</a>
           @endif
         </div>
 
@@ -167,7 +178,7 @@
 
 <!-- DECLINE RENT -->
 <div class="modal fade" id="declineModal" role="dialog">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">

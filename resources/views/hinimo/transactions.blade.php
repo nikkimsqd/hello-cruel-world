@@ -36,7 +36,7 @@
                         	<tr>
                         		<th style="text-align: center;">Order ID</th>
                         		<th style="text-align: center;">Product/s</th> <!-- kwaon ang naa sa cart/ or rent transac -->
-                        		<th style="text-align: center;">Status</th>
+                        		<th style="text-align: center;">Order Status</th>
                         		<th></th>
                         	</tr>
                         	</thead>
@@ -69,7 +69,7 @@
                             <tr>
                                 <th style="text-align: center;">RENT ID</th>
                                 <th style="text-align: center;">Product/s</th> <!-- kwaon ang naa sa cart/ or rent transac -->
-                                <th style="text-align: center;">Status</th>
+                                <th style="text-align: center;">Order Status</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -77,7 +77,13 @@
                             <tr>
                                 <td style="text-align: center;">{{$rent['rentID']}}</td>
                                 <td>{{$rent->product['productName']}}</td>
-                                <td style="text-align: center;">{{$rent->order['status']}}</td>
+                                <td style="text-align: center;">
+                                    @if($rent['orderID'] != null)
+                                    {{$rent->order['status']}}
+                                    @elseif($rent['orderID'] == null)
+                                    Rent has no order yet
+                                    @endif
+                                </td>
                                 <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Transaction</a></td>
                             </tr>
                             @endforeach
@@ -87,12 +93,12 @@
 
                     @if(count($mtos) > 0)
                         <table class="table table-hover table-bordered">
-                            <col width="100"><col width="582"><col width="170"><col width="150">
+                            <col width="100"><col width="562"><col width="190"><col width="150">
                             <thead>
                             <tr>
                                 <th style="text-align: center;">MTO ID</th>
                                 <th style="text-align: center;">Notes/Instructions</th>
-                                <th style="text-align: center;">Status</th>
+                                <th style="text-align: center;">Order Status</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -100,7 +106,15 @@
                             <tr>
                                 <td style="text-align: center;">{{$mto['id']}}</td>
                                 <td>{{$mto['notes']}}</td>
-                                <td style="text-align: center;">{{$mto->order['status']}}</td>
+                                @if($mto['orderID'] != null && $mto['status'] == "Active")
+                                    <td style="text-align: center; color: #0315ff;">{{$mto->order['status']}}</td>
+                                @elseif($mto['orderID'] == null && $mto['status'] == "Active")
+                                    <td style="text-align: center; color: green;">MTO has no order yet</td>
+                                @elseif($mto['orderID'] == null && $mto['status'] == "Cancelled")
+                                    <td style="text-align: center; color: red;">MTO has been cancelled</td>
+                                @else
+                                    <td style="text-align: center; color: red;">MTO has been declined</td>
+                                @endif
                                 <td style="text-align: center;"><a href="{{url('/view-mto/'.$mto['id'])}}">View Transaction</a></td>
                             </tr>
                             @endforeach

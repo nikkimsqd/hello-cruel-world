@@ -35,7 +35,7 @@
 
                             <div class="col-md-8 mb-3">
                                 <label>Date of use of the product</label>
-                                <input name="dateOfUse" type="date" class="form-control" >
+                                <input name="dateOfUse" type="date" class="form-control dateOfUse" id="dateOfUse">
                             </div>
 
                             <div class="col-md-8 mb-3">
@@ -92,11 +92,12 @@
                                 </select><br><br><br>
                                 <select id="fabric-color" class="mb-3" name="fabricID">
                                     <option disabled selected="selected">Choose fabric color</option>
-                                </select>
+                                </select><br><br>
 
-                                <label>Cannot find the right fabric and color? Type it below!</label>
+                                <!-- di lang sa maka buot si customer sa fabric -->
+                                <!-- <label>Cannot find the right fabric and color? Type it below!</label>
                                 <input type="text" name="fabricChoice[fabricType]" class="form-control mb-3" placeholder="Fabric Type">
-                                <input type="text" name="fabricChoice[fabricColor]" class="form-control" placeholder="Fabric Color">
+                                <input type="text" name="fabricChoice[fabricColor]" class="form-control" placeholder="Fabric Color"> -->
                             </div>
 
                             <div class="col-md-8 mb-3">
@@ -127,6 +128,13 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+var dateToday = new Date();
+$('.dateOfUse').datepicker({
+    changeMonth: true,
+    changeYear: true,
+    minDate: dateToday
+});
 
 $('.fabric-radio').on('change', function() {
     if($(this).val() == "choose"){
