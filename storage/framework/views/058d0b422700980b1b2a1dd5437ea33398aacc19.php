@@ -422,6 +422,9 @@
 <script src="<?php echo e(asset('adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')); ?>"></script>
 <!-- SlimScroll -->
 <script src="<?php echo e(asset('adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js')); ?>"></script>
+ <!-- Date Picker -->
+<!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
 
 <?php echo $__env->yieldContent('scripts'); ?>
 

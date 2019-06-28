@@ -184,7 +184,7 @@ class CustomerController extends Controller
 
         $barangays = Barangay::all();
 
-        // dd($product->rentDetails->locations);
+        // dd($product['rpID']);
         
         $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
@@ -504,7 +504,7 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
-        return view('hinimo/bidding', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'biddings', 'notificationsCount', 'notifications'));
+        return view('hinimo/biddings', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'biddings', 'notificationsCount', 'notifications'));
     }
 
     public function showStartNewBidding()
@@ -531,26 +531,79 @@ class CustomerController extends Controller
 
     public function savebidding(Request $request)
     {
-        // dd($request->input('productType'));
+        $userID = Auth()->user()->id;
 
-        $bidding = Bidding::create([
-            'productType' => $request->input('productType'),
-            'startingprice' => $request->input('startingprice'),
-            'notes' => $request->input('notes'),
-            'endDate' => $request->input('endDate'),
-            'dateOfUse' => $request->input('dateOfUse'),
-        ]);
+        $measurement = $request->input('measurement');
+        $mName = json_encode($measurement);
+        $deadlineOfProduct = date('Y-m-d',strtotime($request->input('deadlineOfProduct')));
 
-        $tags = $request->input('tags');
+      //   $bidding = Bidding::create([
+      //       'userID' => $userID,
+      //       'maxPriceLimit' => $request->input('maxPriceLimit'), 
+      //       'endDate' => $request->input('endDate'), 
+      //       'deadlineOfProduct' => $deadlineOfProduct,
+      //       'height' => $request->input('height'), 
+      //       'category' => $request->input('category'), 
+      //       'notes' => $request->input('notes'), 
+      //       'status' => "Active"
+      //   ]);
 
-        foreach($tags as $tag) {
-            Prodtag::create([
-                'tagID' => $tag,
-                'biddingID' => $bidding['id']
-            ]);
-        }
+      //   $measurement = Measurement::create([
+      //       'userID' => $userID,
+      //       'type' => 'bidding',
+      //       'typeID' => $bidding['id'],
+      //       'data' => $mName
+      //   ]);
+
+      //   $bidding->update([
+      //       'measurementID' => $measurement['id']
+      //   ]);
+
+
+      //   $upload = $request->file('file');
+      //   if($request->hasFile('file')) {
+      //   // foreach($uploads as $upload){
+      //       $files = new File();
+      //       $destinationPath = public_path('uploads');
+      //       $name = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
+      //       $filename = $destinationPath.'\\'. $name;
+      //       $upload->move($destinationPath, $filename);
+
+      //       $files->userID = $userID;
+      //       $files->biddingID = $bidding['id'];
+      //       $files->filename = "/".$name;
+      //       $files->save();
+      //       $filename = "/".$name;
+      //   // }
+      // }
 
         return redirect('/biddings');
+    }
+
+    public function viewBidding($bididngID)
+    {
+        if (Auth::check()) {
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $page_title = 'Biddings';
+        $products = [];
+        $productsCount = Bidding::all()->count();
+        $categories = Category::all();
+        $boutiques = Boutique::all();
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $bidding = Bidding::where('id', $bididngID)->first();
+        }
+
+        return view('hinimo/bidding-details', compact('user', 'userID', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'productsCount', 'boutiques', 'bidding', 'notificationsCount', 'notifications'));
     }
 
     public function notifications()
@@ -616,6 +669,19 @@ class CustomerController extends Controller
                     $notification->markAsRead();
 
                     return redirect('/view-mto/'.$notification->data['mtoID'].'#mto-details');
+
+                }elseif($notification->type == 'App\Notifications\NotifyForAlterations'){
+                    $notification->markAsRead();
+
+                    $order = Order::where('id', $notification->data['orderID'])->first();
+
+                    if($order['mtoID'] != null){
+                        return redirect('/view-mto/'.$order->mto['id']);
+                    }elseif($order['cartID'] != null){
+                        return redirect('/view-order/'.$order['id']);
+                    }elseif($order['rentID'] != null){
+                        return redirect('/view-rent/'.$order->rent['id']);
+                    }
                 }
             }
         }
@@ -663,6 +729,7 @@ class CustomerController extends Controller
 
     public function saveMadeToOrder(Request $request)
     {
+        $dateOfUse = date('Y-m-d',strtotime($request->input('dateOfUse')));
         $userID = Auth()->user()->id;
         $boutiqueID = $request->input('boutiqueID');
         $measurement = $request->input('measurement');
@@ -682,7 +749,7 @@ class CustomerController extends Controller
         $mto = Mto::create([
             'userID' => $userID,
             'boutiqueID' => $boutiqueID,
-            'dateOfUse' => $request->input('dateOfUse'),
+            'dateOfUse' => $dateOfUse,
             'notes' => $request->input('notes'),
             'height' => $request->input('height'),
             'categoryID' => $request->input('category'),

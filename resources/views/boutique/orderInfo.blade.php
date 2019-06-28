@@ -19,6 +19,9 @@
             <h4>Delivery Address: <b>{{$order['deliveryAddress']}}</b></h4>
             <h4>Status: 
               @if($order['status'] == "In-Progress")
+              <span class="label label-warning">{{$order['status']}}</span>
+
+              @elseif($order['status'] == "For Alterations")
               <span class="label label-info">{{$order['status']}}</span>
 
               @elseif($order['status'] == "For Pickup")
@@ -133,9 +136,11 @@
           <a class="btn btn-default" href="{{url('made-to-orders/'.$order->mto['id'])}}"> Back to MTO Details</a>
         @endif
         @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress")
+          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> For Alterations</a>
+        @elseif($order['status'] == "For Alterations")
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress")
-          <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
+          <input type="submit" value="For Alterations" class="btn btn-primary" disabled>
         @endif
         </div>
       </div>
@@ -144,20 +149,51 @@
 </section>
 
 <!-- MODAL -->
+<div class="modal fade" id="forAlterationsModal" role="dialog">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title"><b>Submit MTO for Alterations?</b></h3>
+          </div>
+
+          <div class="modal-body">
+            <p>Set date for alterations:</p>
+            <form action="{{url('forAlterations')}}" method="post">
+              {{csrf_field()}}
+              <input type="text" name="alterationSchedule" id="alterationSchedule" class="form-control datepicker" required>
+              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+          </div>
+
+          <div class="modal-footer">
+            <!-- <a href="{{url('submitOrder/'.$order['id'])}}" class="btn btn-primary">Confirm</a> -->
+            <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
+          </form>
+          </div>
+      </div> 
+    </div>
+</div>
+
 <div class="modal fade" id="forPickupModal" role="dialog">
     <div class="modal-dialog ">
       <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title"><b>Submit MTO for Pickup?</b></h3>
           </div>
 
           <div class="modal-body">
-            <p>Submit MTO for Pickup?</p>
-            <!-- <input type="text" name="orerID" value="{{$order['id']}}" hidden> -->
+            <p>Set date for pickup:</p>
+            <form action="{{url('submitOrder')}}" method="post">
+              {{csrf_field()}}
+              <!-- <input type="text" name="deliverySchedule" id="deliverySchedule" class="form-control datepicker" required> -->
+              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
           </div>
 
           <div class="modal-footer">
-            <a href="{{url('submitOrder/'.$order['id'])}}" class="btn btn-primary">Confirm</a>
+            <!-- <a href="{{url('submitOrder/'.$order['id'])}}" class="btn btn-primary">Confirm</a> -->
+            <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
+          </form>
           </div>
       </div> 
     </div>
@@ -167,6 +203,14 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+var dateToday = new Date();
+var dateTomorrow = new Date();
+dateTomorrow.setDate(dateToday.getDate()+1);
+
+$('#alterationSchedule').daterangepicker({
+    minDate: dateTomorrow
+});
 
 $('.transactions').addClass("active");
 $('.orders').addClass("active");

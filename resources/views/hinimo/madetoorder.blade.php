@@ -20,22 +20,23 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="regular-page-content-wrapper checkout_details_area">
+                <div class="regular-page-content-wrapper">
                     <div class="regular-page-text">
-                        <form method="post" action="{{url('/saveMadeToOrder')}}"  enctype="multipart/form-data">
+                        <form method="post" action="{{url('/saveMadeToOrder')}}" enctype="multipart/form-data">
                             {{ csrf_field() }}
 
-                            <h2 class="form-group row">Submit your "churva" here</h2>
-                            <p>The boutique still needs to confirm your request before proceeding to the much more details about your item.</p>
+                            <h2 class="form-group row">Submit your made-to-order details here</h2>
+                            <p>After you send your made-to-order details, the boutique will set a price for your made-to-order and you'll get to decide if you will continue your request for made-to-order with the said price or not.</p>
 
                             <div class="col-md-8 mb-3">
                                 <label>Image</label>
-                                <input name="file" type="file" class="form-control">
+                                <input name="file" type="file" class="form-control" multiple>
                             </div>
 
-                            <div class="col-md-8 mb-3">
+                            <div class="col-md-8 mb-3 dateOfUse">
                                 <label>Date of use of the product</label>
-                                <input name="dateOfUse" type="date" class="form-control dateOfUse" id="dateOfUse">
+                                <input name="dateOfUse" type="text" class="form-control" id="dateOfUse" placeholder="mm / dd / yyyy">
+                                <!-- <input name="date" type="date" class="form-control" id="date"> -->
                             </div>
 
                             <div class="col-md-8 mb-3">
@@ -46,7 +47,7 @@
                             <div class="col-md-8 mb-3">
                                 <label>Type of item  <span>*</span></label>
                                 <select class="mb-3" name="gender" id="gender-select">
-                                    <option value=""></option>
+                                    <option disabled selected>Choose gender</option>
                                     <option value="mens">Mens</option>
                                     <option value="womens">Womens</option>
                                 </select><br><br><br>
@@ -107,7 +108,7 @@
 
                             <div class="col-md-8 mb-3">
                                 <input type="text" name="boutiqueID" value="{{$boutique['id']}}" hidden>
-                                <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit for confirmation">
+                                <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit">
                             </div>
                         </form>
                     </div>
@@ -120,6 +121,13 @@
 
 <style type="text/css">
 
+.datepicker-dropdown{top: 634px !important; left: 281.5px; z-index: 11; display: block;}
+
+label{
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
 
 </style>
 @endsection
@@ -130,11 +138,20 @@
 <script type="text/javascript">
 
 var dateToday = new Date();
-$('.dateOfUse').datepicker({
-    changeMonth: true,
-    changeYear: true,
-    minDate: dateToday
+var dateNextMonth = new Date();
+dateNextMonth.setDate(dateToday.getDate()+30);
+
+$('#dateOfUse').datepicker({
+    startDate: dateNextMonth
 });
+
+// $('#date').on('change', function(){
+//     var dateSelected = $(this).val();
+//     date = new Date(dateSelected);
+//     console.log(date);
+//     $('.dateOfUse').append('<input name="dateOfUse" type="date" class="form-control" id="dateOfUse" value="'+ date +'">');
+// });
+
 
 $('.fabric-radio').on('change', function() {
     if($(this).val() == "choose"){
@@ -147,7 +164,7 @@ $('.fabric-radio').on('change', function() {
 $('#fabric-type').on('change', function(){
     $('#fabric-color').empty();
     $('#fabric-color').next().find('.list').empty();
-    $('#fabric-color').next().find('.current').val(" ");
+    $('#fabric-color').next().find('.current').empty();
 
     var type = $(this).val();
     $.ajax({
@@ -167,7 +184,7 @@ $('#gender-select').on('change', function(){
     $('#measurement-input').empty()
     $('#category-select').empty();
     $('#category-select').next().find('.list').empty();
-    $('#category-select').next().find('.current').val("-----------------");
+    $('#category-select').next().find('.current').empty();
 
     var gender = $(this).val();
 

@@ -155,7 +155,7 @@
 </div>
 
 
-<!-- MODAL -->
+<!-- FOR PICKUP MODAL -->
 <div class="modal fade" id="forPickupModal" role="dialog">
     <div class="modal-dialog ">
       <div class="modal-content">
@@ -165,7 +165,8 @@
 
           <div class="modal-body">
             <p>Submit MTO for Pickup?</p>
-            <!-- <input type="text" name="orerID" value="{{$mto['id']}}" hidden> -->
+            <input type="date" name="deliverySchedule">
+            <input type="text" name="orerID" value="{{$mto['id']}}" hidden>
           </div>
 
           <div class="modal-footer">

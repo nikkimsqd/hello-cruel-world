@@ -31,6 +31,17 @@
                         <div class="row">
                             <div class="col-md-12">
                              <!--    if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed") -->
+                             @if($mto->order['status'] == "For Alterations")
+                             <div class="row">
+                                 <div class="col-md-6">
+                                    <h4>Your schedule for alterations will be on:</h4>
+                                 </div>
+                                 <div class="col-md-6" style="text-align: right;">
+                                    <h4>{{ date('M d, Y',strtotime($mto->order['alterationSchedule'])) }}</h4>
+                                 </div>
+                             </div>
+                             @endif
+
                              @if($mto['orderID'] != null)
                                 <div class="order-details-confirmation"> <!-- card opening -->
                                     <div class="cart-page-heading">

@@ -30,6 +30,8 @@
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/Ionicons/css/ionicons.min.css') }}"> -->
     <!-- Font Awesome -->
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/font-awesome/css/font-awesome.min.css') }}"> -->
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
   
 </head>
 
@@ -256,6 +258,8 @@
     <!-- Date Picker -->
 <!--     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
+    <!-- bootstrap datepicker -->
+    <script src="{{asset('adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
 
     @yield('scripts')
 

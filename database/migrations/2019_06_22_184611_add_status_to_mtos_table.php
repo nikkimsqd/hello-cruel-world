@@ -14,7 +14,7 @@ class AddStatusToMtosTable extends Migration
     public function up()
     {
         Schema::table('mtos', function (Blueprint $table) {
-            $table->string('status');
+            $table->string('status'); //active | cancelled | declinedtransactionID
         });
     }
 

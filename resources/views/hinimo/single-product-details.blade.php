@@ -85,7 +85,7 @@
 
 
     <!-- MODAAAAAAAAAAAAAAAL-------------------------------->
-    @if($user != null && $product['rpiID'] != null)
+    @if($user != null)
     <div class="modal fade" id="requestToRentModal{{$product['id']}}" role="dialog">
         <div class="modal-dialog modal-lg">
         

@@ -196,8 +196,17 @@
     <li class="header">MAIN NAVIGATION</li>
    
     <li class="dashboard">
-      <a href="/hinimo/public/dashboard">
+      <a href="{{url('dashboard')}}">
         <i class="fa fa-th"></i> <span>Dashboard</span>
+        <span class="pull-right-container">
+          <!-- <small class="label pull-right bg-green">new</small> -->
+        </span>
+      </a>
+    </li>
+   
+    <li class="biddings">
+      <a href="{{url('boutique-biddings')}}">
+        <i class="fa fa-th"></i> <span>Biddings</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
         </span>

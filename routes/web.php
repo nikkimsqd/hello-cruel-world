@@ -116,8 +116,13 @@ Route::get('/acceptMto/{mtoID}', 'BoutiqueController@acceptMto');
 //TRANSACTIONS-ORDERS
 Route::get('/orders', 'BoutiqueController@getOrders');
 Route::get('/orders/{orderID}', 'BoutiqueController@getOrder');
-Route::get('/submitOrder/{orderID}', 'BoutiqueController@submitOrder');
+// Route::get('/submitOrder/{orderID}', 'BoutiqueController@submitOrder');
+Route::post('/forAlterations', 'BoutiqueController@forAlterations');
 
+
+//TRANSACTIONS-BIDDINGS
+Route::post('/submitBid', 'BoutiqueController@submitBid');
+Route::get('/boutique-biddings', 'BoutiqueController@biddings');
 
 
 
@@ -164,6 +169,7 @@ Route::get('/biddings', 'CustomerController@showBiddings');
 Route::get('/biddings/startNewBidding', 'CustomerController@showStartNewBidding');
 Route::post('/savebidding', 'CustomerController@savebidding');
 Route::get('/getCategory/{genderCategory}', 'CustomerController@getCategory'); //also used in boutique's side
+Route::get('/view-bidding/{biddingID}', 'CustomerController@viewBidding');
 
 
 //NOTIFICATIONS
