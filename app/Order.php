@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['userID', 'cartID', 'subtotal', 'deliveryfee', 'total', 'boutiqueID', 'deliveryAddress', 'status', 'rentID', 'paymentStatus', 'mtoID', 'deliverySchedule', 'alterationSchedule'];
+    protected $fillable = ['userID', 'cartID', 'subtotal', 'deliveryfee', 'total', 'boutiqueID', 'deliveryAddress', 'status', 'rentID', 'paymentStatus', 'mtoID', 'deliverySchedule', 'biddingID', 'alterationDateStart', 'alterationDateEnd'];
     
 
     public function cart()
@@ -37,6 +37,11 @@ class Order extends Model
     public function customer()
     {
         return $this->hasOne('App\User', 'id', 'userID');
+    }
+
+    public function bidding()
+    {
+        return $this->hasOne('App\Bidding', 'id', 'biddingID');
     }
     
 }

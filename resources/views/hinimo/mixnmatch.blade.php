@@ -80,7 +80,18 @@
 
                         <div class="row">
                             <div class="col-md-12" style="text-align: right;"><br><br>
-                                <input type="submit" name="btn" value="submit" class="btn essence-btn">
+                                <div class="add-to-cart-btn">
+                                    <div id="view-top">
+                                        
+                                    </div>
+                                    <div id="view-bottom">
+                                        
+                                    </div>
+                                    <!-- input type="text" id="top" name="top" value="" hidden>
+                                    <input type="text" id="bottom" name="bottom" value="" hidden> -->
+                                    <a href="" class="btn essence-btn">Add items to Cart</a>&nbsp;
+                                </div>
+                                <!-- <input type="submit" name="btn" value="Add items to cart" class="btn essence-btn"> -->
                                 <!-- </form> -->
                             </div>
                         </div>
@@ -97,23 +108,23 @@
 
     .tops-div{
         height: 350px;
-        border: 1px solid black;
+        border: 1px solid #cecece;
     }
 
     .bottoms-div{
         height: 350px;
-        border: 1px solid black;
+        border: 1px solid #cecece;
         overflow-y: scroll;
     }
 
     .view-top{
         height: 350px;
-        border: 1px solid black;
+        border: 1px solid #cecece;
     }
 
     .view-bottom{
         height: 350px;
-        border: 1px solid black;
+        border: 1px solid #cecece;
     }
 
     .product-top, .product-bottom{
@@ -159,8 +170,12 @@ $('.productTop').on('change', function(){
         success:function(data){
             data.files.forEach(function(file){
             $('.view-top').empty();
+            $('#view-top').empty();
+
             $('.view-top').append('<img src="{{asset("/uploads")}}.'+file.filename+'" style="width:100%; height: 100%; object-fit: cover;">');
-            $('.view-top').append('<input type="text" name="top" value="'+ data.product.id +'" hidden>');
+            $('#view-top').append('<input type="text" name="top" value="'+ data.product.id +'" hidden>');
+            // var top = $('#view-top').val();
+            // console.log(top);
             });
         }
     });
@@ -176,16 +191,52 @@ $('.productBottom').on('change', function(){
         success:function(data){
             data.files.forEach(function(file){
             $('.view-bottom').empty();
+            $('#view-bottom').empty();
+
             $('.view-bottom').append('<img src="{{asset("/uploads")}}.'+file.filename+'" style="width:100%; height: 100%; object-fit: cover;">');
-            $('.view-bottom').append('<input type="text" name="bottom" value="'+ data.product.id +'" hidden>');
+            $('#view-bottom').append('<input type="text" name="bottom" value="'+ data.product.id +'" hidden>');
             });
             // var bots = $('.productBottom').val();  
         }
     });
 });
 
-//  var top = $('.productTop').find("input").val();
-// console.log(top);
+
+$('.add-to-cart-btn').on('click', function(){
+var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
+var top = $('#view-top').find("input").val();
+var bottom = $('#view-bottom').find("input").val();
+// alert(top);
+
+$.ajax({
+     url: "/hinimo/public/addtoCart/"+top
+});
+
+$.ajax({
+     url: "/hinimo/public/addtoCart/"+bottom
+});
+
+$.ajax({
+    url: "/hinimo/public/getCart/"+top,
+    success:function(data){  
+         $(".cart-list").append('<div class="single-cart-item">' +
+                    '<a href="#" class="product-image">' +
+                        '<img src="'+ image +'" class="cart-thumb" alt="">' +
+
+                        '<div class="cart-item-desc">' +
+                          '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
+                            '<span class="badge">'+ data.owner.fname +'</span>' +
+                            '<h6>'+ data.product.productName +'</h6>' +
+                            '<p class="price">$'+ data.product.productPrice +'</p>' +
+                        '</div>' +
+                    '</a>' +
+                '</div>'
+                );
+    }
+
+}); //second ajax
+
+}); //main ending
 
 
 

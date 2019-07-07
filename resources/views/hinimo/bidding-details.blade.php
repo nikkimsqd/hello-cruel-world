@@ -4,86 +4,169 @@
 
 @section('body')
 <!-- ##### Single Product Details Area Start ##### -->
-    <a href="{{url('shop')}}" class="back_to_page"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+<a href="{{url('biddings')}}" class="back_to_page"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
 
-    <section class="single_product_details_area d-flex align-items-center">
+<section class="single_product_details_area d-flex align-items-center">
 
-        <!-- Single Product Thumb -->
-        <div class="single_product_thumb clearfix">
-            <!-- <div class="product_thumbnail_slides owl-carousel"> -->
-                @foreach($bidding->productFile as $image)
-                <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
-                @endforeach
-            <!-- </div> -->
-        </div>
-
-        <?php
-            $measurements = json_decode($bidding->measurement->data);
-        ?>
-
-        <!-- Single Product Description -->
-        <div class="single_product_desc clearfix">
-            <span>By: &nbsp; {{$bidding->owner['fname'].' '.$bidding->owner['lname']}}</span>
-            <!-- <h4>Maximum Price Limit: ₱{{ $bidding['maxPriceLimit'] }}</h4> -->
-            <p class="product-price"></p>
-            <p><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bidding['maxPriceLimit'] }}</p>
-            <p><b>Bidding End Date:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['endDate'])) }}</p>
-            <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</p>
-            <hr>
-            <p><b>Customer's notes/instructions:</b></p>
-            <p class="">{{ $bidding['notes'] }}</p>
-            <hr>
-            <p><b>Customer's Measurements:</b></p>
-            @foreach($measurements as $measurementName => $measurement)
-            <p>{{$measurementName.': '. $measurement}}</p>
+    <!-- Single Product Thumb -->
+    <div class="single_product_thumb clearfix">
+        <!-- <div class="product_thumbnail_slides owl-carousel"> -->
+            @foreach($bidding->productFile as $image)
+            <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
             @endforeach
-            <p><b>Customer's height:</b> &nbsp; {{ $bidding['height'] }}</p>
-            
-
-            <br>
-            <!-- Cart & Favourite Box -->
-            <div class="cart-fav-box d-flex align-items-center">
-                <input type="submit" class="btn essence-btn" value="Submit a bid" data-toggle="modal" data-target="#submitABidModal{{$bidding['id']}}">
-            </div>
-
-        </div>
-    </section>
-
-
-    <!-- MODAAAAAAAAAAAAAAAL-------------------------------->
-    <div class="modal fade" id="submitABidModal{{$bidding['id']}}" role="dialog">
-        <div class="modal-dialog modal-md">
-        
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title"><b>Submit your bid</b></h3>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <div class="modal-body">
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <form action="{{url('submitBid')}}" method="post">
-                            {{csrf_field()}}
-                        <input type="number" name="bidAmount" min="1" max="{{$bidding['maxPriceLimit']}}" class="form-control">
-                        <input type="text" name="biddingID" value="{{$bidding['id']}}" hidden>
-                    </div>
-                </div>
-            </div> <!-- modal body -->
-
-            <div class="modal-footer">
-              <input type="submit" class="btn essence-btn" value="Submit Bid">
-              <!-- <input type="" class="btn essence-btn" data-dismiss="modal" value="Cancel"> -->
-              </form>
-
-            </div>
-          </div>
-          
-        </div>
+        <!-- </div> -->
     </div>
 
+    <?php
+        $measurements = json_decode($bidding->measurement->data);
+    ?>
+
+    <!-- Single Product Description -->
+    <div class="single_product_desc clearfix">
+        @if($bidding['status'] == "Closed")
+        <p class="product-price">[CLOSED]</p>
+        @endif
+        <span>By: &nbsp; {{$bidding->owner['fname'].' '.$bidding->owner['lname']}}</span>
+        <!-- <h4>Maximum Price Limit: ₱{{ $bidding['maxPriceLimit'] }}</h4> -->
+        <p><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bidding['maxPriceLimit'] }}</p>
+        <p><b>Bidding End Date:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['endDate'])) }}</p>
+        <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</p>
+        <hr>
+        <p><b>Customer's notes/instructions:</b></p>
+        <p class="">{{ $bidding['notes'] }}</p>
+        <hr>
+        <p><b>Customer's Measurements:</b></p>
+        @foreach($measurements as $measurementName => $measurement)
+        <p>{{$measurementName.': '. $measurement}}</p>
+        @endforeach
+        <p><b>Customer's height:</b> &nbsp; {{ $bidding['height'] }}</p>
+        
+
+        <br>
+        <!-- Cart & Favourite Box -->
+        @if($bidding['status'] == "Closed")
+        <div class="cart-fav-box d-flex align-items-center">
+            <a href="{{url('view-bidding-order/'.$bidding['id'])}}" class="btn essence-btn">View Order Details</a>
+        </div>
+        @endif
+
+    </div>
+</section>
+
+@if($bidding['userID'] == $userID && $bidding['status'] == "Open")
+<hr>
+<section class="align-items-center">
+    <div class="row justify-content-center section-padding-80">
+        <div class="col-md-10">
+            @if(count($bids) && $bidding['status'] == "Open")
+            <h3>Your current bidders</h3>
+            @foreach($bids as $bid)
+            <hr>
+            <table class="table table-borderless">
+                <col width="698"><col width="349">
+                <tr>
+                    <td><p><b>Boutique Name:</b> &nbsp; {{$bid->owner['boutiqueName']}}</p></td>
+                    <td rowspan="3"> <a href="{{url('reviewBidding/'.$bid['id'])}}" class="btn essence-btn">Accept Offer</a></td>
+                </tr>
+                <tr>
+                    <td><p><b>Boutique Address:</b> &nbsp; {{$bid->owner['boutiqueAddress']}}</p></td>
+                </tr>
+                <tr>
+                    <td><p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p></td>
+                </tr>
+                <tr>
+                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</td></p>
+                </tr>
+            </table>
+            @endforeach
+            @elseif($bidding['status'] == "Closed")
+            <h3>Your current bidders</h3>
+            @foreach($bids as $bid)
+            <hr>
+            <table class="table table-borderless">
+                <col width="698"><col width="349">
+                <tr>
+                    <td><p><b>Boutique Name:</b> &nbsp; {{$bid->owner['boutiqueName']}}</p></td>
+                    <td rowspan="3"> <a href="{{url('reviewBidding/'.$bid['id'])}}" class="btn essence-btn">Accept Offer</a></td>
+                </tr>
+                <tr>
+                    <td><p><b>Boutique Address:</b> &nbsp; {{$bid->owner['boutiqueAddress']}}</p></td>
+                </tr>
+                <tr>
+                    <td><p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p></td>
+                </tr>
+                <tr>
+                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</td></p>
+                </tr>
+            </table>
+            @endforeach
+            @else
+                <h3>You currently have no bidders</h3>
+            @endif
+
+          <!--   @if(count($bids))
+            <h3>Your current bidders</h3>
+            @foreach($bids as $bid)
+            <hr>
+            <table class="table table-borderless">
+                <col width="698"><col width="349">
+                <tr>
+                    <td><p><b>Boutique Name:</b> &nbsp; {{$bid->owner['boutiqueName']}}</p></td>
+                    <td rowspan="3"> <a href="{{url('acceptBid/'.$bid['id'])}}" class="btn essence-btn">Accept Offer</a></td>
+                </tr>
+                <tr>
+                    <td><p><b>Boutique Address:</b> &nbsp; {{$bid->owner['boutiqueAddress']}}</p></td>
+                </tr>
+                <tr>
+                    <td><p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p></td>
+                </tr>
+                <tr>
+                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</td></p>
+                </tr>
+            </table>
+            @endforeach
+            @endif -->
+        </div>
+    </div>
+</section>
+@endif
+
+
+<!-- MODAAAAAAAAAAAAAAAL-------------------------------->
+<div class="modal fade" id="submitABidModal{{$bidding['id']}}" role="dialog">
+    <div class="modal-dialog modal-md">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title"><b>Submit your bid</b></h3>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form action="{{url('submitBid')}}" method="post">
+                        {{csrf_field()}}
+                    <input type="number" name="bidAmount" min="1" max="{{$bidding['maxPriceLimit']}}" class="form-control">
+                    <input type="text" name="biddingID" value="{{$bidding['id']}}" hidden>
+                </div>
+            </div>
+        </div> <!-- modal body -->
+
+        <div class="modal-footer">
+          <input type="submit" class="btn essence-btn" value="Submit Bid">
+          <!-- <input type="" class="btn essence-btn" data-dismiss="modal" value="Cancel"> -->
+          </form>
+
+        </div>
+      </div>
+      
+    </div>
+</div>
+
 <style type="text/css">
+    .table td{vertical-align: middle; padding: 0}
     p{line-height: 1.5; margin-bottom: 0; font-size: 16px;}
     .product-desc{margin-bottom: 1rem;}
     .price{text-align: right;}

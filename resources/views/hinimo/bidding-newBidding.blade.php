@@ -70,7 +70,7 @@
                                     </div>
 
                                     <div class="col-md-12 mb-3">
-                                        <label>Bidding End Date (add time for this?)</label>
+                                        <label>Bidding End Date</label>
                                         <input type="date" name="endDate" id="endDate" class="form-control">
                                     </div>
 

@@ -4,7 +4,7 @@
 @section('content')
 
 <section class="content">
-  <div class="row" id="rents">
+  <div class="row" id="orders">
     <div class="col-md-12">
       <div class="box">
 

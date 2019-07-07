@@ -116,13 +116,17 @@ Route::get('/acceptMto/{mtoID}', 'BoutiqueController@acceptMto');
 //TRANSACTIONS-ORDERS
 Route::get('/orders', 'BoutiqueController@getOrders');
 Route::get('/orders/{orderID}', 'BoutiqueController@getOrder');
-// Route::get('/submitOrder/{orderID}', 'BoutiqueController@submitOrder');
+Route::post('/submitOrder', 'BoutiqueController@submitOrder');
 Route::post('/forAlterations', 'BoutiqueController@forAlterations');
 
 
 //TRANSACTIONS-BIDDINGS
 Route::post('/submitBid', 'BoutiqueController@submitBid');
-Route::get('/boutique-biddings', 'BoutiqueController@biddings');
+Route::post('/updateBid', 'BoutiqueController@updateBid');
+Route::get('/boutique-view-biddings', 'BoutiqueController@biddings');
+Route::get('/boutique-view-bidding/{biddingID}', 'BoutiqueController@viewBidding');
+Route::get('/boutique-biddings', 'BoutiqueController@boutiqueBiddings');
+Route::get('/boutique-bidding/{biddingID}', 'BoutiqueController@viewBoutiqueBidding');
 
 
 
@@ -170,6 +174,13 @@ Route::get('/biddings/startNewBidding', 'CustomerController@showStartNewBidding'
 Route::post('/savebidding', 'CustomerController@savebidding');
 Route::get('/getCategory/{genderCategory}', 'CustomerController@getCategory'); //also used in boutique's side
 Route::get('/view-bidding/{biddingID}', 'CustomerController@viewBidding');
+// Route::get('/view-bidder/{biddingID}', 'CustomerController@viewBidder');
+Route::get('/myBiddings', 'CustomerController@myBiddings');
+// Route::get('/acceptBid/{bidID}', 'CustomerController@acceptBid');
+Route::get('/reviewBidding/{bidID}', 'CustomerController@reviewBidding');
+Route::get('/bidding/inputAddress/{bidID}', 'CustomerController@inputAddressforBiding');
+Route::post('/makeOrderforBidding', 'CustomerController@makeOrderforBidding');
+Route::get('/view-bidding-order/{biddingID}', 'CustomerController@viewBiddingOrder');
 
 
 //NOTIFICATIONS
@@ -179,7 +190,7 @@ Route::get('/user-notifications/{notificationID}', 'CustomerController@viewNotif
 
 
 //BOUTIQUE PROFILE
-Route::get('/boutique/{boutiqueID}', 'CustomerController@getBoutique');
+Route::get('/boutique/{boutiqueID}', 'CustomerController@viewBoutique');
 
 
 //MADE-TO-ORDER
@@ -209,6 +220,7 @@ Route::post('/paypal-transaction-complete', 'CustomerController@paypalpaypalTran
 Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
 Route::get('/getMProduct/{productID}', 'CustomerController@getMProduct');
 Route::post('/submitMixnmatch', 'CustomerController@submitMixnmatch');
+Route::get('/addmnmtoCart/{top}/{bottom}', 'CustomerController@addmnmtoCart');
 
 
 

@@ -26,3 +26,75 @@
     </div>
 
 @endsection
+
+
+//required every function
+        $page_title = "Submit Address";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+
+        return view('blade', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount'));
+
+
+
+        <div class="cart-content d-flex">
+
+            <?php $subtotal = 0; ?>
+            @if($cart != null)
+            <!-- Cart List Area -->
+            <div class="cart-list">
+                @foreach($cart->items as $item)
+                <div class="single-cart-item">
+                    <a href="#" class="product-image">
+                        @foreach($item->product->productFile as $file)
+                        <img src="{{ asset('/uploads').$file['filename'] }}" class="cart-thumb" alt="">
+                        @endforeach
+
+                        <!-- Cart Item Desc -->
+                        <div class="cart-item-desc">
+                          <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                            <span class="badge">{{$item->product->owner['boutiqueName']}}</span>
+                            <h6>{{$item->product['productName']}}</h6>
+                            <!-- <p class="size">Size: S</p> -->
+                            <!-- <p class="color">Color: Red</p> -->
+                            <p class="price">₱{{$item->product['price']}}</p>
+                        </div>
+                    </a>
+                </div>
+                <?php
+                    $subtotal += $item->product['price'];
+                ?>
+                @endforeach
+            </div>
+            <!-- Cart Summary -->
+            <div class="cart-amount-summary">
+
+                <h2>Summary</h2>
+                <ul class="summary-table">
+                    <li><span>subtotal:</span> <span>₱{{ number_format($subtotal, 2) }}</span></li>
+                    <!-- <li><span>delivery:</span> <span>Free</span></li> -->
+                    <!-- <li><span>discount:</span> <span>-15%</span></li> -->
+                    <!-- <li><span>total:</span> <span>$232.00</span></li> -->
+                </ul>
+                <div class="checkout-btn mt-100">
+                    <a href="{{url('checkout')}}" class="btn essence-btn">proceed to checkout</a>
+                </div>
+            </div>
+            @else
+            <div class="cart-amount-summary">
+
+                <h2>You have nothing on your cart</h2>
+                
+            </div>
+            @endif
+        </div>

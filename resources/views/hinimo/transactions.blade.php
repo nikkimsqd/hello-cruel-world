@@ -31,10 +31,11 @@
                 	</div> -->
                     @if(count($orders) > 0)
                         <table class="table table-hover ">
-                        	<col width="100"><col width="582"><col width="170"><col width="150">
+                        	<col width="100"><col width="100"><col width="482"><col width="170"><col width="150">
             				<thead>
                         	<tr>
-                        		<th style="text-align: center;">Order ID</th>
+                                <th style="text-align: center;">Order ID</th>
+                        		<th style="text-align: center;">Type</th>
                         		<th style="text-align: center;">Product/s</th> <!-- kwaon ang naa sa cart/ or rent transac -->
                         		<th style="text-align: center;">Order Status</th>
                         		<th></th>
@@ -43,32 +44,67 @@
                             @foreach($orders as $order)
                             @if($order['cartID'] != null)
                         	<tr>
-                        		<td style="text-align: center;">{{$order['id']}}</td>
-                                @if($order['cartID'] != null)
-                                <td>
-                                @foreach($order->cart->items as $item)
-                        		  {{$item->product['productName']}} 
-                                @endforeach
-                                </td>
-                                @elseif($order['rentID'] != null)
-                                <td>{{$order->rent->product['productName']}}</td>
-                                @endif
+                                <td style="text-align: center;">{{$order['id']}}</td>
+                        		<td style="text-align: center;"><b>PURCHASE</b></td>
+                                <!-- if($order['cartID'] != null) -->
+                                    <td>
+                                        @foreach($order->cart->items as $item)
+                                		  {{$item->product['productName']}} 
+                                        @endforeach
+                                    </td>
+                                <!-- elseif($order['rentID'] != null)
+                                    <td>{{$order->rent->product['productName']}}</td>
+                                endif -->
                         		<td style="text-align: center;">{{$order['status']}}</td>
                         		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Order</a></td>
                         	</tr>
+                            @elseif($order['rentID'] != null)
+                            <tr>
+                                <td style="text-align: center;">{{$order['id']}}</td>
+                                <td style="text-align: center;"><b>RENT</b></td>
+                                <td>{{$order->rent->product['productName']}}</td>
+                                <td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
+                                <td style="text-align: center;"><a href="{{url('/view-rent/'.$order->rent['rentID'])}}">View Transaction</a></td>
+                            </tr>
+                            @elseif($order['mtoID'] != null)
+                                @if($order->mto['status'] == "Active")
+                                <tr>
+                                    <td style="text-align: center;">{{$order['id']}}</td>
+                                    <td style="text-align: center;"><b>MTO</b></td>
+                                    <td>{{$order->mto['notes']}}</td>
+                                    @if($order->mto['orderID'] != null && $order->mto['status'] == "Active")
+                                        <td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
+                                    @elseif($order->mto['orderID'] == null && $order->mto['status'] == "Active")
+                                        <td style="text-align: center; color: green;">MTO has no order yet</td>
+                                    @elseif($order->mto['orderID'] == null && $order->mto['status'] == "Cancelled")
+                                        <td style="text-align: center; color: red;">MTO has been cancelled</td>
+                                    @else
+                                        <td style="text-align: center; color: red;">MTO has been declined</td>
+                                    @endif
+                                    <td style="text-align: center;"><a href="{{url('/view-mto/'.$order->mto['id'])}}">View Transaction</a></td>
+                                </tr>
+                                @endif
+                            @elseif($order['bidding'] != null)
+                            <tr>
+                                <td style="text-align: center;">{{$order['id']}}</td>
+                                <td style="text-align: center;"><b>BIDDING</b></td>
+                                <td>{{$order->bidding['notes']}}</td>
+                                <td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
+                                <td style="text-align: center;"><a href="{{url('/view-bidding-order/'.$order->bidding['id'])}}">View Transaction</a></td>
+                            </tr>
                             @endif
                             @endforeach
                         </table>
                         <br><br><br>
                     @endif
 
-                    @if(count($rents) > 0)
+                    <!-- @if(count($rents) > 0)
                         <table class="table table-hover table-bordered">
                             <col width="100"><col width="582"><col width="170"><col width="150">
                             <thead>
                             <tr>
                                 <th style="text-align: center;">RENT ID</th>
-                                <th style="text-align: center;">Product/s</th> <!-- kwaon ang naa sa cart/ or rent transac -->
+                                <th style="text-align: center;">Product/s</th> 
                                 <th style="text-align: center;">Order Status</th>
                                 <th></th>
                             </tr>
@@ -89,8 +125,9 @@
                             @endforeach
                         </table>
                         <br><br><br>
-                    @endif
+                    @endif -->
 
+                    <!-- Pending MTOs -->
                     @if(count($mtos) > 0)
                         <table class="table table-hover table-bordered">
                             <col width="100"><col width="562"><col width="190"><col width="150">

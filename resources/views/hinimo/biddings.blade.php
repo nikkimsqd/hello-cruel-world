@@ -25,26 +25,31 @@
     <!-- ##### Shop Grid Area Start ##### -->
     <section class="shop_grid_area section-padding-80">
         <div class="container">
-            @if (\Auth::check() && \Auth::user()->roles === 'customer')
-            <div class="row" style="padding-bottom: 20px;">
+            <!-- @if (\Auth::check() && \Auth::user()->roles === 'customer')
+            <div class="row" style="padding-bottom: 20px; text-align: right;">
                 <div class="col-md-12">
                     <a href="{{ url('/biddings/startNewBidding') }}" class="btn essence-btn">Start A Bidding</a>
+                    <a href="{{ url('/biddings/startNewBidding') }}" class="btn essence-btn">View your Biddings here</a>
                 </div>
             </div>
-            @endif
+            @endif -->
             <div class="row">
-                <div class="col-12 col-md-4 col-lg-3">
-                   
-                </div>
 
-                <div class="col-12 col-md-8 col-lg-9"> <!-- Products show area -->
+                <div class="col-12 col-md-12 col-lg-12"> <!-- Products show area -->
+                    <div class="row" style="padding-bottom: 20px; text-align: right;">
+                        <div class="col-md-12">
+                    <!-- <div class="col-12 col-md-4 col-lg-3"> -->
+                        <a href="{{ url('/biddings/startNewBidding') }}" class="btn essence-btn">Start A Bidding</a>
+                        <a href="{{ url('/myBiddings') }}" class="btn essence-btn">View your Biddings here</a>
+                        </div>  
+                    </div>  
                     <div class="shop_grid_product_area">
                         <div class="row">
                             <div class="col-12">
                                 <div class="product-topbar d-flex align-items-center justify-content-between">
                                     <!-- Total Products -->
                                     <div class="total-products">
-                                        <p><span>{{$productsCount}}</span> products found</p>
+                                        <p><span>{{$biddingsCount}}</span> biddings found</p>
                                     </div>
                                     <!-- Sorting -->
                                     <div class="product-sorting d-flex">
@@ -67,45 +72,49 @@
 
 
                         <div class="products_list row"> <!-- Products Display -->
+                                <?php $bidcounter = 0; ?>
                             @foreach($biddings as $bidding)
-                            @if($bidding['status'] == "Active")
+                            @if($bidding['status'] == "Open")
                             <!-- Single Product -->
-                            <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="col-12 col-sm-6 col-lg-3">
                             <div class="single-product-wrapper">
                                 <!-- Product Image -->
-                                <?php 
-                                    $counter = 1;
-                                ?>
+                                <?php $imagecounter = 1; ?>
                             
                             @foreach($bidding->productFile as $image)
-                                
                                 <div class="product-img">
-                                @if($counter == 1)    
+                                @if($imagecounter == 1)    
                                     <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                 @else
                                 @endif
-
-                                <!-- @if($bidding['forRent'] == "true")
-                                    <div class="product-badge new-badge">
-                                        <span>Rentable</span>
-                                    </div>
-                                @elseif($bidding['productStatus'] == "Not Available")
-                                    <div class="product-badge offer-badge">
-                                        <span>NOT AVAILABLE</span>
-                                    </div>
-                                @endif -->
                                 </div>
-                                
-                                <?php $counter++; ?>
+                                <?php $imagecounter++; ?>
                                 @endforeach
 
+
+                                <?php $bidcounter++; ?>
                                 <!-- Product Description -->
                                 <div class="product-description">
-                                    <span>Bidding closes in: </span> <span id="demo"></span>
+                                    <span>by: {{$bidding->owner['fname'].' '.$bidding->owner['lname']}} </span><br>
+                                    <span>Bidding closes in: </span> <span id="demo{{$bidcounter}}"></span>
                                     <a href="#">
                                         <h6>${{ number_format($bidding['maxPriceLimit']) }}</h6>
                                     </a>
                                     <p class="product-price">{{ $bidding['productName'] }}</p>
+                                    <input name="endDate" id="endDate" value="{{ $bidding['endDate'] }}" hidden>
+                                    @if(count($bidding->bids))
+                                    <?php $bids = array(); ?>
+                                    <span>
+                                        Lowest bid:
+                                    @foreach($bidding->bids as $bid)
+                                        <?php array_push($bids, $bid['bidAmount']) ?>
+                                        <!-- {{$bid['bidAmount']}} -->
+                                        {{min($bids)}}
+                                    @endforeach
+                                    </span>
+                                    @else
+                                    <span>No bids</span>
+                                    @endif
 
                                     <!-- Hover Content -->
                                     <div class="hover-content">
@@ -123,6 +132,8 @@
 
                         </div>
                     </div>
+                    <!-- {{$biddingsCount}}<br>
+                    {{$bidcounter}} -->
                     <!-- Pagination -->
                    <!--  <nav aria-label="navigation">
                         <ul class="pagination mt-50 mb-70">
@@ -142,14 +153,22 @@
     <!-- ##### Shop Grid Area End ##### -->
 </div>
 <!-- page -->
+
+<style type="text/css">
+.mb-10{margin-bottom: 10px;}
+.custom-block{display: block;}
+</style>
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
-    
+
+var date = $('#endDate').val();
+
+// alert(date);
 
 // Set the date we're counting down to
-var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+var countDownDate = new Date(date).getTime();
 
 // Update the count down every 1 second
 var x = setInterval(function() {
@@ -167,13 +186,24 @@ var x = setInterval(function() {
   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
     
   // Output the result in an element with id="demo"
-  document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-  // $('#demo').append(days + "d " + hours + "h " + minutes + "m " + seconds + "s ")
+  for (i = 0; i <= {{$bidcounter}}; i++) {
+      console.log(i);
+      // console.log("tae");
+  if(i == {{$bidcounter}}){
+      // console.log(i);
+      // console.log({{$bidcounter}});
+    // document.getElementById("demo{{$bidcounter}}").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+      $('#demo{{$bidcounter}}').append(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
+      // {{$biddingsCount--}}
+  }else{
+    document.getElementById("demo{{$bidcounter}}").innerHTML = "dili equals";
+  }
+    }
     
   // If the count down is over, write some text 
   if (distance < 0) {
     clearInterval(x);
-    document.getElementById("demo").innerHTML = "EXPIRED";
+    document.getElementById("demo{{$bidcounter}}").innerHTML = "EXPIRED";
   }
 }, 1000);
 

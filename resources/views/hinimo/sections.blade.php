@@ -124,7 +124,7 @@
                     </a>
                 </div>
                 <?php
-                	$subtotal += $item->product['price'];
+                    $subtotal += $item->product['price'];
                 ?>
                 @endforeach
             </div>

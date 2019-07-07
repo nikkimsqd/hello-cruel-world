@@ -33,16 +33,19 @@
                              <!--    if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed") -->
                              @if($mto->order['status'] == "For Alterations")
                              <div class="row">
-                                 <div class="col-md-6">
-                                    <h4>Your schedule for alterations will be on:</h4>
-                                 </div>
-                                 <div class="col-md-6" style="text-align: right;">
-                                    <h4>{{ date('M d, Y',strtotime($mto->order['alterationSchedule'])) }}</h4>
-                                 </div>
+                                <div class="col-md-12">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><h5>Your schedule for alterations will be on:</h5></td>
+                                        <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($mto->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($mto->order['alterationDateEnd']))}}</h5></td>
+                                    </tr>
+                                </table>
+                                    <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
+                                </div>
                              </div>
                              @endif
 
-                             @if($mto['orderID'] != null)
+                            @if($mto['orderID'] != null)
                                 <div class="order-details-confirmation"> <!-- card opening -->
                                     <div class="cart-page-heading">
                                         <h5>Your Order Details</h5>
@@ -107,6 +110,7 @@
                                             <li style="color: red;"><span>MTO has been declined</span><span>Reason: {{$mto->declineDetails['reason']}}</span></li>
                                         @endif
                                         <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
+                                        <li><span>Boutique Name</span> <span>{{$mto->boutique['boutiqueName']}}</span></li>
                                         <li><span>Date of use of the product</span> <span>{{$mto['dateOfUse']}}</span></li>
                                         <li><span>Category of item</span> <span>{{$mto->category['categoryName']}}</span></li>
                                         <li><span>Height</span> <span>{{$mto['height']}} cm</span></li>
@@ -241,6 +245,7 @@
 
 <style type="text/css">
     .normal{font-weight: normal;}
+    .table{margin-bottom: 0;}
 </style>
 
 <!-- </div> -->

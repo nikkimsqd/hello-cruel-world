@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bidding extends Model
 {
-    protected $fillable = ['userID', 'maxPriceLimit', 'endDate', 'deadlineOfProduct', 'measurement', 'height', 'category', 'notes', 'orderID', 'status'];
+    protected $fillable = ['userID', 'maxPriceLimit', 'endDate', 'deadlineOfProduct', 'measurementID', 'height', 'category', 'notes', 'orderID', 'status', 'bidID'];
 
     public function owner()
     {
@@ -26,5 +26,20 @@ class Bidding extends Model
     public function measurement()
     {
         return $this->hasOne('App\Measurement', 'id', 'measurementID');
+    }
+
+    public function category()
+    {
+        return $this->hasOne('App\Category', 'id', 'category');
+    }
+
+    public function bids()
+    {
+        return $this->hasMany('App\Bid', 'biddingID', 'id');
+    }
+
+    public function bid()
+    {
+        return $this->hasOne('App\Bid', 'id', 'bidID');
     }
 }

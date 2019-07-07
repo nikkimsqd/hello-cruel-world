@@ -75,14 +75,16 @@
               <hr>
               <a href="" data-toggle="modal" data-target="#recommendFabricModal">Recommend fabric to use with price here.</a>
               <hr>
-              <form action="{{url('/addPrice')}}" method="post">
-                {{csrf_field()}}
-                <h4>Add price of item:</h4>
-                <input type="number" name="price" class="input form-control"><br>
-                <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
+                @if($mto['fabricID'] != null)
+                <form action="{{url('/addPrice')}}" method="post">
+                  {{csrf_field()}}
+                  <h4>Add price of item:</h4>
+                  <input type="number" name="price" class="input form-control"><br>
+                  <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
 
-                <input type="submit" name="btn_submit" value="Place Offer" class="btn btn-primary">
-              </form>
+                  <input type="submit" name="btn_submit" value="Place Offer" class="btn btn-primary">
+                </form>
+                @endif
               @endif
 
               @if($mto['status'] != "Active" && $mto['status'] != "Cancelled")
@@ -91,7 +93,7 @@
               @endif
 
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 col-12 col-lg-5"> <!-- col-md-6 ra ang orig-->
 
               <img src="{{ asset('/uploads/').$mto->productFile['filename'] }}" style="width:80%; height: auto; object-fit: cover;margin: 10px; text-align: right;">
             </div>
@@ -141,7 +143,7 @@
             <option disabled selected="selected">Select Fabric Type first</option>
           </select><br>
           <h4>Price:</h4> 
-          <input type="text" name="fabricSuggestion[price]" class="form-control" placeholder="Price" required>
+          <input type="number" name="fabricSuggestion[price]" class="form-control" placeholder="Price" required>
           <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
       </div>
 

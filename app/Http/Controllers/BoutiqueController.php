@@ -39,6 +39,7 @@ use App\Notifications\RentApproved;
 use App\Notifications\RentUpdateForCustomer;
 use App\Notifications\BoutiqueDeclinesMto;
 use App\Notifications\NotifyForAlterations;
+use App\Notifications\NewBid;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -83,6 +84,36 @@ class BoutiqueController extends Controller
 
 					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/made-to-orders/'.$mto['id']);
+
+				}elseif ($notification->type == 'App\Notifications\CustomerPaysOrder') {
+					$notif = $notification;
+					$notification->markAsRead();
+
+					$order = Order::where('id', $notif->data['orderID'])->first();
+
+					if($order['cartID'] != null){
+
+						return redirect('/orders/'.$order['id']);
+
+					}elseif($order['rentID'] != null){
+
+						$rent = Rent::where('id', $order['rentID'])->first();
+						return redirect('/rents/'.$rent['id']);
+
+					}elseif($order['mtoID'] != null){
+
+						$mto = Mto::where('id', $order['mtoID'])->first();
+						return redirect('/made-to-orders/'.$mto['id']);
+
+					}elseif($order['biddingID'] != null) {
+
+						$bidding = Bidding::where('id', $order['biddingID'])->first();
+						return redirect('');
+
+					}
+					$mto = Mto::where('id', $notif->data['orderID'])->first();
+
+					return redirect('/made-to-orders/'.$mto['id']);
 				}
 			}
 		}
@@ -108,11 +139,12 @@ class BoutiqueController extends Controller
 			$user = User::find($id);
 	    	$boutique = Boutique::where('userID', $id)->first();
 
+	    	$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->get();
 			$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 
 			$notifications = $user->notifications;
 			$notificationsCount = $user->unreadNotifications->count();
-			// dd($notifications);
+			// dd($orders);
 
 			// foreach($notifications as $notification) {
 			// 	foreach ($notification['data'] as $value) {
@@ -123,7 +155,7 @@ class BoutiqueController extends Controller
 	        $rentArray = $rents->toArray();
 	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders')); 
 		}else {
 			return redirect('/shop');
 		}
@@ -818,12 +850,16 @@ class BoutiqueController extends Controller
 
     public function forAlterations(Request $request)
     {
-    	dd($request->input('alterationSchedule'));
+        $alterationDateStart = date('Y-m-d',strtotime($request->input('alterationDateStart')));
+        $alterationDateEnd = date('Y-m-d',strtotime($request->input('alterationDateEnd')));
+    	
     	$order = Order::where('id', $request->input('orderID'))->first();
+    	// dd($request->input('alterationSchedule'));
 
     	$order->update([
     		'status' => 'For Alterations',
-    		'alterationSchedule' => $request->input('alterationSchedule')
+    		'alterationDateStart' => $alterationDateStart,
+    		'alterationDateEnd' => $alterationDateEnd
     	]);
 
     	$customer = User::where('id', $order->customer['id'])->first();
@@ -834,11 +870,12 @@ class BoutiqueController extends Controller
 
     public function submitOrder(Request $request)
     {
+        $deliverySchedule = date('Y-m-d',strtotime($request->input('deliverySchedule')));
     	$order = Order::where('id', $request->input('orderID'))->first();
 
     	$order->update([
     		'status' => 'For Pickup',
-    		'deliverySchedule' => $request->input('deliverySchedule')
+    		'deliverySchedule' => $deliverySchedule
     	]);
 
     	return redirect('/orders/'.$order['id']);
@@ -948,14 +985,29 @@ class BoutiqueController extends Controller
         $userID = Auth()->user()->id;
 		$user = User::find($userID);
         $page_title = 'Biddings';
-        $products = [];
         $biddingsCount = Bidding::all()->count();
     	$boutique = Boutique::where('userID', $userID)->first();
-        $biddings = Bidding::all();
+        $biddings = Bidding::where('status', 'Open')->get();
         $notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
 
-        return view('boutique/biddings', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'biddings', 'notificationsCount', 'notifications'));
+        return view('boutique/view-biddings', compact('user', 'page_title', 'userID', 'biddingsCount', 'boutique', 'biddings', 'notificationsCount', 'notifications'));
+    }
+
+    public function viewBidding($biddingID)
+    {
+    	$userID = Auth()->user()->id;
+		$user = User::find($userID);
+        $page_title = 'Biddings';
+        $products = [];
+        $biddingsCount = Bidding::all()->count();
+    	$boutique = Boutique::where('userID', $userID)->first();
+        $notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
+    	$bidding = Bidding::where('id', $biddingID)->first();
+    	$bid = Bid::where('biddingID', $biddingID)->where('boutiqueID', $boutique['id'])->first();
+
+    	return view('boutique/viewBidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications'));
     }
 
     public function submitBid(Request $request)
@@ -965,16 +1017,68 @@ class BoutiqueController extends Controller
  		$userID = Auth()->user()->id;
 		$user = User::find($userID);
     	$boutique = Boutique::where('userID', $userID)->first();
-    	dd($boutique);
+    	$bidding = Bidding::where('id', $biddingID)->first();
+    	// $bid = Bid::where('boutiqueID', $boutique['id'])->where('biddingID', $bidding['id'])->first();
 
     	$bid = Bid::create([
     		'biddingID' => $biddingID,
     		'boutiqueID' => $boutique['id'],
-    		'bidAmount' => $request->input('bidAmount')
+    		'bidAmount' => $request->input('bidAmount'),
+    		'plans' => $request->input('plans')
     	]);
 
-    	return redirect('view-bidding/'.$biddingID);
+    	$customer = User::where('id', $bidding->owner['id'])->first();
+    	$customer->notify(new NewBid($bidding));
 
+    	return redirect('boutique-view-bidding/'.$biddingID.'#bidSubmitted'); //for modal unta pero di sya mo work huhu
     }
+
+    public function updateBid(Request $request)
+    {
+
+    	$biddingID = $request->input('biddingID');
+ 		$userID = Auth()->user()->id;
+		$user = User::find($userID);
+    	$boutique = Boutique::where('userID', $userID)->first();
+    	$bidding = Bidding::where('id', $biddingID)->first();
+    	$bid = Bid::where('boutiqueID', $boutique['id'])->where('biddingID', $bidding['id'])->first();
+
+		$bid->update([
+			'bidAmount' =>$request->input('bidAmount'),
+    		'plans' => $request->input('plans')
+		]);
+
+    	$customer = User::where('id', $bidding->owner['id'])->first();
+    	$customer->notify(new NewBid($bidding));
+
+    	return redirect('boutique-bidding/'.$biddingID.'#bidSubmitted');
+    }
+
+    public function boutiqueBiddings()
+    {
+    	$userID = Auth()->user()->id;
+	    $user = User::find($userID);
+	    $page_title = 'Orders from Bidding';
+	    $boutique = Boutique::where('userID', $userID)->first();
+	    $notifications = $user->notifications;
+	    $notificationsCount = $user->unreadNotifications->count();
+	    $biddingOrders = Order::where('biddingID', '!=', null)->where('boutiqueID', $boutique['id'])->get();
+
+	    return view('boutique/boutique-biddings', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'biddingOrders'));
+    }
+
+    public function viewBoutiqueBidding($biddingID)
+    {
+    	$userID = Auth()->user()->id;
+	    $user = User::find($userID);
+	    $page_title = 'Orders from Bidding';
+	    $boutique = Boutique::where('userID', $userID)->first();
+	    $notifications = $user->notifications;
+	    $notificationsCount = $user->unreadNotifications->count();
+	    $bidding = Bidding::where('id', $biddingID)->first();
+
+	    return view('boutique/boutique-biddingInfo', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'bidding'));
+    }
+
 
 }

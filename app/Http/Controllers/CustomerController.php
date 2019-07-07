@@ -16,6 +16,7 @@ use App\Boutique;
 use App\Rent;
 use App\Profiling;
 use App\Bidding;
+use App\Bid;
 use App\Prodtag;
 use App\Tag;
 use App\Order;
@@ -30,6 +31,7 @@ use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
 use App\Notifications\CustomerCancelMto;
+use App\Notifications\CustomerAcceptsBid;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -54,11 +56,23 @@ class CustomerController extends Controller
                     $cartCount = 0;
                 }
 
+                // dd($cart);
+                // foreach($cart->items as $item)
+                // {
+                //     foreach($item->product->productFile as $file)
+                //     {
+                //         dd($file['productID']);
+                //     }
+                // }
+
+
+
                 $notifications;
                 $notificationsCount;
                 $this->getNotifications($notifications, $notificationsCount);
 
                 return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+                
 
             } else if(Auth()->user()->roles == "boutique") {
                 return redirect('/dashboard');
@@ -141,8 +155,13 @@ class CustomerController extends Controller
         return view('hinimo/profiling-done', compact('boutiques'));
     }
 
-    public function getBoutique($boutiqueID)
+    public function viewBoutique($boutiqueID)
     {
+        // if (Auth::check()) {
+        // $userID = Auth()->user()->id;
+        // }
+
+        if(Auth()->user()->roles == "customer") {
         $userID = Auth()->user()->id;
     	$categories = Category::all();
     	$products = Product::where('boutiqueID', $boutiqueID)->where('productStatus', 'Available')->get();
@@ -163,6 +182,12 @@ class CustomerController extends Controller
         $this->getNotifications($notifications, $notificationsCount);
 
     	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+
+        }else if(Auth()->user()->roles == "boutique") {
+            return redirect('/dashboard');
+        } else if(Auth()->user()->roles == "admin") {
+            return redirect('/admin-dashboard');
+        } 
     }
 
     public function productDetails($productID)
@@ -209,7 +234,6 @@ class CustomerController extends Controller
                     'status' => "Active"
                 ]);
             }
-            
         }
 
         Cartitem::create([
@@ -484,16 +508,16 @@ class CustomerController extends Controller
 
     public function showBiddings()
     {
+        if(Auth()->user()->roles == "customer") {
         if (Auth::check()) {
         $userID = Auth()->user()->id;
         }
 
         $page_title = 'Biddings';
-        $products = [];
-        $productsCount = Bidding::all()->count();
         $categories = Category::all();
         $boutiques = Boutique::all();
         $biddings = Bidding::all();
+        $biddingsCount = Bidding::all()->count();
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
@@ -504,18 +528,35 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
-        return view('hinimo/biddings', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'biddings', 'notificationsCount', 'notifications'));
+        // $time = date();
+        // dd(date("Y-m-d"));
+
+        // foreach($biddings as $bidding){
+        // $bids = array();
+        // foreach($bidding->bids as $bid){
+        //     array_push($bids, $bid['bidAmount']);
+        // }
+        // dd(min($bids));
+            // dd($bidding->bids);
+        // }
+
+
+        return view('hinimo/biddings', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'boutiques', 'biddings', 'biddingsCount', 'notificationsCount', 'notifications'));
+        
+        }else if(Auth()->user()->roles == "boutique") {
+            return redirect('/dashboard');
+        } else if(Auth()->user()->roles == "admin") {
+            return redirect('/admin-dashboard');
+        }
     }
 
     public function showStartNewBidding()
     {
         $page_title = "Start a New Bid";
         $userID = Auth()->user()->id;
-        $products = [];
-        $productsCount = Product::all()->count();
         $categories = Category::all();
         $boutiques = Boutique::all();
-        $tags = Tag::all();
+        // $tags = Tag::all();
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
@@ -526,7 +567,7 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
-        return view('hinimo/bidding-newBidding', compact('page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'tags', 'notifications', 'notificationsCount'));
+        return view('hinimo/bidding-newBidding', compact('page_title', 'categories', 'cart', 'cartCount', 'userID', 'boutiques' , 'notifications', 'notificationsCount'));
     }
 
     public function savebidding(Request $request)
@@ -536,46 +577,49 @@ class CustomerController extends Controller
         $measurement = $request->input('measurement');
         $mName = json_encode($measurement);
         $deadlineOfProduct = date('Y-m-d',strtotime($request->input('deadlineOfProduct')));
+        $time = time();
+        // dd(date("Y-m-d",$time));
+        // dd($time);
 
-      //   $bidding = Bidding::create([
-      //       'userID' => $userID,
-      //       'maxPriceLimit' => $request->input('maxPriceLimit'), 
-      //       'endDate' => $request->input('endDate'), 
-      //       'deadlineOfProduct' => $deadlineOfProduct,
-      //       'height' => $request->input('height'), 
-      //       'category' => $request->input('category'), 
-      //       'notes' => $request->input('notes'), 
-      //       'status' => "Active"
-      //   ]);
+        $bidding = Bidding::create([
+            'userID' => $userID,
+            'maxPriceLimit' => $request->input('maxPriceLimit'), 
+            'endDate' => $request->input('endDate'), 
+            'deadlineOfProduct' => $deadlineOfProduct,
+            'height' => $request->input('height'), 
+            'category' => $request->input('category'), 
+            'notes' => $request->input('notes'), 
+            'status' => "Open"
+        ]);
 
-      //   $measurement = Measurement::create([
-      //       'userID' => $userID,
-      //       'type' => 'bidding',
-      //       'typeID' => $bidding['id'],
-      //       'data' => $mName
-      //   ]);
+        $measurement = Measurement::create([
+            'userID' => $userID,
+            'type' => 'bidding',
+            'typeID' => $bidding['id'],
+            'data' => $mName
+        ]);
 
-      //   $bidding->update([
-      //       'measurementID' => $measurement['id']
-      //   ]);
+        $bidding->update([
+            'measurementID' => $measurement['id']
+        ]);
 
 
-      //   $upload = $request->file('file');
-      //   if($request->hasFile('file')) {
-      //   // foreach($uploads as $upload){
-      //       $files = new File();
-      //       $destinationPath = public_path('uploads');
-      //       $name = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
-      //       $filename = $destinationPath.'\\'. $name;
-      //       $upload->move($destinationPath, $filename);
+        $upload = $request->file('file');
+        if($request->hasFile('file')) {
+        // foreach($uploads as $upload){
+            $files = new File();
+            $destinationPath = public_path('uploads');
+            $name = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
+            $filename = $destinationPath.'\\'. $name;
+            $upload->move($destinationPath, $filename);
 
-      //       $files->userID = $userID;
-      //       $files->biddingID = $bidding['id'];
-      //       $files->filename = "/".$name;
-      //       $files->save();
-      //       $filename = "/".$name;
-      //   // }
-      // }
+            $files->userID = $userID;
+            $files->biddingID = $bidding['id'];
+            $files->filename = "/".$name;
+            $files->save();
+            $filename = "/".$name;
+        // }
+      }
 
         return redirect('/biddings');
     }
@@ -586,9 +630,6 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         $user = User::find($userID);
         $page_title = 'Biddings';
-        $products = [];
-        $productsCount = Bidding::all()->count();
-        $categories = Category::all();
         $boutiques = Boutique::all();
         $notifications;
         $notificationsCount;
@@ -601,9 +642,140 @@ class CustomerController extends Controller
         }
 
         $bidding = Bidding::where('id', $bididngID)->first();
+        $bids = Bid::where('biddingID', $bidding['id'])->get();
+
+        return view('hinimo/bidding-details', compact('user', 'userID', 'page_title', 'cart', 'cartCount', 'boutiques', 'bidding', 'bids', 'notificationsCount', 'notifications'));
+        }
+    }
+
+    // public function viewBidder($biddingID)
+    // {
+    //     $page_title = "Notifications";
+    //     $userID = Auth()->user()->id;
+    //     $boutiques = Boutique::all();
+    //     $user = User::find($userID);
+    //     $notifications = $user->notifications;
+    //     $notificationsCount = $user->unreadNotifications->count();
+    //     $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+    //     if($cart != null){
+    //         $cartCount = $cart->items->count();
+    //     }else{
+    //         $cartCount = 0;
+    //     }
+    //     $bidding = Bidding::where('id', $biddingID)->first();
+    //     $bids = Bid::where('biddingID', $bidding['id'])->get();
+
+    //     return view('hinimo/viewBidder', compact('page_title', 'userID', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'bids'));
+    // }
+
+    public function myBiddings()
+    {
+        $page_title = "My Biddings";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
         }
 
-        return view('hinimo/bidding-details', compact('user', 'userID', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'productsCount', 'boutiques', 'bidding', 'notificationsCount', 'notifications'));
+        $biddings = Bidding::where('userID', $userID)->get();
+        $biddingsCount = $biddings->count();
+
+        return view('hinimo/myBiddings', compact('page_title', 'userID', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'biddings', 'biddingsCount'));
+    }
+
+    public function reviewBidding($bidID)
+    {
+        $page_title = "Submit Address";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $bid = Bid::where('id', $bidID)->first();
+
+        return view('hinimo/reviewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bid'));
+    }
+
+    // public function acceptBid($bidID)
+    // {
+    //     $bid = Bid::where('id', $bidID)->first();
+    //     $bidding= Bidding::where('id', $bid['biddingID'])->first();
+        
+    //     $bidding->update([
+    //         'bidID' => $bid['id'],
+    //         'status' => "Closed"
+    //     ]);
+
+    //     return redirect('view-bidding/'.$bidding['id']);
+    // }
+
+    public function inputAddressforBiding($bidID)
+    {
+        $page_title = "Submit Address";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $bid = Bid::where('id', $bidID)->first();
+        $mto = null;
+
+        return view('hinimo/inputAddress', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bid', 'mto'));
+    }
+
+    public function makeOrderforBidding(Request $request)
+    {
+        $userID = Auth()->user()->id;
+        $bid = Bid::where('id', $request->input('bidID'))->first();
+        $bidding = Bidding::where('id', $bid->bidding['id'])->first();
+
+        // dd($bidding);
+        $bidding->update([
+            'bidID' => $request->input('bidID')
+        ]);
+
+        $order = Order::create([
+            'userID' => $userID,
+            'biddingID' => $bidding['id'],
+            'boutiqueID' => $bid->owner['id'],
+            'subtotal' => $request->input('subtotal'),
+            'deliveryfee' => $request->input('deliveryfee'),
+            'total' => $request->input('total'),
+            'deliveryAddress' => $request->input('deliveryAddress'),
+            'status' => "In-Progress",
+            'paymentStatus' => "Not Yet Paid"
+        ]);
+
+        $bidding->update([
+            'orderID' => $order['id']
+        ]);
+        // dd($bidding->bid['id']);
+
+        $boutique = Boutique::where('id', $bid->owner['id'])->first();
+        $boutiqueseller = User::find($boutique['userID']);
+        $boutiqueseller->notify(new CustomerAcceptsBid($bidding));
+
+        return redirect('/view-bidding-order/'.$bidding['id']);
     }
 
     public function notifications()
@@ -634,12 +806,6 @@ class CustomerController extends Controller
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
-        // $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
-        // if($cart != null){
-        //     $cartCount = $cart->items->count();
-        // }else{
-        //     $cartCount = 0;
-        // }
 
         foreach($notifications as $notification) {
             if($notification->id == $notificationID) {
@@ -677,11 +843,22 @@ class CustomerController extends Controller
 
                     if($order['mtoID'] != null){
                         return redirect('/view-mto/'.$order->mto['id']);
+
                     }elseif($order['cartID'] != null){
                         return redirect('/view-order/'.$order['id']);
+
                     }elseif($order['rentID'] != null){
-                        return redirect('/view-rent/'.$order->rent['id']);
+                        return redirect('/view-rent/'.$order->rent['rentID']);
+
+                    }elseif($order['biddingID'] != null){
+                        return redirect('/view-bidding-order/'.$order->bidding['id']);
                     }
+
+                }elseif($notification->type == 'App\Notifications\NewBid'){
+                    $notification->markAsRead();
+
+                    return redirect('/view-bidding/'.$notification->data['biddingID']);
+
                 }
             }
         }
@@ -753,7 +930,8 @@ class CustomerController extends Controller
             'notes' => $request->input('notes'),
             'height' => $request->input('height'),
             'categoryID' => $request->input('category'),
-            'fabricChoice' => $fabChoice,
+            // 'fabricChoice' => $fabChoice,
+            'fabricChoice' => null,
             'price' => $request->input('price'),
             'orderID' => $request->input('orderID'),
             'status' => "Active"
@@ -829,7 +1007,9 @@ class CustomerController extends Controller
 
         $orders = Order::where('userID', $userID)->get();
         $rents = Rent::where('customerID', $userID)->get();
-        $mtos = Mto::where('userID', $userID)->get();
+        $mtos = Mto::where('userID', $userID)->where('orderID', null)->where('status', 'Active')->get();
+        $biddings = Bidding::where('userID', $userID)->where('orderID', '!=', null)->get();
+        $declinedMtos = Mto::where('status', '!=', 'Cancelled')->get();
         // dd($orders);
 
         $transactions = array();
@@ -841,7 +1021,29 @@ class CustomerController extends Controller
         // $productsArray = $products->toArray();
         // array_multisort(array_column($transactions, "created_at"), SORT_DESC, $transactions);
 
-        return view('hinimo/transactions', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount'));
+        return view('hinimo/transactions', compact('cart', 'cartCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'mtos', 'orders', 'rents', 'biddings', 'declinedMtos'));
+    }
+
+    public function viewBiddingOrder($biddingID)
+    {
+        $page_title = "Order Details";
+        $userID = Auth()->user()->id;
+        $user = User::find($userID);
+        $boutiques = Boutique::all();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $bidding = Bidding::find($biddingID);
+        // dd($bidding->bid->owner);
+
+
+        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding'));
     }
 
     public function viewOrder($orderID)
@@ -1093,9 +1295,9 @@ class CustomerController extends Controller
     {
         $userID = Auth()->user()->id;
         $categories = Category::all();
-        $products = Product::all();
         $boutiques = Boutique::all();
         $boutique = Boutique::where('id', $boutiqueID)->first();
+        $products = Product::where('boutiqueID', $boutique['id'])->get();
         $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
         if($cart != null){
             $cartCount = $cart->items->count();
@@ -1126,6 +1328,42 @@ class CustomerController extends Controller
         $bottom = $request->input('bottom');
 
         
+    }
+
+    public function addmnmtoCart($top, $bottom)
+    {
+        $userID = Auth()->user()->id;
+        $cart = Cart::where('userID', $userID)->orderBy('created_at', 'DESC')->first();
+        $product = Product::where('id', $top)->first();
+        $boutique = Boutique::where('id', $product['boutiqueID'])->first();
+
+        if($cart == null){
+            $cart = Cart::create([
+                'userID' => $userID,
+                'status' => "Active"
+            ]);
+
+        }else{
+            if($cart['status'] == "Inactive"){
+                $cart = Cart::create([
+                    'userID' => $userID,
+                    'status' => "Active"
+                ]);
+            }
+        }
+
+        Cartitem::create([
+            'cartID' => $cart['id'],
+            'productID' => $top
+        ]);
+
+        Cartitem::create([
+            'cartID' => $cart['id'],
+            'productID' => $bottom
+        ]);
+        
+
+        return redirect('/'.$boutique['id'].'/mixnmatch');
     }
 
 

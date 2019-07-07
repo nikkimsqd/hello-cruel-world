@@ -24,6 +24,20 @@
                 <div id="rent-details" class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
 
+                        @if($rent->order['status'] == "For Alterations")
+                             <div class="row">
+                                <div class="col-md-12">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><h5>Your schedule for alterations will be on:</h5></td>
+                                        <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($rent->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($rent->order['alterationDateEnd']))}}</h5></td>
+                                    </tr>
+                                </table>
+                                    <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
+                                </div>
+                             </div>
+                             @endif
+                             
                         @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">

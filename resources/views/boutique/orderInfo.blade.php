@@ -47,6 +47,8 @@
                 <b>Rent</b>
               @elseif($order['mtoID'] != null)
                 <b>MTO</b>
+              @elseif($order['biddingID'] != null)
+                <b>Bidding</b>
               @endif
             </h4>
             <br>
@@ -134,6 +136,8 @@
           <a class="btn btn-default" href="{{url('rents/'.$order->rent['rentID'])}}"> Back to Rent Details</a>
         @elseif($order['mtoID'] != null)
           <a class="btn btn-default" href="{{url('made-to-orders/'.$order->mto['id'])}}"> Back to MTO Details</a>
+        @elseif($order['biddingID'] != null)
+          <a class="btn btn-default" href="{{url('boutique-bidding/'.$order->bidding['id'])}}"> Back to Bidding Details</a>
         @endif
         @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress")
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> For Alterations</a>
@@ -161,12 +165,12 @@
             <p>Set date for alterations:</p>
             <form action="{{url('forAlterations')}}" method="post">
               {{csrf_field()}}
-              <input type="text" name="alterationSchedule" id="alterationSchedule" class="form-control datepicker" required>
+              <input type="text" name="alterationDateStart" id="alterationDateStart" class="form-control" placeholder="Set start date" required>
+              <input type="text" name="alterationDateEnd" id="alterationDateEnd" class="form-control" placeholder="Set end date" required>
               <input type="text" name="orderID" value="{{$order['id']}}" hidden>
           </div>
 
           <div class="modal-footer">
-            <!-- <a href="{{url('submitOrder/'.$order['id'])}}" class="btn btn-primary">Confirm</a> -->
             <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
           </form>
           </div>
@@ -186,7 +190,8 @@
             <p>Set date for pickup:</p>
             <form action="{{url('submitOrder')}}" method="post">
               {{csrf_field()}}
-              <!-- <input type="text" name="deliverySchedule" id="deliverySchedule" class="form-control datepicker" required> -->
+              <!-- <input type="text" id="alterationDateEnd" class="form-control" value="{{$order['alterationDateEnd']}}" hidden> -->
+              <input type="text" name="deliverySchedule" id="deliverySchedule" class="form-control datepicker" required>
               <input type="text" name="orderID" value="{{$order['id']}}" hidden>
           </div>
 
@@ -204,16 +209,33 @@
 @section('scripts')
 <script type="text/javascript">
 
+$('.transactions').addClass("active");
+$('.orders').addClass("active");
+
+// ---------------------------------------------------------------------
 var dateToday = new Date();
 var dateTomorrow = new Date();
 dateTomorrow.setDate(dateToday.getDate()+1);
 
-$('#alterationSchedule').daterangepicker({
-    minDate: dateTomorrow
+$('#alterationDateStart').datepicker({
+  startDate: dateTomorrow
 });
 
-$('.transactions').addClass("active");
-$('.orders').addClass("active");
+var dateStart = $('#alterationDateStart').val();
+
+$('#alterationDateEnd').datepicker({
+  startDate: dateTomorrow //dapat mag start sa d day after sa startDate
+});
+
+// ---------------------------------------------------------------------
+// {{$order['alterationDateEnd']}}
+var alterationDateEnd = new Date();
+// alert(alterationDateEnd);
+$('#deliverySchedule').datepicker({
+  startDate: dateTomorrow
+  //set sad ug date limit sa mto nga dapat 1 week before the use ideliver
+});
+
 
 </script>
 @endsection

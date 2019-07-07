@@ -22,7 +22,7 @@
     </section>
     <!-- ##### Welcome Area End ##### -->
 
-    <div class="container section-padding-80-0">
+   <!--  <div class="container section-padding-80-0">
     <div class="row">
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-green">
@@ -51,7 +51,6 @@
         </div>
      
         <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
           <div class="small-box bg-yellow">
             <div class="inner">
               <h3>44</h3>
@@ -65,7 +64,6 @@
         </div>
    
         <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
               <h3>65</h3>
@@ -79,7 +77,7 @@
         </div>
   
     </div>
-    </div>
+    </div> -->
 
     <!-- ##### Shop Grid Area Start ##### -->
     <section class="shop_grid_area section-padding-80">

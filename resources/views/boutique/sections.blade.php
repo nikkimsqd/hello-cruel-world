@@ -205,7 +205,7 @@
     </li>
    
     <li class="biddings">
-      <a href="{{url('boutique-biddings')}}">
+      <a href="{{url('boutique-view-biddings')}}">
         <i class="fa fa-th"></i> <span>Biddings</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
@@ -242,7 +242,7 @@
         <li class="orders"><a href="{{url('orders')}}"><i class="fa fa-circle-o"></i> Orders</a></li>
         <li class="rents"><a href="{{url('rents')}}"><i class="fa fa-circle-o"></i> Rents</a></li>
         <li class="mtos"><a href="{{url('made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-        <li class="biddings"><a href=""><i class="fa fa-circle-o"></i> Biddings</a></li>
+        <li class="boutique-biddings"><a href="{{url('boutique-biddings')}}"><i class="fa fa-circle-o"></i> Biddings</a></li>
       </ul>
     </li>
 

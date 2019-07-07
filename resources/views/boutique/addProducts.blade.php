@@ -70,7 +70,7 @@
 
       <div class="form-group" id="forSalePrice" hidden>
         <label>Retail Price</label>
-        <input type="number" name="retailPrice" class="input form-control"><br>
+        <input type="number" name="retailPrice" class="input form-control" autofocus><br>
       </div>
 
       <div class="form-group" id="forRentPrice" hidden>

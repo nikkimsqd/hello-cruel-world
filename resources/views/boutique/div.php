@@ -79,3 +79,14 @@
     </div>
 </div>
 @endsection
+
+
+    $userID = Auth()->user()->id;
+    $user = User::find($userID);
+    $page_title = 'Biddings';
+    $boutique = Boutique::where('userID', $userID)->first();
+    $notifications = $user->notifications;
+    $notificationsCount = $user->unreadNotifications->count();
+    $biddingsCount = Bidding::all()->count();
+
+    return view('boutique/viewBidding', compact('userID', 'user', 'page_title', 'biddingsCount', 'boutique', 'notificationsCount', 'notifications', 'biddingsCount'));
