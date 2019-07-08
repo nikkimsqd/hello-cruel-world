@@ -46,15 +46,11 @@
                         	<tr>
                                 <td style="text-align: center;">{{$order['id']}}</td>
                         		<td style="text-align: center;"><b>PURCHASE</b></td>
-                                <!-- if($order['cartID'] != null) -->
-                                    <td>
-                                        @foreach($order->cart->items as $item)
-                                		  {{$item->product['productName']}} 
-                                        @endforeach
-                                    </td>
-                                <!-- elseif($order['rentID'] != null)
-                                    <td>{{$order->rent->product['productName']}}</td>
-                                endif -->
+                                <td>
+                                    @foreach($order->cart->items as $item)
+                            		  {{$item->product['productName']}} 
+                                    @endforeach
+                                </td>
                         		<td style="text-align: center;">{{$order['status']}}</td>
                         		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Order</a></td>
                         	</tr>

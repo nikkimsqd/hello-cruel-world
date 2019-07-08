@@ -32,6 +32,7 @@ use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
 use App\Notifications\CustomerCancelMto;
 use App\Notifications\CustomerAcceptsBid;
+use App\Notifications\NewOrder;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -279,7 +280,11 @@ class CustomerController extends Controller
 
     public function placeOrder(Request $request)
     {
+        $billingName = $request->input('fname').' '.$request->input('lname');
+
         $order = Order::create([
+            'billingName' => $billingName,
+            'phoneNumber' => $request->input('phoneNumber'),
             'userID' => $request->input('userID'),
             'cartID' => $request->input('cartID'),
             'subtotal' => $request->input('subtotal'),
@@ -301,7 +306,9 @@ class CustomerController extends Controller
             ]);
         }
 
-        
+        $boutique = Boutique::where('id', $order['boutiqueID'])->first();
+        $boutiqueseller = User::find($boutique['userID']);
+        $boutiqueseller->notify(new NewOrder($order));
 
         //add churva for add address here
 
@@ -552,7 +559,7 @@ class CustomerController extends Controller
 
     public function showStartNewBidding()
     {
-        $page_title = "Start a New Bid";
+        $page_title = "Start a New Bidding";
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $boutiques = Boutique::all();

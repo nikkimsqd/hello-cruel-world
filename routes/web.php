@@ -59,6 +59,9 @@ Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 
 
 //BOUTIQUE----------------------------------------------------------------------------------------
+Route::get('/reqToActivateAccount', 'BoutiqueController@reqToActivateAccount');
+Route::post('/reqToVerify', 'BoutiqueController@reqToVerify');
+
 Route::get('/dashboard', 'BoutiqueController@dashboard');
 Route::get('/categories', 'BoutiqueController@categories');
 Route::post('/requestCategory', 'BoutiqueController@requestCategory');
@@ -226,6 +229,22 @@ Route::get('/addmnmtoCart/{top}/{bottom}', 'CustomerController@addmnmtoCart');
 
 
 Route::view('/autocomplete', 'hinimo.autocomplete');
+
+
+
+// COURIER -------------------------------------------------------------------------------------------------------
+
+Route::get('/ionic-dashboard', 'CourierController@dashboard');
+Route::get('/ionic-topickup', 'CourierController@topickup');
+Route::get('/ionic-todeliver', 'CourierController@todeliver');
+Route::get('/ionic-delivered', 'CourierController@delivered');
+Route::get('/ionic-completed', 'CourierController@completed');
+
+Route::get('/ionic-viewOrder/{orderID}', 'CourierController@viewOrder');
+Route::get('/ionic-pickupOrder/{orderID}', 'CourierController@pickupOrder');
+Route::get('/ionic-deliveredOrder/{orderID}', 'CourierController@deliveredOrder');
+
+
 
 });
 

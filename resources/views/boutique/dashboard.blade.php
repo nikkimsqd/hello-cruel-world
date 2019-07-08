@@ -5,6 +5,13 @@
 @section('content')
 
 <section class="content">
+  @if($boutique['status'] == "Not Verified")
+  <div class="callout callout-warning">
+    <h4>Ooops!</h4>
+    <p>Looks like you haven't activated your account yet. <a href="{{url('reqToActivateAccount')}}">Activate here.</a></p>
+  </div>
+  @endif
+
   <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">

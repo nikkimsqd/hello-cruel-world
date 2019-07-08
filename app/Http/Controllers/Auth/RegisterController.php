@@ -103,6 +103,8 @@ class RegisterController extends Controller
                 'userID' => $user['id'],
                 'boutiqueName' => $data['boutiqueName'],
                 'boutiqueAddress' => $data['boutiqueAddress'],
+                'contactNo' => $data['contactNo'],
+                'status' => "Not Verified"
             ]);
 
 

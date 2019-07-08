@@ -47,6 +47,31 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 class BoutiqueController extends Controller
 {
 
+	public function reqToActivateAccount()
+	{
+		$userID = Auth()->user()->id;
+	    $user = User::find($userID);
+	    $page_title = 'Request to Activate Your Account';
+	    $boutique = Boutique::where('userID', $userID)->first();
+	    $notifications = $user->notifications;
+	    $notificationsCount = $user->unreadNotifications->count();
+
+	    return view('boutique/reqToActivateAccount', compact('userID', 'user', 'page_title', 'biddingsCount', 'boutique', 'notificationsCount', 'notifications'));
+	}
+
+	public function reqToVerify(Request $request)
+	{
+		$boutiqueID = $request->input('boutiqueID');
+
+		$boutique = Boutique::where('id', $boutiqueID)->update([
+			'openingHours' => $request->input('openingHours'),
+			'closingHours' => $request->input('closingHours'),
+			'status' => 'Verified'
+		]);
+
+		return redirect('dashboard');
+	}
+
 	public function viewNotifications($notificationID)
 	{
 		$page_title = "Notification";
@@ -114,6 +139,15 @@ class BoutiqueController extends Controller
 					$mto = Mto::where('id', $notif->data['orderID'])->first();
 
 					return redirect('/made-to-orders/'.$mto['id']);
+
+				}elseif ($notification->type == 'App\Notifications\NewOrder') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$order = Order::where('id', $notif->data['orderID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/orders/'.$order['id']);
+
 				}
 			}
 		}

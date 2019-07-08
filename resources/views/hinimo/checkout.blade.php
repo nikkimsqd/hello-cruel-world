@@ -37,31 +37,19 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="first_name">First Name <span>*</span></label>
-                                <input type="text" class="form-control" id="first_name" value="" required>
+                                <input type="text" class="form-control" name="fname" value="" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="last_name">Last Name <span>*</span></label>
-                                <input type="text" class="form-control" id="last_name" value="" required>
+                                <input type="text" class="form-control" name="lname" value="" required>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="phone_number">Phone No <span>*</span></label>
-                                <input type="number" class="form-control" id="phone_number" min="0" value="">
+                                <input type="number" class="form-control" name="phoneNumber" min="0" value="">
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="street_address">Address <span>*</span></label>
                                 <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" value="">
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="city">City <span>*</span></label>
-                                <input type="text" class="form-control" id="city" value="">
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="state">Province <span>*</span></label>
-                                <input type="text" class="form-control" id="state" value="">
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="postcode">Zip code <span>*</span></label>
-                                <input type="text" class="form-control" id="zipcode" value="">
                             </div>
 
                             <div class="col-12">
@@ -70,8 +58,8 @@
                                     <label class="custom-control-label" for="customCheck1">Terms and conitions</label>
                                 </div>
                             </div>
-                                <input type="text" name="userID" value="{{$user['id']}}">
-                                <input type="text" name="cartID" value="{{$cart['id']}}">
+                                <input type="text" name="userID" value="{{$user['id']}}" hidden>
+                                <input type="text" name="cartID" value="{{$cart['id']}}" hidden>
                         </div>
                     <!-- </form> -->
                 </div>
@@ -103,12 +91,12 @@
                         <li><span>Delivery Fee</span> <span>₱{{$deliveryfee}}</span></li>
                         <li><span>Total</span> <span>₱{{$total}}</span></li>
                     </ul>
-                            <input type="text" name="boutiqueID" value="{{$item->product->owner['id']}}">
-                            <input type="text" name="subtotal" value="{{$subtotal}}">
-                            <input type="text" name="deliveryfee" value="40">
-                            <input type="text" name="total" value="500">
+                            <input type="text" name="boutiqueID" value="{{$item->product->owner['id']}}" hidden>
+                            <input type="text" name="subtotal" value="{{$subtotal}}" hidden>
+                            <input type="text" name="deliveryfee" value="40" hidden>
+                            <input type="text" name="total" value="500" hidden>
 
-                    <div id="accordion" role="tablist" class="mb-4">
+                    <!-- <div id="accordion" role="tablist" class="mb-4">
                         <div class="card">
                             <div class="card-header" role="tab" id="headingOne">
                                 <h6 class="mb-0">
@@ -122,19 +110,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-header" role="tab" id="headingTwo">
-                                <h6 class="mb-0">
-                                    <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"><i class="fa fa-circle-o mr-3"></i>cash on delievery</a>
-                                </h6>
-                            </div>
-                            <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
-                                <div class="card-body">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo quis in veritatis officia inventore, tempore provident dignissimos.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div> -->
 
                         <!-- <a href="#" class="btn essence-btn">Place Order</a> -->
                         <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Order">

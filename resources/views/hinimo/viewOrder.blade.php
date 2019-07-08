@@ -32,6 +32,7 @@
 
                             <ul class="order-details-form mb-4">
                                 <li><span>Order ID</span> <span>{{$order['id']}}</span></li>
+                                <li><span>Boutique Name</span> <span>{{$order->boutique['boutiqueName']}}</span></li>
                                 <li><span>Product/s</span>
                                     <span>
                                         @foreach($order->cart->items as $item)
@@ -53,6 +54,17 @@
                                 </li>
                                 <li><span>Payment Status</span> <span style="color: red;">{{$order['paymentStatus']}}</span></li>
                             </ul>
+
+                            @if($order['status'] == "For Pickup" || $order['status'] == "For Delivery")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                            </div>
+                            @elseif($order['status'] == "On Delivery" || $order['status'] == "Delivered")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <a href="{{url('receiveOrder/'.$order['id'])}}" class="btn essence-btn">Item Recieved</a>
+                            </div>
+                            <!-- elseif($order['status'] == "On Rent") -->
+                            @endif
                         </div><br><br> <!-- card closing -->
 
                         @if($order['paymentStatus'] == "Not Yet Paid")

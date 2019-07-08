@@ -62,6 +62,20 @@ Hinimo | Register Boutique
                             </div>
 
                             <div class="form-group row">
+                                <label for="contactNo" class="col-md-4 col-form-label text-md-right">{{ __('Contact Number') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="contactNo" type="text" class="form-control{{ $errors->has('contactNo') ? ' is-invalid' : '' }}" name="contactNo" value="{{ old('contactNo') }}" required autofocus>
+
+                                    @if ($errors->has('contactNo'))
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $errors->first('contactNo') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
                                 <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Username') }}</label>
 
                                 <div class="col-md-6">

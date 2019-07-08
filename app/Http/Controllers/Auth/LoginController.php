@@ -51,12 +51,15 @@ class LoginController extends Controller
     {
         if ($user['roles'] === "boutique") {
             $this->redirectTo = '/dashboard';
-            // dd($this->redirectPath());
+            
         } else if ($user['roles'] === "customer") {
             $this->redirectTo = '/shop';
-            // dd($this->redirectPath());
+           
         } else if ($user['roles'] === "admin") {
             $this->redirectTo = '/admin-dashboard';
+
+        } else if ($user['roles'] === "courier") {
+            $this->redirectTo = '/ionic-dashboard';
         }
     }
     
