@@ -125,6 +125,10 @@
 
                   @endif
                 </tr>
+                <tr>
+                  <td>Payment Status</td>
+                  <td class="align-right" style="color: red"><b>{{$order['paymentStatus']}}</b></td>
+                </tr>
               </table>
 
             </div>

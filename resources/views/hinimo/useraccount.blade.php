@@ -66,7 +66,11 @@
                             <div class="order-details-confirmation"> <!-- card opening -->
 
                                 <ul class="order-details-form mb-4">
-                                    <li><a href="" data-toggle="modal" data-target="#notificationsModal">View Notifications</a><span>{{$notificationsCount}}</span></li>
+                                    <li><a href="" data-toggle="modal" data-target="#notificationsModal">View Notifications</a>
+                                        @if(count($notifications) > 0)
+                                        <span>{{$notificationsCount}}</span>
+                                        @endif
+                                    </li>
                                     <li><a href="{{url('/user-transactions')}}">View Transactions</a></li>
                                 </ul>
                             </div> <!-- card closing -->
@@ -245,6 +249,7 @@
 
             <div class="modal-body">
                 <table class="table table-bordered">
+                    @if(count($notifications) > 0)
                     @foreach($notifications as $notification)
                     @if($notification->read_at != null)
                     <tr>
@@ -260,12 +265,15 @@
                     </tr>
                     @endif
                     @endforeach
+                    @else
+                    <tr><i>You have no notifications.</i></tr>
+                    @endif
                 </table>
             </div>
 
             <div class="modal-footer">
               <!-- <input type="submit" class="btn essence-btn" value="Place Request"> -->
-              <input type="" class="btn btn-danger" data-dismiss="modal" value="Close">
+              <input type="submit" class="btn essence-btn" data-dismiss="modal" value="Close">
             </div>
         </div> 
     </div>
@@ -274,6 +282,7 @@
 </div> <!-- page -->
 
 <style type="text/css">
+    .modal-body{max-height: 300px; overflow-y: scroll;}
     .nice-select .list{width: inherit; max-height: 250px; overflow-y: scroll;}
     span{color: #0315ff;}
     a{color: #000;}

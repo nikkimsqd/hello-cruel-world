@@ -116,7 +116,7 @@
                 'content-type': 'application/json'
               },
               body: JSON.stringify({
-                orderID: data.orderID,
+                paypalOrderID: data.orderID,
                 orderTransactionID: orderTransactionID
               })
             });

@@ -246,19 +246,19 @@ class BoutiqueController extends Controller
 	public function getCity($provCode)
     {
         $userid = Auth()->user()->id;
-        $cities = City::where('provCode', $provCode)->get();
+        $cities = City::where('provCode', $provCode)->orderBy('citymunDesc', 'ASC')->get();
         
         return response()->json(['cities' => $cities]);
     }
 
-    public function getBrgy($citymunCode)
-    {
-        $barangays = Barangay::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
+    // public function getBrgy($citymunCode)
+    // {
+    //     $barangays = Barangay::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
         
-        // $brgys = Brgy::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
+    //     // $brgys = Brgy::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
 
-        return response()->json(['brgys' => $barangays]);
-    }
+    //     return response()->json(['brgys' => $barangays]);
+    // }
 
 	public function saveProduct(Request $request)
 	{
@@ -274,11 +274,6 @@ class BoutiqueController extends Controller
     		'productStatus' => "Available"
     		]);
 
-		// $arrayloc = array();
-		// array_push($arrayloc, $request->input('locationsAvailable'));
-		// $locations = json_encode($arrayloc);
-		// $locs = json_decode($locations);
-		// dd($locs);
 
     	if($request->input('rentPrice') != null){
 			$locations = json_encode($request->input('locationsAvailable'));
@@ -381,6 +376,7 @@ class BoutiqueController extends Controller
 			$prodtags = ProdTag::where('productID', $productID)->get();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
+	        $regions = Region::all();
 
 			foreach ($boutiques as $boutique) {
 				$boutique;
@@ -389,11 +385,9 @@ class BoutiqueController extends Controller
 				$category;
 			}
 
-			$mensCategories = Category::where('gender', "Mens")->get();
-			$womensCategories = Category::where('gender', "Womens")->get();
-			// dd($womensCategories);
+			// dd($product->getCategory['gender']);
 
-			return view('boutique/editView', compact('product', 'categories', 'mensCategories', 'womensCategories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount'));
+			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions'));
 			}else {
 			return redirect('/shop');
 		}
@@ -403,32 +397,69 @@ class BoutiqueController extends Controller
 	{
 		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
+		$product = Product::where('id', $productID)->first();
 
-		if($request->input('forRent') == null) {
-			$rentPrice = null;
-		}else {
-			$rentPrice = $request->input('rentPrice');
-		}
-
-		if($request->input('forSale') == null) {
-			$productPrice = null;
-		}else {
-			$productPrice = $request->input('productPrice');
-		}
-    	
-    	$products = Product::where('productID', $productID)->update([
+		$product->update([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
-    		'productPrice' => $productPrice,
-    		'rentPrice' => $rentPrice,
     		'category' => $request->input('category'),
-    		'productStatus' => $request->input('productStatus'),
-    		'forRent' => $request->input('forRent'),
-    		'forSale' => $request->input('forSale'),
-    		'customizable' => $request->input('customizable')
+    		'productStatus' => $request->input('productStatus')
     		]);
 
+		if($request->input('forRent') != null) {
+			$rp = Rentableproduct::where('id', $product['rpID'])->first();
+
+			if($rp != null){
+				$rp->update([
+		    		'price' => $request->input('rentPrice'),
+		    		'depositAmount' => $request->input('depositAmount'),
+		    		'penaltyAmount' => $request->input('penaltyAmount'),
+		    		'limitOfDays' => $request->input('limitOfDays'),
+		    		'fine' => $request->input('fine'),
+		    		'locationsAvailable' => $request->input('locationsAvailable')
+		    	]);
+
+			}elseif($rp == null){
+				$rp = Rentableproduct::create([
+		    		'price' => $request->input('rentPrice'),
+		    		'depositAmount' => $request->input('depositAmount'),
+		    		'penaltyAmount' => $request->input('penaltyAmount'),
+		    		'limitOfDays' => $request->input('limitOfDays'),
+		    		'fine' => $request->input('fine'),
+		    		'locationsAvailable' => $request->input('locationsAvailable')
+		    	]);
+
+		    	$product->update([
+		    		'rpID' => $rp['id']
+		    	]);
+			}
+		}else {
+			$product->update([
+	    		'rpID' => null
+	    	]);
+		}
+
+		if($request->input('forSale') != null) {
+
+			$product->update([
+	    		'price' => $request->input('productPrice')
+	    	]);
+
+		}else {
+			$product->update([
+	    		'price' => null
+	    	]);
+		}
+
+    	Prodtag::where('productID', $product['id'])->delete();
+    	$tags = $request->input('tags');
+        foreach($tags as $tag) {
+	    	Prodtag::create([
+	    		'tagID' => $tag,
+	    		'productID' => $product['id']
+	    	]);
+		}
 
     	$uploads = $request->file('file');
 
@@ -456,7 +487,13 @@ class BoutiqueController extends Controller
 
 	public function delete($productID)
 	{
-		$product = Product::where('id', $productID)->delete();
+		$product = Product::where('id', $productID)->first();
+
+		if($product['rpID'] != null){
+			$rp = Rentableproduct::where('id', $product['rpID'])->delete();
+		}
+		
+		$product->delete();
 
 		return redirect('/products');
 

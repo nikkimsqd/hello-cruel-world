@@ -97,41 +97,41 @@
             </div>
 
             <div class="modal-body">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center checkout_details_area">
             <div class="col-md-11">
               <form action="/hinimo/public/requestToRent" method="post">
                 {{csrf_field()}}
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Product Rent Price:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['price']}}</label>
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Required Deposit Amount:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['depositAmount']}}</label>
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Required Penalty Amount:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['penaltyAmount']}}</label> 
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Days item is available for rent:</label>
                     <div class="col-md-6">
-                        <label class="col-form-label">{{$product->rentDetails['limitOfDays']}}</label> 
+                        <label class="col-form-label">{{$product->rentDetails['limitOfDays']}} days</label> 
                         <input type="text" name="limitOfDays" class="form-control" value="{{$product->rentDetails['limitOfDays']}}" hidden><br> 
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Fine incase item is lost:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['fine']}}</label> 
@@ -143,9 +143,9 @@
                     <div class="col-md-6">
                         <?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
                         @foreach($locs as $loc)
-                            @foreach($barangays as $barangay)
-                            @if($barangay['brgyCode'] == $loc)
-                            <label class="col-form-label">{{$barangay['brgyDesc']}}</label>
+                            @foreach($cities as $city)
+                            @if($city['citymunCode'] == $loc)
+                            <label class="col-form-label">{{$city['citymunDesc']}},</label>
                             @endif
                             @endforeach 
                         @endforeach

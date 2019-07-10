@@ -3,53 +3,55 @@
 
 
 @section('content')
-<div class="row">
-  <div class="col-md-12">
-    <div class="box box-success">
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-success">
 
-      <div class="box-header with-border">
-        <h3 class="box-title">Categories</h3>
-      </div>
-
-      <form action="{{url('/saveCategory')}}" method="post">
-      <div class="box-body">
-        <div class="row">
-        <div class="col-md-6">
-          {{csrf_field()}}
-
-          <label>Category Gender</label>
-          <h4>{{ $notif['gender'] }}</h4>
-          <input type="text" name="gender" value="{{ $notif['gender'] }}" hidden>
-
-          <label>Category Name</label>
-          <h4>{{ $notif['categoryName'] }}</h4>
-          <input type="text" name="categoryName" value="{{ $notif['categoryName'] }}" hidden>
-
-          <label>Boutique Name</label>
-          <h4>{{ $boutique['boutiqueName']}}</h4>
-
-          <input type="text" name="categoryRequest" value="{{ $notif['id'] }}" hidden>
-          <input type="text" name="notificationID" value="{{ $notification['id'] }}" >
-         
-          </div>
+        <div class="box-header with-border">
+          <h3 class="box-title">Categories</h3>
         </div>
 
-      </div>
-      <div class="box-footer" style="text-align: right;">
-       <a class="btn btn-warning" href="{{url('admin-notifications')}}">Go to notifications</a>
-       @if($notif['status'] == "Pending")
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal">Decline request</button>
-        <input type="submit" name="btn_submit" value="Approve request" class="btn btn-primary">
-       @elseif($notif['status'] == "Approved")
-        <input type="submit" name="btn_submit" value="Request Approved" class="btn btn-primary" disabled>
-       @elseif($notif['status'] == "Declined")
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal" disabled>Request Declined</button>
-       @endif
-     </form>
+        <form action="{{url('/saveCategory')}}" method="post">
+        <div class="box-body">
+          <div class="row">
+          <div class="col-md-6">
+            {{csrf_field()}}
+
+            <label>Category Gender</label>
+            <h4>{{ $notif['gender'] }}</h4>
+            <input type="text" name="gender" value="{{ $notif['gender'] }}" hidden>
+
+            <label>Category Name</label>
+            <h4>{{ $notif['categoryName'] }}</h4>
+            <input type="text" name="categoryName" value="{{ $notif['categoryName'] }}" hidden>
+
+            <label>Boutique Name</label>
+            <h4>{{ $boutique['boutiqueName']}}</h4>
+
+            <input type="text" name="categoryRequest" value="{{ $notif['id'] }}" hidden>
+            <input type="text" name="notificationID" value="{{ $notification['id'] }}" >
+           
+            </div>
+          </div>
+
+        </div>
+        <div class="box-footer" style="text-align: right;">
+         <a class="btn btn-warning" href="{{url('admin-notifications')}}">Go to notifications</a>
+         @if($notif['status'] == "Pending")
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal">Decline request</button>
+          <input type="submit" name="btn_submit" value="Approve request" class="btn btn-primary">
+         @elseif($notif['status'] == "Approved")
+          <input type="submit" name="btn_submit" value="Request Approved" class="btn btn-primary" disabled>
+         @elseif($notif['status'] == "Declined")
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal" disabled>Request Declined</button>
+         @endif
+       </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 
 <div class="modal modal-danger fade" id="declineModal">

@@ -4,153 +4,62 @@
 
 @section('content')
 
-<div class="row">
-  <div class="col-md-12">
-    <div class="box box-warning">
-      <div class="box-header">
-        <h3 class="box-title"><b>PENDING RENT REQUESTS</b></h3>
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title"><b>RENTS</b></h3>
 
-        <div class="box-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+          <div class="box-tools">
+            <div class="input-group input-group-sm" style="width: 150px;">
+              <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
 
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+              <div class="input-group-btn">
+                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /.box-header -->
+        <!-- /.box-header -->
 
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <tr>
-            <th>Rent ID</th>
-            <th>Customer Name</th>
-            <th>Request Placed at:</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-          @foreach($rents as $rent)
-          @if($rent['status'] === "Pending")
-          <tr>
-            <td>{{$rent['rentID']}}</td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
-            <td><span class="label label-warning">Pending</span></td>
-            <td>
-                <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#pendingModal{{$rent['rentID']}}">
-            </td>
-          </tr>
-         
-          @endif
-          @endforeach
-        </table>
-      </div>
-    </div>
-  </div>
-</div> <!-- table row -->
-
-
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="box box-info">
-      <div class="box-header">
-        <h3 class="box-title"><b>IN-PROGRESS RENTS</b></h3>
-
-        <div class="box-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
-
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-            </div>
-          </div>
+        <div class="box-body">
+          <table class="table table-hover" id="rents-table">
+            <thead>
+            <tr>
+              <th>Rent ID</th>
+              <th>Boutique Name</th>
+              <!-- <th>Customer Name</th> -->
+              <th>Status</th>
+              <th>Boutique's profit</th>
+              <th>Hinimo's profit</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+            </thead>
+            @foreach($rents as $rent)
+            <tr>
+              <td>{{$rent['rentID']}}</td>
+              <td>{{$rent->order->boutique['boutiqueName']}}</td>
+              <!-- <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td> -->
+              <td><span class="label label-warning">Pending</span></td>
+              <td>[halin ni boutique here]</td>
+              <td>[halin ni hinimo here]</td>
+              <td>{{$rent->order['total']}}</td>
+              <td>
+                  <input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#pendingModal{{$rent['rentID']}}">
+              </td>
+            </tr>
+           
+            @endforeach
+          </table>
         </div>
       </div>
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <tr>
-            <th>Rent ID</th>
-            <th>Customer Name</th>
-            <th>Request Approved at:</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-          @foreach($rents as $rent)
-          @if($rent['status'] == "In-Progress")
-          <tr>
-            <td>{{$rent['rentID']}}</td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
-            <td><span class="label label-info">In-Progress</span></td>
-            <td><input type="submit" class="btn btn-primary btn-sm" value="View Order" data-toggle="modal" data-target="#inprogressModal{{$rent['rentID']}}"></td>
-          </tr>
-          @endif
-          @endforeach
-        </table>
-      </div>
     </div>
-  </div>
-</div> <!-- table row -->
+  </div> <!-- table row -->
 
 
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="box box-danger">
-      <div class="box-header">
-        <h3 class="box-title"><b>RENT HISTORY</b></h3>
-
-        <div class="box-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
-
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <tr>
-            <th>Rent ID</th>
-            <th>Customer Name</th>
-            <th>Completed at:</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-          @foreach($rents as $rent)
-          @if($rent['status'] == "Completed" || $rent['status'] == "Declined")
-          <tr>
-            <td>{{$rent['rentID']}}</td>
-            <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-            <td>{{$rent['created_at']->format('M d, Y')}}</td>
-            <td>
-              @if($rent['status'] == "Completed")
-              <span class="label label-success">Completed</span>
-              @elseif($rent['status'] == "Declined")
-              <span class="label label-danger">Declined</span>
-              @endif
-            </td>
-            <td><input type="submit" class="btn btn-sm-primary" value="View Order" data-toggle="modal" data-target="#historyModal{{$rent['rentID']}}"></td>
-          </tr>
-          @elseif($rent['status'] != "Completed")
-          <tr>
-            <td colspan="5"><i>You have no rent history...</i></td>
-            @break
-          </tr>
-          @endif
-          @endforeach
-        </table>
-      </div>
-    </div>
-  </div>
-</div> <!-- table row -->
+</section>
       
 
 <!-- MODALS HEREE -->
@@ -363,7 +272,24 @@
 </div>
 @endforeach
 
+@endsection
 
 
+
+@section('scripts')
+<script type="text/javascript">
+
+$(function () {
+    $('#rents-table').DataTable({
+      'paging'      : true,
+      'lengthChange': true,
+      'searching'   : false,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    })
+  });
+
+</script>
 @endsection
 

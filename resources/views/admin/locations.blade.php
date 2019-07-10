@@ -54,7 +54,7 @@
 
         </div>
         <div class="box-footer" style="text-align: right;">
-         <input type="submit" name="btn_submit" value="Add Category" class="btn btn-primary">
+         <input type="submit" name="btn_submit" value="Add Location" class="btn btn-primary">
         </form>
         </div>
       </div>
@@ -83,9 +83,8 @@
 
 
           <table id="locations-table" class="table table-hover table-bordered">
+            <col width="350">
             <col width="250">
-            <col width="150">
-            <col width="200">
             <col width="300">
             <col width="70">
             <thead>
@@ -93,15 +92,12 @@
               <th>Region</th>
               <th>Province</th>
               <th>City</th>
-              <th>Barangay</th>
               <th></th>
             </tr>
             </thead>
             <tbody>
-            @foreach($barangays as $barangay)
+            @foreach($cities as $city)
             <tr>
-                @foreach($cities as $city)
-                @if($barangay->citymunCode == $city->citymunCode)
 
                   @foreach($provinces as $province)
                   @if($city->provCode == $province->provCode)
@@ -112,14 +108,11 @@
                         <td>{{$region->regDesc}}</td>
                         <td>{{$province->provDesc}}</td>
                         <td>{{$city->citymunDesc}}</td>
-                        <td>{{$barangay->brgyDesc}}</td>
                     @endif
                     @endforeach
                   @endif
                   @endforeach
-                @endif
-                @endforeach
-                <td><a href="" class="btn btn-danger">Delete</a></td>
+                <td><a href="{{url('deleteLocation/'.$city['id'])}}" class="btn btn-danger">Delete</a></td>
             </tr>
             @endforeach
           </tbody>
@@ -136,6 +129,10 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+$('.add-ons').addClass("active");
+$('.locations').addClass("active");  
+
   var session = 0;
 
 

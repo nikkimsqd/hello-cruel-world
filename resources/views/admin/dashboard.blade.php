@@ -4,174 +4,141 @@
 
 @section('content')
 
-<div class="row">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box bg-aqua">
-      <span class="info-box-icon"><i class="ion ion-ios-cart-outline"></i></span>
+<section class="content">
+  <div class="row">
 
-      <div class="info-box-content">
-        <span class="info-box-text">Orders</span>
-        <span class="info-box-number">{{$orderCount}}</span>
+    <div class="col-lg-3 col-xs-6">
+      <div class="small-box bg-aqua">
+        <div class="inner">
+          <h3>{{$orderCount}}</h3>
+
+          <p>SALES</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-pricetags"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
       </div>
-      <!-- /.info-box-content -->
     </div>
-    <!-- /.info-box -->
+
+    <div class="col-lg-3 col-xs-6">
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3>{{$orderCount}}</h3>
+
+          <p>ORDERS</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-android-cart"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-xs-6">
+      <div class="small-box bg-yellow">
+        <div class="inner">
+          <h3>{{$customerCount}}</h3>
+
+          <p>CUSTOMERS</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-person-stalker"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-xs-6">
+      <div class="small-box bg-red">
+        <div class="inner">
+          <h3>{{$boutiqueCount}}</h3>
+
+          <p>BOUTIQUES</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-bag"></i>
+        </div>
+        <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+
   </div>
 
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box bg-green">
-      <span class="info-box-icon"><i class="ion ion-bag"></i></span>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-success">
+        <div class="box-header with-border">
+          <h3 class="box-title">Bar Chart</h3>
 
-      <div class="info-box-content">
-        <span class="info-box-text">Rent</span>
-        <span class="info-box-number">{{$rentCount}}</span>
-      </div>
-      <!-- /.info-box-content -->
-    </div>
-    <!-- /.info-box -->
-  </div>
-
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box bg-yellow">
-      <span class="info-box-icon"><i class="ion ion-ios-people"></i></span>
-
-      <div class="info-box-content">
-        <span class="info-box-text">Customers</span>
-        <span class="info-box-number">{{$customerCount}}</span>
-      </div>
-      <!-- /.info-box-content -->
-    </div>
-    <!-- /.info-box -->
-  </div>
-
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box bg-red">
-      <span class="info-box-icon"><i class="ion ion-ios-cart-outline"></i></span>
-
-      <div class="info-box-content">
-        <span class="info-box-text">Boutiques</span>
-        <span class="info-box-number">{{$boutiqueCount}}</span>
-      </div>
-      <!-- /.info-box-content -->
-    </div>
-    <!-- /.info-box -->
-  </div>
-</div>
-
-
-<div class="row">
-  <div class="col-md-12">
-    <br>
-    <div class="box">
-      <div class="box-header">
-        <h3 class="box-title"><b>ON-DELIVERY</b></h3>
-
-        <div class="box-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
-
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-            </div>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
           </div>
         </div>
-      </div>
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <tr>
-            <th>Order ID</th>
-            <th>Boutique Name</th>
-            <th>Customer Name</th>
-            <th>Order Placed at:</th>
-            <th>Status</th>
-            <th></th>
-            <!-- <th></th> -->
-          </tr>
-          @foreach($orders as $order)
-          <tr>
-            <td>{{$order['id']}}</td>
-            <td>{{$order->boutique['boutiqueName']}}</td>
-            <td>{{$order->customer['fname'].' '.$order->customer['lname']}}</td>
-            <td>{{$order['created_at']}}</td>
-            @if ($order['status'] == "Pending")
-            <td><span class="label label-warning">{{$order['status']}}</span></td>
-            @elseif ($order['status'] == "On Delivery")
-            <td><span class="label label-info">{{$order['status']}}</span></td>
-            @else
-            <td><span class="label label-info">{{$order['status']}}</span></td>
-            @endif
-            <th><a href="admin-orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></th>
-          </tr>
-          @endforeach
-        </table>
-      </div>
-      <div class="box-footer" style="text-align: right;">
-       <a class="btn btn-primary" href="admin-orders">View all Orders here</a>
-      </div>
-    </div>
-    <!-- /.box -->
-  </div>
-</div>
-
-
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="box">
-      <div class="box-header">
-        <h3 class="box-title"><b>ORDERS</b></h3>
-
-        <div class="box-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
-
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-            </div>
+        <div class="box-body">
+          <div class="chart">
+            <canvas id="barChart" style="height: 230px; width: 467px;" width="467" height="230"></canvas>
           </div>
         </div>
-      </div>
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <tr>
-            <th>Order ID</th>
-            <th>Boutique Name</th>
-            <th>Customer Name</th>
-            <th>Order Placed at:</th>
-            <th>Status</th>
-            <th></th>
-            <!-- <th></th> -->
-          </tr>
-          @foreach($orders as $order)
-          <tr>
-            <td>{{$order['id']}}</td>
-            <td>{{$order->boutique['boutiqueName']}}</td>
-            <td>{{$order->customer['fname'].' '.$order->customer['lname']}}</td>
-            <td>{{$order['created_at']}}</td>
-            @if ($order['status'] == "Pending")
-            <td><span class="label label-warning">{{$order['status']}}</span></td>
-            @elseif ($order['status'] == "On Delivery")
-            <td><span class="label label-info">{{$order['status']}}</span></td>
-            @else
-            <td><span class="label label-info">{{$order['status']}}</span></td>
-            @endif
-            <th><a href="admin-orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></th>
-          </tr>
-          @endforeach
-        </table>
-      </div>
-      <div class="box-footer" style="text-align: right;">
-       <a class="btn btn-primary" href="admin-orders">View all Orders here</a>
+        <!-- /.box-body -->
       </div>
     </div>
-    <!-- /.box -->
   </div>
-</div>
 
 
 
-
+</section>
 @endsection
 
+
+@section('scripts')
+<script type="text/javascript">
+
+$('.dashboard').addClass("active");  
+
+  $(function () {
+//-------------
+    //- BAR CHART -
+    //-------------
+    var barChartCanvas                   = $('#barChart').get(0).getContext('2d')
+    var barChart                         = new Chart(barChartCanvas)
+    var barChartData                     = areaChartData
+    barChartData.datasets[1].fillColor   = '#00a65a'
+    barChartData.datasets[1].strokeColor = '#00a65a'
+    barChartData.datasets[1].pointColor  = '#00a65a'
+    var barChartOptions                  = {
+      //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+      scaleBeginAtZero        : true,
+      //Boolean - Whether grid lines are shown across the chart
+      scaleShowGridLines      : true,
+      //String - Colour of the grid lines
+      scaleGridLineColor      : 'rgba(0,0,0,.05)',
+      //Number - Width of the grid lines
+      scaleGridLineWidth      : 1,
+      //Boolean - Whether to show horizontal lines (except X axis)
+      scaleShowHorizontalLines: true,
+      //Boolean - Whether to show vertical lines (except Y axis)
+      scaleShowVerticalLines  : true,
+      //Boolean - If there is a stroke on each bar
+      barShowStroke           : true,
+      //Number - Pixel width of the bar stroke
+      barStrokeWidth          : 2,
+      //Number - Spacing between each of the X value sets
+      barValueSpacing         : 5,
+      //Number - Spacing between data sets within X values
+      barDatasetSpacing       : 1,
+      //String - A legend template
+      legendTemplate          : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+      //Boolean - whether to make the chart responsive
+      responsive              : true,
+      maintainAspectRatio     : true
+    }
+
+    barChartOptions.datasetFill = false
+    barChart.Bar(barChartData, barChartOptions)
+})
+</script>
+
+@endsection

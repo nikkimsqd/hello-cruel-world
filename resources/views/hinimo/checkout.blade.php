@@ -35,13 +35,9 @@
                     <form action="{{url('placeOrder')}}" method="post">
                         {{csrf_field()}}
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="first_name">First Name <span>*</span></label>
-                                <input type="text" class="form-control" name="fname" value="" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="last_name">Last Name <span>*</span></label>
-                                <input type="text" class="form-control" name="lname" value="" required>
+                            <div class="col-md-12 mb-3">
+                                <label for="fullname">Full Name <span>*</span></label>
+                                <input type="text" class="form-control" name="fullname" required>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="phone_number">Phone No <span>*</span></label>
@@ -85,32 +81,29 @@
                         <?php 
                             $subtotal += $item->product['price'];
                             $total = $subtotal + $deliveryfee;
-                            ?>
+                            $adminShare = $subtotal * 0.05;
+                            $boutiqueShare = $subtotal - $adminShare;
+                        ?>
                         @endforeach
+                        <!-- <hr> -->
                         <li><span>Subtotal</span> <span>₱{{$subtotal}}</span></li>
                         <li><span>Delivery Fee</span> <span>₱{{$deliveryfee}}</span></li>
-                        <li><span>Total</span> <span>₱{{$total}}</span></li>
+                        <li><span>Total</span> <span style="color: red;">₱{{$total}}</span></li>
                     </ul>
-                            <input type="text" name="boutiqueID" value="{{$item->product->owner['id']}}" hidden>
-                            <input type="text" name="subtotal" value="{{$subtotal}}" hidden>
-                            <input type="text" name="deliveryfee" value="40" hidden>
-                            <input type="text" name="total" value="500" hidden>
 
-                    <!-- <div id="accordion" role="tablist" class="mb-4">
-                        <div class="card">
-                            <div class="card-header" role="tab" id="headingOne">
-                                <h6 class="mb-0">
-                                    <a data-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne"><i class="fa fa-circle-o mr-3"></i>Paypal</a>
-                                </h6>
-                            </div>
+                        <input type="text" name="boutiqueID" value="{{$item->product->owner['id']}}" hidden>
+                        subtotal
+                        <input type="text" name="subtotal" value="{{$subtotal}}" ><br>
+                        b's share
+                        <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" ><br>
+                        hinimo's share
+                        <input type="text" name="adminShare" value="{{$adminShare}}" ><br>
+                        delivery fee
+                        <input type="text" name="deliveryfee" value="40" ><br>
+                        total
+                        <input type="text" name="total" value="500" ><br>
 
-                            <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-                                <div class="card-body">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra tempor so dales. Phasellus sagittis auctor gravida. Integ er bibendum sodales arcu id te mpus. Ut consectetur lacus.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
+                    
 
                         <!-- <a href="#" class="btn essence-btn">Place Order</a> -->
                         <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Order">

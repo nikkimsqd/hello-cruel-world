@@ -16,9 +16,33 @@
           <div class="col-md-12">
             <form action="{{url('reqToVerify')}}" method="post">
               {{csrf_field()}}
+
+            <div class="form-group row">
+                <label for="closingHours" class="col-md-4 col-form-label text-md-right">Boutique Store Days</label>
+
+                <div class="col-md-6">
+                    <input id="closingHours" type="checkbox" class="custom-control-input" name="closingHours">
+                    <label class="custom-control-label" for="closingHours">Monday</label><br>
+
+                    <input id="closingHours" type="checkbox" class="custom-control-input" name="closingHours">
+                    <label class="custom-control-label" for="closingHours">Tuesday</label><br>
+
+                    <input id="closingHours" type="checkbox" class="custom-control-input" name="closingHours">
+                    <label class="custom-control-label" for="closingHours">Wednesday</label><br>
+
+                    <input id="closingHours" type="checkbox" class="custom-control-input" name="closingHours">
+                    <label class="custom-control-label" for="closingHours">Thursday</label><br>
+
+                    <input id="closingHours" type="checkbox" class="custom-control-input" name="closingHours">
+                    <label class="custom-control-label" for="closingHours">Friday</label><br>
+
+                    <input id="closingHours" type="checkbox" class="custom-control-input" name="closingHours">
+                    <label class="custom-control-label" for="closingHours">Saturday</label><br>
+                </div>
+            </div>
             
             <div class="form-group row">
-                <label for="openingHours" class="col-md-4 col-form-label text-md-right">{{ __('Store Opening Hours') }}</label>
+                <label for="openingHours" class="col-md-4 col-form-label text-md-right">Store Opening Hours</label>
 
                 <div class="col-md-6">
                     <input id="openingHours" type="time" class="form-control" name="openingHours" required autofocus>
@@ -26,7 +50,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="closingHours" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Closing Hours') }}</label>
+                <label for="closingHours" class="col-md-4 col-form-label text-md-right">Boutique Closing Hours</label>
 
                 <div class="col-md-6">
                     <input id="closingHours" type="time" class="form-control" name="closingHours" required autofocus>

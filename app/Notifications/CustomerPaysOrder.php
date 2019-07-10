@@ -57,7 +57,7 @@ class CustomerPaysOrder extends Notification
     public function toArray($notifiable)
     {
         return [
-            'text' => $this->order->customer['fname'].' '.$this->mto->customer['lname'].' has paid its order.',
+            'text' => $this->order->customer['fname'].' '.$this->order->customer['lname'].' has paid its order.',
             'orderID' => $this->order['id']
         ];
     }

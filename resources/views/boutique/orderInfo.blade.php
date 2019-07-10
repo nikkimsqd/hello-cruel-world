@@ -72,7 +72,7 @@
                     <td>1</td>
                     <td>{{$item->product['productName']}}</td>
                     <td>{{$item->product['productDesc']}}</td>
-                    <td>{{$item->product['productPrice']}}</td>
+                    <td>{{$item->product['price']}}</td>
                   </tr>
                   @endforeach
               </table><br><br>
@@ -132,7 +132,6 @@
         <div class="box-footer" style="text-align: right;">
         @if($order['cartID'] != null)
           <a class="btn btn-default" href="{{url('orders')}}"> Back</a>
-          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
         @elseif($order['rentID'] != null)
           <a class="btn btn-default" href="{{url('rents/'.$order->rent['rentID'])}}"> Back to Rent Details</a>
         @elseif($order['mtoID'] != null)
@@ -140,10 +139,14 @@
         @elseif($order['biddingID'] != null)
           <a class="btn btn-default" href="{{url('boutique-bidding/'.$order->bidding['id'])}}"> Back to Bidding Details</a>
         @endif
-        @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] == null)
+        @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
+          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
+        @elseif($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> For Alterations</a>
         @elseif($order['status'] == "For Alterations" && $order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
+        @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
+          <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress")
           <input type="submit" value="For Alterations" class="btn btn-primary" disabled>
         @endif

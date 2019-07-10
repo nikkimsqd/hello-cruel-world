@@ -31,6 +31,8 @@ Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
 
 
+Route::view('/autocomplete', 'hinimo.autocomplete');
+Route::view('/googleapi', 'hinimo.addressexample');
 
 
 Route::middleware(['auth'])->group(function(){
@@ -38,8 +40,11 @@ Route::middleware(['auth'])->group(function(){
 //ADMIN--------------------------------------------------------------------------------------------
 Route::get('/admin-dashboard', 'AdminController@dashboard');
 Route::get('/admin-orders', 'AdminController@orders');
-Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
-Route::get('/admin-rents', 'AdminController@rents');
+Route::get('/admin-orders/{orderID}', 'AdminController@getOrder');
+Route::get('/admin-archives', 'AdminController@archives');
+Route::get('/admin-archives/{orderID}', 'AdminController@getArchives');
+// Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
+// Route::get('/admin-rents', 'AdminController@rents');
 Route::get('/admin-categories', 'AdminController@categories');
 Route::get('/admin-tags', 'AdminController@tags');
 Route::post('/addTag', 'AdminController@addTag');
@@ -51,6 +56,7 @@ Route::get('/admin-getProvince/{regCode}', 'AdminController@getProvince');
 Route::get('/admin-getCity/{provCode}', 'AdminController@getCity');
 Route::get('/admin-getBrgy/{citymunCode}', 'AdminController@getBrgy');
 Route::post('/addLocation', 'AdminController@addLocation');
+Route::get('/deleteLocation/{cityID}', 'AdminController@deleteLocation');
 
 Route::get('/categories-notifications/{notificationID}', 'AdminController@viewNotifications');
 
@@ -83,11 +89,11 @@ Route::get('/delete/{productID}', 'BoutiqueController@delete');
 
 //view products
 Route::get('/products', 'BoutiqueController@showProducts');
-Route::get('/products/womens', 'BoutiqueController@getwomens');
-Route::get('/products/mens', 'BoutiqueController@getmens');
-Route::get('/products/embellishments', 'BoutiqueController@getembellishments');
-Route::get('/products/customizable', 'BoutiqueController@getcustomizables');
-Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
+// Route::get('/products/womens', 'BoutiqueController@getwomens');
+// Route::get('/products/mens', 'BoutiqueController@getmens');
+// Route::get('/products/embellishments', 'BoutiqueController@getembellishments');
+// Route::get('/products/customizable', 'BoutiqueController@getcustomizables');
+// Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 
 
 //TRANSACTIONS-RENT
@@ -228,7 +234,6 @@ Route::get('/addmnmtoCart/{top}/{bottom}', 'CustomerController@addmnmtoCart');
 
 
 
-Route::view('/autocomplete', 'hinimo.autocomplete');
 
 
 

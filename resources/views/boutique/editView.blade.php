@@ -30,51 +30,47 @@
 					    <div class="form-group">
 					      <label>Product Category</label>
 					      <select class="form-control select2" name="gender" id="gender-select">
-							@if($product['gender'] == "Womens")
-								<option value="Mens">Mens</option>
+							@if($product->getCategory['gender'] === "Womens")
 								<option selected value="Womens">Womens</option>
+								<option value="Mens">Mens</option>
 
-							@else
-								<option selected value="Mens">Mens</option>
+							@elseif($product->getCategory['gender'] === "Mens")
 								<option value="Womens">Womens</option>
-								
+								<option selected value="Mens">Mens</option>
+							@else
+								<option selected disabled></option>
+								<option value="Womens">Womens</option>
+								<option  value="Mens">Mens</option>
 							@endif
 						  </select><br>
 
 						  <select class="form-control select2" name="category">
 
-						  	@if($product['gender'] == "Womens")
-							  	@foreach($womensCategories as $womensCategory)
-								  	@if($product->getCategory['categoryName'] === $womensCategory['categoryName'])
-									<option selected value="{{$womensCategory['id']}}">{{$womensCategory['categoryName']}}</option>
-									@else
-									<option value="{{$womensCategory['id']}}">{{$womensCategory['categoryName']}}</option>
-									@endif
-							  	@endforeach
-						  	@elseif($product['gender'] == "Mens")
-							  	@foreach($mensCategories as $mensCategory)
-								  	@if($product->getCategory['categoryName'] === $mensCategory['categoryName'])
-									<option selected value="{{$mensCategory['id']}}">{{$mensCategory['categoryName']}}</option>
-									@else
-									<option value="{{$mensCategory['id']}}">{{$mensCategory['categoryName']}}</option>
-									@endif
-							  	@endforeach
-						  	@endif
+						  @foreach($categories as $category)
+						  @if($category['gender'] == $product->getCategory['gender'])
+							  @if($category['categoryName'] == $product->getCategory['categoryName'])
+							  	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+							  @endif
+							  @if($category['categoryName'] != $product->getCategory['categoryName'])
+							  	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+							  @endif
+						  @endif
+						  @endforeach
 
 						  </select>
 					    </div>
 
 					    <div class="form-group">
 					      	<label>Product Availability</label><br>
-					      	@if($product->forRent != null && $product->forSale != null)
+					      	@if($product['rpID'] != null && $product['price'] != null)
 							<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 
-					      	@elseif($product->forRent != null)
+					      	@elseif($product['rpID'] != null)
 					    	<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
 
-							@elseif($product->forSale != null)
+							@elseif($product['price'] != null)
 							<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 
@@ -85,23 +81,53 @@
 					    </div>
 
 				    	<?php $var = 'display:none;'; ?>
-					    @if($product['forSale'] != null)
+					    @if($product['price'] != null)
 				    	<?php $var = ''; ?>
 					    @endif
 					    <div class="form-group" id="forSalePrice" style="{{$var}}">
 					      <label>Retail Price</label>
-						  <input type="number" name="productPrice" class="input form-control" value="{{ $product['productPrice'] }}" required>
+						  <input type="number" name="productPrice" class="input form-control" value="{{ $product['price'] }}" required>
 					    </div>
 
 				    	<?php $var = 'display:none;'; ?>
-					    @if($product['forRent'] != null)
+					    @if($product['rpID'] != null)
 				    	<?php $var = ''; ?>
 					    @endif
 
 				 	    <div class="form-group" id="forRentPrice" style="{{$var}}">
 					        <label>Rent Price</label>
-					        <input type="number" name="rentPrice" value="{{ $product['rentPrice'] }}" class="input form-control" required>
-					     </div>
+					        <input type="number" name="rentPrice" value="{{ $product->rentDetails['price'] }}" class="input form-control" required><br>
+
+					        <label>Deposit Amount</label>
+					        <input type="number" name="depositAmount" class="input form-control"><br>
+
+					        <label>Penalty Amount if item is returned late (per day)</label>
+					        <input type="number" name="penaltyAmount" class="input form-control"><br>
+
+					        <label>Duration of days item is available for rent</label>
+					        <input type="number" name="limitOfDays" class="input form-control"><br>
+
+					        <label>Amount of fine incase item is lost by user</label>
+					        <input type="number" name="fine" class="input form-control"><br>
+
+					        <label>Locations item is available for rent</label><br>
+
+					        <label>Select Region:</label>
+					        <select name="region" class="form-control" id="region-select">
+					          <option selected="selected"> </option>
+					          @foreach($regions as $region)
+					          <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
+					          @endforeach
+					        </select>
+
+					        <label>Select Province:</label>
+					        <select name="province" class="form-control" id="province-select" disabled>
+					        </select>
+
+					        <label>Select City:</label>
+					        <select name="locationsAvailable" class="form-control" id="city-select" disabled>
+					        </select><br>
+					    </div>
 
 					    <div class="form-group">
 					      	<label>Product Status</label><br>
@@ -130,8 +156,8 @@
 
 					       @foreach($tags as $tag)
 					       @if($tag['id'] != $prodtag->tag['id'])
-					       <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-					       <label for="{{$prodtag['tagID']}}">{{$tag['name']}}</label>
+					       <input type="checkbox" name="tags[]" id="{{$tag['id']}}" value="{{$tag['id']}}">
+					       <label for="{{$tag['id']}}">{{$tag['name']}}</label>
 					       @endif
 					       @endforeach
 					      </div>
@@ -153,7 +179,6 @@
 				  	<a href="/hinimo/public/viewproduct/{{$product['id']}}" class="btn btn-warning"><i class="fa fa-arrow-left"> Back</i></a>
 					<input type="submit" name="btn_add" value="Update Product" class="btn btn-primary">
 				  </div>
-	<section class="content">
 
 				</form> 
 
@@ -164,25 +189,25 @@
 
 <style type="text/css">
 
-.tags label {
-  display: inline-block;
-  width: auto;
-  padding: 10px;
-  border: solid 1px #ccc;
-  transition: all 0.3s;
-  background-color: #e3e2e2;
-  border-radius: 5px;
-}
+	.tags label {
+	  display: inline-block;
+	  width: auto;
+	  padding: 10px;
+	  border: solid 1px #ccc;
+	  transition: all 0.3s;
+	  background-color: #e3e2e2;
+	  border-radius: 5px;
+	}
 
-.tags input[type="checkbox"] {
-  display: none;
-}
+	.tags input[type="checkbox"] {
+	  display: none;
+	}
 
-.tags input[type="checkbox"]:checked + label {
-  border: solid 1px #e7e7e7;
-  background-color: #ef1717;
-  color: #fff;
-}
+	.tags input[type="checkbox"]:checked + label {
+	  border: solid 1px #e7e7e7;
+	  background-color: #ef1717;
+	  color: #fff;
+	}
 
 </style>
 @endsection
@@ -217,6 +242,80 @@
       }
 
   	});
+
+
+  	$('#gender-select').on('change', function(){
+	  $('#category-select').empty();
+
+	  var gender = $(this).val();
+	  // console.log(gender);
+
+	  // $('#category-select').prop('disabled',false);
+
+	  $.ajax({
+	    url: "/hinimo/public/getCategory/"+gender,
+	    success:function(data){ 
+
+	      $('#category-select').append('<option selected disabled value=""></option>');
+	      data.categories.forEach(function(category){
+	        $('#category-select').append('<option value="'+category.id+'">'+category.categoryName+'</option>');
+	      });
+	    }
+	  });
+	});
+
+
+// LOCATIONS-----------------------------------------------------------------------------
+$("#region-select").on('change', function(){
+  $('#province-select').empty();
+  $('#city-select').empty();
+  $('#brgy-select').empty();
+  var regCode = $(this).val();
+
+  $('#city-select').prop('disabled',true);
+  $('#province-select').prop('disabled',false);
+            
+
+  $.ajax({
+    url: "/hinimo/public/boutique-getProvince/"+regCode,
+    success:function(data){
+
+      $('#province-select').append('<option selected disabled value=""></option>');
+        data.provinces.forEach(function(province){
+          $('#province-select').append(
+              '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
+              );
+        });
+    }
+  });
+});
+
+
+$('#province-select').on('change', function(){
+  $('#city-select').empty();
+  $('#brgy-select').empty();
+  var provCode = $(this).val();
+  
+  // $('#city-select').prop('disabled',false);;
+
+  $.ajax({
+    url: "/hinimo/public/boutique-getCity/"+provCode,
+    success:function(data){
+      $('#city-select').append('<option selected disabled value=""></option>');
+        data.cities.forEach(function(city){
+
+        if(city === null){
+        console.log(provCode);
+        }else{
+          $('#city-select').prop('disabled',false);
+          $('#city-select').append(
+          '<option value="'+city.citymunCode+'">'+city.citymunDesc+'</option>'
+          );
+        }
+      });
+    }
+  }); //ajaxclosing
+});
 
 
 </script>

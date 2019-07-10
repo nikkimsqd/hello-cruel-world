@@ -60,6 +60,7 @@ return array(
     'App\\Notifications\\NewOrder' => $baseDir . '/app/Notifications/NewOrder.php',
     'App\\Notifications\\NotifyForAlterations' => $baseDir . '/app/Notifications/NotifyForAlterations.php',
     'App\\Notifications\\NotifyForPayment' => $baseDir . '/app/Notifications/NotifyForPayment.php',
+    'App\\Notifications\\NotifyForPickup' => $baseDir . '/app/Notifications/NotifyForPickup.php',
     'App\\Notifications\\RentApproved' => $baseDir . '/app/Notifications/RentApproved.php',
     'App\\Notifications\\RentRequest' => $baseDir . '/app/Notifications/RentRequest.php',
     'App\\Notifications\\RentUpdateForCustomer' => $baseDir . '/app/Notifications/RentUpdateForCustomer.php',

@@ -9,84 +9,84 @@
 
 @section('logo')
 <!-- LOGO -->
-    <a href="/hinimo/public/admin-dashboard" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>H</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">Hinimo</span>
-    </a>
+  <a href="admin-dashboard" class="logo">
+    <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini"><b>H</b></span>
+    <!-- logo for regular state and mobile devices -->
+    <span class="logo-lg">Hinimo</span>
+  </a>
 @endsection
 
 @section('inbox')
 <!-- Messages: style can be found in dropdown.less-->
-<li class="dropdown messages-menu">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <i class="fa fa-envelope-o"></i>
-    <span class="label label-success">4</span>
-  </a>
-  <ul class="dropdown-menu">
-    <li class="header">You have 4 messages</li>
-    <li>
-      <!-- inner menu: contains the actual data -->
-      <ul class="menu">
-        <li><!-- start message -->
-          <a href="#">
-            <div class="pull-left">
-              <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-            </div>
-            <h4>
-              Support Team
-              <small><i class="fa fa-clock-o"></i> 5 mins</small>
-            </h4>
-            <p>Why not buy a new awesome theme?</p>
-          </a>
-        </li>
-        <!-- end message -->
-      </ul>
-    </li>
-    <li class="footer"><a href="#">See All Messages</a></li>
-  </ul>
-</li>
+  <li class="dropdown messages-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+      <i class="fa fa-envelope-o"></i>
+      <span class="label label-success">4</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="header">You have 4 messages</li>
+      <li>
+        <!-- inner menu: contains the actual data -->
+        <ul class="menu">
+          <li><!-- start message -->
+            <a href="#">
+              <div class="pull-left">
+                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+              </div>
+              <h4>
+                Support Team
+                <small><i class="fa fa-clock-o"></i> 5 mins</small>
+              </h4>
+              <p>Why not buy a new awesome theme?</p>
+            </a>
+          </li>
+          <!-- end message -->
+        </ul>
+      </li>
+      <li class="footer"><a href="#">See All Messages</a></li>
+    </ul>
+  </li>
 @endsection
 
 
 @section('notifications')
 <!-- Notifications: style can be found in dropdown.less -->
-<li class="dropdown notifications-menu">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <i class="fa fa-bell-o"></i>
-    @if($notificationsCount != null)
-    <span class="label label-danger">{{$notificationsCount}}</span>
-    @else
-    @endif
-  </a>
-  <ul class="dropdown-menu">
-    <li class="header">You have {{$notificationsCount}} notifications</li>
-    <li>
-      <!-- inner menu: contains the actual data -->
-      <ul class="menu">
+  <li class="dropdown notifications-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+      <i class="fa fa-bell-o"></i>
+      @if($notificationsCount != null)
+      <span class="label label-danger">{{$notificationsCount}}</span>
+      @else
+      @endif
+    </a>
+    <ul class="dropdown-menu">
+      <li class="header">You have {{$notificationsCount}} notifications</li>
+      <li>
+        <!-- inner menu: contains the actual data -->
+        <ul class="menu">
 
-        @foreach($adminNotifications as $notification)
-        @if($notification->read_at != null)
-        <li>
-          <a href="{{ url('categories-notifications/'.$notification->id) }}">
-              <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
-          </a> 
-        </li>
-        @else
-        <li style="background-color: #e6f2ff;">
-          <a href="{{ url('categories-notifications/'.$notification->id) }}">
-              <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
-          </a> 
-        </li>
-        @endif
-        @endforeach
+          @foreach($adminNotifications as $notification)
+          @if($notification->read_at != null)
+          <li>
+            <a href="{{ url('categories-notifications/'.$notification->id) }}">
+                <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
+            </a> 
+          </li>
+          @else
+          <li style="background-color: #e6f2ff;">
+            <a href="{{ url('categories-notifications/'.$notification->id) }}">
+                <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
+            </a> 
+          </li>
+          @endif
+          @endforeach
 
-      </ul>
-    </li>
-    <li class="footer"><a href="#">View all</a></li>
-  </ul>
-</li>
+        </ul>
+      </li>
+      <li class="footer"><a href="#">View all</a></li>
+    </ul>
+  </li>
 @endsection
 
 
@@ -196,7 +196,7 @@
     <li class="header">MAIN NAVIGATION</li>
    
     <li>
-      <a href="/hinimo/public/admin-dashboard">
+      <a href="{{url('admin-dashboard')}}">
         <i class="fa fa-th"></i> <span>Dashboard</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
@@ -204,7 +204,21 @@
       </a>
     </li>
 
-    <li class="treeview">
+    <li class="treeview orders">
+      <a href="#">
+        <i class="fa fa-edit"></i>
+        <span>Orders</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li class="on-going"><a href="{{url('admin-orders')}}"><i class="fa fa-circle-o"></i> On-going</a></li>
+        <li class="archives"><a href="{{url('admin-archives')}}"><i class="fa fa-circle-o"></i> Archives</a></li>
+      </ul>
+    </li>
+
+    <li class="treeview products">
       <a href="#">
         <i class="fa fa-pie-chart"></i>
         <span>Products</span>
@@ -213,28 +227,13 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/hinimo/public/admin-categories"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li><a href="/hinimo/public/admin-tags"><i class="fa fa-circle-o"></i> Tags</a></li>
-        <li><a href="/hinimo/public/admin-measurements"><i class="fa fa-circle-o"></i> Measurements</a></li>
+        <li class="categories"><a href="admin-categories"><i class="fa fa-circle-o"></i> Categories</a></li>
+        <li class="tags"><a href="{{url('admin-tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <li class="measurements"><a href="{{url('admin-measurements')}}"><i class="fa fa-circle-o"></i> Measurements</a></li>
       </ul>
     </li>
 
-    <li class="treeview">
-      <a href="#">
-        <i class="fa fa-edit"></i>
-        <span>Transactions</span>
-        <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
-      </a>
-      <ul class="treeview-menu">
-        <li><a href="/hinimo/public/admin-orders"><i class="fa fa-circle-o"></i> Orders</a></li>
-        <li><a href="/hinimo/public/admin-made-to-orders"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
-        <li><a href="/hinimo/public/admin-rents"><i class="fa fa-circle-o"></i> Rents</a></li>
-      </ul>
-    </li>
-
-        <li class="treeview">
+    <li class="treeview add-ons">
       <a href="#">
         <i class="fa fa-gear"></i>
         <span>Add-ons(?)</span>
@@ -243,7 +242,7 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li><a href="/hinimo/public/admin-locations"><i class="fa fa-circle-o"></i> Address</a></li>
+        <li class="locations"><a href="{{url('admin-locations')}}"><i class="fa fa-circle-o"></i> Locations</a></li>
       </ul>
     </li>
 

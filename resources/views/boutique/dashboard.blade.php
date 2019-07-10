@@ -125,8 +125,8 @@
                   @elseif($order['status'] == "On Delivery")
                   <td><span class="label label-maroon">{{$order['status']}}</span></td>
 
-                  @elseif($mto['status'] == "Delivered")
-                  <td><span class="label label-success">{{$mto['status']}}</span></td>
+                  @elseif($order['status'] == "Delivered")
+                  <td><span class="label label-success">{{$order['status']}}</span></td>
 
                   @elseif($order['status'] == "Completed")
                   <td><span class="label label-success">{{$order['status']}}</span></td>

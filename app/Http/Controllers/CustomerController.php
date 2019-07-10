@@ -33,6 +33,7 @@ use App\Notifications\CustomerAcceptsOffer;
 use App\Notifications\CustomerCancelMto;
 use App\Notifications\CustomerAcceptsBid;
 use App\Notifications\NewOrder;
+use App\Notifications\CustomerPaysOrder;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -79,7 +80,9 @@ class CustomerController extends Controller
                 return redirect('/dashboard');
             } else if(Auth()->user()->roles == "admin") {
                 return redirect('/admin-dashboard');
-            }       
+            } else if(Auth()->user()->roles == "courier") {
+                return redirect('/ionic-dashboard');
+            }        
         }else {
             $page_title = "Shop";
             $userID = null;
@@ -208,13 +211,13 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
-        $barangays = Barangay::all();
+        $cities = City::all();
 
-        // dd($product['rpID']);
+        // dd($product->rentDetails['locationsAvailable']);
         
-        $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
+        // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'totalPrice', 'page_title', 'notifications', 'notificationsCount', 'barangays'));
+    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities'));
     }
 
     public function addtoCart($productID)
@@ -246,21 +249,6 @@ class CustomerController extends Controller
     	return redirect('/shop');
     }
 
-    public function cart()
-    {
-        $page_title = "Cart";
-   		$userID = Auth()->user()->id;
-        $boutiques = Boutique::all();
-        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
-        if($cart != null){
-            $cartCount = $cart->items->count();
-        }else{
-            $cartCount = 0;
-        }
-    	
-    	return view('hinimo/cart', compact('cart', 'boutiques', 'page_title'));
-    }
-
     public function removeItem($cartID)
     {
         $item = Cart::where('id', $cartID)->delete();
@@ -280,11 +268,9 @@ class CustomerController extends Controller
 
     public function placeOrder(Request $request)
     {
-        $billingName = $request->input('fname').' '.$request->input('lname');
+        $billingName = ucwords($request->input('fullname'));
 
         $order = Order::create([
-            'billingName' => $billingName,
-            'phoneNumber' => $request->input('phoneNumber'),
             'userID' => $request->input('userID'),
             'cartID' => $request->input('cartID'),
             'subtotal' => $request->input('subtotal'),
@@ -292,6 +278,10 @@ class CustomerController extends Controller
             'total' => $request->input('total'),
             'boutiqueID' => $request->input('boutiqueID'),
             'deliveryAddress' => $request->input('deliveryAddress'),
+            'billingName' => $billingName,
+            'phoneNumber' => $request->input('phoneNumber'),
+            'boutiqueShare' => $request->input('boutiqueShare'),
+            'adminShare' => $request->input('adminShare'),
             'status' => 'In-Progress',
             'paymentStatus' => 'Not Yet Paid'
         ]);
@@ -866,6 +856,11 @@ class CustomerController extends Controller
 
                     return redirect('/view-bidding/'.$notification->data['biddingID']);
 
+                }elseif($notification->type == 'App\Notifications\NotifyForPickup'){
+                    $notification->markAsRead();
+
+                    return redirect('/view-order/'.$notification->data['orderID']);
+
                 }
             }
         }
@@ -1055,6 +1050,7 @@ class CustomerController extends Controller
 
     public function viewOrder($orderID)
     {
+
         $page_title = "Order Details";
         $userID = Auth()->user()->id;
         $user = User::find($userID);
@@ -1069,6 +1065,8 @@ class CustomerController extends Controller
         }
 
         $order = Order::find($orderID);
+        // $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
+        // dd($boutiqueseller);
 
         return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order'));
     }
@@ -1243,31 +1241,43 @@ class CustomerController extends Controller
 
         if($request->rentID != null){
             $rent = Rent::where('rentID', $request->rentID)->first();
-            $order = Order::where('id', $request->rentOrderID)->update([
+            $order = Order::where('id', $request->rentOrderID)->first();
+            $order->update([
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);
 
             return redirect('/view-rent/'.$rent['rentID']);
 
+
         }elseif($request->mtoOrderID != null){
-            $order = Order::where('id', $request->mtoOrderID)->update([
+
+            $mto = Mto::where('id', $request->mtoID)->first();
+            $order = Order::where('id', $request->mtoOrderID)->first();
+            $order->update([
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);
-            $mto = Mto::where('id', $request->mtoID)->first();
 
             $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
-            $boutiqueseller->notify(new CustomerPaysMto($mto));
+            $boutiqueseller->notify(new CustomerPaysOrder($order));
 
             return redirect('/view-mto/'.$mto['id']);
 
+
         }elseif($request->orderTransactionID != null){
+
+            // print_r($request->paypalOrderID);
             $order = Order::where('id', $request->orderTransactionID)->first();
             $order->update([
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);
+
+            $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
+            $boutiqueseller->notify(new CustomerPaysOrder($order));
+
+            return redirect('view-order/'.$order['id']);
         }
         
     }

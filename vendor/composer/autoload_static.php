@@ -410,6 +410,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Notifications\\NewOrder' => __DIR__ . '/../..' . '/app/Notifications/NewOrder.php',
         'App\\Notifications\\NotifyForAlterations' => __DIR__ . '/../..' . '/app/Notifications/NotifyForAlterations.php',
         'App\\Notifications\\NotifyForPayment' => __DIR__ . '/../..' . '/app/Notifications/NotifyForPayment.php',
+        'App\\Notifications\\NotifyForPickup' => __DIR__ . '/../..' . '/app/Notifications/NotifyForPickup.php',
         'App\\Notifications\\RentApproved' => __DIR__ . '/../..' . '/app/Notifications/RentApproved.php',
         'App\\Notifications\\RentRequest' => __DIR__ . '/../..' . '/app/Notifications/RentRequest.php',
         'App\\Notifications\\RentUpdateForCustomer' => __DIR__ . '/../..' . '/app/Notifications/RentUpdateForCustomer.php',

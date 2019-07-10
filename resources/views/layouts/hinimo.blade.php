@@ -32,7 +32,8 @@
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/font-awesome/css/font-awesome.min.css') }}"> -->
     <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
-  
+    @yield('links')
+    
 </head>
 
 <body>

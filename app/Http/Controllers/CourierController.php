@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Boutique;
 use App\Order;
+use App\Notifications\NotifyForPickup;
 
 class CourierController extends Controller
 {
     public function dashboard()
     {
-    	$page_title = "Dashboard";
+    	$page_title = "Recent Transactions";
    		$id = Auth()->user()->id;
 		$user = User::find($id);
     	$boutiques = Boutique::all();
@@ -111,6 +112,9 @@ class CourierController extends Controller
     		'status' => "For Delivery"
     	]);
 
+        $customer = User::where('id', $order->customer['id'])->first();
+        $customer->notify(new NotifyForPickup($order));
+
     	return redirect('ionic-viewOrder/'.$order['id']);
     }
 
@@ -120,6 +124,7 @@ class CourierController extends Controller
     	$order->update([
     		'status' => "Delivered"
     	]);
+
 
     	return redirect('ionic-viewOrder/'.$order['id']);
     }

@@ -118,6 +118,10 @@
 @section('scripts')
 <script type="text/javascript">
 
+$('.products').addClass("active");
+$('.measurements').addClass("active"); 
+
+
 $('#gender-select').on('change', function(){
 
   $('#category-select').empty();

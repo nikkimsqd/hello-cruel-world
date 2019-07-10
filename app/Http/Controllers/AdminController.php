@@ -96,12 +96,51 @@ class AdminController extends Controller
 		$page_title = "Orders";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
-		$orders = Order::all();
+		$orders = Order::where('status', '!=', 'Completed')->get();
 
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		
-		return view('admin/orders', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/ongoing-orders', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount'));
+	}
+
+	public function getOrder($orderID)
+	{
+		$page_title = "Orders";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$order = Order::where('id', $orderID)->first();
+
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		
+		return view('admin/viewOrder', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount'));
+	}
+
+	public function archives()
+	{
+		$page_title = "Archives";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$orders = Order::where('status', 'Completed')->get();
+
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		
+		return view('admin/archives', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount'));
+	}
+
+	public function getArchives($orderID)
+	{
+		$page_title = "Archives";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$order = Order::where('id', $orderID)->first();
+
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		
+		return view('admin/viewArchive', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount'));
 	}
 
     public function addBoutique()
@@ -238,15 +277,15 @@ class AdminController extends Controller
         return response()->json(['cities' => $cities]);
     }
 
-    public function getBrgy($citymunCode)
-    {
-        $barangays = Barangay::where('citymunCode', $citymunCode);
+    // public function getBrgy($citymunCode)
+    // {
+    //     $barangays = Barangay::where('citymunCode', $citymunCode);
         
-        $brgys = RefBrgy::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
+    //     $brgys = RefBrgy::where('citymunCode', $citymunCode)->orderBy('brgyDesc', 'ASC')->get();
 
-        return response()->json(['brgys' => $brgys,
-    							 'barangays' => $barangays]);
-    }
+    //     return response()->json(['brgys' => $brgys,
+    // 							 'barangays' => $barangays]);
+    // }
 
     public function addLocation(Request $request)
     {
@@ -295,23 +334,30 @@ class AdminController extends Controller
         }
 
         //BARANGAY
-        foreach($brgyCodes as $brgyCode){
-        	$refBrgy = RefBrgy::where('brgyCode', $brgyCode)->first();
-        	$barangay = Barangay::where('brgyCode', $refBrgy['brgyCode'])->first();
-        	if($barangay == null){
-	        	Barangay::create([
-		    		'id' => $refBrgy['id'],
-		    		'brgyCode' => $refBrgy['brgyCode'],
-		    		'brgyDesc' => $refBrgy['brgyDesc'],
-		    		'regCode' => $refBrgy['regCode'],
-		    		'provCode' => $refBrgy['provCode'],
-		    		'citymunCode' => $refBrgy['citymunCode'],
-		    	]);
-	        }
-        }
+       //  foreach($brgyCodes as $brgyCode){
+       //  	$refBrgy = RefBrgy::where('brgyCode', $brgyCode)->first();
+       //  	$barangay = Barangay::where('brgyCode', $refBrgy['brgyCode'])->first();
+       //  	if($barangay == null){
+	      //   	Barangay::create([
+		    	// 	'id' => $refBrgy['id'],
+		    	// 	'brgyCode' => $refBrgy['brgyCode'],
+		    	// 	'brgyDesc' => $refBrgy['brgyDesc'],
+		    	// 	'regCode' => $refBrgy['regCode'],
+		    	// 	'provCode' => $refBrgy['provCode'],
+		    	// 	'citymunCode' => $refBrgy['citymunCode'],
+		    	// ]);
+	      //   }
+       //  }
     	
 
     	return redirect('/admin-locations');
+    }
+
+    public function deleteLocation($cityID)
+    {
+    	City::where('id', $cityID)->delete();
+
+    	return redirect('admin-locations');
     }
 
     public function measurements()

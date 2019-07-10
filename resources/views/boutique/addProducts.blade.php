@@ -39,13 +39,13 @@
       <div class="form-group">
         <label>Product Category</label>
         <select class="form-control select2" name="gender" id="gender-select">
-          <option selected="selected"> </option>
+          <option disabled selected="selected"> </option>
           <option value="Womens">Womens</option>
           <option value="Mens">Mens</option>
         </select>
         <br>
         <select class="form-control select2" name="category" id="category-select" disabled>
-          <option> </option>
+          <option disabled selected="selected"></option>
           <!-- @foreach($categories as $category)
           <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
           @endforeach -->
@@ -78,16 +78,16 @@
         <input type="number" name="rentPrice" class="input form-control"><br>
 
         <label>Deposit Amount</label>
-        <input type="number" name="depositAmount" class="input form-control">
+        <input type="number" name="depositAmount" class="input form-control"><br>
 
-        <label>Penalty Amount</label>
-        <input type="number" name="penaltyAmount" class="input form-control">
+        <label>Penalty Amount if item is returned late (per day)</label>
+        <input type="number" name="penaltyAmount" class="input form-control"><br>
 
-        <label>Days item available for rent</label>
-        <input type="number" name="limitOfDays" class="input form-control">
+        <label>Duration of days item is available for rent</label>
+        <input type="number" name="limitOfDays" class="input form-control"><br>
 
         <label>Amount of fine incase item is lost by user</label>
-        <input type="number" name="fine" class="input form-control">
+        <input type="number" name="fine" class="input form-control"><br>
 
         <label>Locations item is available for rent</label><br>
 
@@ -97,20 +97,18 @@
           @foreach($regions as $region)
           <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
           @endforeach
-        </select>
+        </select><br>
 
         <label>Select Province:</label>
         <select name="province" class="form-control" id="province-select" disabled>
-          <option selected="selected"> </option>
-        </select>
-
-        <label>Select City:</label>
-        <select name="city" class="form-control" id="city-select" disabled>
-          <option selected="selected"></option>
         </select><br>
 
-        <label id="barangay-id" hidden>Select Barangays:</label>
-        <div name="barangays" id="brgy-select" style="column-count: 3">
+        <!-- <label>Select City:</label>
+        <select name="locationsAvailable" class="form-control" id="city-selects" disabled>
+        </select><br> -->
+
+        <label id="city-id" hidden>Select Cities:</label>
+        <div name="cities" id="city-select" style="column-count: 3">
           <!-- append js code here -->
           <!-- <label class="custom-control-label" for="id">name</label> -->
         </div>
@@ -187,20 +185,18 @@ $('#forSale').on('change', function() {
 $('#gender-select').on('change', function(){
   $('#measurement-input').empty();
   $('#category-select').empty();
-  $('#category-select').next().find('.list').empty();
-  $('#category-select').next().find('.current').val("-----------------");
 
   var gender = $(this).val();
 
   $('#category-select').prop('disabled',false);
-  $('.nice-select').removeClass('disabled');
 
   $.ajax({
     url: "/hinimo/public/getCategory/"+gender,
     success:function(data){ 
+
+      $('#category-select').append('<option selected disabled value=""></option>');
       data.categories.forEach(function(category){
         $('#category-select').append('<option value="'+category.id+'">'+category.categoryName+'</option>');
-        $('#category-select').next().find('.list').append('<li data-value="'+category.id+'" class="option">'+category.categoryName+'</li>');
       });
     }
   });
@@ -209,7 +205,6 @@ $('#gender-select').on('change', function(){
 // LOCATIONS-----------------------------------------------------------------------------
 $("#region-select").on('change', function(){
   $('#province-select').empty();
-  // $('#province-select').val("Select");
   $('#city-select').empty();
   $('#brgy-select').empty();
   var regCode = $(this).val();
@@ -221,8 +216,8 @@ $("#region-select").on('change', function(){
   $.ajax({
     url: "/hinimo/public/boutique-getProvince/"+regCode,
     success:function(data){
-      $('#province-select').append('<option value=""></option>');
 
+      $('#province-select').append('<option selected disabled value=""></option>');
         data.provinces.forEach(function(province){
           $('#province-select').append(
               '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
@@ -233,9 +228,36 @@ $("#region-select").on('change', function(){
 });
 
 
+// $('#province-select').on('change', function(){
+//   $('#city-select').empty();
+//   $('#brgy-select').empty();
+//   var provCode = $(this).val();
+  
+//   // $('#city-select').prop('disabled',false);;
+
+//   $.ajax({
+//     url: "/hinimo/public/boutique-getCity/"+provCode,
+//     success:function(data){
+//       $('#city-select').append('<option selected disabled value=""></option>');
+//         data.cities.forEach(function(city){
+
+//         if(city === null){
+//         console.log(provCode);
+//         }else{
+//           $('#city-select').prop('disabled',false);
+//           $('#city-select').apendp(
+//           '<option value="'+city.citymunCode+'">'+city.citymunDesc+'</option>'
+//           );
+//         }
+//       });
+//     }
+//   }); //ajaxclosing
+// });
+
+
 $('#province-select').on('change', function(){
   $('#city-select').empty();
-  $('#brgy-select').empty();
+  // $('#brgy-select').empty();
   var provCode = $(this).val();
   
   // $('#city-select').prop('disabled',false);;
@@ -243,43 +265,40 @@ $('#province-select').on('change', function(){
   $.ajax({
     url: "/hinimo/public/boutique-getCity/"+provCode,
     success:function(data){
-      $('#city-select').append('<option value=""></option>');
-        data.cities.forEach(function(city){
 
-        if(city === null){
-        console.log(provCode);
-        }else{
-          $('#city-select').prop('disabled',false);
-          $('#city-select').append(
-          '<option value="'+city.citymunCode+'">'+city.citymunDesc+'</option>'
-          );
-        }
+      $('#city-id').prop('hidden',false);
+
+        data.cities.forEach(function(city){
+        console.log(city);
+         $('#city-select').append(
+        '<input type="checkbox" name="locationsAvailable[]" value="'+city.citymunCode+'" id="'+city.citymunDesc+'"> '+city.citymunDesc+'<br>'
+        );
       });
     }
   }); //ajaxclosing
 });
 
 
-$('#city-select').on('change', function(){
-  // console.log("adadad");
+// $('#city-select').on('change', function(){
+//   // console.log("adadad");
 
-  $('#brgy-select').empty();
+//   $('#brgy-select').empty();
 
-  var citymunCode = $(this).val();
+//   var citymunCode = $(this).val();
 
-  $.ajax({
-     url: "/hinimo/public/boutique-getBrgy/"+citymunCode,
-    success:function(data){
-      $('#barangay-id').prop('hidden',false);
+//   $.ajax({
+//      url: "/hinimo/public/boutique-getBrgy/"+citymunCode,
+//     success:function(data){
+//       $('#barangay-id').prop('hidden',false);
 
-      data.brgys.forEach(function(brgy){
-        $('#brgy-select').append(
-        '<input type="checkbox" name="locationsAvailable[]" value="'+brgy.brgyCode+'" id="'+brgy.brgyDesc+'"> '+brgy.brgyDesc+'<br>'
-        );
-      });
-    }
-  });
-});
+//       data.brgys.forEach(function(brgy){
+//         $('#brgy-select').append(
+//         '<input type="checkbox" name="locationsAvailable[]" value="'+brgy.brgyCode+'" id="'+brgy.brgyDesc+'"> '+brgy.brgyDesc+'<br>'
+//         );
+//       });
+//     }
+//   });
+// });
 
 </script>
 @endsection

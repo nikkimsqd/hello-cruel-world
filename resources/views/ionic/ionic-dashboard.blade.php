@@ -1,6 +1,9 @@
 @extends('layouts.boutique')
 @extends('ionic.sections')
 
+@section('page_title')
+{{$page_title}}
+@endsection
 
 @section('content')
 
