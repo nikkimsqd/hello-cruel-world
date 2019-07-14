@@ -107,7 +107,7 @@
                                         @endforeach
                                         </ul>
                                     </li>
-
+<!-- 
                                     <li data-toggle="collapse" data-target="#mens">
                                         <a href="#">Mens</a>
                                         <ul class="sub-menu collapse" id="mens">
@@ -118,13 +118,13 @@
                                             @endif
                                         @endforeach
                                         </ul>
-                                    </li>
+                                    </li> -->
                                    
                                 </ul>
                             </div>
                         </div>
 
-                        <div class="widget price mb-50">
+                        <!-- <div class="widget price mb-50">
                             <h6 class="widget-title mb-30">Filter by</h6>
                             <p class="widget-title2 mb-30">Price</p>
 
@@ -138,7 +138,7 @@
                                     <div class="range-price">Range: $49.00 - $360.00</div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -211,7 +211,7 @@
                                     <a href="#">
                                         <h6>{{ $product['productName'] }}</h6>
                                     </a>
-                                    <p class="product-price">${{ number_format($product['productPrice']) }}</p>
+                                    <p class="product-price">₱{{ number_format($product['price']) }}</p>
 
                                     <div class="hover-content">
                                         <div class="add-to-cart-btn">
@@ -272,7 +272,7 @@
                                     <a href="#">
                                         <h6>{{ $notAvailable['productName'] }}</h6>
                                     </a>
-                                    <p class="product-price">${{ number_format($notAvailable['productPrice']) }}</p>
+                                    <p class="product-price">₱{{ number_format($notAvailable['price']) }}</p>
 
                                     <div class="hover-content">
                                         <div class="add-to-cart-btn">

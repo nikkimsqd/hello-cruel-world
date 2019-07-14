@@ -175,6 +175,7 @@ class BoutiqueController extends Controller
 
 	    	$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->get();
 			$rents = Rent::where('boutiqueID', $boutique['id'])->get();
+			$mtos = Mto::where('boutiqueID', $boutique['id'])->where('orderID', '!=', null)->get();
 
 			$notifications = $user->notifications;
 			$notificationsCount = $user->unreadNotifications->count();
@@ -189,7 +190,7 @@ class BoutiqueController extends Controller
 	        $rentArray = $rents->toArray();
 	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos')); 
 		}else {
 			return redirect('/shop');
 		}
@@ -377,6 +378,7 @@ class BoutiqueController extends Controller
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
+	        $cities = City::all();
 
 			foreach ($boutiques as $boutique) {
 				$boutique;
@@ -387,7 +389,7 @@ class BoutiqueController extends Controller
 
 			// dd($product->getCategory['gender']);
 
-			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions'));
+			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
 			}else {
 			return redirect('/shop');
 		}
@@ -1077,6 +1079,7 @@ class BoutiqueController extends Controller
 		$notificationsCount = $user->unreadNotifications->count();
     	$bidding = Bidding::where('id', $biddingID)->first();
     	$bid = Bid::where('biddingID', $biddingID)->where('boutiqueID', $boutique['id'])->first();
+    	// dd($bid);
 
     	return view('boutique/viewBidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications'));
     }
@@ -1113,6 +1116,7 @@ class BoutiqueController extends Controller
     	$boutique = Boutique::where('userID', $userID)->first();
     	$bidding = Bidding::where('id', $biddingID)->first();
     	$bid = Bid::where('boutiqueID', $boutique['id'])->where('biddingID', $bidding['id'])->first();
+    	// dd($bid);
 
 		$bid->update([
 			'bidAmount' =>$request->input('bidAmount'),

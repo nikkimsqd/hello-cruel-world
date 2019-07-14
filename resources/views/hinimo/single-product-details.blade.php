@@ -157,14 +157,14 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Name:</label>
                     <div class="col-md-6">
-                        <input type="text" name="customerName" class="form-control" value="{{$user['lname'].', '.$user['fname']}}" disabled><br> 
+                        <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}"><br> 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Email Address:</label>
                     <div class="col-md-6">
-                        <input type="text" name="email" class="form-control" value="{{$user['email']}}" disabled><br> 
+                        <input type="text" name="email" class="form-control" value="{{$user['email']}}"><br> 
                     </div>
                 </div>
 
@@ -212,7 +212,8 @@
                 <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
                 <input type="text" name="productID" value="{{$product['id']}}" hidden>
 
-                <div class="form-group row">
+                <hr>
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Subtotal:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['price']}}</label>
@@ -220,14 +221,14 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Required Deposit Amount:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['depositAmount']}}</label>
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Delivery Fee:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">50</label>
@@ -235,7 +236,6 @@
                     </div>
                 </div>
 
-                <hr>
                 <?php $total = $product->rentDetails['price'] + $product->rentDetails['depositAmount'] + 50; ?> <!-- replace 50 with delveryfee -->
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Total Payment:</label>
@@ -245,13 +245,22 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <!-- <label class="col-md-4 col-form-label text-md-right">Total Payment:</label> -->
-                    <input type="checkbox" id="t&c" class="form-control col-md-4" required>
+                <div class="row">
+                    <label class="col-md-4 col-form-label text-md-right"></label>
+                    <!-- <input type="checkbox" id="t&c" class="col-md-4 col-md-offset-5" required> -->
                     <div class="col-md-6">
+                    <input type="checkbox" id="t&c" class="" required> &nbsp;
                         <label for="t&c">I agree to Terms & Conditions</label>
                     </div>
                 </div>
+
+                <?php 
+                $adminShare = $product->rentDetails['price'] * $percentage;
+                $boutiqueShare = $product->rentDetails['price'] - $adminShare;
+                ?>
+
+                <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" hidden>
+                <input type="text" name="adminShare" value="{{$adminShare}}" hidden>
 
             </div>
             </div>
@@ -317,6 +326,7 @@
     </div>
 
 <style type="text/css">
+    .product-price{font-size: 20px !important; line-height: 1.5;}
     .price{text-align: right;}
     .payment-info{color: #0000;}
     .back_to_page{background-color: #ff084e; border-radius: 0;  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3); color: #ffffff; font-size: 18px;  height: 40px; line-height: 40px; right: 60px; left: 20px; top: 110px; text-align: center;  width: 40px; position: fixed; z-index: 2147483647; display: block;}

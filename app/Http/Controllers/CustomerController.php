@@ -27,6 +27,7 @@ use App\Measurement;
 use App\Categorymeasurement;
 use App\Cartitem;
 use App\Fabric;
+use App\Sharepercentage;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -212,12 +213,13 @@ class CustomerController extends Controller
         }
 
         $cities = City::all();
-
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
         // dd($product->rentDetails['locationsAvailable']);
         
         // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities'));
+    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage'));
     }
 
     public function addtoCart($productID)
@@ -319,11 +321,13 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
 
-    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount'));
+    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage'));
     }
 
     public function useraccount()
@@ -469,8 +473,12 @@ class CustomerController extends Controller
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
             'deliveryAddress' => $request->input('addressOfDelivery'),
-            'status' => "In-Progress",
-            'paymentStatus' => "Not Yet Paid"
+            'status' => "Pending",
+            'paymentStatus' => "Not Yet Paid",
+            'billingName' => $request->input('billingName'), 
+            'phoneNumber' => $request->input('phoneNumber'),
+            'boutiqueShare' => $request->input('boutiqueShare'),
+            'adminShare' => $request->input('adminShare')
         ]);
 
         $rent->update([
@@ -1109,9 +1117,11 @@ class CustomerController extends Controller
         $mto = Mto::find($mtoID);
         $measurement = json_decode($mto->measurement->data);
         $fabrics = Fabric::where('boutiqueID', $mto->boutique['id'])->get();
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
         // dd($fabrics);
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics'));
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage'));
     }
 
     public function inputAddress($mtoID, $type)
@@ -1147,8 +1157,11 @@ class CustomerController extends Controller
             $mtoPrice = $fabricSuggestion->price;
 
         }
+
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
         
-        return view('hinimo/inputAddress', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice'));
+        return view('hinimo/inputAddress', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage'));
 
     }
 
@@ -1167,7 +1180,11 @@ class CustomerController extends Controller
             'total' => $request->input('total'),
             'deliveryAddress' => $request->input('deliveryAddress'),
             'status' => "In-Progress",
-            'paymentStatus' => "Not Yet Paid"           
+            'paymentStatus' => "Not Yet Paid",
+            'billingName' => $request->input('billingName'),
+            'phoneNumber' => $request->input('phoneNumber'),
+            'boutiqueShare' => $request->input('boutiqueShare'),
+            'adminShare' => $request->input('adminShare')
         ]);
 
         $mto->update([
@@ -1243,6 +1260,7 @@ class CustomerController extends Controller
             $rent = Rent::where('rentID', $request->rentID)->first();
             $order = Order::where('id', $request->rentOrderID)->first();
             $order->update([
+                'status' => 'In-Progress',
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);

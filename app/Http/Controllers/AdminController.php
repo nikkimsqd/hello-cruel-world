@@ -23,6 +23,7 @@ use App\RefBrgy;
 use App\Measurement;
 use App\Measurementtype;
 use App\Categorymeasurement;
+use App\Sharepercentage;
 
 
 class AdminController extends Controller
@@ -67,6 +68,31 @@ class AdminController extends Controller
 
 		$notificationsCount = $admin->unreadNotifications->count();
 		return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin'));
+    }
+
+    public function sales()
+    {
+    	$page_title = "Sales";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$orders = Order::where('status', '=', 'Completed')->get();
+		// $order = Order::where('id', $orderID)->first();
+
+		$sp = Sharepercentage::where('id', '1')->first();
+
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		
+		return view('admin/sales', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount', 'sp'));
+    }
+
+    public function editPercentage(Request $request)
+    {
+    	$sp = Sharepercentage::create([
+    		'sharePercentage' => $request->input('sharePercentage')
+    	]);
+
+    	return redirect('admin-sales');
     }
 
 	public function dashboard()

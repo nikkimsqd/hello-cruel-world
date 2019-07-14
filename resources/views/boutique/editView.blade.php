@@ -96,37 +96,51 @@
 
 				 	    <div class="form-group" id="forRentPrice" style="{{$var}}">
 					        <label>Rent Price</label>
-					        <input type="number" name="rentPrice" value="{{ $product->rentDetails['price'] }}" class="input form-control" required><br>
+					        <input type="number" name="rentPrice" value="{{$product->rentDetails['price']}}" class="input form-control" required><br>
 
 					        <label>Deposit Amount</label>
-					        <input type="number" name="depositAmount" class="input form-control"><br>
+					        <input type="number" name="depositAmount" class="input form-control" value="{{$product->rentDetails['depositAmount']}}"><br>
 
 					        <label>Penalty Amount if item is returned late (per day)</label>
-					        <input type="number" name="penaltyAmount" class="input form-control"><br>
+					        <input type="number" name="penaltyAmount" class="input form-control" value="{{$product->rentDetails['penaltyAmount']}}"><br>
 
 					        <label>Duration of days item is available for rent</label>
-					        <input type="number" name="limitOfDays" class="input form-control"><br>
+					        <input type="number" name="limitOfDays" class="input form-control" value="{{$product->rentDetails['limitOfDays']}}"><br>
 
 					        <label>Amount of fine incase item is lost by user</label>
-					        <input type="number" name="fine" class="input form-control"><br>
+					        <input type="number" name="fine" class="input form-control" value="{{$product->rentDetails['fine']}}"><br>
 
 					        <label>Locations item is available for rent</label><br>
 
+                        	<?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
+                        	<!-- PLAN: TO ADD LIST FOR THE AVAILABLE PRODUCTS. DILI LANG SILA ISUD SA MGA SELECTS BELOW -->
 					        <label>Select Region:</label>
 					        <select name="region" class="form-control" id="region-select">
 					          <option selected="selected"> </option>
 					          @foreach($regions as $region)
-					          <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
+					          	<option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
 					          @endforeach
-					        </select>
+					        </select><br>
 
 					        <label>Select Province:</label>
-					        <select name="province" class="form-control" id="province-select" disabled>
-					        </select>
-
-					        <label>Select City:</label>
-					        <select name="locationsAvailable" class="form-control" id="city-select" disabled>
+					        <select name="province" class="form-control" id="province-select" value="{{$product->rentDetails['price']}}">
 					        </select><br>
+
+					        <label id="city-id" hidden>Select Cities:</label>
+					        <div name="cities" id="city-select" style="column-count: 3">
+				        	@foreach($locs as $loc)
+					        	@foreach($cities as $city)
+                            	@if($city['citymunCode'] == $loc)
+					        	<input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunDesc']}}" id="{{$loc}}">{{$city['citymunDesc']}} <br>
+					        	@endif
+                            	@endforeach
+				        	@endforeach
+
+					        </div><br>
+
+					        <!-- <label>Select City:</label>
+					        <select name="locationsAvailable" class="form-control" id="city-select"  value="{{$product->rentDetails['price']}}">
+					        </select><br> -->
 					    </div>
 
 					    <div class="form-group">
@@ -301,17 +315,13 @@ $('#province-select').on('change', function(){
   $.ajax({
     url: "/hinimo/public/boutique-getCity/"+provCode,
     success:function(data){
-      $('#city-select').append('<option selected disabled value=""></option>');
-        data.cities.forEach(function(city){
 
-        if(city === null){
-        console.log(provCode);
-        }else{
-          $('#city-select').prop('disabled',false);
-          $('#city-select').append(
-          '<option value="'+city.citymunCode+'">'+city.citymunDesc+'</option>'
-          );
-        }
+      $('#city-id').prop('hidden',false);
+        data.cities.forEach(function(city){
+        // console.log(city);
+         $('#city-select').append(
+        '<input type="checkbox" name="locationsAvailable[]" value="'+city.citymunCode+'" id="'+city.citymunDesc+'"> '+city.citymunDesc+'<br>'
+        );
       });
     }
   }); //ajaxclosing

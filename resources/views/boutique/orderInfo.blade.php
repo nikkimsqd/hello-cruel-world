@@ -18,7 +18,10 @@
             <h4>Boutique Name: <b>{{$order->boutique['boutiqueName']}}</b></h4>
             <h4>Delivery Address: <b>{{$order['deliveryAddress']}}</b></h4>
             <h4>Status: 
-              @if($order['status'] == "In-Progress")
+              @if($order['status'] == "Pending")
+              <span class="label label-warning">{{$order['status']}}</span>
+
+              @elseif($order['status'] == "In-Progress")
               <span class="label label-warning">{{$order['status']}}</span>
 
               @elseif($order['status'] == "For Alterations")

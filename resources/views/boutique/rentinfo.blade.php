@@ -41,7 +41,7 @@
               @endforeach
 
               <hr>
-              <h4>Status: 
+             <!--  <h4>Status: 
                 @if($rent['status'] == "Pending")
                 <span class="label label-warning">{{ $rent['status']}}</span>
                 @elseif($rent['status'] == "In-Progress")
@@ -61,7 +61,7 @@
                 @else
                 <span class="label label-default">{{ $rent['status']}}</span>
                 @endif
-              </h4>
+              </h4> -->
 
               <br><br>
             </div>

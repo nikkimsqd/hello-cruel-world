@@ -59,7 +59,7 @@
                     <div class="classynav">
                         <ul>
                             <li><a href="{{url('/shop')}}">Shop</a>
-                                <div class="megamenu">
+                                <!-- <div class="megamenu">
                                     <ul class="single-mega cn-col-4">
                                         <li class="title">Women's Collection</li>
                                         <ul class=" cn-col-4">
@@ -87,7 +87,7 @@
                                     <div class="single-mega cn-col-4">
                                         <img src="img/bg-img/bg-6.jpg" alt="">
                                     </div>
-                                </div>
+                                </div> -->
                             </li>
                             <!-- <li><a href="#">Pages</a>
                                 <ul class="dropdown">

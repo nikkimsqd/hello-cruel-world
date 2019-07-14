@@ -4,7 +4,7 @@
 
 @section('body')
 <!-- ##### Breadcumb Area Start ##### -->
-    <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
+    <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
@@ -91,7 +91,7 @@
 <script>
     
     var orderTransactionID = document.getElementById('orderTransactionID').value;
-    // console.log(orderTransactionID);
+
     paypal.Buttons({
         createOrder: function(data, actions) {
           // Set up the transaction
@@ -107,8 +107,6 @@
           // Capture the funds from the transaction
           return actions.order.capture().then(function(details) {
             // Show a success message to your buyer
-            // alert('Transaction completed by ' + details.payer.name.given_name);
-            // alert('Transaction completed by ' + details.payer);
             return fetch('/hinimo/public/paypal-transaction-complete', {
 
               method: 'post',

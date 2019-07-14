@@ -3,7 +3,7 @@
 
 @section('body')
 <!-- ##### Breadcumb Area Start ##### -->
-    <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
+    <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
@@ -25,7 +25,7 @@
                         <form method="post" action="{{url('/saveMadeToOrder')}}" enctype="multipart/form-data">
                             {{ csrf_field() }}
 
-                            <h2 class="form-group row">Submit your made-to-order details here</h2>
+                            <h2 class="form-group row">Submit your request for your made-to-order here</h2>
                             <p>After you send your made-to-order details, the boutique will set a price for your made-to-order and you'll get to decide if you will continue your request for made-to-order with the said price or not.</p>
 
                             <div class="col-md-8 mb-3">

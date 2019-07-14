@@ -4,7 +4,7 @@
 
 @section('body')
 <!-- ##### Breadcumb Area Start ##### -->
-    <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
+    <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
@@ -102,8 +102,8 @@
                                 <li><span>Date to be returned</span> <span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
                                 <li><span>Required Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
                                 <li><span>Penalty Amount</span> <span>₱{{$rent->product->rentDetails['penaltyAmount']}}</span></li>
-                                <li><span>Status</span> <span style="color: #0315ff;">{{$rent['status']}}</span></li>
-                                @if($rent->order['status'] == "In-Progress")
+                                <li><span>Status</span> <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
+                                <!-- if(rent order['status'] == "In-Progress") -->
                                     <li><span></span><span>Payment Info</span><span></span></li>
                                     <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
                                     <li><span>Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
@@ -116,7 +116,7 @@
                                             <span style="color: #0315ff;">{{$rent->order['paymentStatus']}}</span>
                                             @endif
                                         </li>
-                                @endif
+                                <!-- endif -->
                             </ul>
                         </div> <!-- card closing --> <br>
 

@@ -6,7 +6,7 @@
 
 <div class="page">
 <!-- ##### Breadcumb Area Start ##### -->
-    <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
+    <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
@@ -81,7 +81,7 @@
                         <?php 
                             $subtotal += $item->product['price'];
                             $total = $subtotal + $deliveryfee;
-                            $adminShare = $subtotal * 0.05;
+                            $adminShare = $subtotal * $percentage;
                             $boutiqueShare = $subtotal - $adminShare;
                         ?>
                         @endforeach
@@ -89,23 +89,23 @@
                         <li><span>Subtotal</span> <span>₱{{$subtotal}}</span></li>
                         <li><span>Delivery Fee</span> <span>₱{{$deliveryfee}}</span></li>
                         <li><span>Total</span> <span style="color: red;">₱{{$total}}</span></li>
-                    </ul>
-
+                    </ul><br>
                         <input type="text" name="boutiqueID" value="{{$item->product->owner['id']}}" hidden>
-                        subtotal
-                        <input type="text" name="subtotal" value="{{$subtotal}}" ><br>
-                        b's share
-                        <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" ><br>
-                        hinimo's share
-                        <input type="text" name="adminShare" value="{{$adminShare}}" ><br>
-                        delivery fee
-                        <input type="text" name="deliveryfee" value="40" ><br>
-                        total
-                        <input type="text" name="total" value="500" ><br>
+                        <!-- subtotal -->
+                        <input type="text" name="subtotal" value="{{$subtotal}}" hidden>
+                        <!-- b's share -->
+                        <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" hidden>
+                        <!-- hinimo's share -->
+                        <input type="text" name="adminShare" value="{{$adminShare}}" hidden>
+                        <!-- delivery fee -->
+                        <input type="text" name="deliveryfee" value="40" hidden>
+                        <!-- total -->
+                        <input type="text" name="total" value="500" hidden>
 
                     
 
                         <!-- <a href="#" class="btn essence-btn">Place Order</a> -->
+                        <a href="{{url('shop')}}" class="btn essence-btn">Cancel</a>
                         <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Order">
                     </form>
                 </div>

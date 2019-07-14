@@ -195,9 +195,18 @@
   <ul class="sidebar-menu" data-widget="tree">
     <li class="header">MAIN NAVIGATION</li>
    
-    <li>
+    <li class="dashboard">
       <a href="{{url('admin-dashboard')}}">
         <i class="fa fa-th"></i> <span>Dashboard</span>
+        <span class="pull-right-container">
+          <!-- <small class="label pull-right bg-green">new</small> -->
+        </span>
+      </a>
+    </li>
+   
+    <li class="sales">
+      <a href="{{url('admin-sales')}}">
+        <i class="fa fa-th"></i> <span>Sales</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
         </span>

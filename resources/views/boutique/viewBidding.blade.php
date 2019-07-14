@@ -36,8 +36,8 @@
             @if(count($bidding->bids))
               <?php $bids = array(); ?>
               <h4>Lowest bid:
-                @foreach($bidding->bids as $bid)
-                  <?php array_push($bids, $bid['bidAmount']) ?>
+                @foreach($bidding->bids as $bidAmount)
+                  <?php array_push($bids, $bidAmount['bidAmount']) ?>
                 @endforeach
                   <b>₱{{min($bids)}}</b>
               </h4>

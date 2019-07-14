@@ -57,6 +57,11 @@
         height: 20px;
         margin-bottom: 2px;
       }
+       #map {
+         width: 100%;
+         height: 400px;
+         background-color: grey;
+       }
     </style>
   </head>
 
@@ -98,6 +103,20 @@
       </tr>
     </table>
 
+    <div id="map">
+            <div id="custom-search-input">
+                <div class="input-group">
+                    <input id="autocomplete_search" name="autocomplete_search" type="text" class="form-control" placeholder="Search" />
+                    <input type="hidden" name="lat">
+                    <input type="hidden" name="long">
+                </div>
+            </div>
+        </div>
+
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBadl68dsbAsEPCJ4dKuYroBBZ70wgXFE&libraries=places&callback=initAutocomplete" async defer></script> -->
+
+
+    <script src="https://www.google.com/maps/api/v1/search?key=AIzaSyAh9Zof4j3ivJSWjB_YEnAvDsCjwr8h978&callback=initAutocomplete" async defer></script>
     <script>
       // This example displays an address form, using the autocomplete feature
       // of the Google Places API to help users fill in the information.
@@ -105,6 +124,16 @@
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+      var map, infoWindow;
+      // function initMap() {
+      //    map = new google.maps.Map(document.getElementById('map'), {
+      //     center: {lat: 40.397, lng: 180.644},
+      //     zoom: 1,
+      //     minZoom: 1,
+      //     mapTypeId: 'roadmap'
+      //   });
+
 
       var placeSearch, autocomplete;
       var componentForm = {
@@ -126,6 +155,36 @@
         // When the user selects an address from the dropdown, populate the address
         // fields in the form.
         autocomplete.addListener('place_changed', fillInAddress);
+
+        map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 40.397, lng: 180.644},
+        zoom: 1,
+        minZoom: 1,
+        mapTypeId: 'roadmap'
+      });
+
+      infoWindow = new google.maps.InfoWindow;
+
+
+       // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
       }
 
       function fillInAddress() {
@@ -166,7 +225,5 @@
         }
       }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"
-        async defer></script>
   </body>
 </html>

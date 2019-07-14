@@ -39,15 +39,19 @@ Route::middleware(['auth'])->group(function(){
 
 //ADMIN--------------------------------------------------------------------------------------------
 Route::get('/admin-dashboard', 'AdminController@dashboard');
+Route::get('/admin-sales', 'AdminController@sales');
 Route::get('/admin-orders', 'AdminController@orders');
 Route::get('/admin-orders/{orderID}', 'AdminController@getOrder');
 Route::get('/admin-archives', 'AdminController@archives');
 Route::get('/admin-archives/{orderID}', 'AdminController@getArchives');
 // Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
 // Route::get('/admin-rents', 'AdminController@rents');
-Route::get('/admin-categories', 'AdminController@categories');
+
+Route::post('/editPercentage', 'AdminController@editPercentage');
+
 Route::get('/admin-tags', 'AdminController@tags');
 Route::post('/addTag', 'AdminController@addTag');
+Route::get('/admin-categories', 'AdminController@categories');
 Route::post('/saveCategory', 'AdminController@saveCategory');
 Route::get('/declineCategory/{notificationID}', 'AdminController@declineCategory');
 

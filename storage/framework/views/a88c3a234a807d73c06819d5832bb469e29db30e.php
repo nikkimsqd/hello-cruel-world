@@ -80,6 +80,7 @@ Hinimo | Register
                                 <div class="col-md-6">
                                     <!-- <input id="gender" type="text" class="form-control<?php echo e($errors->has('gender') ? ' is-invalid' : ''); ?>" name="gender" value="<?php echo e(old('gender')); ?>" required autofocus> -->
                                     <select id="gender" class="form-control<?php echo e($errors->has('gender') ? ' is-invalid' : ''); ?>" name="gender" required autofocus>
+                                        <option selected disabled></option>
                                         <option value="Female">Female</option>
                                         <option value="Male">Male</option>
                                     </select>

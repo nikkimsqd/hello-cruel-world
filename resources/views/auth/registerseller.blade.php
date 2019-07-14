@@ -104,7 +104,7 @@ Hinimo | Register Boutique
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row mb-30">
                                 <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
 
                                 <div class="col-md-6">
@@ -112,6 +112,7 @@ Hinimo | Register Boutique
                                 </div>
                             </div>
 
+                            <div class="cart-page-heading" style="text-align: center;"><h4>Place a marker</h4></div>
                             <div class="form-group row">
                                 <label for="boutiqueAddress" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Address') }}</label>
 
@@ -124,8 +125,9 @@ Hinimo | Register Boutique
                                         </span>
                                     @endif
                                 </div>
+                            </div><br>
+                            <div id="map">
                             </div>
-                            <div id="map"></div>
 
                             <br>
                             <div class="form-group row mb-0">

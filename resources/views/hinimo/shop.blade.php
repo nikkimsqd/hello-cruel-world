@@ -6,7 +6,7 @@
 <div class="page">
 
 <!-- ##### Breadcumb Area Start ##### -->
-    <div class="breadcumb_area bg-img" style="background-image: url(bg/breadcumb.jpg);">
+    <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
@@ -49,7 +49,7 @@
                                     </li>
 
                                     <!-- Single Item -->
-                                    <li data-toggle="collapse" data-target="#mens">
+                                    <!-- <li data-toggle="collapse" data-target="#mens">
                                         <a href="#">Mens</a>
                                         <ul class="sub-menu collapse" id="mens">
                                 		@foreach($categories as $category)
@@ -59,17 +59,15 @@
                                             @endif
                                         @endforeach
                                         </ul>
-                                    </li>
+                                    </li> -->
                                    
                                 </ul>
                             </div>
                         </div>
 
                         <!-- ##### Single Widget ##### -->
-                        <div class="widget price mb-50">
-                            <!-- Widget Title -->
+                        <!-- <div class="widget price mb-50">
                             <h6 class="widget-title mb-30">Filter by</h6>
-                            <!-- Widget Title 2 -->
                             <p class="widget-title2 mb-30">Price</p>
 
                             <div class="widget-desc">
@@ -82,10 +80,10 @@
                                     <div class="range-price">Range: $49.00 - $360.00</div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- ##### Single Widget ##### -->
-                        <!-- <div class="widget color mb-50">
+                       <!--  <div class="widget color mb-50">
                             <p class="widget-title2 mb-30">Color</p>
                             <div class="widget-desc">
                                 <ul class="d-flex">
@@ -105,7 +103,6 @@
 
                         <!-- ##### Single Widget ##### -->
                         <div class="widget brands mb-50">
-                            <!-- Widget Title 2 -->
                             <p class="widget-title2 mb-30">Boutiques</p>
                             <div class="widget-desc">
                                 <ul>
