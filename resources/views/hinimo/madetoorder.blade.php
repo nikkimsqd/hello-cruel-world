@@ -30,29 +30,29 @@
 
                             <div class="col-md-8 mb-3">
                                 <label>Image</label>
-                                <input name="file" type="file" class="form-control" multiple>
+                                <input name="file" type="file" class="form-control" multiple required>
                             </div>
 
                             <div class="col-md-8 mb-3 dateOfUse">
                                 <label>Date of use of the product</label>
-                                <input name="dateOfUse" type="text" class="form-control" id="dateOfUse" placeholder="mm / dd / yyyy">
+                                <input name="dateOfUse" type="text" class="form-control" id="dateOfUse" placeholder="mm / dd / yyyy" required>
                                 <!-- <input name="date" type="date" class="form-control" id="date"> -->
                             </div>
 
                             <div class="col-md-8 mb-3">
                                 <label>Height (cm)</label>
-                                <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm">
+                                <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm" required>
                             </div>
 
                             <div class="col-md-8 mb-3">
                                 <label>Type of item  <span>*</span></label>
-                                <select class="mb-3" name="gender" id="gender-select">
+                                <select class="mb-3" name="gender" id="gender-select" required>
                                     <option disabled selected>Choose gender</option>
-                                    <option value="mens">Mens</option>
+                                    <!-- <option value="mens">Mens</option> -->
                                     <option value="womens">Womens</option>
                                 </select><br><br><br>
 
-                                <select class="mb-3" name="category" id="category-select" disabled>
+                                <select class="mb-3" name="category" id="category-select" disabled required>
                                     <option></option>
                                     <!-- @foreach($categories as $category)
                                     <option value="{{$category['id']}}">{{$category['categoryName']}}</option>
@@ -63,16 +63,16 @@
                             <!-- <hr> -->
                             <div class="col-md-8 mb-3">
                                 <label>Measurements (inches)</label>
-                                <div class="mb-3" id="measurement-input">
+                                <div class="mb-3" id="measurement-input" required>
                                 </div>
                             </div>
 
                             <div class="col-md-8 mb-3">
                                 <label>Choose Fabric</label><br>
-                                    <input id="suggest" class="fabric-radio" type="radio" name="fabric" value="suggest">
+                                    <input id="suggest" class="fabric-radio" type="radio" name="fabric" value="suggest" required>
                                     <label for="suggest"> Ask boutique for fabric suggestions</label> <br>
 
-                                    <input id="choose" class="fabric-radio" type="radio" name="fabric" value="choose">
+                                    <input id="choose" class="fabric-radio" type="radio" name="fabric" value="choose" required>
                                     <label for="choose"> Choose available fabric from boutique</label> <br>
                             </div>
 
@@ -103,7 +103,7 @@
 
                             <div class="col-md-8 mb-3">
                                 <label>Instructions/Notes</label>
-                                    <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of cloth for your item etc."></textarea>
+                                    <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of cloth for your item etc." required></textarea>
                             </div>  
 
                             <div class="col-md-8 mb-3">
@@ -121,7 +121,7 @@
 
 <style type="text/css">
 
-.datepicker-dropdown{top: 634px !important; left: 281.5px; z-index: 11; display: block;}
+.datepicker-dropdown{top: 388px !important; left: 281.5px; z-index: 11; display: block;}
 
 label{
     font-size: 12px;

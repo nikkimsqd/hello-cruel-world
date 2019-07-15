@@ -34,7 +34,7 @@
 
                                     <div class="col-md-12 mb-3">
                                         <label>Image</label>
-                                        <input name="file" type="file" class="form-control" multiple>
+                                        <input name="file" type="file" class="form-control" multiple required>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
@@ -45,7 +45,7 @@
                                             <option value="womens">Womens</option>
                                         </select><br><br><br>
 
-                                        <select class="mb-3" name="category" id="category-select" disabled>
+                                        <select class="mb-3" name="category" id="category-select" disabled required>
                                             <!-- @foreach($categories as $category)
                                             <option value="{{$category['id']}}">{{$category['categoryName']}}</option>
                                             @endforeach -->
@@ -61,27 +61,27 @@
 
                                     <div class="col-md-12 mb-3">
                                         <label>Height (cm)</label>
-                                        <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm">
+                                        <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm" required>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
                                         <label>Instructions/Notes</label>
-                                            <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of fabric for your item etc."></textarea>
+                                            <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of fabric for your item etc." required></textarea>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
                                         <label>Bidding End Date</label>
-                                        <input type="date" name="endDate" id="endDate" class="form-control">
+                                        <input type="date" name="endDate" id="endDate" class="form-control" required>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
                                         <label>Deadline for the product</label>
-                                        <input type="text" name="deadlineOfProduct" id="deadlineOfProduct" class="form-control">
+                                        <input type="text" name="deadlineOfProduct" id="deadlineOfProduct" class="form-control" required>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
                                         <label>Your Maximum Price</label>
-                                        <input name="maxPriceLimit" type="number" class="form-control">
+                                        <input name="maxPriceLimit" type="number" class="form-control" required>
                                     </div>
 
 

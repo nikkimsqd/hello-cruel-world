@@ -36,7 +36,9 @@
                                 <li><span>Product/s</span>
                                     <span>
                                         @foreach($order->cart->items as $item)
-                                        {{$item->product['productName']}}, 
+                                        @if($item->product->owner['id'] == $order['boutiqueID'])
+                                            {{$item->product['productName']}}, 
+                                        @endif
                                         @endforeach
                                     </span>
                                 </li>

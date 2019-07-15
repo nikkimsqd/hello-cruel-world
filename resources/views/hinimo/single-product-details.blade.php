@@ -157,21 +157,21 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Name:</label>
                     <div class="col-md-6">
-                        <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}"><br> 
+                        <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}" required><br> 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Email Address:</label>
                     <div class="col-md-6">
-                        <input type="text" name="email" class="form-control" value="{{$user['email']}}"><br> 
+                        <input type="text" name="email" class="form-control" value="{{$user['email']}}" required><br> 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Contact Number:</label>
                     <div class="col-md-6">
-                        <input type="text" name="phoneNumber" class="form-control"><br> 
+                        <input type="text" name="phoneNumber" class="form-control" required><br> 
                     </div>
                 </div>
 
@@ -183,7 +183,7 @@
                     @foreach($product->getCategory->getMeasurements as $measurements)
                     <label class="col-md-4 col-form-label text-md-right">{{$measurements['mName']}}:</label>
                     <div class="col-md-6" id="measurement-input">
-                        <input type="text" name="measurement[{{$measurements['mName']}}]" class="form-control"><br> 
+                        <input type="text" name="measurement[{{$measurements['mName']}}]" class="form-control" required><br> 
                     </div>
                     @endforeach
                 </div><br>
@@ -191,21 +191,21 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Date Item will be used:</label>
                     <div class="col-md-6">
-                        <input type="date" name="dateToUse" class="form-control"><br> 
+                        <input type="date" name="dateToUse" class="form-control" required><br> 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Additional Notes:</label>
                     <div class="col-md-6">
-                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done"></textarea><br> 
+                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done" required></textarea><br> 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
                     <div class="col-md-6">
-                        <input type="text" name="addressOfDelivery" class="input form-control"><br>
+                        <input type="text" name="addressOfDelivery" class="input form-control" required><br>
                     </div>
                 </div>
 

@@ -24,12 +24,12 @@
 
         </div>
 
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <label>Mens</label>
             @foreach($mens as $men)
                 <li>{{$men['categoryName']}}</li>
             @endforeach
-        </div>
+        </div> -->
           </div>
 
           <div class="col-md-5">
@@ -41,7 +41,7 @@
                   <select class="form-control select2" name="gender" id="gender-select">
                     <option selected="selected"> </option>
                     <option value="Womens">Womens</option>
-                    <option value="Mens">Mens</option>
+                    <!-- <option value="Mens">Mens</option> -->
                   </select>
                   <br>
                   

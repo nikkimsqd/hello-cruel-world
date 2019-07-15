@@ -41,11 +41,11 @@
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="phone_number">Phone No <span>*</span></label>
-                                <input type="number" class="form-control" name="phoneNumber" min="0" value="">
+                                <input type="number" class="form-control" name="phoneNumber" min="0" value="" required>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="street_address">Address <span>*</span></label>
-                                <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" value="">
+                                <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" value="" required>
                             </div>
 
                             <div class="col-12">
@@ -64,43 +64,64 @@
             <div class="col-12 col-md-6 col-lg-5 ml-lg-auto">
                 <div class="order-details-confirmation">
 
-                    <div class="cart-page-heading">
-                        <h5>Your Order</h5>
-                        <p>The Details</p>
-                    </div>
-
                     <?php 
-                    $subtotal = 0;
+                    $merchSubtotal = 0;
                     $deliveryfee = 50;
+                    $deliveryfeeSubtotal = 0;
+                    $boutiques = array();
+                    $boutiqueCount = 0;
                     ?>
 
-                    <ul class="order-details-form mb-4">
-                        <li><span>Product</span> <span>Total</span></li>
+                    @foreach($cart->items as $item)
+                        @if(!in_array($item->product->owner, $boutiques))
+                            <?php array_push($boutiques, $item->product->owner); ?>
+                        @endif
+                    @endforeach
+
+                    @foreach($boutiques as $boutique)
+                    <?php 
+                        $boutiqueCount += 1;
+                        $boutiqueSubtotal = 0;
+                    ?>
+                        <div class="cart-page-heading">
+                            <h5>{{$boutique['boutiqueName']}}</h5>
+                        </div>
+
                         @foreach($cart->items as $item)
-                        <li><span>{{$item->product['productName']}}</span> <span>₱{{$item->product['price']}}</span></li>
-                        <?php 
-                            $subtotal += $item->product['price'];
-                            $total = $subtotal + $deliveryfee;
-                            $adminShare = $subtotal * $percentage;
-                            $boutiqueShare = $subtotal - $adminShare;
-                        ?>
+                        @if($item->product->owner == $boutique)
+                        <ul class="order-details-form mb-4">
+                            <li><span>{{$item->product['productName']}}</span> <span>₱{{$item->product['price']}}</span></li>
+                            <?php 
+                                $boutiqueSubtotal += $item->product['price'];
+                                $merchSubtotal += $item->product['price'];
+                            ?>
+                        @endif
                         @endforeach
+                            <li style="background-color: aliceblue; border-bottom: 5px solid #ebebeb;"><span>Delivery Fee</span> <span>₱{{$deliveryfee}}</span></li><br><br>
+                            <?php 
+                                $deliveryfeeSubtotal += $deliveryfee;
+                                $total = $boutiqueSubtotal + $deliveryfee;
+                                $orderTotal = $merchSubtotal + $deliveryfeeSubtotal;
+                                $adminShare = $boutiqueSubtotal * $percentage;
+                                $boutiqueShare = $boutiqueSubtotal - $adminShare;
+                            ?>
+                        <input type="text" name="order{{$boutiqueCount}}[boutiqueID]" value="{{$boutique['id']}}" hidden>
+                        <input type="text" name="order{{$boutiqueCount}}[subtotal]" value="{{$boutiqueSubtotal}}" hidden>
+                        <input type="text" name="order{{$boutiqueCount}}[deliveryfee]" value="{{$deliveryfee}}" hidden>
+                        <input type="text" name="order{{$boutiqueCount}}[total]" value="{{$total}}" hidden>
+                        <input type="text" name="order{{$boutiqueCount}}[boutiqueShare]" value="{{$boutiqueShare}}" hidden>
+                        <input type="text" name="order{{$boutiqueCount}}[adminShare]" value="{{$adminShare}}" hidden>
+                        <input type="text" name="boutiqueCount" value="{{$boutiqueCount}}" hidden>
+                    @endforeach
+
                         <!-- <hr> -->
-                        <li><span>Subtotal</span> <span>₱{{$subtotal}}</span></li>
-                        <li><span>Delivery Fee</span> <span>₱{{$deliveryfee}}</span></li>
-                        <li><span>Total</span> <span style="color: red;">₱{{$total}}</span></li>
+                        <li><span>Merchandise Subtotal</span> <span>₱{{$merchSubtotal}}</span></li>
+                        <li><span>Delivery Fee Subtotal</span> <span>₱{{$deliveryfeeSubtotal}}</span></li>
+                        <li><span>Total</span> <span style="color: red;">₱{{$orderTotal}}</span></li>
                     </ul><br>
-                        <input type="text" name="boutiqueID" value="{{$item->product->owner['id']}}" hidden>
-                        <!-- subtotal -->
-                        <input type="text" name="subtotal" value="{{$subtotal}}" hidden>
-                        <!-- b's share -->
-                        <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" hidden>
-                        <!-- hinimo's share -->
-                        <input type="text" name="adminShare" value="{{$adminShare}}" hidden>
-                        <!-- delivery fee -->
-                        <input type="text" name="deliveryfee" value="40" hidden>
-                        <!-- total -->
-                        <input type="text" name="total" value="500" hidden>
+                        <input type="text" name="merchSubtotal" value="{{$merchSubtotal}}" hidden>
+                        <input type="text" name="deliveryfee" value="{{$deliveryfeeSubtotal}}" hidden>
+                        <input type="text" name="total" value="{{$orderTotal}}" hidden>
 
                     
 

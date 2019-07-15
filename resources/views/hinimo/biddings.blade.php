@@ -109,8 +109,8 @@
                                     @foreach($bidding->bids as $bid)
                                         <?php array_push($bids, $bid['bidAmount']) ?>
                                         <!-- {{$bid['bidAmount']}} -->
-                                        {{min($bids)}}
                                     @endforeach
+                                        {{min($bids)}}
                                     </span>
                                     @else
                                     <span>No bids</span>

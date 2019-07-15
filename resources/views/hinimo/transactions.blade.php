@@ -48,7 +48,9 @@
                         		<td style="text-align: center;"><b>PURCHASE</b></td>
                                 <td>
                                     @foreach($order->cart->items as $item)
+                                    @if($item->product->owner['id'] == $order['boutiqueID'])
                             		  {{$item->product['productName']}} 
+                                    @endif
                                     @endforeach
                                 </td>
                         		<td style="text-align: center;">{{$order['status']}}</td>

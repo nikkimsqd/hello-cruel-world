@@ -271,36 +271,42 @@ class CustomerController extends Controller
     public function placeOrder(Request $request)
     {
         $billingName = ucwords($request->input('fullname'));
+        $boutiqueCount = $request->input('boutiqueCount');
 
-        $order = Order::create([
-            'userID' => $request->input('userID'),
-            'cartID' => $request->input('cartID'),
-            'subtotal' => $request->input('subtotal'),
-            'deliveryfee' => $request->input('deliveryfee'),
-            'total' => $request->input('total'),
-            'boutiqueID' => $request->input('boutiqueID'),
-            'deliveryAddress' => $request->input('deliveryAddress'),
-            'billingName' => $billingName,
-            'phoneNumber' => $request->input('phoneNumber'),
-            'boutiqueShare' => $request->input('boutiqueShare'),
-            'adminShare' => $request->input('adminShare'),
-            'status' => 'In-Progress',
-            'paymentStatus' => 'Not Yet Paid'
-        ]);
+        for ($i=1; $i <= $boutiqueCount; $i++) { 
 
-        $cart = Cart::where('id', $order['cartID'])->first();
-        $cart->update([
-            'status' => 'Inactive'
-        ]);
-        foreach($cart->items as $item){
-            Product::where('id', $item->product['id'])->update([
-                'productStatus' => "Not Available"
+            $orders = $request->input("order$i");
+            $order = Order::create([
+                'userID' => $request->input('userID'),
+                'cartID' => $request->input('cartID'),
+                'subtotal' => $orders['subtotal'],
+                'deliveryfee' => $orders['deliveryfee'],
+                'total' => $orders['total'],
+                'boutiqueID' => $orders['boutiqueID'],
+                'deliveryAddress' => $request->input('deliveryAddress'),
+                'billingName' => $billingName,
+                'phoneNumber' => $request->input('phoneNumber'),
+                'boutiqueShare' => $orders['boutiqueShare'],
+                'adminShare' => $orders['adminShare'],
+                'status' => 'In-Progress',
+                'paymentStatus' => 'Not Yet Paid'
             ]);
+
+            $cart = Cart::where('id', $order['cartID'])->first();
+            $cart->update([
+                'status' => 'Inactive'
+            ]);
+            foreach($cart->items as $item){
+                Product::where('id', $item->product['id'])->update([
+                    'productStatus' => "Not Available"
+                ]);
+            }
+
+            $boutique = Boutique::where('id', $orders['boutiqueID'])->first();
+            $boutiqueseller = User::find($boutique['userID']);
+            $boutiqueseller->notify(new NewOrder($order));
         }
 
-        $boutique = Boutique::where('id', $order['boutiqueID'])->first();
-        $boutiqueseller = User::find($boutique['userID']);
-        $boutiqueseller->notify(new NewOrder($order));
 
         //add churva for add address here
 
@@ -326,6 +332,24 @@ class CustomerController extends Controller
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+
+        $orders = array();
+        foreach($cart->items as $item){
+            if(!in_array($item->product->owner, $orders)){
+                // dd("naa");
+                array_push($orders, $item->product->owner);
+            }else{
+            }
+        }
+        // foreach($orders as $order){
+                // dd($order->product->owner);
+            // if(in_array($order->product->owner, $orders)){
+                // dd($order->product->owner['boutiqueName']);
+            // }else{
+                // dd($order->product->owner);
+            // }
+        // }   
+            // dd($orders);
 
     	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage'));
     }
