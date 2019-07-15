@@ -1276,7 +1276,7 @@ class CustomerController extends Controller
 
     // }
 
-    public function paypalpaypalTransactionComplete(Request $request)
+    public function paypalTransactionComplete(Request $request)
     {
         // print_r($request->mtoOrderID);
 
@@ -1288,6 +1288,9 @@ class CustomerController extends Controller
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);
+
+            $boutiqueseller = User::where('id', $rent->boutique->owner['id'])->first();
+            $boutiqueseller->notify(new CustomerPaysOrder($order));
 
             return redirect('/view-rent/'.$rent['rentID']);
 

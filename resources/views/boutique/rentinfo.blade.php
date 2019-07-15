@@ -84,7 +84,7 @@
           <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
           <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a>
           @if($rent['orderID'] != null)
-          <a href="{{url('orders/'.$rent->order['id'])}}" class="btn btn-primary">View Order Details</a>
+          <a href="{{url('orders/'.$rent['orderID'])}}" class="btn btn-primary">View Order Details</a>
           @endif
           </form>
         </div>

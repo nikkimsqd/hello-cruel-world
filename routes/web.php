@@ -225,7 +225,7 @@ Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');
 Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
 
 //PAYPAL TRANSACTION
-Route::post('/paypal-transaction-complete', 'CustomerController@paypalpaypalTransactionComplete');
+Route::post('/paypal-transaction-complete', 'CustomerController@paypalTransactionComplete');
 // Route::get('/get-paypal-transaction/{orderId}', 'CustomerController@getPaypalOrder');
 
 

@@ -5,7 +5,6 @@
 @section('body')
 
 <div class="page">
-<!-- ##### Breadcumb Area Start ##### -->
     <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
@@ -17,10 +16,8 @@
             </div>
         </div>
     </div>
-<!-- ##### Breadcumb Area End ##### -->
 
 
-<!-- ##### Checkout Area Start ##### -->
 <div class="checkout_area section-padding-80">
     <div class="container">
         <div class="row">
@@ -118,7 +115,8 @@
                         <li><span>Merchandise Subtotal</span> <span>₱{{$merchSubtotal}}</span></li>
                         <li><span>Delivery Fee Subtotal</span> <span>₱{{$deliveryfeeSubtotal}}</span></li>
                         <li><span>Total</span> <span style="color: red;">₱{{$orderTotal}}</span></li>
-                    </ul><br>
+                        </ul><br>
+
                         <input type="text" name="merchSubtotal" value="{{$merchSubtotal}}" hidden>
                         <input type="text" name="deliveryfee" value="{{$deliveryfeeSubtotal}}" hidden>
                         <input type="text" name="total" value="{{$orderTotal}}" hidden>
@@ -134,20 +132,17 @@
         </div>
     </div>
 </div>
-<!-- ##### Checkout Area End ##### -->
 
 
 
 
-  </div> <!-- row -->
-
-
-
-
-
+  <!-- </div> --> <!-- row -->
 
 </div> <!-- page -->
 
+<style type="text/css">
+    .order-details-confirmation .order-details-form li{padding: 20px 10px;}
+</style>
 
 
 @endsection

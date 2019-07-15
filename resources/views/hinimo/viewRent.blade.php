@@ -45,6 +45,7 @@
                             </div>
 
                             <ul class="order-details-form mb-4">
+                                <li><span>Boutique Name</span> <span>{{$rent->order->boutique['boutiqueName']}}</span></li>
                                 <li><span>Order ID</span> <span>{{$rent->order['id']}}</span></li>
                                 <li><span>Product/s</span>
                                     @if($rent->order['cartID'] != null)
@@ -95,6 +96,7 @@
                             </div>
 
                             <ul class="order-details-form mb-4">
+                                <li><span>Boutique Name</span> <span>{{$rent->order->boutique['boutiqueName']}}</span></li>
                                 <li><span>Rent ID</span> <span>{{$rent['rentID']}}</span></li>
                                 <li><span>Product/s</span> <span>{{$rent->product['productName']}}</span></li>
                                 <li><span>Date to use</span> <span>{{date('M d, Y',strtotime($rent['dateToUse']))}}</span></li>
@@ -135,6 +137,10 @@
         </div>
     </div>
 </div>
+
+<style type="text/css">
+    .order-details-confirmation .order-details-form li{padding: 20px 10px;}
+</style>
 
 <!-- </div> -->
 @endsection
@@ -177,6 +183,9 @@
               })
             });
           });
+        },
+        onError: function (err) {
+            alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');
 </script>

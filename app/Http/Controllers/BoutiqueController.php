@@ -122,8 +122,8 @@ class BoutiqueController extends Controller
 
 					}elseif($order['rentID'] != null){
 
-						$rent = Rent::where('id', $order['rentID'])->first();
-						return redirect('/rents/'.$rent['id']);
+						$rent = Rent::where('rentID', $order['rentID'])->first();
+						return redirect('/rents/'.$rent['rentID']);
 
 					}elseif($order['mtoID'] != null){
 

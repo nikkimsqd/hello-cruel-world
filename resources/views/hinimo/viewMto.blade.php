@@ -246,6 +246,7 @@
 <style type="text/css">
     .normal{font-weight: normal;}
     .table{margin-bottom: 0;}
+    .order-details-confirmation .order-details-form li{padding: 20px 10px;}
 </style>
 
 <!-- </div> -->

@@ -31,22 +31,31 @@
                             </div>
 
                             <ul class="order-details-form mb-4">
-                                <li><span>Order ID</span> <span>{{$order['id']}}</span></li>
                                 <li><span>Boutique Name</span> <span>{{$order->boutique['boutiqueName']}}</span></li>
-                                <li><span>Product/s</span>
-                                    <span>
+                                <li><span>Order ID</span> <span>{{$order['id']}}</span></li>
+                                <li><span></span><span>Product/s</span><span></span>
+                                    <!-- <span>
                                         @foreach($order->cart->items as $item)
                                         @if($item->product->owner['id'] == $order['boutiqueID'])
                                             {{$item->product['productName']}}, 
                                         @endif
                                         @endforeach
-                                    </span>
+                                    </span> -->
                                 </li>
+                                @foreach($order->cart->items as $item)
+                                @if($item->product->owner['id'] == $order['boutiqueID'])
+                                <li>
+                                    <span>{{$item->product['productName']}}</span>
+                                    <span>₱{{$item->product['price']}}</span>
+                                </li>
+                                @endif
+                                @endforeach
+                                <li><span>Delivery Address</span><span>{{$order['deliveryAddress']}}</span></li>
 
 
-                                <li><span>Subtotal</span> <span>{{$order['subtotal']}}</span></li>
-                                <li><span>Delivery Fee</span> <span>{{$order['deliveryfee']}}</span></li>
-                                <li><span>Total</span> <span>{{$order['total']}}</span></li>
+                                <li style="background-color: aliceblue;"><span>Subtotal</span> <span>₱{{$order['subtotal']}}</span></li>
+                                <li style="background-color: aliceblue;"><span>Delivery Fee</span> <span>₱{{$order['deliveryfee']}}</span></li>
+                                <li style="background-color: aliceblue;"><span>Total</span> <span style="color: red;">₱{{$order['total']}}</span></li>
                                 <li><span>Status</span> 
                                     @if($order['status'] == "For Pickup")
                                     <span style="color: #0315ff;">To be picked up by courier</span>
@@ -82,6 +91,10 @@
         </div>
     </div>
 </div>
+
+<style type="text/css">
+    .order-details-confirmation .order-details-form li{padding: 20px 10px;}
+</style>
 
 <!-- </div> -->
 @endsection

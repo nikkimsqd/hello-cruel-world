@@ -17,6 +17,11 @@ class Rent extends Model
         return $this->hasOne('App\User', 'id', 'customerID');
     }
 
+    public function boutique()
+    {
+        return $this->hasOne('App\Boutique', 'id', 'boutiqueID');
+    }
+
     public function product()
     {
         return $this->hasOne('App\Product', 'id', 'productID');
