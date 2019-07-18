@@ -81,10 +81,11 @@ class RegisterController extends Controller
         if (!empty($data['fname'])) {
 
             return User::create([
-                'fname' => $data['fname'],
-                'lname' => $data['lname'],
+                'fname' => ucwords($data['fname']),
+                'lname' => ucfirst($data['lname']),
                 'username' => $data['username'],
-                'gender' => $data['gender'],
+                // 'gender' => $data['gender'],
+                'gender' => "Female",
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'roles' => "customer",
@@ -104,7 +105,7 @@ class RegisterController extends Controller
                 'boutiqueName' => $data['boutiqueName'],
                 'boutiqueAddress' => $data['boutiqueAddress'],
                 'contactNo' => $data['contactNo'],
-                'status' => "Not Verified"
+                'status' => "Verified"
             ]);
 
 

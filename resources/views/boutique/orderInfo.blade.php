@@ -41,6 +41,9 @@
 
               @elseif($order['status'] == "Completed")
               <span class="label label-success">{{$order['status']}}</span>
+
+              @elseif($order['status'] == "On Rent")
+              <span class="label label-info">{{$order['status']}}</span>
               @endif
             </h4>
             <h4>Order Type: 
@@ -152,6 +155,8 @@
           <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress")
           <input type="submit" value="For Alterations" class="btn btn-primary" disabled>
+        @elseif($order['status'] == "On Rent")
+          <a href="{{url('rentReturned/'.$order['rentID'])}}" class="btn btn-primary">Item Returned</a>
         @endif
         </div>
       </div>
@@ -222,7 +227,8 @@ $('.orders').addClass("active");
 // ---------------------------------------------------------------------
 var dateToday = new Date();
 var dateTomorrow = new Date();
-dateTomorrow.setDate(dateToday.getDate()+1);
+dateTomorrow.setDate(dateToday.getDate());
+// dateTomorrow.setDate(dateToday.getDate()+1);
 
 $('#alterationDateStart').datepicker({
   startDate: dateTomorrow

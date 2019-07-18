@@ -79,6 +79,7 @@
                         </div><br><br> <!-- card closing -->
 
                         @if($order['paymentStatus'] == "Not Yet Paid")
+                        <span>You are required to pay first so boutique can start on working with your item</span>
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="orderTransactionID" value="{{$order['id']}}" hidden>
@@ -134,6 +135,9 @@
               })
             });
           });
+        },
+        onError: function (err) {
+            alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');
 </script>

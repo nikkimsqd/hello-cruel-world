@@ -34,11 +34,11 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="fullname">Full Name <span>*</span></label>
-                                <input type="text" class="form-control" name="fullname" required>
+                                <input type="text" class="form-control" name="fullname" required value="{{$user['fname'].' '.$user['lname']}}">
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="phone_number">Phone No <span>*</span></label>
-                                <input type="number" class="form-control" name="phoneNumber" min="0" value="" required>
+                                <input type="number" class="form-control" name="phoneNumber" maxlength="11" value="" required>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="street_address">Address <span>*</span></label>

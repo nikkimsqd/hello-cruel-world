@@ -15,37 +15,7 @@
     </a>
 @endsection
 
-@section('inbox')
-<!-- Messages: style can be found in dropdown.less-->
-<li class="dropdown messages-menu">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <i class="fa fa-envelope-o"></i>
-    <span class="label label-danger">4</span>
-  </a>
-  <ul class="dropdown-menu">
-    <li class="header">You have 4 messages</li>
-    <li>
-      <!-- inner menu: contains the actual data -->
-      <ul class="menu">
-        <li><!-- start message -->
-          <a href="#">
-            <div class="pull-left">
-              <img src="{{asset('adminlte/dist/img/avatar2.png')}}" class="img-circle" alt="User Image">
-            </div>
-            <h4>
-              Customer Name
-              <small><i class="fa fa-clock-o"></i> 5 mins</small>
-            </h4>
-            <p>I would like to follow up my order</p>
-          </a>
-        </li>
-        <!-- end message -->
-      </ul>
-    </li>
-    <li class="footer"><a href="#">See All Messages</a></li>
-  </ul>
-</li>
-@endsection
+
 
 
 @section('notifications')
@@ -93,7 +63,7 @@
 <li class="dropdown tasks-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
     <i class="fa fa-flag-o"></i>
-    <span class="label label-danger">9</span>
+    <span class="label label-danger"></span>
   </a>
   <ul class="dropdown-menu">
     <li class="header">You have 9 tasks</li>
@@ -131,7 +101,7 @@
 <li class="dropdown user user-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
     <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="user-image" alt="User Image">
-    <span class="hidden-xs">{{$user['fname']}}</span>
+    <span class="hidden-xs">{{$user['lname']}}</span>
   </a>
   <ul class="dropdown-menu">
     <!-- User image -->
@@ -139,7 +109,7 @@
       <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image">
 
       <p>
-        {{$user['fname']}}
+        {{$user['fname'].' '.$user['lname']}}
         <!-- <small>Member since {{$user['created_at']}}</small> -->
       </p>
     </li>

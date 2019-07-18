@@ -63,6 +63,18 @@
                                 </li>
                                 <li><span>Payment Status</span> <span style="color: red;">{{$bidding->order['paymentStatus']}}</span></li>
                             </ul>
+                            
+                            @if($bidding->order['status'] == "For Pickup" || $bidding->order['status'] == "For Delivery")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                            </div>
+                            @elseif($bidding->order['status'] == "On Delivery" || $bidding->order['status'] == "Delivered")
+                            <div class="notif-area cart-area" style="text-align: right;">
+                                <a href="{{url('receiveOrder/'.$bidding->order['id'])}}" class="btn essence-btn">Item Recieved</a>
+                            </div>
+                            <!-- elseif($order['status'] == "On Rent") -->
+                            @endif
+
                         </div><br><br> <!-- card closing -->
 
                         @if($bidding->order['paymentStatus'] == "Not Yet Paid")
@@ -170,6 +182,9 @@
               })
             });
           });
+        },
+        onError: function (err) {
+            alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');
 </script>

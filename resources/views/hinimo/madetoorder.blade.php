@@ -108,6 +108,7 @@
 
                             <div class="col-md-8 mb-3">
                                 <input type="text" name="boutiqueID" value="{{$boutique['id']}}" hidden>
+                                <a href="{{url('boutique/'.$boutique['id'])}}" class="btn essence-btn">Cancel</a>
                                 <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit">
                             </div>
                         </form>

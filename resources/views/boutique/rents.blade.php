@@ -43,10 +43,10 @@
                   <td>{{$rent['rentID']}}</td>
                   <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
                   <td>{{$rent['created_at']->format('M d, Y')}}</td>
-                  @if($rent['paymentStatus'] == "Not Yet Paid")
+                  @if($rent->order['paymentStatus'] == "Not Yet Paid")
                     <td style="color: red">{{$rent['paymentStatus']}}</td>
                   @else
-                    <td style="color: #0315ff;">{{$rent['paymentStatus']}}</td>
+                    <td style="color: #0315ff;">{{$rent->order['paymentStatus']}}</td>
                   @endif
                   @if($rent['status'] == "Pending")
                     <td><span class="label label-warning">{{$rent['status']}}</span></td>

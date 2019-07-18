@@ -42,7 +42,7 @@
 
 @section('scripts')
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh9Zof4j3ivJSWjB_YEnAvDsCjwr8h978&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuwlagqyrOGUF9IUqAI6d9f2MHDMVhddI&libraries=places&callback=initMap" async defer></script>
 
 <script type="text/javascript">
 
@@ -79,59 +79,62 @@ var map, infoWindow;
 //   }
 // }
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-  infoWindow.setPosition(pos);
-  infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-                        'Error: Your browser doesn\'t support geolocation.');
-  infoWindow.open(map);
+// function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+//   infoWindow.setPosition(pos);
+//   infoWindow.setContent(browserHasGeolocation ?
+//                         'Error: The Geolocation service failed.' :
+//                         'Error: Your browser doesn\'t support geolocation.');
+//   infoWindow.open(map);
 
   
-  var marker;
-  function placeMarker(location) {
-    if ( marker ) {
-      marker.setPosition(location);
-    } else {
-      marker = new google.maps.Marker({
-        position: location,
-        map: map
-      });
-    }
-  }
-  google.maps.event.addListener(map, 'click', function(event) {
-    placeMarker(event.latLng);
-    //input x ang long y ang lat
-    console.log(event.latLng.lng());
-    console.log(event.latLng.lat());
-  });
-}
+//   var marker;
+//   function placeMarker(location) {
+//     if ( marker ) {
+//       marker.setPosition(location);
+//     } else {
+//       marker = new google.maps.Marker({
+//         position: location,
+//         map: map
+//       });
+//     }
+//   }
+//   google.maps.event.addListener(map, 'click', function(event) {
+//     placeMarker(event.latLng);
+//     //input x ang long y ang lat
+//     console.log(event.latLng.lng());
+//     console.log(event.latLng.lat());
+//   });
+// }
 
 
  // Initialize and add the map
 function initMap() {
   // // The location of Uluru
-  // var uluru = {lat: -25.344, lng: 131.036};
+  var myLatLng = {lat: 40.397, lng: 180.644};
   // The map, centered at Uluru
-  var map = new google.maps.Map(
-      document.getElementById('map'), {
-        zoom: 1,
-        center: {lat: 40.397, lng: 180.644}
+  var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 5,
+        center: myLatLng
       });
+  
   // The marker, positioned at Uluru
-  // var marker = new google.maps.Marker({position: uluru, map: map});
+  var marker = new google.maps.Marker({
+    position: myLatLng, 
+    map: map
+  });
 
-   google.maps.event.addDomListener(window, 'load', initialize);
-    function initAutocomplete() {
-        var input = document.getElementById('autocomplete_search');
-        var autocomplete = new google.maps.places.Autocomplete(input);
+   // google.maps.event.addDomListener(window, 'load', initialize);
+   //  function initAutocomplete() {
+   //      var input = document.getElementById('autocomplete_search');
+   //      var autocomplete = new google.maps.places.Autocomplete(input);
         
-        autocomplete.addListener('place_changed', function () {
-        var place = autocomplete.getPlace();
-        // place variable will have all the information you are looking for.
-        $('#lat').val(place.geometry['location'].lat());
-        $('#long').val(place.geometry['location'].lng());
-      });
-    }
+   //      autocomplete.addListener('place_changed', function () {
+   //      var place = autocomplete.getPlace();
+   //      // place variable will have all the information you are looking for.
+   //      $('#lat').val(place.geometry['location'].lat());
+   //      $('#long').val(place.geometry['location'].lng());
+   //    });
+   //  }
 }
 
    

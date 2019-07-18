@@ -47,7 +47,7 @@ class CustomerController extends Controller
             if(Auth()->user()->roles == "customer") {
                 $page_title = "Shop";
                 $userID = Auth()->user()->id;
-                $products = Product::where('productStatus', 'Available')->get();
+                $products = Product::all();
                 $productsCount = $products->count();
                 $categories = Category::all();
                 $boutiques = Boutique::all();
@@ -768,8 +768,10 @@ class CustomerController extends Controller
 
         $bid = Bid::where('id', $bidID)->first();
         $mto = null;
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
 
-        return view('hinimo/inputAddress', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bid', 'mto'));
+        return view('hinimo/inputAddress', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bid', 'mto', 'percentage'));
     }
 
     public function makeOrderforBidding(Request $request)
@@ -780,7 +782,8 @@ class CustomerController extends Controller
 
         // dd($bidding);
         $bidding->update([
-            'bidID' => $request->input('bidID')
+            'bidID' => $request->input('bidID'),
+            'status' => "Closed"
         ]);
 
         $order = Order::create([
@@ -792,7 +795,11 @@ class CustomerController extends Controller
             'total' => $request->input('total'),
             'deliveryAddress' => $request->input('deliveryAddress'),
             'status' => "In-Progress",
-            'paymentStatus' => "Not Yet Paid"
+            'paymentStatus' => "Not Yet Paid",
+            'billingName' => $request->input('billingName'),
+            'phoneNumber' => $request->input('phoneNumber'),
+            'boutiqueShare' => $request->input('boutiqueShare'),
+            'adminShare' => $request->input('adminShare')
         ]);
 
         $bidding->update([
@@ -891,7 +898,20 @@ class CustomerController extends Controller
                 }elseif($notification->type == 'App\Notifications\NotifyForPickup'){
                     $notification->markAsRead();
 
-                    return redirect('/view-order/'.$notification->data['orderID']);
+                    $order = Order::where('id', $notification->data['orderID'])->first();
+
+                    if($order['mtoID'] != null){
+                        return redirect('/view-mto/'.$order->mto['id']);
+
+                    }elseif($order['cartID'] != null){
+                        return redirect('/view-order/'.$order['id']);
+
+                    }elseif($order['rentID'] != null){
+                        return redirect('/view-rent/'.$order->rent['rentID']);
+
+                    }elseif($order['biddingID'] != null){
+                        return redirect('/view-bidding-order/'.$order->bidding['id']);
+                    }
 
                 }
             }
@@ -1185,7 +1205,7 @@ class CustomerController extends Controller
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         
-        return view('hinimo/inputAddress', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage'));
+        return view('hinimo/inputAddress', compact('user', 'cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage'));
 
     }
 
@@ -1212,7 +1232,8 @@ class CustomerController extends Controller
         ]);
 
         $mto->update([
-            'orderID' => $order['id']
+            'orderID' => $order['id'],
+            'price' => $order['subtotal']
         ]);
 
         // $boutique = Boutique::where('id', $mto->boutique['id'])->first();
@@ -1254,8 +1275,8 @@ class CustomerController extends Controller
         elseif($order['rentID'] != null){
             return redirect('/view-rent/'.$order->rent['rentID']);
         }
-        elseif($order['mtoID'] != null){
-            return redirect('/view-mto/'.$order->mto['id']);
+        elseif($order['biddingID'] != null){
+            return redirect('/view-bidding-order/'.$order->bidding['id']);
         }
         
     }
@@ -1426,6 +1447,20 @@ class CustomerController extends Controller
         
 
         return redirect('/'.$boutique['id'].'/mixnmatch');
+    }
+
+    public function editProfile(Request $request)
+    {
+        $userID = Auth()->user()->id;
+
+        $user = User::where('id', $userID)->update([
+            'fname' => ucwords($request->input('fname')),
+            'lname' => ucwords($request->input('lname')),
+            'username' => $request->input('username'),
+            'email' => $request->input('email'),
+        ]);
+
+        return redirect('user-account');
     }
 
 

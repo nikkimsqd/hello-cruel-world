@@ -12,6 +12,14 @@
   </div>
   @endif
 
+  @if($boutique['openingHours'] == null)
+  <div class="callout callout-warning">
+    <h4>Ooops!</h4>
+    <p>Looks like you haven't activated your account yet. <a href="{{url('reqToActivateAccount')}}">Activate here.</a></p>
+  </div>
+  @endif
+
+
   <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
@@ -99,6 +107,7 @@
                   <th></th>
                 </tr>
                 </thead>
+                @if(count($orders) > 0)
                 @foreach($orders as $order)
                 @if(!empty($order['status']))
                 <tr>
@@ -134,12 +143,13 @@
                   @endif
                   <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>
-                @else
-                <tr>
-                  <td colspan="5"><i>You have no rent requests...</i></td>
-                </tr>
                 @endif
                 @endforeach
+                @else
+                <tr>
+                  <td colspan="5" style="color: blue"><i>You have no orders...</i></td>
+                </tr>
+                @endif
               </table>
             </div>
           </div>
@@ -176,6 +186,7 @@
               <th>Status</th>
               <th></th>
             </tr>
+            @if(count($rents) > 0)
             @foreach($rents as $rent)
             <tr>
               <td>{{$rent['rentID']}}</td>
@@ -185,13 +196,18 @@
               <td><span class="label label-warning">Pending</span></td>
             </tr>
             @endforeach
+            @else
+            <tr>
+              <td colspan="5" style="color: blue"><i>You have no rent orders...</i></td>
+            </tr>
+            @endif
           </table>
         </div>
       </div>
     </div>
   </div> <!-- table row -->
 
-  <div class="row" id="orders">
+  <div class="row" id="mtos">
     <div class="col-md-12">
       <div class="box">
 
@@ -223,8 +239,8 @@
                   <th></th>
                 </tr>
                 </thead>
+                @if(count($mtos) > 0)
                 @foreach($mtos as $mto)
-                @if(!empty($mto))
                 <tr>
                   <td>{{$mto->order['id']}}</td>
                   <td>{{$order->cart->owner['fname'].' '.$order->cart->owner['lname']}}</td>
@@ -258,12 +274,12 @@
                   @endif
                   <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>
+                @endforeach
                 @else
                 <tr>
-                  <td colspan="5"><i>You have no new made-to-orders...</i></td>
+                  <td colspan="5" style="color: blue"><i>You have no made-to-orders...</i></td>
                 </tr>
                 @endif
-                @endforeach
               </table>
             </div>
           </div>

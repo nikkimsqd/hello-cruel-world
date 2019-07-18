@@ -177,7 +177,7 @@
                                         @if($fabric['id'] == $fabricSuggestion->fabricID) 
                                             <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
                                             <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>₱{{ucfirst($fabricSuggestion->price)}}</b></h5>
+                                            <h5 class="normal">Price: <b>₱{{$fabricSuggestion->price}}</b></h5>
                                         @endif
                                         @endforeach
                                     </div>
@@ -289,6 +289,9 @@
               })
             });
           });
+        },
+        onError: function (err) {
+            alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');</script>
 

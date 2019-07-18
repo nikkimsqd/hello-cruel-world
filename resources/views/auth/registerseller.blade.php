@@ -168,20 +168,48 @@ Hinimo | Register Boutique
 
 @section('scripts')
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBadl68dsbAsEPCJ4dKuYroBBZ70wgXFE&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuwlagqyrOGUF9IUqAI6d9f2MHDMVhddI&callback=initMap" async defer></script>
 
 <script type="text/javascript">
 var map, infoWindow;
+
+// function initMap() {
+//   var myLatLng = {lat: -25.363, lng: 131.044};
+
+//   var map = new google.maps.Map(document.getElementById('map'), {
+//     zoom: 4,
+//     center: myLatLng
+//   });
+
+//   var marker = new google.maps.Marker({
+//     position: myLatLng,
+//     map: map,
+//     title: 'Hello World!'
+//   });
+// }
+
+
 function initMap() {
+  var myLatLng = {lat: -25.363, lng: 131.044};
+
    map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.397, lng: 180.644},
-    zoom: 1,
-    minZoom: 1,
-    mapTypeId: 'roadmap'
+    center: myLatLng,
+    zoom: 14,
+    minZoom: 1
   });
 
-  infoWindow = new google.maps.InfoWindow;
 
+  var marker = new google.maps.Marker({
+    position: myLatLng,
+    map: map,
+    title: 'Hello World!'
+  });
+
+  marker.setMap(map);
+
+
+
+  infoWindow = new google.maps.InfoWindow;
 
  // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -204,32 +232,34 @@ function initMap() {
   }
 }
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-  infoWindow.setPosition(pos);
-  infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-                        'Error: Your browser doesn\'t support geolocation.');
-  infoWindow.open(map);
+
+
+// function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+//   infoWindow.setPosition(pos);
+//   infoWindow.setContent(browserHasGeolocation ?
+//                         'Error: The Geolocation service failed.' :
+//                         'Error: Your browser doesn\'t support geolocation.');
+//   infoWindow.open(map);
 
   
-  var marker;
-  function placeMarker(location) {
-    if ( marker ) {
-      marker.setPosition(location);
-    } else {
-      marker = new google.maps.Marker({
-        position: location,
-        map: map
-      });
-    }
-  }
-  google.maps.event.addListener(map, 'click', function(event) {
-    placeMarker(event.latLng);
-    //input x ang long y ang lat
-    console.log(event.latLng.lng());
-    console.log(event.latLng.lat());
-  });
-}
+//   var marker;
+//   function placeMarker(location) {
+//     if ( marker ) {
+//       marker.setPosition(location);
+//     } else {
+//       marker = new google.maps.Marker({
+//         position: location,
+//         map: map
+//       });
+//     }
+//   }
+//   google.maps.event.addListener(map, 'click', function(event) {
+//     placeMarker(event.latLng);
+//     //input x ang long y ang lat
+//     console.log(event.latLng.lng());
+//     console.log(event.latLng.lat());
+//   });
+// }
 
 </script>
 

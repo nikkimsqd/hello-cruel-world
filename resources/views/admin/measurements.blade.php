@@ -21,7 +21,7 @@
                 <label>Category of item</label><br>
                   <select name="gender" id="gender-select" class="input form-control" autofocus>
                     <option value=""></option>
-                    <option value="mens">Mens</option>
+                    <!-- <option value="mens">Mens</option> -->
                     <option value="womens">Womens</option>
                   </select><br>                
               </div>
@@ -82,7 +82,7 @@
           </div>
 
           <div class="col-md-6">
-            <div class="box-header with-border">
+            <!-- <div class="box-header with-border">
               <h3 class="box-title">Mens</h3>
             </div>
             @foreach ($categoryArray as $categoriesName => $cats)
@@ -96,7 +96,7 @@
                     </ul>
                 @endforeach
               @endif
-            @endforeach
+            @endforeach -->
           </div>
 
         </div>

@@ -245,14 +245,14 @@
     <li class="treeview etc">
       <a href="#">
         <i class="fa fa-edit"></i>
-        <span>Etc-name tempo</span>
+        <span>Tools</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
       </a>
       <ul class="treeview-menu">
         <li class="categories"><a href="{{url('categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li class="tags"><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <!-- <li class="tags"><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li> -->
         <li class="fabrics"><a href="{{url('fabrics')}}"><i class="fa fa-circle-o"></i> Available Fabrics</a></li>
       </ul>
     </li>

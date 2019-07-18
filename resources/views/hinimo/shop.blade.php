@@ -65,43 +65,7 @@
                             </div>
                         </div>
 
-                        <!-- ##### Single Widget ##### -->
-                        <!-- <div class="widget price mb-50">
-                            <h6 class="widget-title mb-30">Filter by</h6>
-                            <p class="widget-title2 mb-30">Price</p>
-
-                            <div class="widget-desc">
-                                <div class="slider-range">
-                                    <div data-min="49" data-max="360" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="49" data-value-max="360" data-label-result="Range:">
-                                        <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                        <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                    </div>
-                                    <div class="range-price">Range: $49.00 - $360.00</div>
-                                </div>
-                            </div>
-                        </div> -->
-
-                        <!-- ##### Single Widget ##### -->
-                       <!--  <div class="widget color mb-50">
-                            <p class="widget-title2 mb-30">Color</p>
-                            <div class="widget-desc">
-                                <ul class="d-flex">
-                                    <li><a href="#" class="color1"></a></li>
-                                    <li><a href="#" class="color2"></a></li>
-                                    <li><a href="#" class="color3"></a></li>
-                                    <li><a href="#" class="color4"></a></li>
-                                    <li><a href="#" class="color5"></a></li>
-                                    <li><a href="#" class="color6"></a></li>
-                                    <li><a href="#" class="color7"></a></li>
-                                    <li><a href="#" class="color8"></a></li>
-                                    <li><a href="#" class="color9"></a></li>
-                                    <li><a href="#" class="color10"></a></li>
-                                </ul>
-                            </div>
-                        </div> -->
-
-                        <!-- ##### Single Widget ##### -->
+                       
                         <div class="widget brands mb-50">
                             <p class="widget-title2 mb-30">Boutiques</p>
                             <div class="widget-desc">
@@ -117,7 +81,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-8 col-lg-9"> <!-- Products show area -->
+                <div class="col-12 col-md-8 col-lg-9"> 
                     <div class="shop_grid_product_area">
                         <div class="row">
                             <div class="col-12">
@@ -133,8 +97,8 @@
                                             <select name="select" id="sortByselect">
                                                 <option value="highest_rated">Highest Rated</option>
                                                 <option value="newest">Newest</option>
-                                                <option value="value">Price: $10,000 - $5,000</option>
-                                                <option value="value">Price: $1,000 - $5,000</option>
+                                                <option value="value">Price: ₱10,000 - ₱5,000</option>
+                                                <option value="value">Price: ₱1,000 - ₱5,000</option>
                                                 <option value="value">Price: below $1,000</option>
                                             </select>
                                             <input type="submit" class="d-none" value="">
@@ -148,6 +112,7 @@
 
                         <div class="products_list row"> <!-- Products Display -->
                         	@foreach($products as $product)
+                            @if($product['productStatus'] == "Available")
 	                        <!-- Single Product -->
                             <div class="col-12 col-sm-6 col-lg-4">
 	                        <div class="single-product-wrapper">
@@ -170,7 +135,7 @@
                                     </div>
                                 @elseif($product['rpID'] != null && $product['price'] != null)
                                     <div class="product-badge new-badge">
-                                        <span>Rentable</span>
+                                        <span>RENTABLE</span>
                                     </div>
                                 @elseif($product['rpID'] != null && $product['price'] == null)
                                     <div class="product-badge new-badge">
@@ -193,9 +158,9 @@
 	                                    <h6>{{ $product['productName'] }}</h6>
 	                                </a>
                                     @if($product['price'] != null)
-	                                <p class="product-price">${{ number_format($product['price']) }}</p>
+	                                <p class="product-price">₱{{ number_format($product['price']) }}</p>
                                     @else
-                                    <p class="product-price">${{ number_format($product->rentDetails['price']) }}</p>
+                                    <p class="product-price">₱{{ number_format($product->rentDetails['price']) }}</p>
                                     @endif
 
 	                                <!-- Hover Content -->
@@ -211,12 +176,13 @@
 	                            </div>
                             </div>
 	                        </div>
+                            @endif
                             @endforeach
 
                         </div>
                     </div>
                     <!-- Pagination -->
-                    <nav aria-label="navigation">
+                    <!-- <nav aria-label="navigation">
                         <ul class="pagination mt-50 mb-70">
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-left"></i></a></li>
                             <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -226,18 +192,17 @@
                             <li class="page-item"><a class="page-link" href="#">21</a></li>
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
-                    </nav>
-                    <div class="products_list row"> <!-- Products Display -->
-                            @foreach($notAvailables as $notAvailable)
-                            <!-- Single Product -->
+                    </nav> -->
+                    <div class="products_list row"> 
+                            @foreach($products as $product)
+                            @if($product['productStatus'] == "Not Available")
                             <div class="col-12 col-sm-6 col-lg-4">
                             <div class="single-product-wrapper">
-                                <!-- Product Image -->
                                 <?php 
                                     $counter = 1;
                                 ?>
                             
-                            @foreach($notAvailable->productFile as $image)
+                            @foreach($product->productFile as $image)
                                 
                                 <div class="product-img">
                                 @if($counter == 1)    
@@ -248,36 +213,29 @@
                                     <div class="product-badge offer-badge">
                                         <span>NOT AVAILABLE</span>
                                     </div>
-                                    <!-- Favourite -->
-                                    <!-- <div class="product-favourite">
-                                        <a href="#" class="favme fa fa-heart"></a>
-                                    </div> -->
                                 </div>
                                 
                                 <?php $counter++; ?>
                                 @endforeach
 
-                                <!-- Product Description -->
                                 <div class="product-description">
-                                    <span>{{ $notAvailable->owner['boutiqueName'] }}</span>
+                                    <span>{{ $product->owner['boutiqueName'] }}</span>
                                     <a href="#">
-                                        <h6>{{ $notAvailable['productName'] }}</h6>
+                                        <h6>{{ $product['productName'] }}</h6>
                                     </a>
-                                    <p class="product-price">${{ number_format($notAvailable['productPrice']) }}</p>
+                                    <p class="product-price">₱{{ number_format($product['price']) }}</p>
 
-                                    <!-- Hover Content -->
                                     <div class="hover-content">
-                                        <!-- Add to Cart -->
                                         <div class="add-to-cart-btn">
-                                            <!-- <input type="text" name="productID" value="{{$notAvailable['id']}}" hidden> -->
-                                            @if($notAvailable['productStatus'] == "Available")
-                                            <a href="single-product-details/{{$notAvailable['id']}}" class="btn essence-btn">View Product</a>
+                                            @if($product['productStatus'] == "Available")
+                                            <a href="single-product-details/{{$product['id']}}" class="btn essence-btn">View Product</a>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             </div>
+                            @endif
                             @endforeach
 
                         </div>

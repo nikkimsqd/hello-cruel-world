@@ -105,6 +105,7 @@
       </div> <!-- modal body -->
 
       <div class="modal-footer">
+        <a href="" class="btn btn-default">Cancel</a>
         <input type="submit" class="btn btn-primary" value="Submit Bid" id="">
         <!-- <input type="" class="btn essence-btn" data-dismiss="modal" value="Cancel"> -->
         </form>

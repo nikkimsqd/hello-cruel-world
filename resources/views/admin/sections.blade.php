@@ -236,7 +236,7 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li class="categories"><a href="admin-categories"><i class="fa fa-circle-o"></i> Categories</a></li>
+        <li class="categories"><a href="{{url('admin-categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
         <li class="tags"><a href="{{url('admin-tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
         <li class="measurements"><a href="{{url('admin-measurements')}}"><i class="fa fa-circle-o"></i> Measurements</a></li>
       </ul>

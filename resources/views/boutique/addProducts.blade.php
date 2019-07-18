@@ -23,28 +23,28 @@
   	<div class="col-md-6">
 	    <div class="form-group">
 	     <label>Product Name</label>
-			 <input type="text" name="productName" class="input form-control" placeholder="Enter product name">
+			 <input type="text" name="productName" class="input form-control" placeholder="Enter product name" required>
 	    </div>
 
 	    <div class="form-group">
 	      <label>Product Description</label>
-	      <textarea name="productDesc" rows="3" cols="50" class="input form-control"></textarea>
+	      <textarea name="productDesc" rows="3" cols="50" class="input form-control" required></textarea>
 	    </div>
 
       <div class="form-group">
         <label>Add Image:</label>
-        <input type="file" name="file[]" multiple>
+        <input type="file" name="file[]" multiple required>
       </div>
 
       <div class="form-group">
         <label>Product Category</label>
-        <select class="form-control select2" name="gender" id="gender-select">
+        <select class="form-control select2" name="gender" id="gender-select" required>
           <option disabled selected="selected"> </option>
           <option value="Womens">Womens</option>
-          <option value="Mens">Mens</option>
+          <!-- <option value="Mens">Mens</option> -->
         </select>
         <br>
-        <select class="form-control select2" name="category" id="category-select" disabled>
+        <select class="form-control select2" name="category" id="category-select" disabled required>
           <option disabled selected="selected"></option>
           <!-- @foreach($categories as $category)
           <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
@@ -75,7 +75,7 @@
 
       <div class="form-group" id="forRentPrice" hidden>
         <label>Rent Price</label> <br>
-        <input type="number" name="rentPrice" class="input form-control"><br>
+        <input type="number" name="rentPrice" class="input form-control" autofocus><br>
 
         <label>Deposit Amount</label>
         <input type="number" name="depositAmount" class="input form-control"><br>

@@ -41,7 +41,7 @@
                                         <label>Category of item  <span>*</span></label>
                                         <select class="mb-3" name="gender" id="gender-select">
                                             <option disabled selected>Choose gender</option>
-                                            <option value="mens">Mens</option>
+                                            <!-- <option value="mens">Mens</option> -->
                                             <option value="womens">Womens</option>
                                         </select><br><br><br>
 
@@ -82,12 +82,11 @@
                                     <div class="col-md-12 mb-3">
                                         <label>Your Maximum Price</label>
                                         <input name="maxPriceLimit" type="number" class="form-control" required>
-                                    </div>
+                                    </div><br>
 
 
-                                    <button type="submit" class="btn btn-primary">
-                                        Start Bidding
-                                    </button>
+                                    <a href="{{url('biddings')}}" class="btn essence-btn">Cancel</a>
+                                    <input type="submit" name="btn_submit" class="btn essence-btn" value="Start Bidding">
                                     <!-- <a href="{{url('biddings')}}" class="btn btn-primary">Submit dummy</a> -->
                                         
                                 </form>

@@ -217,7 +217,7 @@ class AdminController extends Controller
 	{
     	$id = Auth()->user()->id;
 
-    	dd("dfdfdf");
+    	// dd("dfdfdf");
 		$category = Category::create([
 			'categoryName' => $request->input('categoryName'),
 			'gender' => $request->input('gender')

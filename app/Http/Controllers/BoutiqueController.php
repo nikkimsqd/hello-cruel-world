@@ -40,6 +40,7 @@ use App\Notifications\RentUpdateForCustomer;
 use App\Notifications\BoutiqueDeclinesMto;
 use App\Notifications\NotifyForAlterations;
 use App\Notifications\NewBid;
+use App\Notifications\NotifyCourierForPickup;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -133,7 +134,7 @@ class BoutiqueController extends Controller
 					}elseif($order['biddingID'] != null) {
 
 						$bidding = Bidding::where('id', $order['biddingID'])->first();
-						return redirect('');
+						return redirect('orders/'.$bidding->order['id']);
 
 					}
 					$mto = Mto::where('id', $notif->data['orderID'])->first();
@@ -147,6 +148,14 @@ class BoutiqueController extends Controller
 
 					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/orders/'.$order['id']);
+
+				}elseif ($notification->type == 'App\Notifications\CustomerAcceptsBid') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$bidding = Bidding::where('id', $notif->data['biddingID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/boutique-bidding/'.$bidding['id']);
 
 				}
 			}
@@ -179,7 +188,7 @@ class BoutiqueController extends Controller
 
 			$notifications = $user->notifications;
 			$notificationsCount = $user->unreadNotifications->count();
-			// dd($orders);
+			// dd($rand = substr(md5(microtime()),rand(0,26),5));
 
 			// foreach($notifications as $notification) {
 			// 	foreach ($notification['data'] as $value) {
@@ -645,7 +654,12 @@ class BoutiqueController extends Controller
         	'status' => "Completed"
         ]);
 
-        return redirect('/rents/'.$rent['$rentID']);
+        Product::where('id', $rent['productID'])->update([
+        	'productStatus' => "Available"
+        ]);
+
+
+        return redirect('/orders/'.$rent['orderID']);
 	}
 
 	public function getwomens()
@@ -837,6 +851,10 @@ class BoutiqueController extends Controller
     	Mto::where('id', $mtoID)->update([
     		'fabricSuggestion' => $fabSuggestion
     	]);
+
+    	$customer = $mto->customer;
+        $customer->notify(new MtoUpdateForCustomer($mtoID, $mto->boutique['boutiqueName']));
+
     	return redirect('/made-to-orders/'.$mtoID);
     }
 
@@ -950,6 +968,9 @@ class BoutiqueController extends Controller
     		'status' => 'For Pickup',
     		'deliverySchedule' => $deliverySchedule
     	]);
+
+    	$courier = User::where('roles', 'courier')->first();
+    	$courier->notify(new NotifyCourierForPickup($order));
 
     	return redirect('/orders/'.$order['id']);
     }

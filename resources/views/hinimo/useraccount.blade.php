@@ -34,12 +34,12 @@
                                 </div>
 
                                 <div class="col-md-2">
-                                    <a href=""><u>Edit Details</u></a>
+                                    <a href="" data-toggle="modal" data-target="#editProfile"><u>Edit Details</u></a>
                                 </div>
                             </div>
                             <br>
 
-                            <form action="" method="">
+                            <!-- <form action="" method=""> -->
                                 <div class="row">
                                     <div class="col-md-9 mb-3">
                                         <label for="first_name">Name</label>
@@ -59,7 +59,7 @@
                                     </div>
                                 </div>
                                 <!-- <input type="submit" name="btn_submit" value=""> -->
-                            </form>
+                            <!-- </form> -->
                         </div>
 
                         <div class="col-md-3">
@@ -81,7 +81,7 @@
         </div> <!-- first row -->
 
         <br><br>
-        <div class="row" id="addresses">
+        <!-- <div class="row" id="addresses">
             <div class="col-12 col-md-11">
                 <div class="mt-50 clearfix">
                     <div class="row">
@@ -100,7 +100,7 @@
                         <hr>
                         <table class="">
                             <tr>
-                                <td width="15%">Name</td>
+                                <td width="15%"><label>Name</label></td>
                                 <td width="70%"><b>{{$address['contactName']}}</b><br></td>
                                 <td width="20%" rowspan="2" width="20%" align="right">
                                     <br>
@@ -119,11 +119,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td width="15%">Phone</td>
+                                <td width="15%"><label>Phone</label></td>
                                 <td width="70%">{{$address['phoneNumber']}}<br></td>
                             </tr>
                             <tr>
-                                <td width="15%">Address</td>
+                                <td width="15%"><label>Address</label></td>
                                 <td width="70%">
                                     {{$address['completeAddress']}}<br>
                                     {{$address->brgyName['brgyDesc'].', '.$address->cityName['citymunDesc'].', '.$address->provName['provDesc']}}
@@ -138,11 +138,45 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 <!-- ##### Checkout Area End ##### -->
 
+
+<!-- MODALSSSSS ----------------------------- -->
+<div class="modal fade" id="editProfile" role="dialog">
+    <div class="modal-dialog modal-md">
+      <!-- Modal content-->
+      <div class="modal-content checkout_details_area">
+          <div class="modal-header">
+            <h3 class="modal-title"><b>Edit Profile</b></h3>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <div class="modal-body">
+            <form action="{{url('editProfile')}}" method="post">
+                {{csrf_field()}}
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" name="fname" value="{{$user['fname']}}"><br>
+
+            <label for="first_name">Last Name</label>
+            <input type="text" class="form-control" name="lname" value="{{$user['lname']}}"><br>
+
+            <label for="first_name">Username</label>
+            <input type="text" class="form-control" name="username" value="{{$user['username']}}"><br>
+
+            <label for="first_name">Email</label>
+            <input type="text" class="form-control" name="email" value="{{$user['email']}}"><br>
+          </div>
+
+          <div class="modal-footer">
+            <input type="submit" class="btn essence-btn" value="Update">
+            </form>
+          </div>
+      </div> 
+    </div>
+</div>
 
 
 <div class="modal fade" id="addAddress" role="dialog">
@@ -282,10 +316,11 @@
 </div> <!-- page -->
 
 <style type="text/css">
-    .modal-body{max-height: 300px; overflow-y: scroll;}
+    /*.modal-body{max-height: 300px; overflow-y: scroll;}*/
     .nice-select .list{width: inherit; max-height: 250px; overflow-y: scroll;}
     span{color: #0315ff;}
     a{color: #000;}
+    label{font-size: 12px; text-transform: uppercase; font-weight: 600;}
 </style>
 
 @endsection

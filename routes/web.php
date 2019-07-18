@@ -144,6 +144,7 @@ Route::get('/boutique-bidding/{biddingID}', 'BoutiqueController@viewBoutiqueBidd
 
 
 //CUSTOMER--------------------------------------------------------------------------------------------
+
 Route::get('/get-started/welcome', 'CustomerController@welcome');
 Route::get('/get-started', 'CustomerController@getStarted');
 Route::post('/user-profiling', 'CustomerController@profiling');
@@ -155,10 +156,14 @@ Route::get('/getProducts/{condition}', 'CustomerController@getProducts');
 
 Route::get('/getMeasurements/{categoryID}', 'CustomerController@getMeasurements');
 
+//PROFILE
+Route::get('/user-account', 'CustomerController@useraccount');
+Route::post('/editProfile', 'CustomerController@editProfile');
+
 
 //REQUEST FOR RENT
 Route::post('/requestToRent', 'CustomerController@requestToRent');
-// Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
+Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
 
 //ORDER
 Route::post('/placeOrder', 'CustomerController@placeOrder');
@@ -218,7 +223,6 @@ Route::get('/cancelMto/{mtoID}', 'CustomerController@cancelMto');
 
 
 //TRANSACTIONS
-Route::get('/user-account', 'CustomerController@useraccount');
 Route::get('/user-transactions', 'CustomerController@usertransactions');
 Route::get('/view-order/{orderID}', 'CustomerController@viewOrder');
 Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');

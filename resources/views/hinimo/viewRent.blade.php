@@ -25,18 +25,27 @@
                     <div class="regular-page-text">
 
                         @if($rent->order['status'] == "For Alterations")
-                             <div class="row">
-                                <div class="col-md-12">
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><h5>Your schedule for alterations will be on:</h5></td>
-                                        <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($rent->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($rent->order['alterationDateEnd']))}}</h5></td>
-                                    </tr>
-                                </table>
-                                    <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
-                                </div>
-                             </div>
-                             @endif
+                        <div class="row">
+                            <div class="col-md-12">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><h5>Your schedule for alterations will be on:</h5></td>
+                                    <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($rent->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($rent->order['alterationDateEnd']))}}</h5></td>
+                                </tr>
+                            </table>
+                                <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($rent->order['status'] == "On Rent")
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 style="color: red; text-align: center;">You are required to visit the boutique personally on returning the item and claiming your deposit.</h5><br>
+                            </div>
+                        </div>
+
+                        @endif
                              
                         @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
                         <div class="order-details-confirmation"> <!-- card opening -->
@@ -104,8 +113,8 @@
                                 <li><span>Date to be returned</span> <span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
                                 <li><span>Required Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
                                 <li><span>Penalty Amount</span> <span>₱{{$rent->product->rentDetails['penaltyAmount']}}</span></li>
+                                @if($rent->order['status'] == "Pending" && $rent->order['status'] == "In-Progress")
                                 <li><span>Status</span> <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
-                                <!-- if(rent order['status'] == "In-Progress") -->
                                     <li><span></span><span>Payment Info</span><span></span></li>
                                     <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
                                     <li><span>Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
@@ -118,7 +127,7 @@
                                             <span style="color: #0315ff;">{{$rent->order['paymentStatus']}}</span>
                                             @endif
                                         </li>
-                                <!-- endif -->
+                                @endif
                             </ul>
                         </div> <!-- card closing --> <br>
 

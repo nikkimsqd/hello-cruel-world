@@ -74,11 +74,10 @@ Hinimo | Register
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <!-- <div class="form-group row">
                                 <label for="gender" class="col-md-4 col-form-label text-md-right"><?php echo e(__('Gender')); ?></label>
 
                                 <div class="col-md-6">
-                                    <!-- <input id="gender" type="text" class="form-control<?php echo e($errors->has('gender') ? ' is-invalid' : ''); ?>" name="gender" value="<?php echo e(old('gender')); ?>" required autofocus> -->
                                     <select id="gender" class="form-control<?php echo e($errors->has('gender') ? ' is-invalid' : ''); ?>" name="gender" required autofocus>
                                         <option selected disabled></option>
                                         <option value="Female">Female</option>
@@ -91,7 +90,7 @@ Hinimo | Register
                                         </span>
                                     <?php endif; ?>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="form-group row">
                                 <label for="email" class="col-md-4 col-form-label text-md-right"><?php echo e(__('E-Mail Address')); ?></label>

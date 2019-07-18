@@ -59,7 +59,7 @@ class MtoUpdateForCustomer extends Notification
     public function toArray($notifiable)
     {
         return [
-            'text' => $this->boutique.' has set a price for your MTO.',
+            'text' => $this->boutique.' has an update for your MTO.',
             'mtoID' => $this->mtoID
         ];
     }
