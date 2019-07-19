@@ -26,27 +26,27 @@
               <h4>Product Description</h4>
               <p>{{ $product['productDesc'] }}</p>
 
-              @if($product['forSale'] === "true" && $product['forRent'] === "true")
+              @if($product['price'] != null && $product['rpID'] != null)
               <h4>Retail Price</h4>
-              <p>{{ $product['productPrice'] }}</p>
+              <p>₱{{ number_format($product['price']) }}</p>
 
               <h4>Rent Price</h4>
-              <p>{{ $product['rentPrice'] }}</p>
+              <p>₱{{ number_format($product->rentDetails['price']) }}</p>
               
-              @elseif($product['forRent'] === "true")
+              @elseif($product['rpID'] != null)
               <h4>Rent Price</h4>
-              <p>{{ $product['rentPrice'] }}</p>
+              <p>₱{{ number_format($product->rentDetails['price']) }}</p>
 
-              @elseif($product['forSale'] === "true")
+              @elseif($product['price'] != null)
               <h4>Retail Price</h4>
-              <p>{{ $product['productPrice'] }}</p>
+              <p>₱{{ number_format($product['price']) }}</p>
 
               @endif
 
 
 
               <h4>Product Category</h4>
-              <p>{{ $product->getCategory['gender'].', '.$product->getCategory['categoryName']}}<p>
+              <p>{{ $product->getCategory['categoryName']}}<p>
 
               <h4>Product Status</h4>
               <p>{{ $product['productStatus'] }}</p>
@@ -62,10 +62,10 @@
               <p>You have not yet set the availability for this item.</p>
               @endif
 
-              <h4>Tags:</h4>
+              <!-- <h4>Tags:</h4>
               @foreach($tags as $tag)
               <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['name']}}</h2>
-              @endforeach
+              @endforeach -->
 
             </div>
 

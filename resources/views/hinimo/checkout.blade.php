@@ -87,14 +87,14 @@
                         @foreach($cart->items as $item)
                         @if($item->product->owner == $boutique)
                         <ul class="order-details-form mb-4">
-                            <li><span>{{$item->product['productName']}}</span> <span>₱{{$item->product['price']}}</span></li>
+                            <li><span>{{$item->product['productName']}}</span> <span>₱{{number_format($item->product['price'])}}</span></li>
                             <?php 
                                 $boutiqueSubtotal += $item->product['price'];
                                 $merchSubtotal += $item->product['price'];
                             ?>
                         @endif
                         @endforeach
-                            <li style="background-color: aliceblue; border-bottom: 5px solid #ebebeb;"><span>Delivery Fee</span> <span>₱{{$deliveryfee}}</span></li><br><br>
+                            <li style="background-color: aliceblue; border-bottom: 5px solid #ebebeb;"><span>Delivery Fee</span> <span>₱{{number_format($deliveryfee)}}</span></li><br><br>
                             <?php 
                                 $deliveryfeeSubtotal += $deliveryfee;
                                 $total = $boutiqueSubtotal + $deliveryfee;
@@ -112,9 +112,9 @@
                     @endforeach
 
                         <!-- <hr> -->
-                        <li><span>Merchandise Subtotal</span> <span>₱{{$merchSubtotal}}</span></li>
-                        <li><span>Delivery Fee Subtotal</span> <span>₱{{$deliveryfeeSubtotal}}</span></li>
-                        <li><span>Total</span> <span style="color: red;">₱{{$orderTotal}}</span></li>
+                        <li><span>Merchandise Subtotal</span> <span>₱{{number_format($merchSubtotal)}}</span></li>
+                        <li><span>Delivery Fee Subtotal</span> <span>₱{{number_format($deliveryfeeSubtotal)}}</span></li>
+                        <li><span>Total</span> <span style="color: red;">₱{{number_format($orderTotal)}}</span></li>
                         </ul><br>
 
                         <input type="text" name="merchSubtotal" value="{{$merchSubtotal}}" hidden>

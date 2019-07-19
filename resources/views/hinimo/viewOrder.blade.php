@@ -83,6 +83,7 @@
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="orderTransactionID" value="{{$order['id']}}" hidden>
+                            <input type="text" id="total" value="{{$order['total']}}" hidden>
                         </div>
                         @endif
 
@@ -107,6 +108,7 @@
 <script>
     
     var orderTransactionID = document.getElementById('orderTransactionID').value;
+    var total = document.getElementById('total').value;
 
     paypal.Buttons({
         createOrder: function(data, actions) {
@@ -114,7 +116,7 @@
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: '0.01'
+                value: total
               }
             }]
           });

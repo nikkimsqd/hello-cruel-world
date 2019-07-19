@@ -54,7 +54,8 @@
 
                                     <!-- <hr> -->
                                     <div class="col-md-12 mb-3">
-                                        <label>Measurements (inches)</label>
+                                        <label>Measurements (inches)</label> 
+                                        <span><a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">See guide on how to measure youself here.</a></span>
                                         <div class="mb-3" id="measurement-input">
                                         </div>
                                     </div>
@@ -128,7 +129,7 @@ label{
   color: #fff;
 }
 
-.datepicker-dropdown{top: 703px !important; left: 281.5px; z-index: 11; display: block;}
+.datepicker-dropdown{top: 935px !important; left: 281.5px; z-index: 11; display: block;}
 
 </style>
 @endsection

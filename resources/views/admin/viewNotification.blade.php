@@ -30,7 +30,7 @@
             <h4>{{ $boutique['boutiqueName']}}</h4>
 
             <input type="text" name="categoryRequest" value="{{ $notif['id'] }}" hidden>
-            <input type="text" name="notificationID" value="{{ $notification['id'] }}" >
+            <input type="text" name="notificationID" value="{{ $notification['id'] }}" hidden>
            
             </div>
           </div>
@@ -63,8 +63,10 @@
         <h4 class="modal-title">Provide a reason</h4>
       </div>
       <div class="modal-body">
-        <form action="{{url('')}}">
-        <textarea class="modal-body" rows="3" cols="85" placeholder="Provide a reason here..." required></textarea>
+        <form action="{{url('declineCategory')}}" method="post">
+          {{csrf_field()}}
+          <textarea name="reason" class="modal-body" rows="3" cols="65" placeholder="Provide a reason here..." required></textarea>
+          <input type="text" name="catreqID" value="{{ $notif['id'] }}" hidden>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>

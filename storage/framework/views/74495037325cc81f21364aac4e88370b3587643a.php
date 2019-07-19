@@ -24,7 +24,7 @@
   <?php else: ?>
   <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-    <div class=" col-md-4" style="padding-right: 20px; padding-left: 20px;">
+    <div class=" col-12 col-sm-6 col-lg-4" style="padding-right: 20px; padding-left: 20px;"> <!-- change to col-lg-3 if dako ra -->
       <div class="box " style="padding: 10px;">
         <div class="box-body">
           <?php $counter = 1; ?>

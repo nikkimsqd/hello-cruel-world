@@ -86,7 +86,7 @@
 					    @endif
 					    <div class="form-group" id="forSalePrice" style="{{$var}}">
 					      <label>Retail Price</label>
-						  <input type="number" name="productPrice" class="input form-control" value="{{ $product['price'] }}" required>
+						  <input type="number" name="productPrice" class="input form-control" value="{{ $product['price'] }}">
 					    </div>
 
 				    	<?php $var = 'display:none;'; ?>
@@ -96,7 +96,7 @@
 
 				 	    <div class="form-group" id="forRentPrice" style="{{$var}}">
 					        <label>Rent Price</label>
-					        <input type="number" name="rentPrice" value="{{$product->rentDetails['price']}}" class="input form-control" required><br>
+					        <input type="number" name="rentPrice" value="{{$product->rentDetails['price']}}" class="input form-control"><br>
 
 					        <label>Deposit Amount</label>
 					        <input type="number" name="depositAmount" class="input form-control" value="{{$product->rentDetails['depositAmount']}}"><br>
@@ -114,27 +114,23 @@
 
                         	<?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
                         	<!-- PLAN: TO ADD LIST FOR THE AVAILABLE PRODUCTS. DILI LANG SILA ISUD SA MGA SELECTS BELOW -->
-					        <label>Select Region:</label>
+					        <!-- <label>Select Region:</label>
 					        <select name="region" class="form-control" id="region-select">
 					          <option selected="selected"> </option>
 					          @foreach($regions as $region)
 					          	<option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
 					          @endforeach
-					        </select><br>
+					        </select><br> -->
 
-					        <label>Select Province:</label>
+					        <!-- <label>Select Province:</label>
 					        <select name="province" class="form-control" id="province-select" value="{{$product->rentDetails['price']}}">
-					        </select><br>
+					        </select><br> -->
 
 					        <label id="city-id" hidden>Select Cities:</label>
 					        <div name="cities" id="city-select" style="column-count: 3">
-				        	@foreach($locs as $loc)
 					        	@foreach($cities as $city)
-                            	@if($city['citymunCode'] == $loc)
-					        	<input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunDesc']}}" id="{{$loc}}">{{$city['citymunDesc']}} <br>
-					        	@endif
+					        	<input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['id']}}"> {{$city['citymunDesc']}} <br>
                             	@endforeach
-				        	@endforeach
 
 					        </div><br>
 
@@ -159,8 +155,9 @@
 							<input type="file" name="file[]" multiple>
 					    </div>
 
-					    <label>Add Tags:</label>
-					    <div class="form-group tags">
+					    <!-- <label>Add Tags:</label> -->
+					    <!-- <div class="form-group tags">
+					    	@if(count($prodtags) > 0)
 					       @foreach($prodtags as $prodtag)
 					       @if($prodtag['productID'] == $product['id'])
 					       <input type="checkbox" name="tags[]" id="{{$prodtag->tag['name']}}" value="{{$prodtag->tag['id']}}" checked>
@@ -174,7 +171,8 @@
 					       <label for="{{$tag['id']}}">{{$tag['name']}}</label>
 					       @endif
 					       @endforeach
-					      </div>
+					       @endif
+					      </div> -->
 						</div>
 
 					<div class="col-md-6">

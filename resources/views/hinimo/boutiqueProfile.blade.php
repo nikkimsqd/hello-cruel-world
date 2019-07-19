@@ -7,77 +7,32 @@
 
 
 	<!-- ##### Welcome Area Start ##### -->
-    <section class="welcome_area bg-img background-overlay" style="background-image: url({{ asset('pics_for_upload/long/oo.jpg') }});">
+    <!-- <section class="welcome_area bg-img background-overlay" style="background-image: url({{ asset('pics_for_upload/long/oo.jpg') }});">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
                     <div class="hero-content">
-                        <!-- <h6>asoss</h6> -->
+                        <h6>asoss</h6>
                         <h2>{{$boutique['boutiqueName']}}</h2>
                         <a href="#" class="btn essence-btn">shop now</a>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
+    <div class="breadcumb_area bg-img" style="background-image: url({{ asset('bg/breadcumb.jpg')}});">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="page-title text-center">
+                        <h2>{{$page_title}}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- ##### Welcome Area End ##### -->
 
-   <!--  <div class="container section-padding-80-0">
-    <div class="row">
-        <div class="col-lg-3 col-xs-6">
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-              <p>Ratings</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3 col-xs-6">
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>150</h3>
-
-              <p>New Orders</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-shopping-cart"></i>
-            </div>
-          </div>
-        </div>
-     
-        <div class="col-lg-3 col-xs-6">
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3>44</h3>
-
-              <p>User Registrations</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-          </div>
-        </div>
-   
-        <div class="col-lg-3 col-xs-6">
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3>65</h3>
-
-              <p>Products</p>
-            </div>
-            <div class="icon">
-              <i class="ion-ios-pricetags"></i>
-            </div>
-          </div>
-        </div>
-  
-    </div>
-    </div> -->
 
     <!-- ##### Shop Grid Area Start ##### -->
     <section class="shop_grid_area section-padding-80">
@@ -239,7 +194,7 @@
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
                     </nav>
-                    <div class="products_list row"> 
+                    <!-- <div class="products_list row"> 
                             @foreach($notAvailables as $notAvailable)
                             <div class="col-12 col-sm-6 col-lg-4">
                             <div class="single-product-wrapper">
@@ -286,7 +241,7 @@
                             </div>
                             @endforeach
 
-                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>

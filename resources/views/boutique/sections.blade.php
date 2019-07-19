@@ -128,21 +128,21 @@
 @section('useraccount')
 <li class="dropdown user user-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="user-image" alt="User Image">
+    <!-- <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="user-image" alt="User Image"> -->
     <span class="hidden-xs">{{$boutique['boutiqueName']}}</span>
   </a>
   <ul class="dropdown-menu">
     <!-- User image -->
     <li class="user-header">
-      <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image">
-
+      <!-- <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image"> -->
+      <br><br><br>
       <p>
         {{$boutique['boutiqueName']}}
         <small>Member since {{$boutique['created_at']}}</small>
       </p>
     </li>
     <!-- Menu Body -->
-    <li class="user-body">
+    <!-- <li class="user-body">
       <div class="row">
         <div class="col-xs-4 text-center">
           <a href="#">Followers</a>
@@ -154,8 +154,7 @@
           <a href="#">Friends</a>
         </div>
       </div>
-      <!-- /.row -->
-    </li>
+    </li> -->
     <!-- Menu Footer-->
     <li class="user-footer">
       <div class="pull-left">
@@ -177,7 +176,7 @@
 <!-- sidebar: style can be found in sidebar.less -->
 <section class="sidebar">
   <!-- Sidebar user panel -->
-  <div class="user-panel">
+  <!-- <div class="user-panel">
     <div class="pull-left image">
       <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image">
     </div>
@@ -185,7 +184,7 @@
       <p>{{$boutique['boutiqueName']}}</p>
       <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
     </div>
-  </div>
+  </div> -->
 
    <!-- sidebar menu: : style can be found in sidebar.less -->
   <ul class="sidebar-menu" data-widget="tree">
@@ -202,7 +201,7 @@
    
     <li class="biddings">
       <a href="{{url('boutique-view-biddings')}}">
-        <i class="fa fa-th"></i> <span>Biddings</span>
+        <i class="fa fa-edit"></i> <span>Biddings</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
         </span>
@@ -228,7 +227,7 @@
 
     <li class="treeview transactions">
       <a href="#">
-        <i class="fa fa-edit"></i>
+        <i class="fa fa-user-plus"></i>
         <span>Transactions</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
@@ -244,7 +243,7 @@
 
     <li class="treeview etc">
       <a href="#">
-        <i class="fa fa-edit"></i>
+        <i class="fa fa-gear"></i>
         <span>Tools</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
@@ -257,8 +256,28 @@
       </ul>
     </li>
 
+    <li class="treeview archives">
+      <a href="#">
+        <i class="fa fa-archive"></i>
+        <span>Archives</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li class="archive-orders"><a href="{{url('archive-orders')}}"><i class="fa fa-circle-o"></i> Orders</a></li>
+        <li class="archive-rents"><a href="{{url('archive-rents')}}"><i class="fa fa-circle-o"></i> Rents</a></li>
+        <li class="archive-mtos"><a href="{{url('archive-made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
+        <li class="archive-boutique-biddings"><a href="{{url('archive-boutique-biddings')}}"><i class="fa fa-circle-o"></i> Biddings</a></li>
+      </ul>
+    </li>
+
   </ul>
 </section>
+
+<style type="text/css">
+  .user-panel{min-height: 45px;}
+</style>
 <!-- /.sidebar -->
 
 @endsection

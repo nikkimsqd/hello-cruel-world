@@ -47,13 +47,23 @@ Route::get('/admin-archives/{orderID}', 'AdminController@getArchives');
 // Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
 // Route::get('/admin-rents', 'AdminController@rents');
 
+
 Route::post('/editPercentage', 'AdminController@editPercentage');
+
+
+Route::get('/admin-addAccount', 'AdminController@addAccount');
+Route::post('/admin-saveAccount', 'AdminController@saveAccount');
+
 
 Route::get('/admin-tags', 'AdminController@tags');
 Route::post('/addTag', 'AdminController@addTag');
+Route::get('/deleteTag/{tagID}', 'AdminController@deleteTag');
+
+
 Route::get('/admin-categories', 'AdminController@categories');
 Route::post('/saveCategory', 'AdminController@saveCategory');
-Route::get('/declineCategory/{notificationID}', 'AdminController@declineCategory');
+Route::post('/declineCategory', 'AdminController@declineCategory');
+
 
 Route::get('/admin-locations', 'AdminController@locations');
 Route::get('/admin-getProvince/{regCode}', 'AdminController@getProvince');
@@ -140,6 +150,16 @@ Route::get('/boutique-view-biddings', 'BoutiqueController@biddings');
 Route::get('/boutique-view-bidding/{biddingID}', 'BoutiqueController@viewBidding');
 Route::get('/boutique-biddings', 'BoutiqueController@boutiqueBiddings');
 Route::get('/boutique-bidding/{biddingID}', 'BoutiqueController@viewBoutiqueBidding');
+
+
+//ARCHIVES
+Route::get('/archive-orders', 'BoutiqueController@archiveOrders');
+Route::get('/archive-rents', 'BoutiqueController@archiveRents');
+Route::get('/archive-made-to-orders', 'BoutiqueController@archiveMtos');
+Route::get('/archive-boutique-biddings', 'BoutiqueController@archiveBiddings');
+
+
+
 
 
 

@@ -113,7 +113,7 @@
                                 <li><span>Date to be returned</span> <span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
                                 <li><span>Required Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
                                 <li><span>Penalty Amount</span> <span>₱{{$rent->product->rentDetails['penaltyAmount']}}</span></li>
-                                @if($rent->order['status'] == "Pending" && $rent->order['status'] == "In-Progress")
+                                @if($rent->order['status'] == "Pending" || $rent->order['status'] == "In-Progress")
                                 <li><span>Status</span> <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
                                     <li><span></span><span>Payment Info</span><span></span></li>
                                     <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
@@ -138,6 +138,7 @@
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="rentID" value="{{$rent['rentID']}}" hidden>
                             <input type="text" id="rentOrderID" value="{{$rent->order['id']}}" hidden>
+                            <input type="text" id="total" value="{{$rent->order['total']}}" hidden>
                         </div>
                         @endif
                     </div>
@@ -161,6 +162,7 @@
     
     var rentOrderID = document.getElementById('rentOrderID').value;
     var rentID = document.getElementById('rentID').value;
+    var total = document.getElementById('total').value;
     // console.log(rentID);
     paypal.Buttons({
         createOrder: function(data, actions) {
@@ -168,7 +170,7 @@
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: '0.01'
+                value: total
               }
             }]
           });

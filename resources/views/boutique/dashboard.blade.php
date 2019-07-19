@@ -12,13 +12,13 @@
   </div>
   @endif
 
-  @if($boutique['openingHours'] == null)
-  <div class="callout callout-warning">
-    <h4>Ooops!</h4>
-    <p>Looks like you haven't activated your account yet. <a href="{{url('reqToActivateAccount')}}">Activate here.</a></p>
+<!--   @if($boutique['openingHours'] == null)
+  <div class="callout callout-info">
+    <h4>Hi!</h4>
+    <p>Set up your profile <a href="{{url('reqToActivateAccount')}}">here.</a></p>
   </div>
   @endif
-
+ -->
 
   <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
@@ -40,7 +40,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Products</span>
-          <span class="info-box-number">6<small></small></span>
+          <span class="info-box-number">{{$productsCount}}<small></small></span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -53,7 +53,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Orders</span>
-          <span class="info-box-number">20<small></small></span>
+          <span class="info-box-number">{{$orderCount}}<small></small></span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -66,7 +66,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Customers</span>
-          <span class="info-box-number">2<small></small></span>
+          <span class="info-box-number">{{$customerCount}}<small></small></span>
         </div>
         <!-- /.info-box-content -->
       </div>

@@ -88,6 +88,7 @@
                                 <div class="col-md-3" id="paypal-button-container">
                                     <input type="text" id="mtoOrderID" value="{{$mto->order['id']}}" hidden>
                                     <input type="text" id="mtoID" value="{{$mto['id']}}" hidden>
+                                    <input type="text" id="total" value="{{$mto->order['total']}}" hidden>
                                 </div><br><br>
                                 @endif
                             @endif
@@ -259,6 +260,7 @@
     
     var mtoOrderID = document.getElementById('mtoOrderID').value;
     var mtoID = document.getElementById('mtoID').value;
+    var total = document.getElementById('total').value;
   
     paypal.Buttons({
         createOrder: function(data, actions) {
@@ -266,7 +268,7 @@
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: '0.01'
+                value: total
               }
             }]
           });

@@ -262,6 +262,7 @@
     <!-- bootstrap datepicker -->
     <script src="{{asset('adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
 
+    @yield('script2')
     @yield('scripts')
 
 </body>

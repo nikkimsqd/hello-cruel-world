@@ -25,7 +25,7 @@
 
                             <label>Delivery Address <span>*</span></label>
                             <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required>
-                            (apply api here)<br><br>
+                            <!-- (apply api here) --><br><br>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                         </div>
                         
@@ -76,7 +76,7 @@
 
                             <label>Delivery Address</label>
                             <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required>
-                            (apply api here)<br><br>
+                            <!-- (apply api here) --><br><br>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                             <a href="{{url('view-bidding/'.$bid->bidding['id'])}}" class="btn essence-btn">Cancel</a>
                         </div>
@@ -98,7 +98,7 @@
                             ?>
                             <ul class="order-details-form mb-4">
                                 <li><span>Item Price</span> <span>{{$bid['bidAmount']}}</span></li>
-                                <li><span>Subtotal</span> <span>{{$subtotal}}</span></li>
+                                <!-- <li><span>Subtotal</span> <span>{{$subtotal}}</span></li> -->
                                 <li><span>Delivery Fee</span> <span><i>{{$deliveryfee}}</i></span></li>
                                 <li><span>Total</span> <span style="color: #0315ff;"><i>{{$total}}</i></span></li>
                             </ul>
@@ -110,7 +110,7 @@
                                     <input type="text" name="subtotal" value="{{$subtotal}}" hidden>
                                     <input type="text" name="deliveryfee" value="{{$deliveryfee}}" hidden>
                                     <input type="text" name="total" value="{{$total}}" hidden>
-                                    <input type="submit" class="btn essence-btn" value="Make Order">
+                                    <input type="submit" class="btn essence-btn" value="Place Order">
                                     <a href="sss">
                             </div>
                         </div>

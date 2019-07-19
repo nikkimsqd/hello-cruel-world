@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Tag;
 use App\User;
 use App\Order;
@@ -53,12 +54,16 @@ class AdminController extends Controller
 		foreach($adminNotifications as $notifications) {
 			if($notifications->id == $notificationID) { //match notificationID
 				$notification = $notifications;
+
 				if($notification['type'] == "App\Notifications\NewCategoryRequest") { //determine by type
 					$categoryRequest = Categoryrequest::where('id', $notification->data['categoryRequest'])->first();
 					$notif = $categoryRequest;
 					$boutique = Boutique::where('id', $notif['boutiqueID'])->first();
 
-					// $notification->markAsRead();
+					$notification->markAsRead();
+					$notificationsCount = $admin->unreadNotifications->count();
+
+					return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin'));
 				}
 				// $notification->markAsRead();
 			} else {
@@ -66,8 +71,6 @@ class AdminController extends Controller
 			}
 		} //endforeach
 
-		$notificationsCount = $admin->unreadNotifications->count();
-		return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin'));
     }
 
     public function sales()
@@ -88,7 +91,7 @@ class AdminController extends Controller
 
     public function editPercentage(Request $request)
     {
-    	$sp = Sharepercentage::create([
+    	$sp = Sharepercentage::where('id', $request->input('oldPercentage'))->update([
     		'sharePercentage' => $request->input('sharePercentage')
     	]);
 
@@ -195,6 +198,13 @@ class AdminController extends Controller
 		return redirect('/admin-tags');
 	}
 
+	public function deleteTag($tagID)
+	{
+		Tag::where('id', $tagID)->delete();
+
+		return redirect('admin-tags');
+	}
+
 	public function categories()
 	{
 		$page_title = "Categories";
@@ -236,26 +246,35 @@ class AdminController extends Controller
 		return redirect('/admin-categories');
 	}
 
-	public function declineCategory($notificationID)
+	public function declineCategory(Request $request)
 	{
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
-		$adminNotifications = $admin->notifications;
 
-		foreach($adminNotifications as $notifications) {
-			if($notifications->id == $notificationID) { //match notificationID
-				$notification = $notifications;
-				if($notification['type'] == "App\Notifications\NewCategoryRequest") { //determine by type
-					$categoryRequest = Categoryrequest::where('id', $notification->data['categoryRequest'])->update([
-						'status' => "Declined"
-					]);
-				}
-			} else {
+		// foreach($adminNotifications as $notifications) {
+		// 	if($notifications->id == $notificationID) { //match notificationID
+		// 		$notification = $notifications;
+		// 		if($notification['type'] == "App\Notifications\NewCategoryRequest") { //determine by type
+		// 			$categoryRequest = Categoryrequest::where('id', $notification->data['categoryRequest'])->update([
+		// 				'status' => "Declined"
+		// 			]);
+		// 		}
+		// 	} else {
 				
-			}
-		} //endforeach
+		// 	}
+		// } //endforeach
 
-		return redirect('categories-notifications/'.$notificationID);
+		$catReq = Categoryrequest::where('id', $request->input('catreqID'))->first();
+		$catReq->update([
+			'status' => 'Declined',
+			'reason' => $request->input('reason')
+		]);
+
+		$boutique = Boutique::where('id', $catReq['boutiqueID'])->first();
+		$boutiqueseller = User::where('id', $boutique['userID'])->first();
+		// $boutiqueseller->notify(new )
+
+		return redirect('admin-categories');
 	}
 
 	public function rents()
@@ -427,4 +446,27 @@ class AdminController extends Controller
     	return redirect('admin-measurements');
     }
 
+    public function addAccount()
+    {
+		$page_title = "Add Account";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		
+		return view('admin/addAccount', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount'));
+    }
+
+    public function saveAccount(Request $request)
+    {
+    	User::create([
+    		'username' => $request->input('username'),
+    		'email' => $request->input('email'),
+    		'password' => Hash::make($request->input('email')),
+    		'roles' => $request->input('role')
+    	]);
+
+    	return redirect('admin-addAccount');
+    }
 }

@@ -78,9 +78,11 @@
                         </div><br><br> <!-- card closing -->
 
                         @if($bidding->order['paymentStatus'] == "Not Yet Paid")
+                        <i style="color: red;">(You are required to pay first so the boutique can start processing your item.)</i>
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="orderTransactionID" value="{{$bidding->order['id']}}" hidden>
+                            <input type="text" id="total" value="{{$bidding->order['total']}}" hidden>
                         </div><br><br>
                         @endif
 
@@ -152,6 +154,7 @@
 <script>
     
     var orderTransactionID = document.getElementById('orderTransactionID').value;
+    var total = document.getElementById('total').value;
     // console.log(orderTransactionID);
     paypal.Buttons({
         createOrder: function(data, actions) {
@@ -159,7 +162,8 @@
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: '0.01'
+                value: total, 
+                currencyCode: 'PHP'
               }
             }]
           });

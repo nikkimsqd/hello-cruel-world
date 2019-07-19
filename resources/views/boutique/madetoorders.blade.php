@@ -37,6 +37,7 @@
                 </thead>
                 @if(!empty($mtos))
                 @foreach($mtos as $mto)
+                @if($mto->order['status'] != "Completed")
                 <tr>
                   <td>{{$mto['id']}}</td>
                   <td>{{$mto->customer->lname.', '.$mto->customer->fname}}</td>
@@ -53,6 +54,7 @@
                   @endif
                   <td><a href="made-to-orders/{{$mto['id']}}" class="btn btn-default btn-sm">View MTO</a></td>
                 </tr>
+                @endif
                 @endforeach
                 @else
                 <tr>

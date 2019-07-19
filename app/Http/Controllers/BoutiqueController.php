@@ -157,6 +157,14 @@ class BoutiqueController extends Controller
 					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/boutique-bidding/'.$bidding['id']);
 
+				}elseif ($notification->type == 'App\Notifications\NewBidding') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$bidding = Bidding::where('id', $notif->data['biddingID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/boutique-view-bidding/'.$bidding['id']);
+
 				}
 			}
 		}
@@ -186,20 +194,19 @@ class BoutiqueController extends Controller
 			$rents = Rent::where('boutiqueID', $boutique['id'])->get();
 			$mtos = Mto::where('boutiqueID', $boutique['id'])->where('orderID', '!=', null)->get();
 
+			$orderCount = $orders->count();
+			$productsCount = Product::where('boutiqueID', $boutique['id'])->count();
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$customerCount = Order::where('boutiqueID', $boutique['id'])->count();
+
 			$notifications = $user->notifications;
 			$notificationsCount = $user->unreadNotifications->count();
 			// dd($rand = substr(md5(microtime()),rand(0,26),5));
 
-			// foreach($notifications as $notification) {
-			// 	foreach ($notification['data'] as $value) {
-			// 		dd($notification['data']);
-			// 	}
-			// }
-
 	        $rentArray = $rents->toArray();
 	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos', 'orderCount', 'productsCount', 'customerCount')); 
 		}else {
 			return redirect('/shop');
 		}
@@ -233,13 +240,14 @@ class BoutiqueController extends Controller
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
+	        $cities = City::all();
 
 			// foreach ($boutiques as $boutique) {
 			// 	$boutique;
 			// }
 
 
-			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions'));
+			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions', 'cities'));
 		}else {
 			return redirect('/shop');
 		}
@@ -301,13 +309,13 @@ class BoutiqueController extends Controller
 	    	]);
     	}
 
-    	$tags = $request->input('tags');
-        foreach($tags as $tag) {
-	    	Prodtag::create([
-	    		'tagID' => $tag,
-	    		'productID' => $product['id']
-	    	]);
-		}
+  //   	$tags = $request->input('tags');
+  //       foreach($tags as $tag) {
+	 //    	Prodtag::create([
+	 //    		'tagID' => $tag,
+	 //    		'productID' => $product['id']
+	 //    	]);
+		// }
 
 
 		$randomKey = str_random(10);
@@ -396,7 +404,7 @@ class BoutiqueController extends Controller
 				$category;
 			}
 
-			// dd($product->getCategory['gender']);
+			// dd($prodtags);
 
 			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
 			}else {
@@ -422,23 +430,25 @@ class BoutiqueController extends Controller
 			$rp = Rentableproduct::where('id', $product['rpID'])->first();
 
 			if($rp != null){
+			$locations = json_encode($request->input('locationsAvailable'));
 				$rp->update([
 		    		'price' => $request->input('rentPrice'),
 		    		'depositAmount' => $request->input('depositAmount'),
 		    		'penaltyAmount' => $request->input('penaltyAmount'),
 		    		'limitOfDays' => $request->input('limitOfDays'),
 		    		'fine' => $request->input('fine'),
-		    		'locationsAvailable' => $request->input('locationsAvailable')
+		    		'locationsAvailable' => $locations
 		    	]);
 
 			}elseif($rp == null){
+			$locations = json_encode($request->input('locationsAvailable'));
 				$rp = Rentableproduct::create([
 		    		'price' => $request->input('rentPrice'),
 		    		'depositAmount' => $request->input('depositAmount'),
 		    		'penaltyAmount' => $request->input('penaltyAmount'),
 		    		'limitOfDays' => $request->input('limitOfDays'),
 		    		'fine' => $request->input('fine'),
-		    		'locationsAvailable' => $request->input('locationsAvailable')
+		    		'locationsAvailable' => $locations
 		    	]);
 
 		    	$product->update([
@@ -463,14 +473,14 @@ class BoutiqueController extends Controller
 	    	]);
 		}
 
-    	Prodtag::where('productID', $product['id'])->delete();
-    	$tags = $request->input('tags');
-        foreach($tags as $tag) {
-	    	Prodtag::create([
-	    		'tagID' => $tag,
-	    		'productID' => $product['id']
-	    	]);
-		}
+  //   	Prodtag::where('productID', $product['id'])->delete();
+  //   	$tags = $request->input('tags');
+  //       foreach($tags as $tag) {
+	 //    	Prodtag::create([
+	 //    		'tagID' => $tag,
+	 //    		'productID' => $product['id']
+	 //    	]);
+		// }
 
     	$uploads = $request->file('file');
 
@@ -780,7 +790,7 @@ class BoutiqueController extends Controller
 		$boutique = Boutique::where('userID', $id)->first();
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
-		$mtos = Mto::where('boutiqueID', $boutique['id'])->get();
+		$mtos = Mto::where('boutiqueID', $boutique['id'])->where('status', 'Active')->get();
 
 
 		// $pendings = Mto::where('boutiqueID', $boutique['id'])->where('status', "Pending")->get();
@@ -1174,6 +1184,62 @@ class BoutiqueController extends Controller
 	    $bidding = Bidding::where('id', $biddingID)->first();
 
 	    return view('boutique/boutique-biddingInfo', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'bidding'));
+    }
+
+    public function archiveOrders()
+    {
+    	$page_title = "Archive Orders";
+   		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->where('status', 'Completed')->get();
+
+		return view('boutique/archiveorders', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'orders'));
+    }
+
+    public function archiveRents()
+    {
+    	$page_title = "Archive Rents";
+    	$id = Auth()->user()->id;
+    	$boutique = Boutique::where('userID', $id)->first();
+
+    	$rents = Rent::where('boutiqueID', $boutique['id'])->get();
+		$pendings = Rent::where('boutiqueID', $boutique['id'])->where('status', 'Pending')->get();
+		$inprogress = Rent::where('boutiqueID', $boutique['id'])->where('status', 'In-Progress')->get();
+		$ondeliveries = Rent::where('boutiqueID', $boutique['id'])->where('status', 'On Delivery')->get();
+		$histories = Rent::where('boutiqueID', $boutique['id'])->whereIn('status', ['Declined', 'Completed'])->get();
+		// dd($pendings);
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+
+		return view('boutique/archiverents', compact( 'pendings', 'inprogress', 'ondeliveries', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount'));
+    }
+
+    public function archiveMtos()
+    {
+    	$page_title = "Archive Made-to-Orders";
+   		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$mtos = Mto::where('boutiqueID', $boutique['id'])->get();
+		
+
+		return view('boutique/archivemtos',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos'));
+    }
+
+    public function archiveBiddings()
+    {
+    	$userID = Auth()->user()->id;
+	    $user = User::find($userID);
+	    $page_title = 'Archive Orders from Bidding';
+	    $boutique = Boutique::where('userID', $userID)->first();
+	    $notifications = $user->notifications;
+	    $notificationsCount = $user->unreadNotifications->count();
+	    $biddingOrders = Order::where('biddingID', '!=', null)->where('boutiqueID', $boutique['id'])->where('status', 'Completed')->get();
+
+	    return view('boutique/archiveboutique-biddings', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'biddingOrders'));
     }
 
 

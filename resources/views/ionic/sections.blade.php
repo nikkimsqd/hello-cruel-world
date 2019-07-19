@@ -59,74 +59,24 @@
 
 
 
-@section('tasks')
-<li class="dropdown tasks-menu">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <i class="fa fa-flag-o"></i>
-    <span class="label label-danger"></span>
-  </a>
-  <ul class="dropdown-menu">
-    <li class="header">You have 9 tasks</li>
-    <li>
-      <!-- inner menu: contains the actual data -->
-      <ul class="menu">
-
-        <li><!-- Task item -->
-          <a href="#">
-            <h3>
-              Design some buttons
-              <small class="pull-right">20%</small>
-            </h3>
-            <div class="progress xs">
-              <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
-                   aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                <span class="sr-only">20% Complete</span>
-              </div>
-            </div>
-          </a>
-        </li>
-        <!-- end task item -->
-
-      </ul>
-    </li>
-    <li class="footer">
-      <a href="#">View all tasks</a>
-    </li>
-  </ul>
-</li>
-@endsection
-
-
 @section('useraccount')
 <li class="dropdown user user-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="user-image" alt="User Image">
+    <!-- <img src="{{ asset('essence/img/core-img/user.svg') }}" class="user-image" alt="User Image"> -->
+        <i class="fa fa-user"></i>
     <span class="hidden-xs">{{$user['lname']}}</span>
   </a>
   <ul class="dropdown-menu">
     <!-- User image -->
     <li class="user-header">
-      <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image">
-
+      <!-- <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image"> -->
+      <br><br>
       <p>
         {{$user['fname'].' '.$user['lname']}}
         <!-- <small>Member since {{$user['created_at']}}</small> -->
       </p>
     </li>
-    <!-- Menu Body -->
-    <li class="user-body">
-      <div class="row">
-        <div class="col-xs-4 text-center">
-          <a href="#">Followers</a>
-        </div>
-        <div class="col-xs-4 text-center">
-          <a href="#">Sales</a>
-        </div>
-        <div class="col-xs-4 text-center">
-          <a href="#">Friends</a>
-        </div>
-      </div>
-      <!-- /.row -->
+    
     </li>
     <!-- Menu Footer-->
     <li class="user-footer">
@@ -164,22 +114,38 @@
     <li class="header">MAIN NAVIGATION</li>
    
     <li class="dashboard">
-      <a href="{{url('ionic-dashboard')}}">
-        <i class="fa fa-th"></i> <span>Dashboard</span>
+      <a href="{{url('ionic-topickup')}}">
+        <span>To Pickup</span>
         <span class="pull-right-container">
-          <!-- <small class="label pull-right bg-green">new</small> -->
         </span>
       </a>
     </li>
    
-  <!--   <li class="biddings">
-      <a href="{{url('boutique-view-biddings')}}">
-        <i class="fa fa-th"></i> <span>Orders</span>
+    <li class="dashboard">
+      <a href="{{url('ionic-todeliver')}}">
+        <span>To Deliver</span>
         <span class="pull-right-container">
         </span>
-      </a> -->
+      </a>
     </li>
-
+   
+    <li class="dashboard">
+      <a href="{{url('ionic-delivered')}}">
+        <span>Delivered</span>
+        <span class="pull-right-container">
+        </span>
+      </a>
+    </li>
+   
+    <li class="dashboard">
+      <a href="{{url('ionic-completed')}}">
+        <span>Completed</span>
+        <span class="pull-right-container">
+        </span>
+      </a>
+    </li>
+   
+<!-- 
     <li class="treeview deliveries">
       <a href="#">
         <i class="fa fa-pie-chart"></i>
@@ -194,7 +160,7 @@
         <li class="delivered"><a href="{{url('ionic-delivered')}}"><i class="fa fa-circle-o"></i> Delivered</a></li>
         <li class="completed"><a href="{{url('ionic-completed')}}"><i class="fa fa-circle-o"></i> Completed</a></li>
       </ul>
-    </li>
+    </li> -->
 
 
   </ul>

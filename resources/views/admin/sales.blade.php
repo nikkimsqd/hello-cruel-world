@@ -25,8 +25,9 @@
             <form action="{{url('editPercentage')}}" method="post">
               {{csrf_field()}}
               <label>Enter your percentage</label>
+              <input type="text" name="oldPercentage" value="{{$sp['id']}}" hidden>
               <input type="number" name="sharePercentage" class="form-control"><br>
-              <input type="submit" name="btn_submit" class="btn btn-success">
+              <input type="submit" name="btn_submit" class="btn btn-success" value="Update">
             </form>
           </div>
 

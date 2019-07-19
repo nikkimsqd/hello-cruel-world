@@ -21,6 +21,12 @@
 	{{ csrf_field() }}
   <div class="box-body">
   	<div class="col-md-6">
+
+      <div class="form-group">
+        <label>Add Image:</label>
+        <input type="file" name="file[]" multiple required>
+      </div>
+      
 	    <div class="form-group">
 	     <label>Product Name</label>
 			 <input type="text" name="productName" class="input form-control" placeholder="Enter product name" required>
@@ -30,11 +36,6 @@
 	      <label>Product Description</label>
 	      <textarea name="productDesc" rows="3" cols="50" class="input form-control" required></textarea>
 	    </div>
-
-      <div class="form-group">
-        <label>Add Image:</label>
-        <input type="file" name="file[]" multiple required>
-      </div>
 
       <div class="form-group">
         <label>Product Category</label>
@@ -52,13 +53,13 @@
         </select>
       </div>
       
-      <label>Add Tags:</label>
+      <!-- <label>Add Tags:</label>
       <div class="form-group tags">
          @foreach($tags as $tag)
          <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
          <label for="{{$tag['name']}}">{{$tag['name']}}</label>
          @endforeach
-      </div>
+      </div> -->
     </div> <!-- column closing -->
 
     <div class="col-md-6">
@@ -91,17 +92,17 @@
 
         <label>Locations item is available for rent</label><br>
 
-        <label>Select Region:</label>
+        <!-- <label>Select Region:</label>
         <select name="region" class="form-control" id="region-select">
           <option selected="selected"> </option>
           @foreach($regions as $region)
           <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
           @endforeach
-        </select><br>
+        </select><br> -->
 
-        <label>Select Province:</label>
+        <!-- <label>Select Province:</label>
         <select name="province" class="form-control" id="province-select" disabled>
-        </select><br>
+        </select><br> -->
 
         <!-- <label>Select City:</label>
         <select name="locationsAvailable" class="form-control" id="city-selects" disabled>
@@ -109,8 +110,9 @@
 
         <label id="city-id" hidden>Select Cities:</label>
         <div name="cities" id="city-select" style="column-count: 3">
-          <!-- append js code here -->
-          <!-- <label class="custom-control-label" for="id">name</label> -->
+        @foreach($cities as$city)
+        <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
+        @endforeach
         </div>
       </div>
 

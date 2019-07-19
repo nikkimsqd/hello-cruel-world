@@ -18,6 +18,8 @@
             @foreach($tags as $tag)
             <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag['name']}}</h2>
             @endforeach
+            <br><br>
+            <span><i>Click on a tag to delete.</i></span>
           </div>
 
           <div class="col-md-5">
@@ -50,11 +52,19 @@
 $('.products').addClass("active");
 $('.tags').addClass("active"); 
 
-  $(document).ready(function(){
     $('.tags').on('click', function(){
-      alert($(this).attr('data-tag-id'));
+      var tagID = $(this).attr('data-tag-id');
+      // alert(tagID);
+
+
+      $.ajax({
+          url: "/hinimo/public/deleteTag/"+tagID,
+          success:function(data){
+            location.reload();
+          }
+      });
+
     });
-  });
 
 </script>
 

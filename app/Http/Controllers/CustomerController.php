@@ -28,6 +28,7 @@ use App\Categorymeasurement;
 use App\Cartitem;
 use App\Fabric;
 use App\Sharepercentage;
+use App\Gallery;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -35,6 +36,7 @@ use App\Notifications\CustomerCancelMto;
 use App\Notifications\CustomerAcceptsBid;
 use App\Notifications\NewOrder;
 use App\Notifications\CustomerPaysOrder;
+use App\Notifications\NewBidding;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -68,6 +70,9 @@ class CustomerController extends Controller
                 //     }
                 // }
 
+                // $productsArray = $products->toArray();
+                // array_multisort(array_column($products, "created_at"), SORT_DESC, $products);
+                // dd($products);
 
 
                 $notifications;
@@ -253,9 +258,9 @@ class CustomerController extends Controller
 
     public function removeItem($cartID)
     {
-        $item = Cart::where('id', $cartID)->delete();
+        $item = Cartitem::where('id', $cartID)->delete();
 
-        return redirect('/cart');
+        return response()->json(['item' => $item]);
     }
 
     public function getCart($productID)
@@ -468,7 +473,7 @@ class CustomerController extends Controller
         $measurement = $request->input('measurement');
         $mName = json_encode($measurement);
 
-        $dateuse = $request->input('dateToUse');
+        $dateuse = date('Y-m-d',strtotime($request->input('dateToUse')));
         $toadd = $request->input('limitOfDays');
         $dateToBeReturned = date('Y-m-d', strtotime($dateuse.'+'.$toadd.' days'));
 
@@ -477,7 +482,7 @@ class CustomerController extends Controller
             'customerID' => $id, 
             'status' => "In-Progress", 
             'productID' => $request->input('productID'), 
-            'dateToUse' => $request->input('dateToUse'), 
+            'dateToUse' => $dateuse, 
             'dateToBeReturned' => $dateToBeReturned, 
             'additionalNotes' => $request->input('additionalNotes')
         ]);
@@ -519,7 +524,7 @@ class CustomerController extends Controller
         
         $boutiqueseller->notify(new RentRequest($rent));
 
-        return redirect('/shop');
+        return redirect('/view-rent/'.$rent['rentID']);
     }
 
     public function receiveRent($rentID)
@@ -545,8 +550,8 @@ class CustomerController extends Controller
         $page_title = 'Biddings';
         $categories = Category::all();
         $boutiques = Boutique::all();
-        $biddings = Bidding::all();
-        $biddingsCount = Bidding::all()->count();
+        $biddings = Bidding::where('status', 'Open')->get();
+        $biddingsCount = $biddings->count();
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
@@ -649,6 +654,13 @@ class CustomerController extends Controller
             $filename = "/".$name;
         // }
       }
+
+        $boutiques = Boutique::all();
+        foreach($boutiques as $boutique)
+        {
+            $boutiqueseller = User::where('id', $boutique['userID'])->first();
+            $boutiqueseller->notify(new NewBidding($bidding));
+        }
 
         return redirect('/biddings');
     }
@@ -794,7 +806,7 @@ class CustomerController extends Controller
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
             'deliveryAddress' => $request->input('deliveryAddress'),
-            'status' => "In-Progress",
+            'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
             'billingName' => $request->input('billingName'),
             'phoneNumber' => $request->input('phoneNumber'),
@@ -1013,6 +1025,10 @@ class CustomerController extends Controller
             'measurementID' => $measurement['id']
         ]);
 
+        $gallery = Gallery::create([
+            'userID' => $userID
+        ]);
+
         $upload = $request->file('file');
 
         if($request->hasFile('file')) {
@@ -1025,6 +1041,7 @@ class CustomerController extends Controller
 
             $files->userID = $userID;
             $files->mtoID = $mto['id'];
+            $files->galleryID = $gallery['id'];
             $files->filename = "/".$name;
             $files->save();
             $filename = "/".$name;
@@ -1274,6 +1291,9 @@ class CustomerController extends Controller
         }
         elseif($order['rentID'] != null){
             return redirect('/view-rent/'.$order->rent['rentID']);
+        }
+        elseif($order['mtoID'] != null){
+            return redirect('/view-mto/'.$order->mto['id']);
         }
         elseif($order['biddingID'] != null){
             return redirect('/view-bidding-order/'.$order->bidding['id']);

@@ -59,7 +59,7 @@ class LoginController extends Controller
             $this->redirectTo = '/admin-dashboard';
 
         } else if ($user['roles'] === "courier") {
-            $this->redirectTo = '/ionic-dashboard';
+            $this->redirectTo = '/ionic-topickup';
         }
     }
     

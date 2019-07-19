@@ -10,11 +10,11 @@
 
         <!-- Single Product Thumb -->
         <div class="single_product_thumb clearfix">
-            <!-- <div class="product_thumbnail_slides owl-carousel"> -->
+            <div class="product_thumbnail_slides owl-carousel">
                 @foreach($product->productFile as $image)
                 <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
                 @endforeach
-            <!-- </div> -->
+            </div>
         </div>
 
         <!-- Single Product Description -->
@@ -22,12 +22,12 @@
             <span>{{$product->owner->boutiqueName}}</span>
             <h2>{{ $product['productName'] }}</h2>
             @if($product['price'] != null && $product['rpID'] != null)
-            <p class="product-price">Retail Price: ₱{{ $product['price'] }}</p>
-            <p class="product-price">Rent Price: ₱{{ $product->rentDetails['price'] }}</p>
+            <p class="product-price">Retail Price: ₱{{ number_format($product['price']) }}</p>
+            <p class="product-price">Rent Price: ₱{{ number_format($product->rentDetails['price']) }}</p>
             @elseif($product['price'] != null)
-            <p class="product-price">Retail Price: ₱{{ $product['price'] }}</p>
+            <p class="product-price">Retail Price: ₱{{ number_format($product['price']) }}</p>
             @elseif($product['rpID'] != null)
-            <p class="product-price">Rent Price: ₱{{ $product->rentDetails['price'] }}</p>
+            <p class="product-price">Rent Price: ₱{{ number_format($product->rentDetails['price']) }}</p>
             @endif
             <p class="product-desc">{{ $product['productDesc'] }}</p>
 
@@ -102,7 +102,70 @@
               <form action="/hinimo/public/requestToRent" method="post">
                 {{csrf_field()}}
 
-                <div class="row">
+                <!-- // -->
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Name:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}" required><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Email Address:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="email" class="form-control" value="{{$user['email']}}" required><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Contact Number:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="phoneNumber" class="form-control" required><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-8 col-form-label text-md-right">Submit Measurements (inches)</label>
+                    <div class="col-md-12" id="measurement-input" style="text-align: center;">
+                        <a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">See guide on how to measure youself here.</a>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    @foreach($product->getCategory->getMeasurements as $measurements)
+                    <label class="col-md-4 col-form-label text-md-right">{{$measurements['mName']}}:</label>
+                    <div class="col-md-6" id="measurement-input">
+                        <input type="text" name="measurement[{{$measurements['mName']}}]" class="form-control" required><br> 
+                    </div>
+                    @endforeach
+                </div><br>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Date Item will be used:</label>
+                    <div class="col-md-6">
+                        <!-- <input type="date" name="dateToUse" class="form-control" required><br>  -->
+                        <input type="text" name="dateToUse" id="dateToUse" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Additional Notes:</label>
+                    <div class="col-md-6">
+                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done" required></textarea><br> 
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
+                    <div class="col-md-6">
+                        <input type="text" name="addressOfDelivery" class="input form-control" required><br>
+                    </div>
+                </div>
+
+
+
+                <!-- <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Product Rent Price:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['price']}}</label>
@@ -114,7 +177,7 @@
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['depositAmount']}}</label>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="row">
                     <label class="col-md-4 col-form-label text-md-right">Required Penalty Amount:</label>
@@ -152,69 +215,12 @@
                     </div>
                 </div>
 
-                <!-- // -->
-
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Name:</label>
-                    <div class="col-md-6">
-                        <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}" required><br> 
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Email Address:</label>
-                    <div class="col-md-6">
-                        <input type="text" name="email" class="form-control" value="{{$user['email']}}" required><br> 
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Contact Number:</label>
-                    <div class="col-md-6">
-                        <input type="text" name="phoneNumber" class="form-control" required><br> 
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-md-8 col-form-label text-md-right">Submit Measurements (inches)</label>
-                </div>
-
-                <div class="form-group row">
-                    @foreach($product->getCategory->getMeasurements as $measurements)
-                    <label class="col-md-4 col-form-label text-md-right">{{$measurements['mName']}}:</label>
-                    <div class="col-md-6" id="measurement-input">
-                        <input type="text" name="measurement[{{$measurements['mName']}}]" class="form-control" required><br> 
-                    </div>
-                    @endforeach
-                </div><br>
-
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Date Item will be used:</label>
-                    <div class="col-md-6">
-                        <input type="date" name="dateToUse" class="form-control" required><br> 
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Additional Notes:</label>
-                    <div class="col-md-6">
-                        <textarea name="additionalNotes" rows="3" cols="50" class="input form-control" placeholder="Type here your message to the seller like if you have changes to be done" required></textarea><br> 
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right">Address of delivery:</label>
-                    <div class="col-md-6">
-                        <input type="text" name="addressOfDelivery" class="input form-control" required><br>
-                    </div>
-                </div>
-
                 <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
                 <input type="text" name="productID" value="{{$product['id']}}" hidden>
 
                 <hr>
                 <div class="row">
-                    <label class="col-md-4 col-form-label text-md-right">Subtotal:</label>
+                    <label class="col-md-4 col-form-label text-md-right">Product Rent Price:</label>
                     <div class="col-md-6">
                         <label class="col-form-label">{{$product->rentDetails['price']}}</label>
                         <input type="text" name="subtotal" class="form-control" value="{{$product->rentDetails['price']}}" hidden>
@@ -331,6 +337,7 @@
     .payment-info{color: #0000;}
     .back_to_page{background-color: #ff084e; border-radius: 0;  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3); color: #ffffff; font-size: 18px;  height: 40px; line-height: 40px; right: 60px; left: 20px; top: 110px; text-align: center;  width: 40px; position: fixed; z-index: 2147483647; display: block;}
     /*a:hover{font-size: 18px; color: #ffffff;}*/
+.datepicker-dropdown{top: 181px !important; left: 281.5px; z-index: 11; display: block;}
 </style>
 
 @endsection
@@ -340,6 +347,17 @@
 
 @section('scripts')
 <script type="text/javascript">
+
+var dateToday = new Date();
+var dateTomorrow = new Date();
+var dateNextMonth = new Date();
+dateTomorrow.setDate(dateToday.getDate()+1);
+dateNextMonth.setDate(dateToday.getDate()+14);
+
+$('#dateToUse').datepicker({
+    startDate: dateNextMonth
+});
+
 
  $('.add-to-cart-btn').on('click', function(){
  var productID = $(this).find("input").val();
@@ -366,7 +384,7 @@
                           '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
                             '<span class="badge">'+ data.owner.fname +'</span>' +
                             '<h6>'+ data.product.productName +'</h6>' +
-                            '<p class="price">$'+ data.product.productPrice +'</p>' +
+                            '<p class="price">$'+ data.product.price +'</p>' +
                         '</div>' +
                     '</a>' +
                 '</div>'

@@ -38,20 +38,23 @@
                   <label>Select City:</label>
                     <select name="city" class="form-control" id="city-select" disabled>
                       <option selected="selected"></option>
-                    </select><br>
+                    </select>
             </div>
           </div> <!-- row -->
 
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-md-12">
               <label id="barangay-id" hidden>Select Barangays:</label>
               <div name="barangays" id="brgy-select" style="column-count: 3">
-                <!-- append js code here -->
-                <!-- <label class="custom-control-label" for="id">name</label> -->
               </div>
+
+              <label id="city-id" hidden>Select Cities:</label>
+              <div name="cities-div" id="city-select" style="column-count: 3">
+
+              </div><br>
             </div>
           </div>
-
+ -->
         </div>
         <div class="box-footer" style="text-align: right;">
          <input type="submit" name="btn_submit" value="Add Location" class="btn btn-primary">
@@ -130,7 +133,7 @@
 @section('scripts')
 <script type="text/javascript">
 
-$('.add-ons').addClass("active");
+$('.tools').addClass("active");
 $('.locations').addClass("active");  
 
   var session = 0;
@@ -195,28 +198,53 @@ $('#province-select').on('change', function(){
 });
 
 
-$('#city-select').on('change', function(){
-  console.log("adadad");
 
-  $('#brgy-select').empty();
+// $('#province-select').on('change', function(){
+//   $('#city-select').empty();
+//   // $('#brgy-select').empty();
+//   var provCode = $(this).val();
+  
+//   // $('#city-select').prop('disabled',false);;
 
-  var citymunCode = $(this).val();
+//   $.ajax({
+//     url: "/hinimo/public/admin-getCity/"+provCode,
+//     success:function(data){
 
-  $.ajax({
-       url: "/hinimo/public/admin-getBrgy/"+citymunCode,
-      success:function(data){
+//       $('#city-id').prop('hidden',false);
 
-          $('#barangay-id').prop('hidden',false);
+//         data.cities.forEach(function(city){
+//         console.log(city);
+//          $('#city-select').append(
+//         '<input type="checkbox" name="cities[]" value="'+city.citymunCode+'" id="'+city.citymunDesc+'"> '+city.citymunDesc+'<br>'
+//         );
+//       });
+//     }
+//   }); //ajaxclosing
+// });
 
-          data.brgys.forEach(function(brgy){
 
-              $('#brgy-select').append(
-              '<input type="checkbox" name="barangays[]" value="'+brgy.brgyCode+'" id="'+brgy.brgyDesc+'"> '+brgy.brgyDesc+'<br>'
-              );
-          });
-      }
-  });
-});
+// $('#city-select').on('change', function(){
+//   console.log("adadad");
+
+//   $('#brgy-select').empty();
+
+//   var citymunCode = $(this).val();
+
+//   $.ajax({
+//        url: "/hinimo/public/admin-getBrgy/"+citymunCode,
+//       success:function(data){
+
+//           $('#barangay-id').prop('hidden',false);
+
+//           data.brgys.forEach(function(brgy){
+
+//               $('#brgy-select').append(
+//               '<input type="checkbox" name="barangays[]" value="'+brgy.brgyCode+'" id="'+brgy.brgyDesc+'"> '+brgy.brgyDesc+'<br>'
+//               );
+//           });
+//       }
+//   });
+// });
 
 
 $(function () {

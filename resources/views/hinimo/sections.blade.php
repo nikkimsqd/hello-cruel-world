@@ -110,16 +110,17 @@
                     <a href="#" class="product-image">
                         @foreach($item->product->productFile as $file)
                         <img src="{{ asset('/uploads').$file['filename'] }}" class="cart-thumb" alt="">
+                        <?php break; ?>
                         @endforeach
 
                         <!-- Cart Item Desc -->
                         <div class="cart-item-desc">
-                          <span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                          <span cart-item-id="{{$item['id']}}" class="delete product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
                             <span class="badge">{{$item->product->owner['boutiqueName']}}</span>
                             <h6>{{$item->product['productName']}}</h6>
                             <!-- <p class="size">Size: S</p> -->
                             <!-- <p class="color">Color: Red</p> -->
-                            <p class="price">₱{{$item->product['price']}}</p>
+                            <p class="price">₱{{number_format($item->product['price'])}}</p>
                         </div>
                     </a>
                 </div>
@@ -171,4 +172,33 @@
         <li><a href="contact.html">Contact</a></li>
     </ul>
 </div>
+@endsection
+
+
+@section('script2')
+
+<script type="text/javascript">
+
+$(function(){
+    $('body').on('click', '.delete', function(){
+  var itemID = $(this).attr('cart-item-id');
+  var itemDiv = $(this).closest('.single-cart-item');
+
+
+  $.ajax({
+      url: "/hinimo/public/removeItem/"+itemID,
+      success:function(data){
+        if(data.item){
+            // itemDiv.remove();
+            location.reload();
+        }
+      }
+  });
+
+});
+});
+
+
+</script>
+
 @endsection

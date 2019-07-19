@@ -192,11 +192,11 @@ var x = setInterval(function() {
   if(i == {{$bidcounter}}){
       // console.log(i);
       // console.log({{$bidcounter}});
-    // document.getElementById("demo{{$bidcounter}}").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-      $('#demo{{$bidcounter}}').append(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
+    document.getElementById("demo{{$bidcounter}}").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+      // $('#demo{{$bidcounter}}').append(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
       // {{$biddingsCount--}}
   }else{
-    document.getElementById("demo{{$bidcounter}}").innerHTML = "dili equals";
+    // document.getElementById("demo{{$bidcounter}}").innerHTML = "dili equals";
   }
     }
     

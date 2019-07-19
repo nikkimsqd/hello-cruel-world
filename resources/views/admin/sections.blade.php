@@ -17,37 +17,7 @@
   </a>
 @endsection
 
-@section('inbox')
-<!-- Messages: style can be found in dropdown.less-->
-  <li class="dropdown messages-menu">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-      <i class="fa fa-envelope-o"></i>
-      <span class="label label-success">4</span>
-    </a>
-    <ul class="dropdown-menu">
-      <li class="header">You have 4 messages</li>
-      <li>
-        <!-- inner menu: contains the actual data -->
-        <ul class="menu">
-          <li><!-- start message -->
-            <a href="#">
-              <div class="pull-left">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-              </div>
-              <h4>
-                Support Team
-                <small><i class="fa fa-clock-o"></i> 5 mins</small>
-              </h4>
-              <p>Why not buy a new awesome theme?</p>
-            </a>
-          </li>
-          <!-- end message -->
-        </ul>
-      </li>
-      <li class="footer"><a href="#">See All Messages</a></li>
-    </ul>
-  </li>
-@endsection
+
 
 
 @section('notifications')
@@ -91,62 +61,24 @@
 
 
 
-@section('tasks')
-<li class="dropdown tasks-menu">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <i class="fa fa-flag-o"></i>
-    <span class="label label-danger">9</span>
-  </a>
-  <ul class="dropdown-menu">
-    <li class="header">You have 9 tasks</li>
-    <li>
-      <!-- inner menu: contains the actual data -->
-      <ul class="menu">
-
-        <li><!-- Task item -->
-          <a href="#">
-            <h3>
-              Design some buttons
-              <small class="pull-right">20%</small>
-            </h3>
-            <div class="progress xs">
-              <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
-                   aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                <span class="sr-only">20% Complete</span>
-              </div>
-            </div>
-          </a>
-        </li>
-        <!-- end task item -->
-
-      </ul>
-    </li>
-    <li class="footer">
-      <a href="#">View all tasks</a>
-    </li>
-  </ul>
-</li>
-@endsection
-
-
 @section('useraccount')
 <li class="dropdown user user-menu">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="user-image" alt="User Image">
+    <!-- <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="user-image" alt="User Image"> -->
     <span class="hidden-xs">{{$admin['lname']}}</span>
   </a>
   <ul class="dropdown-menu">
     <!-- User image -->
     <li class="user-header">
-      <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-
+      <!-- <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image"> -->
+      <br><br>
       <p>
         {{$admin['lname']}}
         <small>by {{$admin['fname']}}</small>
       </p>
     </li>
     <!-- Menu Body -->
-    <li class="user-body">
+   <!--  <li class="user-body">
       <div class="row">
         <div class="col-xs-4 text-center">
           <a href="#">Followers</a>
@@ -155,15 +87,14 @@
           <a href="#">Sales</a>
         </div>
         <div class="col-xs-4 text-center">
-          <a href="#">Friends</a>
+          <a href="#">Orders</a>
         </div>
       </div>
-      <!-- /.row -->
-    </li>
+    </li> -->
     <!-- Menu Footer-->
     <li class="user-footer">
       <div class="pull-left">
-        <a href="#" class="btn btn-default btn-flat">Profile</a>
+        <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
       </div>
       <div class="pull-right">
         <a href="{{ route('logout') }}" class="btn btn-default btn-flat" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
@@ -181,7 +112,7 @@
 <!-- sidebar: style can be found in sidebar.less -->
 <section class="sidebar">
   <!-- Sidebar user panel -->
-  <div class="user-panel">
+<!--   <div class="user-panel">
     <div class="pull-left image">
       <img src="{{ asset('adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
     </div>
@@ -189,7 +120,7 @@
       <p>{{$admin['lname']}}</p>
       <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
     </div>
-  </div>
+  </div> -->
 
    <!-- sidebar menu: : style can be found in sidebar.less -->
   <ul class="sidebar-menu" data-widget="tree">
@@ -206,7 +137,7 @@
    
     <li class="sales">
       <a href="{{url('admin-sales')}}">
-        <i class="fa fa-th"></i> <span>Sales</span>
+        <i class="fa fa-line-chart"></i> <span>Sales</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
         </span>
@@ -242,21 +173,26 @@
       </ul>
     </li>
 
-    <li class="treeview add-ons">
+    <li class="treeview tools">
       <a href="#">
         <i class="fa fa-gear"></i>
-        <span>Add-ons(?)</span>
+        <span>Tools</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
       </a>
       <ul class="treeview-menu">
         <li class="locations"><a href="{{url('admin-locations')}}"><i class="fa fa-circle-o"></i> Locations</a></li>
+        <li class="accounts"><a href="{{url('admin-addAccount')}}"><i class="fa fa-circle-o"></i> Add Account</a></li>
       </ul>
     </li>
 
   </ul>
 </section>
+
+<style type="text/css">
+  .user-panel{min-height: 45px;}
+</style>
 <!-- /.sidebar -->
 
 @endsection

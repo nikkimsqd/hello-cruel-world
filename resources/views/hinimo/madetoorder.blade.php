@@ -63,6 +63,7 @@
                             <!-- <hr> -->
                             <div class="col-md-8 mb-3">
                                 <label>Measurements (inches)</label>
+                                <span><a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">See guide on how to measure youself here.</a></span>
                                 <div class="mb-3" id="measurement-input" required>
                                 </div>
                             </div>

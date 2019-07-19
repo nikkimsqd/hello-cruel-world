@@ -126,7 +126,8 @@
 	                            <div class="product-img">
 	                            @if($counter == 1)    
                                     <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
-	                            @else
+                                @elseif($counter == 2)    
+                                    <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                 @endif
 
                                 @if($product['productStatus'] == "Not Available")
@@ -193,52 +194,52 @@
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
                     </nav> -->
-                    <div class="products_list row"> 
-                            @foreach($products as $product)
-                            @if($product['productStatus'] == "Not Available")
-                            <div class="col-12 col-sm-6 col-lg-4">
-                            <div class="single-product-wrapper">
-                                <?php 
-                                    $counter = 1;
-                                ?>
+                    <!-- <div class="products_list row"> 
+                        @foreach($products as $product)
+                        @if($product['productStatus'] == "Not Available")
+                        <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="single-product-wrapper">
+                            <?php 
+                                $counter = 1;
+                            ?>
+                        
+                        @foreach($product->productFile as $image)
                             
-                            @foreach($product->productFile as $image)
-                                
-                                <div class="product-img">
-                                @if($counter == 1)    
-                                    <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
-                                @else
-                                @endif
-
-                                    <div class="product-badge offer-badge">
-                                        <span>NOT AVAILABLE</span>
-                                    </div>
-                                </div>
-                                
-                                <?php $counter++; ?>
-                                @endforeach
-
-                                <div class="product-description">
-                                    <span>{{ $product->owner['boutiqueName'] }}</span>
-                                    <a href="#">
-                                        <h6>{{ $product['productName'] }}</h6>
-                                    </a>
-                                    <p class="product-price">₱{{ number_format($product['price']) }}</p>
-
-                                    <div class="hover-content">
-                                        <div class="add-to-cart-btn">
-                                            @if($product['productStatus'] == "Available")
-                                            <a href="single-product-details/{{$product['id']}}" class="btn essence-btn">View Product</a>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
+                            <div class="product-img">
+                            @if($counter == 1)    
+                                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                            @else
                             @endif
+
+                                <div class="product-badge offer-badge">
+                                    <span>NOT AVAILABLE</span>
+                                </div>
+                            </div>
+                            
+                            <?php $counter++; ?>
                             @endforeach
 
+                            <div class="product-description">
+                                <span>{{ $product->owner['boutiqueName'] }}</span>
+                                <a href="#">
+                                    <h6>{{ $product['productName'] }}</h6>
+                                </a>
+                                <p class="product-price">₱{{ number_format($product['price']) }}</p>
+
+                                <div class="hover-content">
+                                    <div class="add-to-cart-btn">
+                                        @if($product['productStatus'] == "Available")
+                                        <a href="single-product-details/{{$product['id']}}" class="btn essence-btn">View Product</a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        </div>
+                        @endif
+                        @endforeach
+
+                    </div> -->
                 </div>
             </div>
         </div>

@@ -48,13 +48,16 @@
             </h4>
             <h4>Order Type: 
               @if($order['cartID'] != null)
-                <b>Purchase</b>
+                <b>PURCHASE</b>
               @elseif($order['rentID'] != null)
-                <b>Rent</b>
+                <b>RENT</b>
+              <h4>Date Item will be used: <b>{{date('M d, Y',strtotime($order->rent['dateToUse']))}}</b></h4>
               @elseif($order['mtoID'] != null)
-                <b>MTO</b>
+                <b>MADE-TO-ORDER</b>
+                <h4>Date of item's use: <b>{{date('M d, Y',strtotime($order->mto['dateOfUse']))}}</b></h4>
               @elseif($order['biddingID'] != null)
-                <b>Bidding</b>
+                <b>BIDDING</b>
+                <h4>Deadline of Product: <b>{{ date('M d, Y',strtotime($order->bidding['deadlineOfProduct'])) }}</b></h4>
               @endif
             </h4>
             <br>
@@ -148,7 +151,7 @@
         @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
         @elseif($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] == null)
-          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> For Alterations</a>
+          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> Set Date for Fittings</a>
         @elseif($order['status'] == "For Alterations" && $order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
@@ -170,11 +173,11 @@
       <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title"><b>Submit MTO for Alterations?</b></h3>
+            <h3 class="modal-title"><b>Set fitting schedule</b></h3>
           </div>
 
           <div class="modal-body">
-            <p>Set date for alterations:</p>
+            <p>Set date for fitting:</p>
             <form action="{{url('forAlterations')}}" method="post">
               {{csrf_field()}}
               <input type="text" name="alterationDateStart" id="alterationDateStart" class="form-control" placeholder="Set start date" required>
