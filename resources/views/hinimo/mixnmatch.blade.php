@@ -26,7 +26,7 @@
                             <div class="col-md-8">
                                 <div class="row tops-div">
                                     @foreach($products as $product)
-                                        @if($product->getCategory['categoryName'] == "Top")
+                                        @if($product->getCategory['categoryName'] == "Tops")
                                         <div class="col-md-3">
                                             <?php $counter = 1; ?>
                                             @foreach( $product->productFile as $image)
@@ -46,7 +46,8 @@
                                     @foreach($products as $product)
                                         @if($product->getCategory['categoryName'] == "Shorts" || 
                                         $product->getCategory['categoryName'] == "Trousers" || 
-                                        $product->getCategory['categoryName'] == "Pants")
+                                        $product->getCategory['categoryName'] == "Pants" || 
+                                        $product->getCategory['categoryName'] == "Bottoms")
 
                                         <div class="col-md-3">
                                             <?php $counter = 1; ?>

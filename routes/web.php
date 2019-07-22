@@ -88,6 +88,7 @@ Route::post('/requestCategory', 'BoutiqueController@requestCategory');
 Route::get('/tags', 'BoutiqueController@tags');
 Route::get('/fabrics', 'BoutiqueController@fabrics');
 Route::post('/addFabric', 'BoutiqueController@addFabric');
+Route::get('/deleteFabric/{fabricID}', 'BoutiqueController@deleteFabric');
 
 Route::get('/boutique-getProvince/{regCode}', 'BoutiqueController@getProvince');
 Route::get('/boutique-getCity/{provCode}', 'BoutiqueController@getCity');
@@ -277,6 +278,7 @@ Route::get('/ionic-viewOrder/{orderID}', 'CourierController@viewOrder');
 Route::get('/ionic-pickupOrder/{orderID}', 'CourierController@pickupOrder');
 Route::get('/ionic-deliveredOrder/{orderID}', 'CourierController@deliveredOrder');
 
+Route::get('/courier-notifications/{notificationID}', 'CourierController@viewNotifications');
 
 
 });

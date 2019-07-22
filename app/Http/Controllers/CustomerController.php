@@ -293,7 +293,7 @@ class CustomerController extends Controller
                 'phoneNumber' => $request->input('phoneNumber'),
                 'boutiqueShare' => $orders['boutiqueShare'],
                 'adminShare' => $orders['adminShare'],
-                'status' => 'In-Progress',
+                'status' => 'Pending',
                 'paymentStatus' => 'Not Yet Paid'
             ]);
 
@@ -1240,7 +1240,7 @@ class CustomerController extends Controller
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
             'deliveryAddress' => $request->input('deliveryAddress'),
-            'status' => "In-Progress",
+            'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
             'billingName' => $request->input('billingName'),
             'phoneNumber' => $request->input('phoneNumber'),
@@ -1341,6 +1341,7 @@ class CustomerController extends Controller
             $mto = Mto::where('id', $request->mtoID)->first();
             $order = Order::where('id', $request->mtoOrderID)->first();
             $order->update([
+                'status' => 'In-Progress',
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);
@@ -1356,6 +1357,7 @@ class CustomerController extends Controller
             // print_r($request->paypalOrderID);
             $order = Order::where('id', $request->orderTransactionID)->first();
             $order->update([
+                'status' => 'In-Progress',
                 'paymentStatus' => 'Paid',
                 'paypalOrderID' => $request->paypalOrderID
             ]);

@@ -121,7 +121,7 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right">Contact Number:</label>
                     <div class="col-md-6">
-                        <input type="text" name="phoneNumber" class="form-control" required><br> 
+                        <input type="text" name="phoneNumber" class="form-control" maxlength="11" required><br> 
                     </div>
                 </div>
 

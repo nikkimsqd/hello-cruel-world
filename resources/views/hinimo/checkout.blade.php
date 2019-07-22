@@ -38,19 +38,19 @@
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="phone_number">Phone No <span>*</span></label>
-                                <input type="number" class="form-control" name="phoneNumber" maxlength="11" value="" required>
+                                <input type="number" class="form-control" name="phoneNumber" maxlength="11" required>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="street_address">Address <span>*</span></label>
                                 <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" value="" required>
                             </div>
 
-                            <div class="col-12">
+                            <!-- <div class="col-12">
                                 <div class="custom-control custom-checkbox d-block mb-2">
                                     <input type="checkbox" class="custom-control-input" id="customCheck1" required>
                                     <label class="custom-control-label" for="customCheck1">Terms and conitions</label>
                                 </div>
-                            </div>
+                            </div> -->
                                 <input type="text" name="userID" value="{{$user['id']}}" hidden>
                                 <input type="text" name="cartID" value="{{$cart['id']}}" hidden>
                         </div>

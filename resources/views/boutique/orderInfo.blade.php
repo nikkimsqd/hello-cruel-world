@@ -77,12 +77,14 @@
                 </tr>
                 </thead>
                   @foreach($order->cart->items as $item)
+                  @if($item->product['boutiqueID'] == $boutique['id'])
                   <tr>
                     <td>1</td>
                     <td>{{$item->product['productName']}}</td>
                     <td>{{$item->product['productDesc']}}</td>
                     <td>{{$item->product['price']}}</td>
                   </tr>
+                  @endif
                   @endforeach
               </table><br><br>
             @elseif($order['rentID'] != null)

@@ -163,7 +163,7 @@
     var rentOrderID = document.getElementById('rentOrderID').value;
     var rentID = document.getElementById('rentID').value;
     var total = document.getElementById('total').value;
-    // console.log(rentID);
+
     paypal.Buttons({
         createOrder: function(data, actions) {
           // Set up the transaction

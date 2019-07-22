@@ -128,4 +128,9 @@ class CourierController extends Controller
 
     	return redirect('ionic-viewOrder/'.$order['id']);
     }
+
+    public function viewNotifications($notificationID)
+    {
+        
+    }
 }

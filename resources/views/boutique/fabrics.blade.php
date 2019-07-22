@@ -19,12 +19,12 @@
               {{csrf_field()}}
             <div class="col-md-6">
               Fabric Name:
-                <input type="text" name="fabricName" class="input form-control" autofocus><br>
+                <input type="text" name="fabricName" class="input form-control" required autofocus><br>
             </div>
 
             <div class="col-md-6">
               Fabric Color:
-                <input type="text" name="fabricColor" class="input form-control"><br>
+                <input type="text" name="fabricColor" class="input form-control" required><br>
             </div>
           </div>
           <div class="row">
@@ -64,7 +64,7 @@
             <tr>
               <td>{{$fabric['name']}}</td>
               <td>{{$fabric['color']}}</td>
-              <td><a href="deleteFabric"><i class="fa fa-remove"></i></a></td>
+              <td><a href="{{url('deleteFabric/'.$fabric['id'])}}"><i class="fa fa-remove"></i></a></td>
             </tr>
             @endforeach
           </table>

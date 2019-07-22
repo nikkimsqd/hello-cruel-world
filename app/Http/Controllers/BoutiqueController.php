@@ -1036,7 +1036,7 @@ class BoutiqueController extends Controller
 
     public function fabrics()
     {
-    	$page_title = "Paypal Order";
+    	$page_title = "Fabrics";
    		$id = Auth()->user()->id;
 		$user = User::find($id);
     	$boutique = Boutique::where('userID', $id)->first();
@@ -1054,8 +1054,8 @@ class BoutiqueController extends Controller
 
     	$name = ucfirst($request->input('fabricName'));
     	$color = ucfirst($request->input('fabricColor'));
-    	$nameQuery = Fabric::where('name', $name)->first();
-    	$colorQuery = Fabric::where('color', $color)->first();
+    	// $nameQueries = Fabric::where('name', $name)->get();
+    	// $colorQuery = Fabric::where('color', $color)->first();
 
 	    	// dd($colorQuery);
 	    // if(empty($nameQuery) && !empty($colorQuery)){
@@ -1067,13 +1067,7 @@ class BoutiqueController extends Controller
 	    // 	dd("oops");
 	    // }
 
-    	// if($nameQuery == null && $colorQuery == null){
-	    // 	Fabric::create([
-	    // 		'boutiqueID' => $boutique['id'],
-	    // 		'name' => $name,
-	    // 		'color' => $color
-	    // 	]);
-	    // }elseif($nameQuery != null && $colorQuery == null){
+	    // if($nameQuery['id'] != $colorQuery['id']){
 	    	Fabric::create([
 	    		'boutiqueID' => $boutique['id'],
 	    		'name' => $name,
@@ -1081,7 +1075,28 @@ class BoutiqueController extends Controller
 	    	]);
 	    // }
 
+    	// if($nameQuery == null && $colorQuery == null){
+	    // 	Fabric::create([
+	    // 		'boutiqueID' => $boutique['id'],
+	    // 		'name' => $name,
+	    // 		'color' => $color
+	    // 	]);
+	    // }elseif($nameQuery != null && $colorQuery == null){
+	    // 	Fabric::create([
+	    // 		'boutiqueID' => $boutique['id'],
+	    // 		'name' => $name,
+	    // 		'color' => $color
+	    // 	]);
+	    // }
+
     	return redirect('/fabrics');
+    }
+
+    public function deleteFabric($fabricID)
+    {
+    	Fabric::where('id', $fabricID)->delete($fabricID);
+
+    	return redirect('fabrics');
     }
 
     public function biddings()
