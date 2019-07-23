@@ -32,6 +32,8 @@
     <!-- <link rel="stylesheet" href="{{asset('adminlte/bower_components/font-awesome/css/font-awesome.min.css') }}"> -->
     <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="{{asset('adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <!-- Leaflet -->
+
     @yield('links')
     
 </head>
@@ -261,7 +263,7 @@
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
     <!-- bootstrap datepicker -->
     <script src="{{asset('adminlte/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-
+    
     @yield('script2')
     @yield('scripts')
 

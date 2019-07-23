@@ -9,23 +9,13 @@ class Address extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-    	'userID', 'contactName', 'phoneNumber', 'province', 'city', 'barangay', 'completeAddress', 'status'
+    	'userID', 'contactName', 'phoneNumber', 'completeAddress', 'lat', 'lng', 'status'
     ];
 
 
     public function user()
     {
         return $this->hasOne('App\User', 'id', 'userID');
-    }
-
-    public function cityName()
-    {
-        return $this->hasOne('App\City', 'citymunCode', 'city');
-    }
-
-    public function brgyName()
-    {
-        return $this->hasOne('App\Barangay', 'brgyCode', 'barangay');
     }
     
 }

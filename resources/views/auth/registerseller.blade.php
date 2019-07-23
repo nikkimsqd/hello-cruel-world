@@ -4,6 +4,10 @@
 Hinimo | Register Boutique
 @endsection
 
+@section('links')
+<link rel="stylesheet" href="{{asset('/leaflet/leaflet.css')}}" />
+@endsection
+
 @section('auth')
 <div class="classynav" style="padding-right: 50px;">
     <ul>
@@ -51,7 +55,7 @@ Hinimo | Register Boutique
                                 <label for="contactNo" class="col-md-4 col-form-label text-md-right">{{ __('Contact Number') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="contactNo" type="text" class="form-control{{ $errors->has('contactNo') ? ' is-invalid' : '' }}" name="contactNo" value="{{ old('contactNo') }}" required autofocus>
+                                    <input id="contactNo" type="number" class="form-control" name="contactNo" maxlength="11" value="{{ old('contactNo') }}" required autofocus>
 
                                     @if ($errors->has('contactNo'))
                                         <span class="invalid-feedback" role="alert">
@@ -117,7 +121,7 @@ Hinimo | Register Boutique
                                 <label for="boutiqueAddress" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Address') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="boutiqueAddress" type="text" class="form-control{{ $errors->has('boutiqueAddress') ? ' is-invalid' : '' }}" name="boutiqueAddress" value="{{ old('boutiqueAddress') }}" required autofocus>
+                                    <input id="boutiqueAddress" type="text" class="form-control" name="boutiqueAddress" required autofocus>
 
                                     @if ($errors->has('boutiqueAddress'))
                                         <span class="invalid-feedback" role="alert">
@@ -126,8 +130,9 @@ Hinimo | Register Boutique
                                     @endif
                                 </div>
                             </div><br>
-                            <!-- <div id="map">
-                            </div> -->
+                            <div id="map"> </div>
+                            <input type="text" name="lat" id="lat">
+                            <input type="text" name="lng" id="lng">
 
                             <br>
                             <div class="form-group row mb-0">
@@ -146,11 +151,32 @@ Hinimo | Register Boutique
 </div>
 
 <style>
- #map {
-   width: 100%;
-   height: 400px;
-   background-color: grey;
- }
+    #map {
+        width: 100%;
+        height: 400px;
+        background-color: grey;
+    }
+    .pointer{
+        position:absolute;
+        top:86px;
+        left:60px;
+        z-index:99999;
+    }
+    .dropdown-menu li {
+        padding: 3px 20px;
+        margin: 0;
+    }
+    .dropdown-menu li:hover{
+        background: #7FDFFF;
+        border-color: #7FDFFF;
+    }
+    .dropdown-menu .geocoder-control-selected{
+        background: #7FDFFF;
+        border-color: #7FDFFF;
+    }
+    .dropdown-menu ul li {
+        list-style-type: none;
+    }
 </style>
 
 @endsection
@@ -167,99 +193,62 @@ Hinimo | Register Boutique
 @endsection
 
 @section('scripts')
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuwlagqyrOGUF9IUqAI6d9f2MHDMVhddI&callback=initMap" async defer></script>
+<script src="{{asset('/leaflet/leaflet.js')}}"></script>
+<script src="{{asset('/leaflet/bootstrap-geocoder.js')}}"></script>
+<script src="{{asset('/leaflet/Control.Geocoder.js')}}"></script>
 
 <script type="text/javascript">
-var map, infoWindow;
 
-// function initMap() {
-//   var myLatLng = {lat: -25.363, lng: 131.044};
-
-//   var map = new google.maps.Map(document.getElementById('map'), {
-//     zoom: 4,
-//     center: myLatLng
-//   });
-
-//   var marker = new google.maps.Marker({
-//     position: myLatLng,
-//     map: map,
-//     title: 'Hello World!'
-//   });
-// }
+var mylat = '10.2892368502206';
+var mylong = '123.86207342147829';
+var myzoom = '12';
 
 
-function initMap() {
-  var myLatLng = {lat: -25.363, lng: 131.044};
-
-   map = new google.maps.Map(document.getElementById('map'), {
-    center: myLatLng,
-    zoom: 14,
-    minZoom: 1
-  });
+var map = L.map('map').setView([mylat, mylong], myzoom);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
 
 
-  var marker = new google.maps.Marker({
-    position: myLatLng,
-    map: map,
-    title: 'Hello World!'
-  });
-
-  marker.setMap(map);
-
-
-
-  infoWindow = new google.maps.InfoWindow;
-
- // Try HTML5 geolocation.
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-
-      infoWindow.setPosition(pos);
-      infoWindow.setContent('Location found.');
-      infoWindow.open(map);
-      map.setCenter(pos);
-    }, function() {
-      handleLocationError(true, infoWindow, map.getCenter());
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleLocationError(false, infoWindow, map.getCenter());
+var geocoder = L.Control.Geocoder.nominatim();
+if (URLSearchParams && location.search) {
+  // parse /?geocoder=nominatim from URL
+  var params = new URLSearchParams(location.search);
+  var geocoderString = params.get('geocoder');
+  if (geocoderString && L.Control.Geocoder[geocoderString]) {
+    console.log('Using geocoder', geocoderString);
+    geocoder = L.Control.Geocoder[geocoderString]();
+  } else if (geocoderString) {
+    console.warn('Unsupported geocoder', geocoderString);
   }
 }
 
 
+//SET LOCATION W/ MARKER ===========================================================================
+var marker = L.marker([mylat, mylong]).addTo(map);
+map.on('click', function (e) {
+  geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+    var r = results[0];
+    if(r) {
+      // marker.setLatLng(e.latlng);
+      // console.log(r.center.lat);
+      $("#boutiqueAddress").val(r.name);
+      $("#lat").val(r.center.lat);
+      $("#lng").val(r.center.lng);
+    }
+  });
+      marker.setLatLng(e.latlng);
 
-// function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-//   infoWindow.setPosition(pos);
-//   infoWindow.setContent(browserHasGeolocation ?
-//                         'Error: The Geolocation service failed.' :
-//                         'Error: Your browser doesn\'t support geolocation.');
-//   infoWindow.open(map);
+});
+// ==================================================================================================//
 
-  
-//   var marker;
-//   function placeMarker(location) {
-//     if ( marker ) {
-//       marker.setPosition(location);
-//     } else {
-//       marker = new google.maps.Marker({
-//         position: location,
-//         map: map
-//       });
-//     }
-//   }
-//   google.maps.event.addListener(map, 'click', function(event) {
-//     placeMarker(event.latLng);
-//     //input x ang long y ang lat
-//     console.log(event.latLng.lng());
-//     console.log(event.latLng.lat());
-//   });
-// }
+var search = BootstrapGeocoder.search({
+  inputTag: 'boutiqueAddress',
+  // placeholder: 'Search for places or addresses',
+  useMapBounds: false
+}).addTo(map);
+
 
 </script>
 

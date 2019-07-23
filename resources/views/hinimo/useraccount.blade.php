@@ -1,6 +1,9 @@
 @extends('layouts.hinimo')
 @extends('hinimo.sections')
 
+@section('links')
+<link rel="stylesheet" href="{{asset('/leaflet/leaflet.css')}}" />
+@endsection
 
 @section('body')
 
@@ -81,7 +84,7 @@
         </div> <!-- first row -->
 
         <br><br>
-        <!-- <div class="row" id="addresses">
+        <div class="row" id="addresses">
             <div class="col-12 col-md-11">
                 <div class="mt-50 clearfix">
                     <div class="row">
@@ -104,7 +107,7 @@
                                 <td width="70%"><b>{{$address['contactName']}}</b><br></td>
                                 <td width="20%" rowspan="2" width="20%" align="right">
                                     <br>
-                                    <a href="" data-toggle="modal" data-target="#editAddress" class="btn btn-app">
+                                    <a href="" data-toggle="modal" data-target="#editAddress{{$address['id']}}" class="btn btn-app">
                                         <i class="fa fa-edit"> 
                                         </i>
                                     </a>
@@ -112,8 +115,8 @@
                                         <i class="fa fa-trash-o"></i>
                                     </a>
                                     <br>
-                                    @if($address['status'] == null)
-                                    <a href="/hinimo/public/setAsDefault/{{$address['id']}}">Set as Default</a>
+                                    @if($address['status'] == "Not Default")
+                                    <a href="{{url('setAsDefault/'.$address['id'])}}">Set as Default</a>
                                     @endif
                                     <br>
                                 </td>
@@ -126,7 +129,6 @@
                                 <td width="15%"><label>Address</label></td>
                                 <td width="70%">
                                     {{$address['completeAddress']}}<br>
-                                    {{$address->brgyName['brgyDesc'].', '.$address->cityName['citymunDesc'].', '.$address->provName['provDesc']}}
                                 </td>
                             </tr>
                             
@@ -138,7 +140,7 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
 </div>
 <!-- ##### Checkout Area End ##### -->
@@ -180,6 +182,8 @@
 
 
 <div class="modal fade" id="addAddress" role="dialog">
+
+
     <div class="modal-dialog modal-lg">
     
       <!-- Modal content-->
@@ -190,33 +194,20 @@
         </div>
 
         <div class="modal-body">
-            <form action="/hinimo/public/addAddress" method="post">
+            <form action="{{url('addAddress')}}" method="post">
                 {{csrf_field()}}
                 <label>Name:</label>
                 <input type="text" name="contactName" class="form-control"><br>
 
                 <label>Phone Number:</label>
-                <input type="text" name="phoneNumber" class="form-control"><br>
-
-                <label>City</label><br>
-                <select name="city" class="form-control" id="city-select">
-                    <option value=""></option>
-                    @foreach($cities as $city)
-                    <option value="{{$city['citymunCode']}}">{{$city['citymunDesc']}}</option>
-                    @endforeach
-                </select><br><br><br>
-
-                <label>Barangay</label><br>
-                <select name="barangay" class="form-control" id="brgy-select">
-                    <option value=""></option>
-                 
-                    <option value=""></option>
-                 
-                </select><br><br><br>
-                <!-- </div> -->
+                <input type="number" name="phoneNumber" class="form-control" maxlength="11"><br>
 
                 <label>Complete Address</label><br>
-                <input type="text" name="completeAddress" class="form-control">       
+                <input type="text" id="completeAddress" name="completeAddress" class="form-control">
+
+                <div id="map"></div>  
+                <input type="text" name="lat" id="lat">
+                <input type="text" name="lng" id="lng">
         </div> <!-- modal-body -->
 
                 <div class="modal-footer">
@@ -227,7 +218,7 @@
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
 
-<div class="modal fade" id="editAddress" role="dialog">
+<div class="modal fade" id="editAddress{{$address['id']}}" role="dialog">
     <div class="modal-dialog modal-lg">
     
       <!-- Modal content-->
@@ -241,27 +232,17 @@
             <form action="/hinimo/public/addAddress" method="post">
                 {{csrf_field()}}
                 <label>Name:</label>
-                <input type="text" name="contactName" class="form-control"><br>
+                <input type="text" name="contactName" class="form-control" value="{{$address['contactName']}}"><br>
 
                 <label>Phone Number:</label>
-                <input type="text" name="phoneNumber" class="form-control"><br>
-
-                <label>City</label><br>
-                <select name="city" class="form-control" id="city-select">
-                    <option value=""></option>
-                </select><br><br><br>
-
-                <label>Barangay</label><br>
-                <select name="barangay" class="form-control" id="brgy-select">
-                    <option value=""><u>-----------------</u></option>
-                 
-                    <option value=""></option>
-                 
-                </select><br><br><br>
-                <!-- </div> -->
+                <input type="number" name="phoneNumber" class="form-control" maxlength="11" value="{{$address['phoneNumber']}}"><br>
 
                 <label>Complete Address</label><br>
-                <input type="text" name="completeAddress" class="form-control">       
+                <input type="text" id="completeAddress" name="completeAddress" class="form-control" value="{{$address['completeAddress']}}">
+
+                <div id="map"></div>  
+                <input type="text" name="lat" id="lat" value="{{$address['lat']}}">
+                <input type="text" name="lng" id="lng" value="{{$address['lng']}}">      
         </div> <!-- modal-body -->
 
                 <div class="modal-footer">
@@ -321,6 +302,26 @@
     span{color: #0315ff;}
     a{color: #000;}
     label{font-size: 12px; text-transform: uppercase; font-weight: 600;}
+ #map {
+   width: 100%;
+   height: 500px;
+   background-color: grey;
+ }
+  .dropdown-menu li {
+    padding: 3px 20px;
+    margin: 0;
+  }
+  .dropdown-menu li:hover{
+    background: #7FDFFF;
+    border-color: #7FDFFF;
+  }
+  .dropdown-menu .geocoder-control-selected{
+    background: #7FDFFF;
+    border-color: #7FDFFF;
+  }
+  .dropdown-menu ul li {
+    list-style-type: none;
+  }
 </style>
 
 @endsection
@@ -328,37 +329,65 @@
 
 
 @section('scripts')
+<script src="{{asset('/leaflet/leaflet.js')}}"></script>
+<script src="{{asset('/leaflet/bootstrap-geocoder.js')}}"></script>
+<script src="{{asset('/leaflet/Control.Geocoder.js')}}"></script>
 <script type="text/javascript">
-    var session = 0;
 
-$('#city-select').on('change', function(){
+// if($('#completeAddress').val() != null){
+//     console.log("adsdsd");
+//     var mylat = $('#lat').val();
+//     var mylng = $('#lng').val();
+// }else{
+    var mylat = '10.2892368502206';
+    var mylng = '123.86207342147829';
+// }
 
-    $('#brgy-select').empty();
-    $('#brgy-select').next().find('.list').empty();
-    $('#brgy-select').next().find('.current').val("-----------------");
+var myzoom = '12';
 
-    var citymunCode = $(this).val();
 
-    $.ajax({
-         url: "/hinimo/public/getBrgy/"+citymunCode,
-        success:function(data){
+var map = L.map('map').setView([mylat, mylng], myzoom);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
 
-            data.brgys.forEach(function(brgy){
 
-                $('#brgy-select').append(
-                '<option value="'+brgy.brgyCode+'">'+brgy.brgyDesc+'</option>'
-                );
+var geocoder = L.Control.Geocoder.nominatim();
+if (URLSearchParams && location.search) {
+  // parse /?geocoder=nominatim from URL
+  var params = new URLSearchParams(location.search);
+  var geocoderString = params.get('geocoder');
+  if (geocoderString && L.Control.Geocoder[geocoderString]) {
+    console.log('Using geocoder', geocoderString);
+    geocoder = L.Control.Geocoder[geocoderString]();
+  } else if (geocoderString) {
+    console.warn('Unsupported geocoder', geocoderString);
+  }
+}
 
-                $('#brgy-select').next().find('.list').append(
-                    '<li data-value="'+brgy.brgyCode+'" class="option">'+brgy.brgyDesc+'</li>'
-                );
-            });
-        }
-    });
 
+//SET LOCATION W/ MARKER ===========================================================================
+var marker = L.marker([mylat, mylng]).addTo(map);
+map.on('click', function (e) {
+  geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+    var r = results[0];
+    if(r) {
+      // console.log(r.center);
+      $("#completeAddress").val(r.name);
+      $("#lat").val(r.center.lat);
+      $("#lng").val(r.center.lng);
+    }
+  });
+
+  marker.setLatLng(e.latlng);
 });
+// ==================================================================================================//
 
-
+var search = BootstrapGeocoder.search({
+  inputTag: 'completeAddress',
+  useMapBounds: false
+}).addTo(map);
 
 </script>
 

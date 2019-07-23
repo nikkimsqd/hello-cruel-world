@@ -275,9 +275,28 @@ class CustomerController extends Controller
 
     public function placeOrder(Request $request)
     {
-        $billingName = ucwords($request->input('fullname'));
-        $boutiqueCount = $request->input('boutiqueCount');
+        $userID = Auth()->user()->id;
+        $deliveryAddress = $request->input('deliveryAddress');
+        $addressID = $request->input('selectAddress');
+            // dd($addressID);
 
+        if($deliveryAddress != null && $addressID == "addAddress"){
+            $address = Address::create([
+                'userID' => $userID, 
+                'contactName' => $request->input('fullname'), 
+                'phoneNumber' => $request->input('phoneNumber'),
+                'completeAddress' => $request->input('deliveryAddress'),
+                'lat' => $request->input('lat'), 
+                'lng' => $request->input('lng'), 
+                'status' => "Not Default"
+            ]);
+            $addressID = $address['id'];
+        }elseif($deliveryAddress != null && $addressID != "addAddress"){
+
+        }
+
+        $billingName = ucwords($request->input('fullname')); //remove ni
+        $boutiqueCount = $request->input('boutiqueCount');
         for ($i=1; $i <= $boutiqueCount; $i++) { 
 
             $orders = $request->input("order$i");
@@ -285,16 +304,17 @@ class CustomerController extends Controller
                 'userID' => $request->input('userID'),
                 'cartID' => $request->input('cartID'),
                 'subtotal' => $orders['subtotal'],
-                'deliveryfee' => $orders['deliveryfee'],
+                'deliveryfee' => $orders['deliveryfee'], //remove ni
                 'total' => $orders['total'],
                 'boutiqueID' => $orders['boutiqueID'],
-                'deliveryAddress' => $request->input('deliveryAddress'),
-                'billingName' => $billingName,
-                'phoneNumber' => $request->input('phoneNumber'),
+                'deliveryAddress' => $request->input('selectAddress'), //remove ni
+                'billingName' => $billingName, //remove ni
+                'phoneNumber' => $request->input('phoneNumber'), //remove ni
                 'boutiqueShare' => $orders['boutiqueShare'],
                 'adminShare' => $orders['adminShare'],
                 'status' => 'Pending',
-                'paymentStatus' => 'Not Yet Paid'
+                'paymentStatus' => 'Not Yet Paid',
+                'addressID' => $addressID
             ]);
 
             $cart = Cart::where('id', $order['cartID'])->first();
@@ -324,7 +344,8 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         $user = User::find($userID);
         $boutiques = Boutique::all();
-        $notAvailables = Product::where('productStatus', 'Not Available')->get();
+        // $notAvailables = Product::where('productStatus', 'Not Available')->get();
+        $addresses = Address::where('userID', $userID)->get();
         $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
         if($cart != null){
             $cartCount = $cart->items->count();
@@ -356,7 +377,7 @@ class CustomerController extends Controller
         // }   
             // dd($orders);
 
-    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage'));
+    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage', 'addresses'));
     }
 
     public function useraccount()
@@ -368,8 +389,8 @@ class CustomerController extends Controller
         $products = Product::all();
         $addresses = Address::where('userID', $id)->get();
         $boutiques = Boutique::all();
-        $cities = City::where('provCode', '0722')->orderBy('citymunDesc', 'ASC')->get();
-        $barangays = Barangay::all();
+        // $cities = City::where('provCode', '0722')->orderBy('citymunDesc', 'ASC')->get();
+        // $barangays = Barangay::all();
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
@@ -381,7 +402,7 @@ class CustomerController extends Controller
         }
 
 
-        return view('hinimo/useraccount', compact('categories', 'products', 'cart', 'cartCount', 'user', 'cities', 'barangays', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
+        return view('hinimo/useraccount', compact('categories', 'products', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
     }
 
     public function getBrgy($citymunCode)
@@ -395,25 +416,42 @@ class CustomerController extends Controller
     {
         $id = Auth()->user()->id;
 
-        $address = Address::create([
-            'userID' => $id, 
-            'contactName' => $request->input('contactName'), 
-            'phoneNumber' => $request->input('phoneNumber'),
-            'city' => $request->input('city'), 
-            'barangay' => $request->input('barangay'), 
-            'completeAddress' => $request->input('completeAddress'),
-            'status' => "Default"
-        ]);
+        $addresses = Address::where('userID', $id)->get();
+
+        if(count($addresses) > 0) {
+            $address = Address::create([
+                'userID' => $id, 
+                'contactName' => $request->input('contactName'), 
+                'phoneNumber' => $request->input('phoneNumber'),
+                'completeAddress' => $request->input('completeAddress'),
+                'lat' => $request->input('lat'), 
+                'lng' => $request->input('lng'), 
+                'status' => "Not Default"
+            ]);
+
+        }else{
+            $address = Address::create([
+                'userID' => $id, 
+                'contactName' => $request->input('contactName'), 
+                'phoneNumber' => $request->input('phoneNumber'),
+                'completeAddress' => $request->input('completeAddress'),
+                'lat' => $request->input('lat'), 
+                'lng' => $request->input('lng'), 
+                'status' => "Default"
+            ]);
+        }
+
+        
 
         return redirect('/user-account');
     }
 
     public function setAsDefault($addressID)
     {
-        $id = Auth()->user()->id;
+        $userID = Auth()->user()->id;
 
-        $addresses = Address::where('status', "Default")->update([
-            'status' => ""
+        $addresses = Address::where('userID', $userID)->where('status', "Default")->update([
+            'status' => "Not Default"
         ]);
 
         $address = Address::where('id', $addressID)->update([
@@ -1191,6 +1229,7 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         $user = User::find($userID);
         $boutiques = Boutique::all();
+        $addresses = Address::where('userID', $userID)->get();
         $notifications = $user->notifications;
         $notificationsCount = $user->unreadNotifications->count();
         $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
@@ -1222,7 +1261,7 @@ class CustomerController extends Controller
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         
-        return view('hinimo/inputAddress', compact('user', 'cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage'));
+        return view('hinimo/inputAddress', compact('user', 'cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage', 'addresses'));
 
     }
 

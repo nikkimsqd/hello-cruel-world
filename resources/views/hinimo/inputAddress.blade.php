@@ -2,6 +2,10 @@
 @extends('hinimo.sections')
 
 
+@section('links')
+<link rel="stylesheet" href="{{asset('/leaflet/leaflet.css')}}">
+@endsection
+
 @section('body')
 
 <div class="single-blog-wrapper">
@@ -23,8 +27,29 @@
                             <label>Contact Number <span>*</span></label>
                             <input type="text" name="phoneNumber" class="form-control" maxlength="11" required><br>
 
-                            <label>Delivery Address <span>*</span></label>
-                            <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required>
+                            <label for="selectAddress">Select Address <span>*</span></label>
+                            <select name="selectAddress" id="selectAddress">
+                                <option selected disabled></option>
+                                @foreach($addresses as $address)
+                                <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
+                                @endforeach
+                                <option value="addAddress"><b>+ Add Address</b></option>
+                            </select><br><br>
+
+                            <div class="col-12 mb-3" id="addAddressDIV" hidden="">
+                                <label for="deliveryAddress">Input Address <span>*</span></label>
+                                <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
+                                <div class="col-12 mb-3" id="map"></div>
+                                <input type="text" name="lat" id="lat">
+                                <input type="text" name="lng" id="lng">
+                        
+                                <div class="custom-control custom-checkbox d-block mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
+                                    <label class="custom-control-label" for="customCheck1">Save new address</label>
+                                </div>
+                            </div>
+
+
                             <!-- (apply api here) --><br><br>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                         </div>
@@ -122,6 +147,29 @@
         </div>
     </div>
 </div>
+
+<style type="text/css">
+    #map {
+        width: 100%;
+        height: 300px;
+        background-color: grey;
+    }
+    .dropdown-menu li {
+        padding: 3px 20px;
+        margin: 0;
+    }
+    .dropdown-menu li:hover{
+        background: #7FDFFF;
+        border-color: #7FDFFF;
+    }
+    .dropdown-menu .geocoder-control-selected{
+        background: #7FDFFF;
+        border-color: #7FDFFF;
+    }
+    .dropdown-menu ul li {
+        list-style-type: none;
+    }
+</style>
 @endsection
 
 <!-- THE PLAN 
@@ -134,21 +182,85 @@
 -->
 
 @section('scripts')
+<script src="{{asset('/leaflet/leaflet.js')}}"></script>
+<script src="{{asset('/leaflet/bootstrap-geocoder.js')}}"></script>
+<script src="{{asset('/leaflet/Control.Geocoder.js')}}"></script>
+
 <script type="text/javascript">
 
 $('#addressBtn').click(function(){
     var deliveryAddress = $(this).siblings('#deliveryAddress').val();
-    // var deliveryAddress = $('#deliveryAddress').val();
-    // console.log(deliveryAddress);
 
     if(deliveryAddress){
         $('.order-details-confirmation').removeAttr('hidden');
-        
     }else{
         alert("Please enter a valid address");
     }
+});
+
+$('#selectAddress').on('change', function(){
+
+    if($(this).val() == "addAddress"){
+        $('#addAddressDIV').removeAttr('hidden');
+        console.log($(this).val());
+    }else{
+        $('#addAddressDIV').attr('hidden', "hidden");
+    }
+});
+
+
+// MAPS ==================================================================================
+var mylat = '10.2892368502206';
+var mylong = '123.86207342147829';
+var myzoom = '12';
+
+
+var map = L.map('map').setView([mylat, mylong], myzoom);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+
+var geocoder = L.Control.Geocoder.nominatim();
+if (URLSearchParams && location.search) {
+  // parse /?geocoder=nominatim from URL
+  var params = new URLSearchParams(location.search);
+  var geocoderString = params.get('geocoder');
+  if (geocoderString && L.Control.Geocoder[geocoderString]) {
+    console.log('Using geocoder', geocoderString);
+    geocoder = L.Control.Geocoder[geocoderString]();
+  } else if (geocoderString) {
+    console.warn('Unsupported geocoder', geocoderString);
+  }
+}
+
+
+//SET LOCATION W/ MARKER ===========================================================================
+var marker = L.marker([mylat, mylong]).addTo(map);
+map.on('click', function (e) {
+  geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+    var r = results[0];
+    if(r) {
+      // marker.setLatLng(e.latlng);
+      // console.log(r.center.lat);
+      $("#deliveryAddress").val(r.name);
+      $("#lat").val(r.center.lat);
+      $("#lng").val(r.center.lng);
+// console.log($("#deliveryAddress").val());
+    }
+  });
+      marker.setLatLng(e.latlng);
 
 });
+// ==================================================================================================//
+
+var search = BootstrapGeocoder.search({
+  inputTag: 'deliveryAddress',
+  // placeholder: 'Search for places or addresses',
+  useMapBounds: false
+}).addTo(map);
+
 
 </script>
 

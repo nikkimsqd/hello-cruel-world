@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Boutique;
+use App\Address;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -100,12 +101,26 @@ class RegisterController extends Controller
                 'roles' => "boutique",
             ]);
 
-            Boutique::create([
+            $boutique = Boutique::create([
                 'userID' => $user['id'],
                 'boutiqueName' => $data['boutiqueName'],
                 'boutiqueAddress' => $data['boutiqueAddress'],
                 'contactNo' => $data['contactNo'],
                 'status' => "Verified"
+            ]);
+
+            $address = Address::create([
+                'userID' => $user['id'],
+                'contactName' => $boutique['boutiqueName'],
+                'phoneNumber' => $data['contactNo'],
+                'completeAddress' => $data['boutiqueAddress'],
+                'lat' => $data['lat'],
+                'lng' => $data['lng'],
+                'status' => "Default"
+            ]);
+
+            $boutique->update([
+                'addressID' => $address['id']
             ]);
 
 
