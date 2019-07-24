@@ -16,9 +16,11 @@
 
 <div class="container">
     <div class="row">
+      <div class="col-md-6">
         <input type="text" name="address" id="address" class="form-control" autofocus ><br><br><br>
         <!-- <textarea id="address" class="form-control"></textarea> -->
         <div id="map"></div>
+      </div>
     </div>
 </div>
 
@@ -28,7 +30,7 @@
 <style>
  #map {
    width: 100%;
-   height: 500px;
+   height: 300px;
    background-color: grey;
  }
   .dropdown-menu li {

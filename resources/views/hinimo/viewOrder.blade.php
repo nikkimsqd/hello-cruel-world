@@ -50,7 +50,7 @@
                                 </li>
                                 @endif
                                 @endforeach
-                                <li><span>Delivery Address</span><span>{{$order['deliveryAddress']}}</span></li>
+                                <li><span>Delivery Address</span><span>{{$order->address['completeAddress']}}</span></li>
 
 
                                 <li style="background-color: aliceblue;"><span>Subtotal</span> <span>₱{{$order['subtotal']}}</span></li>

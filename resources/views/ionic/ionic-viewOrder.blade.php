@@ -38,7 +38,7 @@
             <div class="col-md-12">
               <p><b>{{$order->boutique['boutiqueName']}}</b></p>
               <p><i>{{$order->boutique['contactNo']}}</i></p>
-              <p><i class="fa fa-map-marker"></i>&nbsp; {{$order->boutique['boutiqueAddress']}}</p>
+              <p><i class="fa fa-map-marker"></i>&nbsp; {{$order->boutique->address['completeAddress']}}</p>
             </div>
           </div>
         </div>
@@ -57,9 +57,9 @@
         <div class="box-body">
           <div class="row">
             <div class="col-md-12">
-              <p><b>{{$order['billingName']}}</b></p>
-              <p>{{$order['phoneNumber']}}</p>
-              <p><i class="fa fa-map-marker"></i>&nbsp; {{$order['deliveryAddress']}}</p>
+              <p><b>{{$order->address['contactName']}}</b></p>
+              <p>{{$order->address['phoneNumber']}}</p>
+              <p><i class="fa fa-map-marker"></i>&nbsp; {{$order->address['completeAddress']}}</p>
             </div>
           </div>
 
@@ -137,6 +137,36 @@
         </div>
       </div>
 
+      @if($order['status'] == "For Pickup")
+      <br> 
+      <div class="box">
+        <input type="text" name="orderID" class="orderID" value="{{$order['id']}}" hidden>
+
+        <div class="box-header with-border">
+          <h3 class="box-title"><b>Directions</b> </h3>
+        </div>
+
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12">
+
+<!--               <label for="deliveryAddress">Input Address <span>*</span></label>
+              <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus> -->
+              <div class="col-12 mb-3" id="map"></div>
+              <input type="text" name="lat" id="lat" value="{{$order->address['lat']}}" hidden>
+              <input type="text" name="lng" id="lng" value="{{$order->address['lng']}}" hidden>
+              <input type="text" name="customerName" id="customerName" value="{{$order->address['contactName']}}" hidden>
+
+              <input type="text" name="boutiqueLat" id="boutiqueLat" value="{{$order->boutique->address['lat']}}" hidden>
+              <input type="text" name="boutiqueLng" id="boutiqueLng" value="{{$order->boutique->address['lng']}}" hidden>
+              <input type="text" name="boutiqueName" id="boutiqueName" value="{{$order->boutique['boutiqueName']}}" hidden>
+
+            </div>
+          </div>
+        </div>
+      </div><br><br><br><br><br>
+      @endif
+
       <div class="box-footer">
          <a class="btn btn-warning" href="{{url('ionic-topickup')}}">Back</a>
          @if($order['status'] == "For Pickup")
@@ -162,15 +192,74 @@
   .main-footer{display: none;}
   .content-wrapper{min-height: 580px !important; position: relative;}
   .align-right{text-align: right;}
+  .box-footer{z-index: 5000;}
+  #map {
+    width: 100%;
+    height: 300px;
+    background-color: grey;
+  }
+  .dropdown-menu li {
+    padding: 3px 20px;
+    margin: 0;
+  }
+  .dropdown-menu li:hover{
+    background: #7FDFFF;
+    border-color: #7FDFFF;
+  }
+  .dropdown-menu .geocoder-control-selected{
+    background: #7FDFFF;
+    border-color: #7FDFFF;
+  }
+  .dropdown-menu ul li {
+    list-style-type: none;
+  }
 </style>
 
 @endsection
 
 @section('scripts')
+<link rel="stylesheet" href="{{asset('/leaflet/leaflet.css')}}">
+
+<script src="{{asset('/leaflet/leaflet.js')}}"></script>
+<script src="{{asset('/leaflet/bootstrap-geocoder.js')}}"></script>
+<script src="{{asset('/leaflet/Control.Geocoder.js')}}"></script>
+
 <script type="text/javascript">
 
+// MAPS ==================================================================================
+var mylat = $("#lat").val();
+var mylng = $("#lng").val();
+var customerName = $("#customerName").val();
+var boutiqueLat = $("#boutiqueLat").val();
+var boutiqueLng = $("#boutiqueLng").val();
+var boutiqueName = $("#boutiqueName").val();
+var myzoom = '12';
+
+var map = L.map('map').setView([mylat, mylng], myzoom);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+mapChecker = true;
 
 
+
+
+//SET LOCATION W/ MARKER ===========================================================================
+var customerMarker = L.marker([mylat, mylng]).addTo(map).bindPopup('To:<br/>' + customerName).openPopup();
+var boutiqueMarker = L.marker([boutiqueLat, boutiqueLng], {name: boutiqueName}).addTo(map).bindPopup('From:<br/>' + boutiqueName).openPopup();
+
+var distance = getDistance(boutiqueMarker, customerMarker);
+console.log(distance);
+// markers = [{
+//     "name": "Supermarket",
+//     "url": "",
+//     "lat": boutiqueLat,
+//     "lng": 
+// }];
+
+// ==================================================================================================//
 
 
 </script>

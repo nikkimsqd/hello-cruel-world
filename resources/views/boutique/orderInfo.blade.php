@@ -16,7 +16,7 @@
           <div class="col-md-12"> 
             <h4>Customer Name: <b>{{$order->customer['fname'].' '.$order->customer['lname']}}</b></h4>
             <h4>Boutique Name: <b>{{$order->boutique['boutiqueName']}}</b></h4>
-            <h4>Delivery Address: <b>{{$order['deliveryAddress']}}</b></h4>
+            <h4>Delivery Address: <b>{{$order->address['completeAddress']}}</b></h4>
             <h4>Status: 
               @if($order['status'] == "Pending")
               <span class="label label-warning">{{$order['status']}}</span>

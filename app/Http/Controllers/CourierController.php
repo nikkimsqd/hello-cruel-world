@@ -131,6 +131,23 @@ class CourierController extends Controller
 
     public function viewNotifications($notificationID)
     {
-        
+        $id = Auth()->user()->id;
+        $user = User::find($id);
+        $boutique = Boutique::where('userID', $id)->first();
+        $notifications = $user->notifications;
+        $notificationsCount = $user->unreadNotifications->count();
+
+        foreach($notifications as $notification){
+            if($notification->id == $notificationID) {
+
+                if($notification->type == 'App\Notifications\NotifyCourierForPickup'){
+                    $notification->markAsRead();
+
+                    return redirect('/ionic-viewOrder/'.$notification->data['orderID']);
+                    
+                }
+
+            }  
+        }
     }
 }

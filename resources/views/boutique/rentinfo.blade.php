@@ -25,7 +25,7 @@
 
               <h4>Customer Name: <b>{{$rent->customer['fname'].' '.$rent->customer['lname']}}</b></h4>
               <h4>Request placed at: <b>{{$rent['created_at']->format('M d, Y')}}</b></h4>
-              <h4>Address of Delivery: <b>{{$rent->order['deliveryAddress']}}</b></h4>
+              <h4>Address of Delivery: <b>{{$rent->order->address['completeAddress']}}</b></h4>
 
               <hr>
               <h4><b>Rent Details</b></h4>

@@ -36,7 +36,7 @@
                                 <option value="addAddress"><b>+ Add Address</b></option>
                             </select><br><br>
 
-                            <div class="col-12 mb-3" id="addAddressDIV" hidden="">
+                            <div id="addAddressDIV" hidden=""><br><br>
                                 <label for="deliveryAddress">Input Address <span>*</span></label>
                                 <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
                                 <div class="col-12 mb-3" id="map"></div>
@@ -45,12 +45,12 @@
                         
                                 <div class="custom-control custom-checkbox d-block mb-2">
                                     <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
-                                    <label class="custom-control-label" for="customCheck1">Save new address</label>
                                 </div>
                             </div>
 
 
-                            <!-- (apply api here) --><br><br>
+                            <br><br>
+                            <a href="{{url('view-mto/'.$mto['id'].'#mto-details')}}" class="btn essence-btn" style="color: white;">Cancel</a>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                         </div>
                         
@@ -87,7 +87,7 @@
                         </div>
                         </form>
 
-    <!-- ------------- BIDDING------------------------------------------------- -->
+    <!-- -------------- BIDDING --------------------------------------------------------------------------- -->
                         @elseif($bid != null)
                         <form action="{{url('makeOrderforBidding')}}" method="post">
                             {{csrf_field()}}
@@ -99,9 +99,31 @@
                             <label>Contact Number <span>*</span></label>
                             <input type="text" name="phoneNumber" class="form-control" maxlength="11" required><br>
 
-                            <label>Delivery Address</label>
-                            <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required>
-                            <!-- (apply api here) --><br><br>
+                            <label for="selectAddress">Select Address <span>*</span></label>
+                            <select name="selectAddress" id="selectAddress">
+                                <option selected disabled></option>
+                                @foreach($addresses as $address)
+                                <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
+                                @endforeach
+                                <option value="addAddress"><b>+ Add Address</b></option>
+                            </select><br><br>
+
+                            <div id="addAddressDIV" hidden=""><br><br>
+                                <label for="deliveryAddress">Input Address <span>*</span></label>
+                                <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
+                                <div class="col-12 mb-3" id="map"></div>
+                                <input type="text" name="lat" id="lat">
+                                <input type="text" name="lng" id="lng">
+                        
+                                <div class="custom-control custom-checkbox d-block mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
+                                    <label class="custom-control-label" for="customCheck1">Save new address</label>
+                                </div>
+                            </div>
+
+                            <!-- <label>Delivery Address</label>
+                            <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required> -->
+                            <br><br>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                             <a href="{{url('view-bidding/'.$bid->bidding['id'])}}" class="btn essence-btn">Cancel</a>
                         </div>
@@ -188,11 +210,26 @@
 
 <script type="text/javascript">
 
-$('#addressBtn').click(function(){
-    var deliveryAddress = $(this).siblings('#deliveryAddress').val();
+    var mapChecker = false;
 
-    if(deliveryAddress){
-        $('.order-details-confirmation').removeAttr('hidden');
+$('#addressBtn').click(function(){
+    var deliveryfee;
+    var selectAddress = $('#selectAddress').val();
+    var deliveryAddress = $('#deliveryAddress').val();
+    var lat = $("#lat").val();
+    var lng = $("#lng").val();
+    // console.log(deliveryAddress);
+
+    if(selectAddress){
+        if(selectAddress == "addAddress"){
+            deliveryAddress = $("#deliveryAddress").val();
+            // console.log(deliveryAddress);
+            $('.order-details-confirmation').removeAttr('hidden');
+        }else{
+            deliveryAddress = selectAddress;
+            console.log(deliveryAddress);
+            $('.order-details-confirmation').removeAttr('hidden');
+        }
     }else{
         alert("Please enter a valid address");
     }
@@ -202,64 +239,78 @@ $('#selectAddress').on('change', function(){
 
     if($(this).val() == "addAddress"){
         $('#addAddressDIV').removeAttr('hidden');
-        console.log($(this).val());
+        $('.order-details-confirmation').attr('hidden', "hidden");
+        // console.log($(this).val());
+
+
+        if(!mapChecker){
+            // MAPS ==================================================================================
+            var mylat = '10.2892368502206';
+            var mylong = '123.86207342147829';
+            var myzoom = '12';
+
+
+            var map = L.map('map').setView([mylat, mylong], myzoom);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            mapChecker = true;
+
+
+            var geocoder = L.Control.Geocoder.nominatim();
+            if (URLSearchParams && location.search) {
+              // parse /?geocoder=nominatim from URL
+              var params = new URLSearchParams(location.search);
+              var geocoderString = params.get('geocoder');
+              if (geocoderString && L.Control.Geocoder[geocoderString]) {
+                console.log('Using geocoder', geocoderString);
+                geocoder = L.Control.Geocoder[geocoderString]();
+              } else if (geocoderString) {
+                console.warn('Unsupported geocoder', geocoderString);
+              }
+            }
+
+
+            //SET LOCATION W/ MARKER ===========================================================================
+            var marker = L.marker([0,0]).addTo(map);
+            map.on('click', function (e) {
+              geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+                var r = results[0];
+                if(r) {
+                  // marker.setLatLng(e.latlng);
+                  $("#deliveryAddress").val(r.name);
+                  $("#lat").val(r.center.lat);
+                  $("#lng").val(r.center.lng);
+                }
+              });
+                  marker.setLatLng(e.latlng);
+
+            });
+            // ==================================================================================================//
+
+            var search = BootstrapGeocoder.search({
+              inputTag: 'deliveryAddress',
+              // placeholder: 'Search for places or addresses',
+              useMapBounds: false
+            }).addTo(map);
+        }
+
     }else{
         $('#addAddressDIV').attr('hidden', "hidden");
     }
-});
 
 
-// MAPS ==================================================================================
-var mylat = '10.2892368502206';
-var mylong = '123.86207342147829';
-var myzoom = '12';
-
-
-var map = L.map('map').setView([mylat, mylong], myzoom);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
-
-
-var geocoder = L.Control.Geocoder.nominatim();
-if (URLSearchParams && location.search) {
-  // parse /?geocoder=nominatim from URL
-  var params = new URLSearchParams(location.search);
-  var geocoderString = params.get('geocoder');
-  if (geocoderString && L.Control.Geocoder[geocoderString]) {
-    console.log('Using geocoder', geocoderString);
-    geocoder = L.Control.Geocoder[geocoderString]();
-  } else if (geocoderString) {
-    console.warn('Unsupported geocoder', geocoderString);
-  }
-}
-
-
-//SET LOCATION W/ MARKER ===========================================================================
-var marker = L.marker([mylat, mylong]).addTo(map);
-map.on('click', function (e) {
-  geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
-    var r = results[0];
-    if(r) {
-      // marker.setLatLng(e.latlng);
-      // console.log(r.center.lat);
-      $("#deliveryAddress").val(r.name);
-      $("#lat").val(r.center.lat);
-      $("#lng").val(r.center.lng);
-// console.log($("#deliveryAddress").val());
-    }
-  });
-      marker.setLatLng(e.latlng);
 
 });
-// ==================================================================================================//
 
-var search = BootstrapGeocoder.search({
-  inputTag: 'deliveryAddress',
-  // placeholder: 'Search for places or addresses',
-  useMapBounds: false
-}).addTo(map);
+
+
+
+
+
+
 
 
 </script>

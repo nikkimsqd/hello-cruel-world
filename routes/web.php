@@ -183,6 +183,7 @@ Route::post('/editProfile', 'CustomerController@editProfile');
 
 
 //REQUEST FOR RENT
+Route::get('/requestToRent/{productID}', 'CustomerController@submitRequestToRent');
 Route::post('/requestToRent', 'CustomerController@requestToRent');
 Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
 
@@ -261,6 +262,7 @@ Route::post('/submitMixnmatch', 'CustomerController@submitMixnmatch');
 Route::get('/addmnmtoCart/{top}/{bottom}', 'CustomerController@addmnmtoCart');
 
 
+Route::get('/gallery', 'CustomerController@gallery');
 
 
 

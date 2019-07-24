@@ -4,7 +4,6 @@
 
 
 
-
 @section('logo')
 <!-- LOGO -->
     <a href="{{url('ionic-dashboard')}}" class="logo">
@@ -14,7 +13,6 @@
       <span class="logo-lg">Hinimo</span>
     </a>
 @endsection
-
 
 
 
@@ -43,7 +41,7 @@
         </li>
         @else
         <li style="background-color: #e6f2ff;">
-          <a href="{{ url('view-notifications/'.$notification->id) }}">
+          <a href="{{ url('courier-notifications/'.$notification->id) }}">
               <i class="fa fa-tags text-aqua"></i> {{$notification->data['text']}}
           </a> 
         </li>
@@ -99,15 +97,11 @@
 <!-- sidebar: style can be found in sidebar.less -->
 <section class="sidebar">
   <!-- Sidebar user panel -->
-  <div class="user-panel">
-    <div class="pull-left image">
-      <img src="{{ asset('adminlte/dist/img/avatar2.png') }}" class="img-circle" alt="User Image">
-    </div>
-    <div class="pull-left info">
-      <p>{{$user['fname']}}</p>
-      <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-    </div>
-  </div>
+ <!--  <div class="user-panel">
+    <div class="pull-left info"> -->
+      <!-- <p>{{$user['lname']}}</p> -->
+  <!--   </div>
+  </div> -->
 
    <!-- sidebar menu: : style can be found in sidebar.less -->
   <ul class="sidebar-menu" data-widget="tree">

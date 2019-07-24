@@ -75,6 +75,7 @@
                                         @endif
                                     </li>
                                     <li><a href="{{url('/user-transactions')}}">View Transactions</a></li>
+                                    <li><a href="{{url('/gallery')}}">View Gallery</a></li>
                                 </ul>
                             </div> <!-- card closing -->
                         </div>
@@ -99,6 +100,7 @@
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             
+                        @if(count($addresses) > 0)
                         @foreach($addresses as $address)
                         <hr>
                         <table class="">
@@ -135,6 +137,9 @@
                         </table>
                         <br>
                         @endforeach
+                        @else
+                        <p>You have no registered addresses.</p>
+                        @endif
                         <br><br>
                         </div>
                     </div>
@@ -218,6 +223,7 @@
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
 
+@if(count($addresses) > 0)
 <div class="modal fade" id="editAddress{{$address['id']}}" role="dialog">
     <div class="modal-dialog modal-lg">
     
@@ -252,6 +258,7 @@
     </div> <!-- modal-content -->
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
+@endif
 
 <div class="modal fade" id="notificationsModal" role="dialog">
     <div class="modal-dialog modal-lg">

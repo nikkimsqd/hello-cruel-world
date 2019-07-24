@@ -64,7 +64,7 @@
                                     @endif
                                 </li>
                                 <li><span>Date to be returned</span><span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
-                                <li><span>Delivery Address</span> <span>{{$rent->order['deliveryAddress']}}</span></li>
+                                <li><span>Delivery Address</span> <span>{{$rent->order->address['completeAddress']}}</span></li>
                                 <li><span>Status</span> 
                                     @if($rent->order['status'] == "On Rent")
                                     <span style="color: red; font-weight: bold">{{$rent->order['status']}}</span></li>

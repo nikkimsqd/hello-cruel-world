@@ -53,7 +53,7 @@
 
                                     <ul class="order-details-form mb-4">
                                         <li><span>Order ID</span> <span>{{$mto->order['id']}}</span></li>
-                                        <li><span>Address of Delivery</span> <span>{{$mto->order['deliveryAddress']}}</span></li>
+                                        <li><span>Address of Delivery</span> <span>{{$mto->order->address['completeAddress']}}</span></li>
                                         <li><span>Status</span> 
                                             @if($mto->order['status'] == "For Pickup")
                                             <span style="color: #0315ff;">To be picked up by courier</span>
