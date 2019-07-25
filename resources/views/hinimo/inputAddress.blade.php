@@ -24,9 +24,6 @@
                             <label>Name <span>*</span></label>
                             <input type="text" name="billingName" class="form-control" required value="{{$user['fname']. ' '.$user['lname']}}"><br>
 
-                            <label>Contact Number <span>*</span></label>
-                            <input type="text" name="phoneNumber" class="form-control" maxlength="11" required><br>
-
                             <label for="selectAddress">Select Address <span>*</span></label>
                             <select name="selectAddress" id="selectAddress">
                                 <option selected disabled></option>
@@ -37,11 +34,14 @@
                             </select><br><br>
 
                             <div id="addAddressDIV" hidden=""><br><br>
+
+                                <label>Contact Number <span>*</span></label>
+                                <input type="text" name="phoneNumber" class="form-control" maxlength="11"><br>
                                 <label for="deliveryAddress">Input Address <span>*</span></label>
                                 <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
                                 <div class="col-12 mb-3" id="map"></div>
-                                <input type="text" name="lat" id="lat">
-                                <input type="text" name="lng" id="lng">
+                                <input type="text" name="lat" id="lat" hidden>
+                                <input type="text" name="lng" id="lng" hidden>
                         
                                 <div class="custom-control custom-checkbox d-block mb-2">
                                     <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
@@ -49,12 +49,12 @@
                             </div>
 
 
-                            <br><br>
-                            <a href="{{url('view-mto/'.$mto['id'].'#mto-details')}}" class="btn essence-btn" style="color: white;">Cancel</a>
+                          
+                            <a class="clearfix" href="{{url('view-mto/'.$mto['id'].'#mto-details')}}" class="btn essence-btn" style="color: white;">Cancel</a>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                         </div>
                         
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-12 mb-3 clearfix">
                         </div>
                         <br><br>
 
@@ -70,10 +70,10 @@
                                 $fabricSuggestion = json_decode($mto['fabricSuggestion']);
                             ?>
                             <ul class="order-details-form mb-4">
-                                <li><span>MTO Price</span> <span>{{$mtoPrice}}</span></li>
-                                <li><span>Subtotal</span> <span>{{$mtoPrice}}</span></li>
-                                <li><span>Delivery Fee</span> <span><i>50</i></span></li>
-                                <li><span>Total</span> <span style="color: #0315ff;"><i>{{$total}}</i></span></li>
+                                <li><span>Made-to-order item</span> <span>₱ {{$mtoPrice}}</span></li>
+                                <!-- <li><span>Subtotal</span> <span>{{$mtoPrice}}</span></li> -->
+                                <li><span>Delivery Fee</span> <span>₱ 50</span></li>
+                                <li><span>Total</span> <span style="color: #0315ff;">₱ {{$total}}</span></li>
                             </ul>
                             <div class="col-md-12 mb-3" style="text-align: center;">
                                     <input name="mtoID" value="{{$mto['id']}}" hidden>
@@ -96,8 +96,6 @@
                             <label>Name <span>*</span></label>
                             <input type="text" name="billingName" class="form-control" required value="{{$user['fname']. ' '.$user['lname']}}"><br>
 
-                            <label>Contact Number <span>*</span></label>
-                            <input type="text" name="phoneNumber" class="form-control" maxlength="11" required><br>
 
                             <label for="selectAddress">Select Address <span>*</span></label>
                             <select name="selectAddress" id="selectAddress">
@@ -109,21 +107,23 @@
                             </select><br><br>
 
                             <div id="addAddressDIV" hidden=""><br><br>
+                                <label>Contact Number <span>*</span></label>
+                                <input type="text" name="phoneNumber" class="form-control" maxlength="11"><br>
                                 <label for="deliveryAddress">Input Address <span>*</span></label>
                                 <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
                                 <div class="col-12 mb-3" id="map"></div>
-                                <input type="text" name="lat" id="lat">
-                                <input type="text" name="lng" id="lng">
+                                <input type="text" name="lat" id="lat" hidden>
+                                <input type="text" name="lng" id="lng" hidden>
                         
                                 <div class="custom-control custom-checkbox d-block mb-2">
                                     <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
-                                    <label class="custom-control-label" for="customCheck1">Save new address</label>
+                                    <!-- <label class="custom-control-label" for="customCheck1">Save new address</label> -->
                                 </div>
                             </div>
 
                             <!-- <label>Delivery Address</label>
                             <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required> -->
-                            <br><br>
+                            <br><br><br><br>
                             <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
                             <a href="{{url('view-bidding/'.$bid->bidding['id'])}}" class="btn essence-btn">Cancel</a>
                         </div>
@@ -171,6 +171,8 @@
 </div>
 
 <style type="text/css">
+    .nice-select{white-space: unset; min-height: 42px; height: auto;}
+    .nice-select .list{white-space: nowrap;}
     #map {
         width: 100%;
         height: 300px;

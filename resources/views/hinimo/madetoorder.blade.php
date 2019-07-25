@@ -64,7 +64,7 @@
                             <div class="col-md-8 mb-3">
                                 <label>Measurements (inches)</label>
                                 <span><a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">See guide on how to measure youself here.</a></span>
-                                <div class="mb-3" id="measurement-input" required>
+                                <div class="mb-3" id="measurement-input">
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@
                             </div>  
 
                             <div class="col-md-8 mb-3">
-                                <input type="text" name="boutiqueID" value="{{$boutique['id']}}" hidden>
+                                <input type="text" id="boutiqueID" name="boutiqueID" value="{{$boutique['id']}}" hidden>
                                 <a href="{{url('boutique/'.$boutique['id'])}}" class="btn essence-btn">Cancel</a>
                                 <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit">
                             </div>
@@ -123,13 +123,13 @@
 
 <style type="text/css">
 
-.datepicker-dropdown{top: 388px !important; left: 281.5px; z-index: 11; display: block;}
+    .datepicker-dropdown{top: 388px !important; left: 281.5px; z-index: 11; display: block;}
 
-label{
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
+    label{
+        font-size: 13px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
 
 </style>
 @endsection
@@ -169,8 +169,9 @@ $('#fabric-type').on('change', function(){
     $('#fabric-color').next().find('.current').empty();
 
     var type = $(this).val();
+    var boutiqueID = $("#boutiqueID").val();
     $.ajax({
-        url: "/hinimo/public/getFabricColor/"+type,
+        url: "/hinimo/public/getFabricColor/"+boutiqueID+'/'+type,
         success:function(data){ 
             console.log('aasa');
             data.colors.forEach(function(color){

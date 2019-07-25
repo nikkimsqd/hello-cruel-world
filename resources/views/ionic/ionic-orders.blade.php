@@ -20,8 +20,8 @@
           <div class="row">
             <div class="col-md-10">
               <!-- <h4>{{$order->customer['fname'].' '.$order->customer['lname']}}</h4> -->
-              <p><i class="fa fa-dot-circle-o"></i>&nbsp; {{$order->boutique['boutiqueAddress']}}</p>
-              <p><i class="fa fa-map-marker"></i>&nbsp; {{$order['deliveryAddress']}}</p>
+              <p><i class="fa fa-dot-circle-o"></i>&nbsp; {{$order->boutique->address['completeAddress']}}</p>
+              <p><i class="fa fa-map-marker"></i>&nbsp; {{$order->address['completeAddress']}}</p>
               @if($order['status'] == "Pending")
               <span class="label label-warning">{{$order['status']}}</span>
 
@@ -63,7 +63,7 @@
 <style type="text/css">
   h4{}
   .col-md-10{width: 80%; float: left; padding-right: 0;}
-  .col-md-2{width: 20%; float: right; padding-left: 10px;}
+  .col-md-2{width: 20%; float: right; padding-left: 10px; margin-bottom: 10%; margin-top: 10%;}
   .breadcrumb{display: none;}
   .box{margin-bottom: 10px;}
   .price{color: #00c95e;}

@@ -236,7 +236,7 @@ Route::get('/boutique/{boutiqueID}', 'CustomerController@viewBoutique');
 //MADE-TO-ORDER
 Route::get('{boutiqueID}/made-to-order', 'CustomerController@madeToOrder');
 Route::post('/saveMadeToOrder', 'CustomerController@saveMadeToOrder');
-Route::get('/getFabricColor/{type}', 'CustomerController@getFabricColor');
+Route::get('/getFabricColor/{boutiqueID}/{type}', 'CustomerController@getFabricColor');
 // Route::post('/acceptOffer', 'CustomerController@acceptOffer');
 Route::post('/makeOrderforMTO', 'CustomerController@makeOrderforMTO');
 // Route::get('/receiveMto/{orderID}', 'CustomerController@receiveMto');

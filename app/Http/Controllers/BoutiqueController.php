@@ -165,6 +165,22 @@ class BoutiqueController extends Controller
 					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/boutique-view-bidding/'.$bidding['id']);
 
+				}elseif ($notification->type == 'App\Notifications\AdminAcceptsCategoryRequest') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$catReq = Categoryrequest::where('id', $notif->data['catReqID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/categories');
+
+				}elseif ($notification->type == 'App\Notifications\AdminDeclinesCategoryRequest') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$catReq = Categoryrequest::where('id', $notif->data['catReqID'])->first();
+
+					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
+					return redirect('/categories');
+
 				}
 			}
 		}
@@ -1183,7 +1199,7 @@ class BoutiqueController extends Controller
 	    $boutique = Boutique::where('userID', $userID)->first();
 	    $notifications = $user->notifications;
 	    $notificationsCount = $user->unreadNotifications->count();
-	    $biddingOrders = Order::where('biddingID', '!=', null)->where('boutiqueID', $boutique['id'])->get();
+	    $biddingOrders = Order::where('biddingID', '!=', null)->where('boutiqueID', $boutique['id'])->where('status', '!=', 'Completed')->get();
 
 	    return view('boutique/boutique-biddings', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'biddingOrders'));
     }

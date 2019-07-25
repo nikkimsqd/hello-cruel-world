@@ -16,20 +16,20 @@
         <div class="box-body">
           <form action="admin-addMeasurement" method="post">
           {{csrf_field()}}
-            <div class="col-md-4"> 
+          <!--   <div class="col-md-4"> 
               <div class="form-group">
                 <label>Category of item</label><br>
                   <select name="gender" id="gender-select" class="input form-control" autofocus>
                     <option value=""></option>
-                    <!-- <option value="mens">Mens</option> -->
+                    <option value="mens">Mens</option>
                     <option value="womens">Womens</option>
                   </select><br>                
               </div>
-            </div>
+            </div> -->
 
             <div class="col-md-4"><br>
               <div class="form-group categories">
-                <select name="category" id="category-select" disabled class="input form-control">
+                <select name="category" id="category-select" class="input form-control" autofocus>
                   <option></option>
                   @foreach($categories as $category)
                   <option value="{{$category['id']}}">{{$category['categoryName']}}</option>

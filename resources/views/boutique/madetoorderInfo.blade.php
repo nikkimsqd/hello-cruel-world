@@ -54,9 +54,11 @@
 
               <hr>
               <h4><b>Customer's Measurements Details</b></h4>
-              @foreach($measurementData as $measurementName => $value)
-                <h4>{{$measurementName}}: <b>{{$value}} inches</b></h4>
-              @endforeach
+              <div class="col-md-12"><!--   style="column-count: 2" -->
+                @foreach($measurementData as $measurementName => $value)
+                  <h4>{{$measurementName}}: <b>{{$value}} inches</b></h4>
+                @endforeach
+              </div>
               <h4>Customer's Height: <b>{{$mto['height']}} cm</b></h4>
               
               @if($mto['fabricSuggestion'] != null)
@@ -99,6 +101,7 @@
             </div>
           </div>
         </div>
+                  <input type="text" id="boutiqueID" name="boutiqueID" value="{{$mto->boutique['id']}}" hidden>
 
         <div class="box-footer" style="text-align: right;">
           @if($mto['orderID'] == null && $mto['status'] == "Active")
@@ -232,8 +235,9 @@ $('#fabric-type').on('change', function(){
     $('#fabric-color').prop('disabled',false);
 
     var type = $(this).val();
+    var boutiqueID = $("#boutiqueID").val();
     $.ajax({
-        url: "/hinimo/public/getFabricColor/"+type,
+        url: "/hinimo/public/getFabricColor/"+boutiqueID+'/'+type,
         success:function(data){ 
             data.colors.forEach(function(color){
                 $('#fabric-color').append('<option value="'+color.id+'">'+color.color+'</option>');

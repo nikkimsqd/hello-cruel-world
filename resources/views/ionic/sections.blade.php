@@ -2,7 +2,9 @@
   {{$user['fname']}}
 @endsection
 
-
+@section('page_title')
+{{$page_title}}
+@endsection
 
 @section('logo')
 <!-- LOGO -->

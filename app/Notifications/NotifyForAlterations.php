@@ -57,7 +57,7 @@ class NotifyForAlterations extends Notification
     public function toArray($notifiable)
     {
         return [
-            'text' => 'Your item is ready for alterations.',
+            'text' => 'Your item is ready for fitting.',
             'orderID' => $this->order['id']
         ];
     }

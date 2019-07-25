@@ -6,10 +6,16 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <div class="box box-success">
+      <div class="box">
 
         <div class="box-header with-border">
-          <h3 class="box-title">Categories</h3>
+          <h3 class="box-title">Categories 
+            @if($notif['status'] == "Approved")
+              <label class="label label-info">Request Approved</label>
+            @elseif($notif['status'] == "Declined")
+              <label class="label label-danger">Request Declined</label>
+            @endif
+          </h3>
         </div>
 
         <form action="{{url('/saveCategory')}}" method="post">
@@ -37,7 +43,7 @@
 
         </div>
         <div class="box-footer" style="text-align: right;">
-         <a class="btn btn-warning" href="{{url('admin-notifications')}}">Go to notifications</a>
+         <!-- <a class="btn btn-warning" href="{{url('admin-notifications')}}">Go to notifications</a> -->
          @if($notif['status'] == "Pending")
           <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal">Decline request</button>
           <input type="submit" name="btn_submit" value="Approve request" class="btn btn-primary">

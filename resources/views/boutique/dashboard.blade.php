@@ -243,36 +243,36 @@
                 @foreach($mtos as $mto)
                 <tr>
                   <td>{{$mto->order['id']}}</td>
-                  <td>{{$order->cart->owner['fname'].' '.$order->cart->owner['lname']}}</td>
-                  <td>{{$order['created_at']->format('M d, Y')}}</td>
-                  @if($order['paymentStatus'] == "Not Yet Paid")
-                    <td style="color: red">{{$order['paymentStatus']}}</td>
+                  <td>{{$mto->customer->owner['fname'].' '.$mto->customer->owner['lname']}}</td>
+                  <td>{{$mto->order['created_at']->format('M d, Y')}}</td>
+                  @if($mto->order['paymentStatus'] == "Not Yet Paid")
+                    <td style="color: red">{{$mto->order['paymentStatus']}}</td>
                   @else
-                    <td style="color: #0315ff;">{{$order['paymentStatus']}}</td>
+                    <td style="color: #0315ff;">{{$mto->order['paymentStatus']}}</td>
                   @endif
-                  @if($order['status'] == "Pending")
-                  <td><span class="label label-warning">{{$order['status']}}</span></td>
+                  @if($mto->order['status'] == "Pending")
+                  <td><span class="label label-warning">{{$mto->order['status']}}</span></td>
 
-                  @elseif($order['status'] == "In-Progress")
-                  <td><span class="label label-info">{{$order['status']}}</span></td>
+                  @elseif($mto->order['status'] == "In-Progress")
+                  <td><span class="label label-info">{{$mto->order['status']}}</span></td>
 
-                  @elseif($order['status'] == "For Pickup")
-                  <td><span class="label bg-navy">{{$order['status']}}</span></td>
+                  @elseif($mto->order['status'] == "For Pickup")
+                  <td><span class="label bg-navy">{{$mto->order['status']}}</span></td>
 
-                  @elseif($order['status'] == "For Delivery")
-                  <td><span class="label bg-olive">{{$order['status']}}</span></td>
+                  @elseif($mto->order['status'] == "For Delivery")
+                  <td><span class="label bg-olive">{{$mto->order['status']}}</span></td>
 
-                  @elseif($order['status'] == "On Delivery")
-                  <td><span class="label label-maroon">{{$order['status']}}</span></td>
+                  @elseif($mto->order['status'] == "On Delivery")
+                  <td><span class="label label-maroon">{{$mto->order['status']}}</span></td>
 
-                  @elseif($order['status'] == "Delivered")
-                  <td><span class="label label-success">{{$order['status']}}</span></td>
+                  @elseif($mto->order['status'] == "Delivered")
+                  <td><span class="label label-success">{{$mto->order['status']}}</span></td>
 
-                  @elseif($order['status'] == "Completed")
-                  <td><span class="label label-success">{{$order['status']}}</span></td>
+                  @elseif($mto->order['status'] == "Completed")
+                  <td><span class="label label-success">{{$mto->order['status']}}</span></td>
 
                   @endif
-                  <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                  <td><a href="orders/{{$mto->order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>
                 @endforeach
                 @else

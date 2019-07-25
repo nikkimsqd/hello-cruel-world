@@ -54,7 +54,7 @@
                             <option value="{{$address['id']}}">{{$address['completeAddress']}}</option>
                             @endforeach
                             <option value="addAddress"><b>+ Add Address</b></option>
-                        </select><br><br>
+                        </select><br><br><br>
 
                         <div id="addAddressDIV" hidden=""><br><br>
                             <label>Contact Number:</label>
@@ -143,8 +143,8 @@
                             </div>
                         </div>
 
-                        <input type="checkbox" id="t&c" class="" required> &nbsp;
-                        <label for="t&c">I agree to Terms & Conditions</label>
+                        <!-- <input type="checkbox" id="t&c" class="" required> &nbsp;
+                        <label for="t&c">I agree to Terms & Conditions</label> -->
                           
 
                         <?php 
@@ -169,6 +169,8 @@
 </div>
 
 <style type="text/css">
+    .nice-select{white-space: unset; min-height: 42px; height: auto;}
+    .nice-select .list{white-space: nowrap;}
     .checkout_details_area form label{font-size: 13px;}
     .checkout_details_area form .form-control{border: 1px solid #b7b7b7;}
     .additionalNotes{height: 100px !important;}

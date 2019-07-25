@@ -36,7 +36,7 @@
                                 <div class="col-md-12">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td><h5>Your schedule for alterations will be on:</h5></td>
+                                        <td><h5>Your schedule for fitting will be on:</h5></td>
                                         <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($mto->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($mto->order['alterationDateEnd']))}}</h5></td>
                                     </tr>
                                 </table>
@@ -68,7 +68,11 @@
                                         <li><span>Delivery Fee</span> <span>₱{{$mto->order['deliveryfee']}}</span></li>
                                         <li><span>Total</span> <span style="color: #0315ff;">₱{{$mto->order['total']}}</span></li>
                                         <li><span>Payment Status</span>
+                                            @if($mto->order['paymentStatus'] == "Not Yet Paid")
+                                            <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
+                                            @else
                                             <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}</span>
+                                            @endif
                                         </li>
                                     </ul>
                                     @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery")
@@ -118,7 +122,7 @@
                                         <li><span>Measurements</span> 
                                             <span style="text-align: right;">
                                                 @foreach($measurements as $measurementName => $measurement)
-                                                {{$measurementName.': '. $measurement}} <br>
+                                                {{$measurementName.': '. $measurement}} inches<br>
                                                 @endforeach
                                             </span></li>
 

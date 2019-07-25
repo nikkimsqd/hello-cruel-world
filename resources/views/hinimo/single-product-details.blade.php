@@ -59,7 +59,8 @@
                     <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                 @endif
 
-                <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['id']}}">
+                <a href="{{url('requestToRent/'.$product['id'])}}" class="btn essence-btn">Request to Rent</a>
+                <!-- <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['id']}}"> -->
 
                 <div class="product-favourite ml-4">
                     <a href="#" class="favme fa fa-heart"></a>

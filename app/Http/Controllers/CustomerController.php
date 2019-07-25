@@ -304,12 +304,12 @@ class CustomerController extends Controller
                 'userID' => $request->input('userID'),
                 'cartID' => $request->input('cartID'),
                 'subtotal' => $orders['subtotal'],
-                'deliveryfee' => $orders['deliveryfee'], //remove ni
+                'deliveryfee' => $orders['deliveryfee'],
                 'total' => $orders['total'],
                 'boutiqueID' => $orders['boutiqueID'],
-                'deliveryAddress' => $request->input('selectAddress'), //remove ni
+                'deliveryAddress' => $addressID, //remove ni
                 'billingName' => $billingName, //remove ni
-                'phoneNumber' => $request->input('phoneNumber'), //remove ni
+                'phoneNumber' => $addressID, //remove ni
                 'boutiqueShare' => $orders['boutiqueShare'],
                 'adminShare' => $orders['adminShare'],
                 'status' => 'Pending',
@@ -916,11 +916,11 @@ class CustomerController extends Controller
             'subtotal' => $request->input('subtotal'),
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
-            'deliveryAddress' => $request->input('deliveryAddress'),
+            'deliveryAddress' => $addressID,
             'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
             'billingName' => $request->input('billingName'),
-            'phoneNumber' => $request->input('phoneNumber'),
+            'phoneNumber' => $addressID,
             'boutiqueShare' => $request->input('boutiqueShare'),
             'adminShare' => $request->input('adminShare'),
             'addressID' => $addressID
@@ -1052,7 +1052,7 @@ class CustomerController extends Controller
     public function madeToOrder($boutiqueID)
     {
         $boutique = Boutique::where('id', $boutiqueID)->first();
-        $page_title = $boutique['boutiqueName'];
+        $page_title = "Made-to-order";
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $boutiques = Boutique::all();
@@ -1075,9 +1075,9 @@ class CustomerController extends Controller
         return view('hinimo/madetoorder', compact('categories', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'categoryArray', 'fabrics', 'fabs'));
     }
 
-    public function getFabricColor($type)
+    public function getFabricColor($boutiqueID, $type)
     {
-        $colors = Fabric::where('name', $type)->get();
+        $colors = Fabric::where('name', $type)->where('boutiqueID', $boutiqueID)->get();
 
         return response()->json(['colors' => $colors]);
     }
@@ -1346,12 +1346,11 @@ class CustomerController extends Controller
         $mto = Mto::find($mtoID);
         $deliveryAddress = $request->input('deliveryAddress');
         $addressID = $request->input('selectAddress');
-            // dd($addressID);
 
         if($deliveryAddress != null && $addressID == "addAddress"){
             $address = Address::create([
                 'userID' => $userID, 
-                'contactName' => $request->input('fullname'), 
+                'contactName' => $request->input('billingName'), 
                 'phoneNumber' => $request->input('phoneNumber'),
                 'completeAddress' => $request->input('deliveryAddress'),
                 'lat' => $request->input('lat'), 
@@ -1359,7 +1358,6 @@ class CustomerController extends Controller
                 'status' => "Not Default"
             ]);
             $addressID = $address['id'];
-            dd($deliveryAddress);
         }elseif($deliveryAddress != null && $addressID != "addAddress"){
             //leave empty lang para mo exit na sa condition
         }
@@ -1375,7 +1373,7 @@ class CustomerController extends Controller
             'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
             'billingName' => $request->input('billingName'), //remove ni
-            'phoneNumber' => $request->input('phoneNumber'), //remove ni
+            'phoneNumber' => $addressID, //remove ni
             'boutiqueShare' => $request->input('boutiqueShare'),
             'adminShare' => $request->input('adminShare'),
             'addressID' => $addressID

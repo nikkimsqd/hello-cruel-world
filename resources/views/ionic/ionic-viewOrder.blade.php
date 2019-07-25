@@ -64,7 +64,7 @@
           </div>
 
           @if($order['status'] != "For Pickup")
-          <hr>
+          <br>
 
           <div class="row">
             <div class="col-md-12">
@@ -136,14 +136,42 @@
           @endif
         </div>
       </div>
-
-      @if($order['status'] == "For Pickup")
+<!-- 
+      @if($order['status'] == "For Delivery")
       <br> 
       <div class="box">
         <input type="text" name="orderID" class="orderID" value="{{$order['id']}}" hidden>
 
         <div class="box-header with-border">
-          <h3 class="box-title"><b>Directions</b> </h3>
+          <h3 class="box-title"><b>Map Guide</b> </h3>
+        </div>
+
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="col-12 mb-3" id="map"></div>
+              <input type="text" name="lat" id="lat" value="{{$order->address['lat']}}" hidden>
+              <input type="text" name="lng" id="lng" value="{{$order->address['lng']}}" hidden>
+              <input type="text" name="customerName" id="customerName" value="{{$order->address['contactName']}}" hidden>
+
+              <input type="text" name="boutiqueLat" id="boutiqueLat" value="{{$order->boutique->address['lat']}}" hidden>
+              <input type="text" name="boutiqueLng" id="boutiqueLng" value="{{$order->boutique->address['lng']}}" hidden>
+              <input type="text" name="boutiqueName" id="boutiqueName" value="{{$order->boutique['boutiqueName']}}" hidden>
+
+            </div>
+          </div>
+        </div>
+      </div><br><br><br><br><br>
+      @endif -->
+
+      @if($order['status'] == "For Pickup" || $order['status'] == "For Delivery")
+      <br> 
+      <div class="box">
+        <input type="text" name="orderID" class="orderID" value="{{$order['id']}}" hidden>
+
+        <div class="box-header with-border">
+          <h3 class="box-title"><b>Map Guide</b> </h3>
         </div>
 
         <div class="box-body">
@@ -248,10 +276,10 @@ mapChecker = true;
 
 //SET LOCATION W/ MARKER ===========================================================================
 var customerMarker = L.marker([mylat, mylng]).addTo(map).bindPopup('To:<br/>' + customerName).openPopup();
-var boutiqueMarker = L.marker([boutiqueLat, boutiqueLng], {name: boutiqueName}).addTo(map).bindPopup('From:<br/>' + boutiqueName).openPopup();
+var boutiqueMarker = L.marker([boutiqueLat, boutiqueLng]).addTo(map).bindPopup('From:<br/>' + boutiqueName).openPopup();
 
-var distance = getDistance(boutiqueMarker, customerMarker);
-console.log(distance);
+// var distance = getDistance(boutiqueMarker, customerMarker);
+// console.log(distance);
 // markers = [{
 //     "name": "Supermarket",
 //     "url": "",

@@ -41,10 +41,10 @@
                                 <label for="fullname">Full Name <span>*</span></label>
                                 <input type="text" class="form-control" name="fullname" required value="{{$user['fname'].' '.$user['lname']}}">
                             </div>
-                            <div class="col-12 mb-3">
+                           <!--  <div class="col-12 mb-3">
                                 <label for="phone_number">Phone No <span>*</span></label>
                                 <input type="number" class="form-control" name="phoneNumber" maxlength="11" required>
-                            </div>
+                            </div> -->
                             <div class="col-12 mb-3">
                                 <label for="selectAddress">Select Address <span>*</span></label>
                                 <select name="selectAddress" id="selectAddress">
@@ -57,15 +57,17 @@
                             </div>
 
                             <div class="col-12 mb-3" id="addAddressDIV" hidden="">
+                                <label for="phone_number">Phone No <span>*</span></label>
+                                <input type="number" class="form-control" name="phoneNumber" maxlength="11"><br>
                                 <label for="deliveryAddress">Input Address <span>*</span></label>
                                 <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
                                 <div class="col-12 mb-3" id="map"></div>
-                                <input type="text" name="lat" id="lat">
-                                <input type="text" name="lng" id="lng">
+                                <input type="text" name="lat" id="lat" hidden>
+                                <input type="text" name="lng" id="lng" hidden>
                         
                                 <div class="custom-control custom-checkbox d-block mb-2">
                                     <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
-                                    <label class="custom-control-label" for="customCheck1">Save new address</label>
+                                    <!-- <label class="custom-control-label" for="customCheck1">Save new address</label> -->
                                 </div>
                             </div>
                             
@@ -167,8 +169,8 @@
 
 <style type="text/css">
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
-    .nice-select{white-space: unset;}
-    .nice-select .list{z-index: 2000;}
+    .nice-select{white-space: unset; min-height: 42px; height: auto;}
+    .nice-select .list{z-index: 2000; white-space: nowrap;}
     #map {
         width: 100%;
         height: 300px;
@@ -207,62 +209,63 @@ $('#selectAddress').on('change', function(){
     if($(this).val() == "addAddress"){
         $('#addAddressDIV').removeAttr('hidden');
         console.log($(this).val());
-    }else{
-        $('#addAddressDIV').attr('hidden', "hidden");
-    }
-});
-
-// MAPS ==================================================================================
-var mylat = '10.2892368502206';
-var mylong = '123.86207342147829';
-var myzoom = '12';
+        // MAPS ==================================================================================
+        var mylat = '10.2892368502206';
+        var mylong = '123.86207342147829';
+        var myzoom = '12';
 
 
-var map = L.map('map').setView([mylat, mylong], myzoom);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+        var map = L.map('map').setView([mylat, mylong], myzoom);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
 
 
-var geocoder = L.Control.Geocoder.nominatim();
-if (URLSearchParams && location.search) {
-  // parse /?geocoder=nominatim from URL
-  var params = new URLSearchParams(location.search);
-  var geocoderString = params.get('geocoder');
-  if (geocoderString && L.Control.Geocoder[geocoderString]) {
-    console.log('Using geocoder', geocoderString);
-    geocoder = L.Control.Geocoder[geocoderString]();
-  } else if (geocoderString) {
-    console.warn('Unsupported geocoder', geocoderString);
-  }
-}
+        var geocoder = L.Control.Geocoder.nominatim();
+        if (URLSearchParams && location.search) {
+          // parse /?geocoder=nominatim from URL
+          var params = new URLSearchParams(location.search);
+          var geocoderString = params.get('geocoder');
+          if (geocoderString && L.Control.Geocoder[geocoderString]) {
+            console.log('Using geocoder', geocoderString);
+            geocoder = L.Control.Geocoder[geocoderString]();
+          } else if (geocoderString) {
+            console.warn('Unsupported geocoder', geocoderString);
+          }
+        }
 
 
-//SET LOCATION W/ MARKER ===========================================================================
-var marker = L.marker([mylat, mylong]).addTo(map);
-map.on('click', function (e) {
-  geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
-    var r = results[0];
-    if(r) {
-      // marker.setLatLng(e.latlng);
-      // console.log(r.center.lat);
-      $("#deliveryAddress").val(r.name);
-      $("#lat").val(r.center.lat);
-      $("#lng").val(r.center.lng);
-// console.log($("#deliveryAddress").val());
-    }
-  });
-      marker.setLatLng(e.latlng);
+        //SET LOCATION W/ MARKER ===========================================================================
+        var marker = L.marker([mylat, mylong]).addTo(map);
+        map.on('click', function (e) {
+          geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+            var r = results[0];
+            if(r) {
+              // marker.setLatLng(e.latlng);
+              // console.log(r.center.lat);
+              $("#deliveryAddress").val(r.name);
+              $("#lat").val(r.center.lat);
+              $("#lng").val(r.center.lng);
+        // console.log($("#deliveryAddress").val());
+            }
+          });
+              marker.setLatLng(e.latlng);
 
-});
-// ==================================================================================================//
+        });
+        // ==================================================================================================//
 
-var search = BootstrapGeocoder.search({
-  inputTag: 'deliveryAddress',
-  // placeholder: 'Search for places or addresses',
-  useMapBounds: false
-}).addTo(map);
+        var search = BootstrapGeocoder.search({
+          inputTag: 'deliveryAddress',
+          // placeholder: 'Search for places or addresses',
+          useMapBounds: false
+        }).addTo(map);
+            }else{
+                $('#addAddressDIV').attr('hidden', "hidden");
+            }
+        });
+
+
 
 </script>
 

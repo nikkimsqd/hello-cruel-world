@@ -25,6 +25,8 @@ use App\Measurement;
 use App\Measurementtype;
 use App\Categorymeasurement;
 use App\Sharepercentage;
+use App\Notifications\AdminAcceptsCategoryRequest;
+use App\Notifications\AdminDeclinesCategoryRequest;
 
 
 class AdminController extends Controller
@@ -236,9 +238,14 @@ class AdminController extends Controller
 		$categoryRequest = $request->input('categoryRequest');
 		$notificationID = $request->input('notificationID');
 		if($categoryRequest != null) {
-			Categoryrequest::where('id', $categoryRequest)->update([
+			$catReq = Categoryrequest::where('id', $categoryRequest)->first();
+			$catReq->update([
 				'status' => "Approved"
 			]);
+
+			$boutique = User::where('id', $catReq->boutique->owner['id'])->first();
+			$boutique->notify(new AdminAcceptsCategoryRequest($catReq));
+			// dd($boutique);
 
 			return redirect('categories-notifications/'.$notificationID);
 		}
@@ -251,28 +258,14 @@ class AdminController extends Controller
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 
-		// foreach($adminNotifications as $notifications) {
-		// 	if($notifications->id == $notificationID) { //match notificationID
-		// 		$notification = $notifications;
-		// 		if($notification['type'] == "App\Notifications\NewCategoryRequest") { //determine by type
-		// 			$categoryRequest = Categoryrequest::where('id', $notification->data['categoryRequest'])->update([
-		// 				'status' => "Declined"
-		// 			]);
-		// 		}
-		// 	} else {
-				
-		// 	}
-		// } //endforeach
-
 		$catReq = Categoryrequest::where('id', $request->input('catreqID'))->first();
 		$catReq->update([
 			'status' => 'Declined',
 			'reason' => $request->input('reason')
 		]);
 
-		$boutique = Boutique::where('id', $catReq['boutiqueID'])->first();
-		$boutiqueseller = User::where('id', $boutique['userID'])->first();
-		// $boutiqueseller->notify(new )
+		$boutique = User::where('id', $catReq->boutique->owner['id'])->first();
+		$boutique->notify(new AdminDeclinesCategoryRequest($catReq));
 
 		return redirect('admin-categories');
 	}

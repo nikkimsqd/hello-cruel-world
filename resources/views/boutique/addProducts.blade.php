@@ -90,7 +90,7 @@
         <label>Amount of fine incase item is lost by user</label>
         <input type="number" name="fine" class="input form-control"><br>
 
-        <label>Locations item is available for rent</label><br>
+        <label>Cities item is available for rent</label><br>
 
         <!-- <label>Select Region:</label>
         <select name="region" class="form-control" id="region-select">

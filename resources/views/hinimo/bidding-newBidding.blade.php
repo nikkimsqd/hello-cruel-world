@@ -28,7 +28,7 @@
                 <div class="regular-page-content-wrapper">
                     <div class="regular-page-text">
                         <div class="row justify-content-center">
-                            <div class="col-md-5">
+                            <div class="col-md-7">
                                 <form method="post" action="{{url('/savebidding')}}" enctype="multipart/form-data">
                                     {{csrf_field()}}
 
@@ -104,7 +104,7 @@
 <style type="text/css">
 
 label{
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
     font-weight: 600;
 }
@@ -129,7 +129,7 @@ label{
   color: #fff;
 }
 
-.datepicker-dropdown{top: 935px !important; left: 281.5px; z-index: 11; display: block;}
+.datepicker-dropdown{position: absolute; top: 935px; left: 281.5px; z-index: 11; display: block;}
 
 </style>
 @endsection

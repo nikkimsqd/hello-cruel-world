@@ -126,6 +126,7 @@
 
 
                         <div class="products_list row">
+                            @if(count($products) > 0)
                             @foreach($products as $product)
                       
                             <div class="col-12 col-sm-6 col-lg-4">
@@ -147,9 +148,13 @@
                                     <div class="product-badge offer-badge">
                                         <span>NOT AVAILABLE</span>
                                     </div>
-                                @elseif($product['forRent'] == "true")
+                                @elseif($product['rpID'] != null && $product['price'] != null)
                                     <div class="product-badge new-badge">
-                                        <span>Rentable</span>
+                                        <span>RENTABLE</span>
+                                    </div>
+                                @elseif($product['rpID'] != null && $product['price'] == null)
+                                    <div class="product-badge new-badge">
+                                        <span>FOR RENT ONLY</span>
                                     </div>
                                 @endif
                                     
@@ -179,11 +184,16 @@
                             </div>
                             </div>
                             @endforeach
+                            @else
+                            <div class="col-md-12">
+                                <p style="">There are no products here...</p>
+                            </div>
+                            @endif
 
                         </div>
                     </div>
 
-                    <nav aria-label="navigation">
+                   <!--  <nav aria-label="navigation">
                         <ul class="pagination mt-50 mb-70">
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-left"></i></a></li>
                             <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -193,7 +203,7 @@
                             <li class="page-item"><a class="page-link" href="#">21</a></li>
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
-                    </nav>
+                    </nav> -->
                     <!-- <div class="products_list row"> 
                             @foreach($notAvailables as $notAvailable)
                             <div class="col-12 col-sm-6 col-lg-4">
@@ -328,14 +338,14 @@
 
 
 <style type="text/css">
-.small-box{
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.13);
-    background-color: transparent !important;
-}
+    .small-box{
+        box-shadow: 0 1px 10px rgba(0, 0, 0, 0.13);
+        background-color: transparent !important;
+    }
 
-.small-box:hover .icon {
-    font-size: 90px;
-}
+    .small-box:hover .icon {
+        font-size: 90px;
+    }
 
 </style>
 
