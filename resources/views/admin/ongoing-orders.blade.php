@@ -50,7 +50,10 @@
               @endif
               <td>{{$order->boutique['boutiqueName']}}</td>
               <td class="align-center">
-                @if($order['status'] == "In-Progress")
+                @if($order['status'] == "Pending")
+                <span class="label label-warning">{{$order['status']}}</span>
+
+                @elseif($order['status'] == "In-Progress")
                 <span class="label label-warning">{{$order['status']}}</span>
 
                 @elseif($order['status'] == "For Alterations")
@@ -68,7 +71,7 @@
                 @elseif($order['status'] == "Delivered")
                 <span class="label label-success">{{$order['status']}}</span>
 
-                @elseif($order['status'] == "Completed")
+                @elseif($order['status'] == "On Rent")
                 <span class="label label-success">{{$order['status']}}</span>
                 @endif
               </td>
