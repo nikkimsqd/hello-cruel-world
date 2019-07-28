@@ -188,7 +188,7 @@
 
    <!-- sidebar menu: : style can be found in sidebar.less -->
   <ul class="sidebar-menu" data-widget="tree">
-    <li class="header">MAIN NAVIGATION</li>
+    <li class="header">{{$boutique['boutiqueName']}}</li>
    
     <li class="dashboard">
       <a href="{{url('dashboard')}}">
@@ -217,6 +217,7 @@
         </span>
       </a>
       <ul class="treeview-menu">
+        <li class="allsets"><a href="{{url('sets')}}"><i class="fa fa-circle-o"></i> All Sets</a></li>
         <li class="allproducts"><a href="{{url('products')}}"><i class="fa fa-circle-o"></i> All Products</a></li>
         <!-- <li><a href="/hinimo/public/products/womens"><i class="fa fa-circle-o"></i> Womens</a></li> -->
         <!-- <li><a href="/hinimo/public/products/mens"><i class="fa fa-circle-o"></i> Mens</a></li> -->

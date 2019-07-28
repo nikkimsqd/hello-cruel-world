@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cartitem extends Model
 {
 	public $table = 'cartitems';
-    protected $fillable = ['cartID', 'productID'];
+    protected $fillable = ['cartID', 'productID', 'setID'];
  	
  	public function getCart()
  	{
@@ -17,5 +17,10 @@ class Cartitem extends Model
  	public function product()
  	{
         return $this->hasOne('App\Product', 'id', 'productID');
+ 	}
+
+ 	public function set()
+ 	{
+        return $this->hasOne('App\Set', 'id', 'setID');
  	}
 }

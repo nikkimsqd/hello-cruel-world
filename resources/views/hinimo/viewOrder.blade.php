@@ -34,20 +34,23 @@
                                 <li><span>Boutique Name</span> <span>{{$order->boutique['boutiqueName']}}</span></li>
                                 <li><span>Order ID</span> <span>{{$order['id']}}</span></li>
                                 <li><span></span><span>Product/s</span><span></span>
-                                    <!-- <span>
-                                        @foreach($order->cart->items as $item)
-                                        @if($item->product->owner['id'] == $order['boutiqueID'])
-                                            {{$item->product['productName']}}, 
-                                        @endif
-                                        @endforeach
-                                    </span> -->
+                                 
                                 </li>
                                 @foreach($order->cart->items as $item)
-                                @if($item->product->owner['id'] == $order['boutiqueID'])
-                                <li>
-                                    <span>{{$item->product['productName']}}</span>
-                                    <span>₱{{$item->product['price']}}</span>
-                                </li>
+                                @if($item->product != null)
+                                    @if($item->product->owner['id'] == $order['boutiqueID'])
+                                    <li>
+                                        <span>{{$item->product['productName']}}</span>
+                                        <span>₱{{$item->product['price']}}</span>
+                                    </li>
+                                    @endif
+                                @else
+                                    @if($item->set->owner['id'] == $order['boutiqueID'])
+                                    <li>
+                                        <span>{{$item->set['setName']}}</span>
+                                        <span>₱{{$item->set['price']}}</span>
+                                    </li>
+                                    @endif
                                 @endif
                                 @endforeach
                                 <li><span>Delivery Address</span><span>{{$order->address['completeAddress']}}</span></li>
@@ -68,11 +71,11 @@
 
                             @if($order['status'] == "For Pickup" || $order['status'] == "For Delivery")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                                <input type="submit" class="btn essence-btn" disabled value="Item Received">
                             </div>
                             @elseif($order['status'] == "On Delivery" || $order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <a href="{{url('receiveOrder/'.$order['id'])}}" class="btn essence-btn">Item Recieved</a>
+                                <a href="{{url('receiveOrder/'.$order['id'])}}" class="btn essence-btn">Item Received</a>
                             </div>
                             <!-- elseif($order['status'] == "On Rent") -->
                             @endif

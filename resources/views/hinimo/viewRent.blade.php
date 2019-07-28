@@ -60,7 +60,11 @@
                                     @if($rent->order['cartID'] != null)
                                     <span>$rent->order->cart['id']</span>
                                     @elseif($rent->order['rentID'] != null)
-                                    <span>{{$rent->product['productName']}}</span>
+                                        @if($rent->product != null)
+                                        <span>{{$rent->product['productName']}}</span>
+                                        @else
+                                        <span>{{$rent->set['setName']}}</span>
+                                        @endif
                                     @endif
                                 </li>
                                 <li><span>Date to be returned</span><span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
@@ -76,7 +80,13 @@
 
                                 <li><span></span><span>Payment Info</span><span></span></li>
                                 <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
-                                <li><span>Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
+                                <li><span>Deposit Amount</span> 
+                                    @if($rent->product != null)
+                                    <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
+                                    @else
+                                    <span>₱{{$rent->set->rentDetails['depositAmount']}}</span>
+                                    @endif
+                                </li>
                                 <li><span>Delivery Fee</span> <span>₱{{$rent->order['deliveryfee']}}</span></li>
                                 <li><span>Total</span> <span style="color: red; font-weight: bold;">₱{{$rent->order['total']}}</span></li>
                                 <li><span>Payment Status</span>
@@ -85,15 +95,15 @@
                             </ul>
                             @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                                <input type="submit" class="btn essence-btn" disabled value="Item Received">
                             </div>
                             @elseif($rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <a href="{{url('receiveRent/'.$rent['rentID'])}}" class="btn essence-btn">Item Recieved</a>
+                                <a href="{{url('receiveRent/'.$rent['rentID'])}}" class="btn essence-btn">Item Received</a>
                             </div>
                             @elseif($rent->order['status'] == "On Rent")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <input type="submit" class="btn essence-btn" hidden value="Item Recieved">
+                                <input type="submit" class="btn essence-btn" hidden value="Item Received">
                             </div>
                             @endif
                         </div> <!-- card closing --><br><br>
@@ -107,17 +117,41 @@
                             <ul class="order-details-form mb-4">
                                 <li><span>Boutique Name</span> <span>{{$rent->order->boutique['boutiqueName']}}</span></li>
                                 <li><span>Rent ID</span> <span>{{$rent['rentID']}}</span></li>
-                                <li><span>Product/s</span> <span>{{$rent->product['productName']}}</span></li>
+                                <li><span>Product/s</span> 
+                                    @if($rent->product != null)
+                                    <span>{{$rent->product['productName']}}</span>
+                                    @else
+                                    <span>{{$rent->set['setName']}}</span>
+                                    @endif
+                                </li>
                                 <li><span>Date to use</span> <span>{{date('M d, Y',strtotime($rent['dateToUse']))}}</span></li>
                                 <li><span>Your notes / instructions</span> <span>{{$rent['additionalNotes']}}</span></li>
                                 <li><span>Date to be returned</span> <span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
-                                <li><span>Required Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
-                                <li><span>Penalty Amount</span> <span>₱{{$rent->product->rentDetails['penaltyAmount']}}</span></li>
+                                <li><span>Required Deposit Amount</span> 
+                                    @if($rent->product != null)
+                                    <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
+                                    @else
+                                    <span>₱{{$rent->set->rentDetails['depositAmount']}}</span>
+                                    @endif
+                                </li>
+                                <li><span>Penalty Amount</span> 
+                                    @if($rent->product != null)
+                                    <span>₱{{$rent->product->rentDetails['penaltyAmount']}}</span>
+                                    @else
+                                    <span>₱{{$rent->set->rentDetails['penaltyAmount']}}</span>
+                                    @endif
+                                </li>
                                 @if($rent->order['status'] == "Pending" || $rent->order['status'] == "In-Progress")
                                 <li><span>Status</span> <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
                                     <li><span></span><span>Payment Info</span><span></span></li>
                                     <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
-                                    <li><span>Deposit Amount</span> <span>₱{{$rent->product->rentDetails['depositAmount']}}</span></li>
+                                    <li><span>Deposit Amount</span> 
+                                        @if($rent->product != null)
+                                        <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
+                                        @else
+                                        <span>₱{{$rent->set->rentDetails['depositAmount']}}</span>
+                                        @endif
+                                    </li>
                                     <li><span>Delivery Fee</span> <span>₱{{$rent->order['deliveryfee']}}</span></li>
                                         <li><span>Total</span> <span style="color: red; font-weight: bold;">₱{{$rent->order['total']}}</span></li>
                                         <li><span>Payment Status</span> 

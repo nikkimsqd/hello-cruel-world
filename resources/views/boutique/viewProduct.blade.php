@@ -98,3 +98,15 @@
 
 @endsection
 
+
+@section('scripts')
+<script type="text/javascript">
+
+$('.products').addClass("active");
+$('.allproducts').addClass("active");
+
+</script>
+
+
+@endsection
+

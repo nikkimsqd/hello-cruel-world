@@ -41,6 +41,8 @@ class AdminController extends Controller
 	    		return redirect('/shop');
 	    	} else if (Auth::user()->roles == 'boutique') {
 	    		return redirect('/dashboard');
+	    	}  else if (Auth::user()->roles == 'courier') {
+	    		return redirect('/ionic-topickup');
 	    	} 
 	 		return $next($request);
    		});

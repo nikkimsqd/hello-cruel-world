@@ -2,9 +2,6 @@
 @extends('boutique.sections')
 
 
-
-
-
 @section('content')
 <section class="content">
 <div class="row">
@@ -51,6 +48,11 @@
           <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
           @endforeach -->
         </select>
+      </div>
+
+      <div class="form-group">
+        <label>Quantity:</label><br>
+        <input type="number" name="quantity" class="input form-control">
       </div>
       
       <!-- <label>Add Tags:</label>

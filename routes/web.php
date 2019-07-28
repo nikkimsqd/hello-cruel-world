@@ -29,6 +29,7 @@ Route::get('/index', 'CustomerController@index');
 Route::get('/shop/{gender}', 'CustomerController@shopWomens');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
+Route::get('/set-single-product-details/{setID}', 'CustomerController@setDetails');
 
 
 Route::view('/autocomplete', 'hinimo.autocomplete');
@@ -111,6 +112,14 @@ Route::get('/products', 'BoutiqueController@showProducts');
 // Route::get('/getGender/{gender}', 'BoutiqueController@getGender');
 
 
+//SETS
+Route::get('/sets', 'BoutiqueController@showSets');
+Route::get('/addset', 'BoutiqueController@addset');
+Route::post('/saveset', 'BoutiqueController@saveset');
+Route::get('/viewset/{setID}', 'BoutiqueController@viewSet');
+
+
+
 //TRANSACTIONS-RENT
 Route::get('/rents', 'BoutiqueController@rents');
 Route::get('/rents/{rentID}', 'BoutiqueController@getRentInfo');
@@ -187,6 +196,9 @@ Route::get('/requestToRent/{productID}', 'CustomerController@submitRequestToRent
 Route::post('/requestToRent', 'CustomerController@requestToRent');
 Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
 
+Route::get('/requestToRentSet/{setID}', 'CustomerController@submitRequestToRentSet');
+Route::post('/requestToRentSet', 'CustomerController@requestToRentSet');
+
 //ORDER
 Route::post('/placeOrder', 'CustomerController@placeOrder');
 Route::get('/receiveOrder/{orderID}', 'CustomerController@receiveOrder');
@@ -194,6 +206,7 @@ Route::get('/receiveOrder/{orderID}', 'CustomerController@receiveOrder');
 
 
 //CART
+Route::get('/addSettoCart/{productID}', 'CustomerController@addSettoCart');
 Route::get('/addtoCart/{productID}', 'CustomerController@addtoCart');
 Route::get('/cart', 'CustomerController@cart');
 Route::get('/checkout', 'CustomerController@checkout');

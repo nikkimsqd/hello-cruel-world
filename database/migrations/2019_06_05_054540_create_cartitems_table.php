@@ -16,7 +16,7 @@ class CreateCartitemsTable extends Migration
         Schema::create('cartitems', function (Blueprint $table) {
             $table->increments('id');
             $table->string('cartID');
-            $table->string('productID');
+            $table->string('productID')->nullable();
             $table->timestamps();
         });
     }

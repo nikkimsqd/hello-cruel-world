@@ -55,7 +55,7 @@ Hinimo | Register Boutique
                                 <label for="contactNo" class="col-md-4 col-form-label text-md-right">{{ __('Contact Number') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="contactNo" type="number" class="form-control" name="contactNo" maxlength="11" value="{{ old('contactNo') }}" required autofocus>
+                                    <input id="contactNo" type="number" class="form-control" name="contactNo" maxlength="11" required autofocus>
 
                                     @if ($errors->has('contactNo'))
                                         <span class="invalid-feedback" role="alert">
@@ -131,8 +131,8 @@ Hinimo | Register Boutique
                                 </div>
                             </div><br>
                             <div id="map"> </div>
-                            <input type="text" name="lat" id="lat">
-                            <input type="text" name="lng" id="lng">
+                            <input type="text" name="lat" id="lat" hidden>
+                            <input type="text" name="lng" id="lng" hidden>
 
                             <br>
                             <div class="form-group row mb-0">
@@ -200,11 +200,11 @@ Hinimo | Register Boutique
 <script type="text/javascript">
 
 var mylat = '10.2892368502206';
-var mylong = '123.86207342147829';
+var mylng = '123.86207342147829';
 var myzoom = '12';
 
 
-var map = L.map('map').setView([mylat, mylong], myzoom);
+var map = L.map('map').setView([mylat, mylng], myzoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -226,7 +226,7 @@ if (URLSearchParams && location.search) {
 
 
 //SET LOCATION W/ MARKER ===========================================================================
-var marker = L.marker([mylat, mylong]).addTo(map);
+var marker = L.marker([0, 0]).addTo(map);
 map.on('click', function (e) {
   geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
     var r = results[0];

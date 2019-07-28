@@ -111,6 +111,76 @@
 
 
                         <div class="products_list row"> <!-- Products Display -->
+                            @foreach($sets as $set)
+                            @if($set['setStatus'] == "Available")
+                            <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="single-product-wrapper">
+                                <!-- Product Image -->
+                                
+                            
+                                <div class="product-img">
+                                    <div class="row">
+                                @foreach( $set->items as $item)
+                                        <div class="col-md-6">
+                                @foreach($item->product->productFile as $image)
+                                
+                                    <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                
+                                <?php break; ?>
+                                @endforeach
+                                        </div>
+                                @endforeach
+                                    </div>
+
+                                @if($set['productStatus'] == "Not Available")
+                                    <div class="product-badge offer-badge">
+                                        <span>NOT AVAILABLE</span>
+                                    </div>
+                                @elseif($set['rpID'] != null && $set['price'] != null)
+                                    <div class="product-badge new-badge">
+                                        <span>RENTABLE</span>
+                                    </div>
+                                @elseif($set['rpID'] != null && $set['price'] == null)
+                                    <div class="product-badge new-badge">
+                                        <span>FOR RENT ONLY</span>
+                                    </div>
+                                @endif
+                                    <!-- Favourite -->
+                                    <div class="product-favourite">
+                                        <a href="#" class="favme fa fa-heart"></a>
+                                    </div>
+                                </div>
+
+                                <!-- Product Description -->
+                                <div class="product-description">
+                                    <span>{{ $set->owner['boutiqueName'] }}</span>
+                                    <a href="#">
+                                        <h6>{{ $set['setName'] }}</h6>
+                                    </a>
+                                    @if($set['price'] != null)
+                                    <p class="product-price">₱{{ number_format($set['price']) }}</p>
+                                    @else
+                                    <p class="product-price">₱{{ number_format($set->rentDetails['price']) }}</p>
+                                    @endif
+
+                                    <!-- Hover Content -->
+                                    <div class="hover-content">
+                                        <!-- Add to Cart -->
+                                        <div class="add-to-cart-btn">
+                                            <!-- <input type="text" name="productID" value="{{$set['id']}}" hidden> -->
+                                            @if($set['setStatus'] == "Available")
+                                            <a href="{{url('set-single-product-details/').'/'.$set['id']}}" class="btn essence-btn">View Product</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            @endif
+                            @endforeach
+
+                            <!-- //INDIVIDUAL PRODUCTS -->
                         	@foreach($products as $product)
                             @if($product['productStatus'] == "Available")
 	                        <!-- Single Product -->

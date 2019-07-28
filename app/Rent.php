@@ -46,4 +46,9 @@ class Rent extends Model
     {
         return $this->hasMany('App\Barangays', 'brgyCode', 'locationsAvailable');
     }
+
+    public function set()
+    {
+        return $this->hasOne('App\Set', 'id', 'setID');
+    }
 }

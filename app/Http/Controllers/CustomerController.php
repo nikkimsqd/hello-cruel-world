@@ -29,6 +29,7 @@ use App\Cartitem;
 use App\Fabric;
 use App\Sharepercentage;
 use App\Gallery;
+use App\Set;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -74,12 +75,13 @@ class CustomerController extends Controller
                 // array_multisort(array_column($products, "created_at"), SORT_DESC, $products);
                 // dd($products);
 
+                $sets = Set::all();
 
                 $notifications;
                 $notificationsCount;
                 $this->getNotifications($notifications, $notificationsCount);
 
-                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'sets'));
                 
 
             } else if(Auth()->user()->roles == "boutique") {
@@ -101,9 +103,9 @@ class CustomerController extends Controller
             $boutiques = Boutique::all();
             $notAvailables = Product::where('productStatus', 'Not Available')->get();
             $notificationsCount = null;
-                // dd($cart);
+            $sets = Set::all();
 
-            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount'));
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets'));
         }
     }
 
@@ -256,6 +258,35 @@ class CustomerController extends Controller
     	return redirect('/shop');
     }
 
+    public function addSettoCart($productID)
+    {
+        $userID = Auth()->user()->id;
+        $cart = Cart::where('userID', $userID)->orderBy('created_at', 'DESC')->first();
+
+        if($cart == null){
+            $cart = Cart::create([
+                'userID' => $userID,
+                'status' => "Active"
+            ]);
+
+        }else{
+            if($cart['status'] == "Inactive"){
+                $cart = Cart::create([
+                    'userID' => $userID,
+                    'status' => "Active"
+                ]);
+            }
+        }
+
+        Cartitem::create([
+            'cartID' => $cart['id'],
+            'setID' => $productID
+        ]);
+        
+
+        return redirect('/shop');
+    }
+
     public function removeItem($cartID)
     {
         $item = Cartitem::where('id', $cartID)->delete();
@@ -317,23 +348,45 @@ class CustomerController extends Controller
                 'addressID' => $addressID
             ]);
 
+            $cart = Cart::where('id', $request->input('cartID'))->first();
             $cart = Cart::where('id', $order['cartID'])->first();
             $cart->update([
                 'status' => 'Inactive'
             ]);
+
             foreach($cart->items as $item){
-                Product::where('id', $item->product['id'])->update([
-                    'productStatus' => "Not Available"
-                ]);
+                if($item->product != null){
+                    $product = Product::where('id', $item->product['id'])->first();
+                    $productQuantity = $product['quantity'] - 1;
+                    $product->update([
+                        'quantity' => $productQuantity
+                    ]);
+
+                    if($product['quantity'] == 0){
+                        $product->update([
+                            'productStatus' => "Not Available"
+                        ]);
+                    }   
+                }else{
+                    $set = Set::where('id', $item->set['id'])->first();
+                    $setQuantity = $set['quantity'] - 1;
+                    $set->update([
+                        'quantity' => $setQuantity
+                    ]);
+
+                    if($set['quantity'] == 0){
+                        $set->update([
+                            'setStatus' => "Not Available"
+                        ]);
+                    }
+                }
             }
+            
 
             $boutique = Boutique::where('id', $orders['boutiqueID'])->first();
             $boutiqueseller = User::find($boutique['userID']);
             $boutiqueseller->notify(new NewOrder($order));
         }
-
-
-        //add churva for add address here
 
         return redirect('/view-order/'.$order['id']);
     }
@@ -359,14 +412,14 @@ class CustomerController extends Controller
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
 
-        $orders = array();
-        foreach($cart->items as $item){
-            if(!in_array($item->product->owner, $orders)){
-                // dd("naa");
-                array_push($orders, $item->product->owner);
-            }else{
-            }
-        }
+        // $orders = array();
+        // foreach($cart->items as $item){
+        //     if(!in_array($item->product->owner, $orders)){
+        //         // dd("naa");
+        //         array_push($orders, $item->product->owner);
+        //     }else{
+        //     }
+        // }
         // foreach($orders as $order){
                 // dd($order->product->owner);
             // if(in_array($order->product->owner, $orders)){
@@ -1634,6 +1687,142 @@ class CustomerController extends Controller
 
         return view('hinimo/gallery', compact('page_title', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'pictures'));
 
+    }
+
+    public function setDetails($setID)
+    {
+        $user = Auth()->user();
+        $set = Set::where('id', $setID)->first();
+        $addresses = Address::where('userID', $user['id'])->get();
+        $boutiques = Boutique::all();
+        $page_title = "Shop";
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $user['id'])->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $cities = City::all();
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
+
+
+        return view('hinimo/set-single-product-details', compact('set', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage'));
+
+    }
+
+    public function submitRequestToRentSet($setID)
+    {
+        $user = Auth()->user();
+        $userID = Auth()->user()->id;
+        $product = Set::where('id', $setID)->first();
+        $addresses = Address::where('userID', $user['id'])->get();
+        $boutiques = Boutique::all();
+        $page_title = "Request to Rent";
+        $addresses = Address::where('userID', $userID)->get();
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+        $cart = Cart::where('userID', $user['id'])->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $cities = City::all();
+        $sp = Sharepercentage::where('id', '1')->first();
+        $percentage = $sp['sharePercentage'] / 100;
+        // dd($product);
+        
+        // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
+
+        return view('hinimo/requestToRentSet', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses'));
+    }
+
+    public function requestToRentSet(Request $request)
+    {
+        $id = Auth()->user()->id;
+        $user = User::find($id);
+
+        $measurement = $request->input('measurement');
+        $mName = json_encode($measurement);
+
+        $dateuse = date('Y-m-d',strtotime($request->input('dateToUse')));
+        $toadd = $request->input('limitOfDays');
+        $dateToBeReturned = date('Y-m-d', strtotime($dateuse.'+'.$toadd.' days'));
+
+        $deliveryAddress = $request->input('deliveryAddress');
+        $addressID = $request->input('selectAddress');
+
+        if($deliveryAddress != null && $addressID == "addAddress"){
+            $address = Address::create([
+                'userID' => $id, 
+                'contactName' => $request->input('billingName'), 
+                'phoneNumber' => $request->input('phoneNumber'),
+                'completeAddress' => $request->input('deliveryAddress'),
+                'lat' => $request->input('lat'), 
+                'lng' => $request->input('lng'), 
+                'status' => "Not Default"
+            ]);
+            $addressID = $address['id'];
+        }elseif($deliveryAddress != null && $addressID != "addAddress"){
+            //leave empty lang para mo exit na sa condition
+        }
+
+        $rent = Rent::create([
+            'boutiqueID' => $request->input('boutiqueID'),
+            'customerID' => $id, 
+            'status' => "In-Progress", 
+            'setID' => $request->input('setID'), 
+            'dateToUse' => $dateuse, 
+            'dateToBeReturned' => $dateToBeReturned, 
+            'additionalNotes' => $request->input('additionalNotes')
+        ]);
+
+        $measurement = Measurement::create([
+            'userID' => $id,
+            'type' => 'rent',
+            'typeID' => $rent['rentID'],
+            'data' => $mName
+        ]);
+
+        $order = Order::create([
+            'userID' => $id,
+            'rentID' => $rent['rentID'],
+            'boutiqueID' => $request->input('boutiqueID'),
+            'subtotal' => $request->input('subtotal'),
+            'deliveryfee' => $request->input('deliveryfee'),
+            'total' => $request->input('total'),
+            'deliveryAddress' => $addressID,
+            'status' => "Pending",
+            'paymentStatus' => "Not Yet Paid",
+            'billingName' => $request->input('billingName'), 
+            'phoneNumber' => $addressID,
+            'boutiqueShare' => $request->input('boutiqueShare'),
+            'adminShare' => $request->input('adminShare'),
+            'addressID' => $addressID
+        ]);
+
+        $rent->update([
+            'orderID' => $order['id'],
+            'measurementID' => $measurement['id']
+        ]);
+
+        Product::where('id', $rent['productID'])->update([
+            'productStatus' => "Not Available"
+        ]);
+
+        $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
+        $boutiqueseller = User::find($boutique['userID']);
+        
+        $boutiqueseller->notify(new RentRequest($rent));
+
+        return redirect('/view-rent/'.$rent['rentID']);
     }
 
 

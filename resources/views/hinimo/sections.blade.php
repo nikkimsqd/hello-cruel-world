@@ -108,24 +108,45 @@
                 @foreach($cart->items as $item)
                 <div class="single-cart-item">
                     <a href="#" class="product-image">
-                        @foreach($item->product->productFile as $file)
-                        <img src="{{ asset('/uploads').$file['filename'] }}" class="cart-thumb" alt="">
-                        <?php break; ?>
-                        @endforeach
+                        @if($item->product != null)
+                            @foreach($item->product->productFile as $file)
+                            <img src="{{ asset('/uploads').$file['filename'] }}" class="cart-thumb" alt="">
+                            <?php break; ?>
+                            @endforeach
 
-                        <!-- Cart Item Desc -->
-                        <div class="cart-item-desc">
-                          <span cart-item-id="{{$item['id']}}" class="delete product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">{{$item->product->owner['boutiqueName']}}</span>
-                            <h6>{{$item->product['productName']}}</h6>
-                            <!-- <p class="size">Size: S</p> -->
-                            <!-- <p class="color">Color: Red</p> -->
-                            <p class="price">₱{{number_format($item->product['price'])}}</p>
-                        </div>
+                            <!-- Cart Item Desc -->
+                            <div class="cart-item-desc">
+                              <span cart-item-id="{{$item['id']}}" class="delete product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                                <span class="badge">{{$item->product->owner['boutiqueName']}}</span>
+                                <h6>{{$item->product['productName']}}</h6>
+                                <!-- <p class="size">Size: S</p> -->
+                                <!-- <p class="color">Color: Red</p> -->
+                                <p class="price">₱{{number_format($item->product['price'])}}</p>
+                                <?php $price = $item->product['price']; ?>
+                            </div>
+                        @else
+                            @foreach($item->set->items as $setItem)
+                            @foreach($setItem->product->productFile as $image)
+                            <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+                            <?php break; ?>
+                            @endforeach
+                            @endforeach
+
+                            <!-- Cart Item Desc -->
+                            <div class="cart-item-desc">
+                              <span cart-item-id="{{$item['id']}}" class="delete product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
+                                <span class="badge">{{$item->set->owner['boutiqueName']}}</span>
+                                <h6>{{$item->set['setName']}}</h6>
+                                <!-- <p class="size">Size: S</p> -->
+                                <!-- <p class="color">Color: Red</p> -->
+                                <p class="price">₱{{number_format($item->set['price'])}}</p>
+                                <?php $price = $item->set['price']; ?>
+                            </div>
+                        @endif
                     </a>
                 </div>
                 <?php
-                    $subtotal += $item->product['price'];
+                    $subtotal += $price;
                 ?>
                 @endforeach
             </div>

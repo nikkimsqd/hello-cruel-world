@@ -77,13 +77,24 @@
                 </tr>
                 </thead>
                   @foreach($order->cart->items as $item)
-                  @if($item->product['boutiqueID'] == $boutique['id'])
-                  <tr>
-                    <td>1</td>
-                    <td>{{$item->product['productName']}}</td>
-                    <td>{{$item->product['productDesc']}}</td>
-                    <td>{{$item->product['price']}}</td>
-                  </tr>
+                  @if($item->product != null)
+                    @if($item->product['boutiqueID'] == $boutique['id'])
+                    <tr>
+                      <td>1</td>
+                      <td>{{$item->product['productName']}}</td>
+                      <td>{{$item->product['productDesc']}}</td>
+                      <td>{{$item->product['price']}}</td>
+                    </tr>
+                    @endif
+                  @else
+                    @if($item->set['boutiqueID'] == $boutique['id'])
+                    <tr>
+                      <td>1</td>
+                      <td>{{$item->set['setName']}}</td>
+                      <td>{{$item->set['setDesc']}}</td>
+                      <td>{{$item->set['price']}}</td>
+                    </tr>
+                    @endif
                   @endif
                   @endforeach
               </table><br><br>
@@ -102,10 +113,17 @@
                 </tr>
                 </thead>
                   <tr>
+                    @if($order->rent->product != null)
                     <td>1</td>
                     <td>{{$order->rent->product['productName']}}</td>
                     <td>{{$order->rent->product['productDesc']}}</td>
                     <td>{{$order->rent->product->rentDetails['price']}}</td>
+                    @else
+                    <td>1</td>
+                    <td>{{$order->rent->set['setName']}}</td>
+                    <td>{{$order->rent->set['setDesc']}}</td>
+                    <td>{{$order->rent->set->rentDetails['price']}}</td>
+                    @endif
                   </tr>
               </table><br><br>
             @endif

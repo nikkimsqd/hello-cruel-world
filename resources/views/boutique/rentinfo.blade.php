@@ -29,10 +29,22 @@
 
               <hr>
               <h4><b>Rent Details</b></h4>
-              <h4>Product Name: <b>{{$rent->product['productName']}}</b></h4>
+              <h4>Product Name: 
+                @if($rent->product != null)
+                  <b>{{$rent->product['productName']}}</b>
+                @else
+                  <b>{{$rent->set['setName']}}</b>
+                @endif
+              </h4>
               <h4>Date Item will be used: <b>{{date('M d, Y',strtotime($rent['dateToUse']))}}</b></h4>
               <h4>Item must be returned on or before: <b>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</b></h4>
-              <h4>Penalty Amount: <b>{{$rent->product->rentDetails['penaltyAmount']}}</b></h4>
+              <h4>Penalty Amount: 
+                @if($rent->product != null)
+                  <b>{{$rent->product->rentDetails['penaltyAmount']}}</b>
+                @else
+                  <b>{{$rent->set->rentDetails['penaltyAmount']}}</b>
+                @endif
+              </h4>
 
               <hr>
               <h4><b>Customer's Measurements Details</b></h4>
@@ -68,12 +80,23 @@
 
             <div class="col-md-6">
               <?php $counter = 1; ?>
-              @foreach( $rent->product->productFile as $image)
-              @if($counter == 1)
-                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
+              @if($rent->product != null)
+                @foreach($rent->product->productFile as $image)
+                @if($counter == 1)
+                  <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
+                @endif
+                <?php $counter++; ?>
+                @endforeach
+              @else
+                @foreach($rent->set->items as $setItem)
+                @foreach($setItem->product->productFile as $image)
+                @if($counter == 1)
+                  <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
+                @endif
+                <?php $counter++; ?>
+                @endforeach
+                @endforeach
               @endif
-              <?php $counter++; ?>
-              @endforeach
               <!-- <input type="text" name="customerID" value="{{$rent->customer['id']}}" hidden> -->
             </div>
           </div>

@@ -31,6 +31,8 @@ use App\Rentableproduct;
 use App\Fabric;
 use App\Bidding;
 use App\Bid;
+use App\Set;
+use App\Setitem;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -305,7 +307,8 @@ class BoutiqueController extends Controller
     		'productDesc' => $request->input('productDesc'),
     		'price' => $request->input('retailPrice'),
     		'category' => $request->input('category'),
-    		'productStatus' => "Available"
+    		'productStatus' => "Available",
+    		'quantity' => $request->input('quantity')
     		]);
 
 
@@ -1272,6 +1275,100 @@ class BoutiqueController extends Controller
 
 	    return view('boutique/archiveboutique-biddings', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'biddingOrders'));
     }
+
+    public function showSets()
+    {
+		$page_title = "Sets";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$sets = Set::where('boutiqueID', $boutique['id'])->get();
+		$setCount = $sets->count();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+
+		return view('boutique/sets', compact('sets', 'boutique', 'user', 'setCount', 'page_title', 'notifications', 'notificationsCount'));
+    }
+
+    public function addset()
+    {
+		$page_title = "Add Set";
+		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$products = Product::where('boutiqueID', $boutique['id'])->get();
+		$categories = Category::all();
+		$tags = Tag::all();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+        $cities = City::all();
+
+
+		return view('boutique/addSets', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount', 'cities', 'sets', 'products'));
+    }
+
+    public function saveset(Request $request)
+    {
+    	$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+
+		$set = Set::create([
+			'boutiqueID' => $boutique['id'],
+			'setName' => $request->input('setName'),		
+			'setDesc' => $request->input('setDesc'),		
+			'price' => $request->input('retailPrice'),
+			'quantity' => $request->input('quantity'),
+			'setStatus' => "Available"
+		]);
+
+		if($request->input('rentPrice') != null){
+			$locations = json_encode($request->input('locationsAvailable'));
+	    	$rp = Rentableproduct::create([
+	    		'price' => $request->input('rentPrice'),
+	    		'depositAmount' => $request->input('depositAmount'),
+	    		'penaltyAmount' => $request->input('penaltyAmount'),
+	    		'limitOfDays' => $request->input('limitOfDays'),
+	    		'fine' => $request->input('fine'),
+	    		'locationsAvailable' => $locations
+	    	]);
+
+	    	$set->update([
+	    		'rpID' => $rp['id']
+	    	]);
+    	}
+
+
+		$products = $request->input('products');
+        foreach($products as $product) {
+	    	Setitem::create([
+	    		'setID' => $set['id'],
+	    		'productID' => $product
+	    	]);
+		}
+
+		return redirect('/sets');
+    }
+
+	public function viewset($setID)
+	{
+		$page_title = "View Set";
+		$user = Auth()->user()->id;
+		$boutiques = Boutique::where('userID', $user)->get();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+
+		$set = Set::where('id', $setID)->first();
+
+		// $product = Product::where('id', $productID)->first();
+		// $category = Category::where('id', $product['category'])->first();
+		// $tags = ProdTag::where('productID', $productID)->get();
+
+
+		foreach ($boutiques as $boutique) {
+			$boutique;
+		}
+
+		return view('boutique/viewSet', compact('boutique', 'user', 'page_title', 'notifications', 
+		'notificationsCount', 'set'));
+	}
 
 
 }

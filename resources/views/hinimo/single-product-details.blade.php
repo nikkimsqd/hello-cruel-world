@@ -47,6 +47,8 @@
                         <option value="value">Color: Purple</option>
                     </select>
                 </div> -->
+            <p class="product-desc">In Stock: {{ $product['quantity'] }}</p>
+
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
                 @if ($product['price'] != null && $product['rpID'] != null)

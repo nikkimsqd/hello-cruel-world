@@ -77,11 +77,11 @@
                                     </ul>
                                     @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery")
                                     <div class="notif-area cart-area" style="text-align: right;">
-                                        <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
+                                        <input type="submit" class="btn essence-btn" disabled value="Item Received">
                                     </div>
                                     @elseif($mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered")
                                     <div class="notif-area cart-area" style="text-align: right;">
-                                        <a href="{{url('receiveOrder/'.$mto->order['id'])}}" class="btn essence-btn">Item Recieved</a>
+                                        <a href="{{url('receiveOrder/'.$mto->order['id'])}}" class="btn essence-btn">Item Received</a>
                                     </div>
                                     <!-- elseif($mto['status'] == "On Rent") -->
                                     @endif

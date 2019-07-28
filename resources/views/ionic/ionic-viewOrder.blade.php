@@ -223,7 +223,7 @@
   .box-footer{z-index: 5000;}
   #map {
     width: 100%;
-    height: 300px;
+    height: 500px;
     background-color: grey;
   }
   .dropdown-menu li {

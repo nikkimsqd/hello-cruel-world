@@ -97,8 +97,14 @@
                     ?>
 
                     @foreach($cart->items as $item)
-                        @if(!in_array($item->product->owner, $boutiques))
-                            <?php array_push($boutiques, $item->product->owner); ?>
+                        @if($item->product != null)
+                            @if(!in_array($item->product->owner, $boutiques))
+                                <?php array_push($boutiques, $item->product->owner); ?>
+                            @endif
+                        @else
+                            @if(!in_array($item->set->owner, $boutiques))
+                                <?php array_push($boutiques, $item->set->owner); ?>
+                            @endif
                         @endif
                     @endforeach
 
@@ -112,17 +118,32 @@
                         </div>
 
                         @foreach($cart->items as $item)
-                        @if($item->product->owner == $boutique)
-                        <ul class="order-details-form mb-4">
-                            <li><span>{{$item->product['productName']}}</span> <span>₱{{number_format($item->product['price'])}}</span></li>
-                            <?php 
-                                $boutiqueSubtotal += $item->product['price'];
-                                $merchSubtotal += $item->product['price'];
-                            ?>
+                        @if($item->product != null)
+                            @if($item->product->owner == $boutique)
+                            <ul class="order-details-form mb-4">
+                                <li><span>{{$item->product['productName']}}</span> <span>₱{{number_format($item->product['price'])}}</span></li>
+                                <?php 
+                                    $price = $item->product['price']; 
+                                    $boutiqueSubtotal += $item->product['price'];
+                                ?>
+                            @endif
+                        @else
+                            @if($item->set->owner == $boutique)
+                            <ul class="order-details-form mb-4">
+                                <li><span>{{$item->set['setName']}}</span> <span>₱{{number_format($item->set['price'])}}</span></li>
+                                <?php 
+                                    $price = $item->set['price']; 
+                                    $boutiqueSubtotal += $item->set['price'];
+                                ?>
+                            @endif
                         @endif
+                                <?php 
+                                    // $boutiqueSubtotal += $item->product['price'];
+                                ?>
                         @endforeach
                             <li style="background-color: aliceblue; border-bottom: 5px solid #ebebeb;"><span>Delivery Fee</span> <span>₱{{number_format($deliveryfee)}}</span></li><br><br>
                             <?php 
+                                $merchSubtotal += $boutiqueSubtotal;
                                 $deliveryfeeSubtotal += $deliveryfee;
                                 $total = $boutiqueSubtotal + $deliveryfee;
                                 $orderTotal = $merchSubtotal + $deliveryfeeSubtotal;
@@ -130,6 +151,7 @@
                                 $boutiqueShare = $boutiqueSubtotal - $adminShare;
                             ?>
                         <input type="text" name="order{{$boutiqueCount}}[boutiqueID]" value="{{$boutique['id']}}" hidden>
+                        <input type="text" name="order{{$boutiqueCount}}[subtotal]" value="{{$merchSubtotal}}" hidden>
                         <input type="text" name="order{{$boutiqueCount}}[subtotal]" value="{{$boutiqueSubtotal}}" hidden>
                         <input type="text" name="order{{$boutiqueCount}}[deliveryfee]" value="{{$deliveryfee}}" hidden>
                         <input type="text" name="order{{$boutiqueCount}}[total]" value="{{$total}}" hidden>
@@ -237,7 +259,7 @@ $('#selectAddress').on('change', function(){
 
 
         //SET LOCATION W/ MARKER ===========================================================================
-        var marker = L.marker([mylat, mylong]).addTo(map);
+        var marker = L.marker([0, 0]).addTo(map);
         map.on('click', function (e) {
           geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
             var r = results[0];
