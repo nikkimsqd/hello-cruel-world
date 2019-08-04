@@ -137,17 +137,17 @@
                                 <!-- <h5>Your Made-to-Order</h5> -->
                             </div>
                             <?php 
-                            $subtotal = $bid['bidAmount'];
+                            $subtotal = $bid['quotationPrice'];
                             $deliveryfee = 50;
                             $total = $subtotal + $deliveryfee;
                             $adminShare = $subtotal * $percentage;
                             $boutiqueShare = $subtotal - $adminShare;
                             ?>
                             <ul class="order-details-form mb-4">
-                                <li><span>Item Price</span> <span>{{$bid['bidAmount']}}</span></li>
+                                <li><span>Item Price</span> <span>₱{{$bid['quotationPrice']}}</span></li>
                                 <!-- <li><span>Subtotal</span> <span>{{$subtotal}}</span></li> -->
-                                <li><span>Delivery Fee</span> <span><i>{{$deliveryfee}}</i></span></li>
-                                <li><span>Total</span> <span style="color: #0315ff;"><i>{{$total}}</i></span></li>
+                                <li><span>Delivery Fee</span> <span><i>₱{{$deliveryfee}}</i></span></li>
+                                <li><span>Total</span> <span style="color: #0315ff;"><i>₱{{$total}}</i></span></li>
                             </ul>
                             <div class="col-md-12 mb-3" style="text-align: center;">
                                     <input name="bidID" value="{{$bid['id']}}" hidden>

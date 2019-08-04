@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bidding extends Model
 {
-    protected $fillable = ['userID', 'maxPriceLimit', 'endDate', 'deadlineOfProduct', 'measurementID', 'height', 'category', 'notes', 'orderID', 'status', 'bidID'];
+    protected $fillable = ['userID', 'quotationPrice', 'endDate', 'deadlineOfProduct', 'measurementID', 'category', 'notes', 'orderID', 'status', 'bidID', 'quantity', 'fabChoice'];
 
     public function owner()
     {

@@ -43,12 +43,12 @@
           <!-- <div class="row"> -->
             <!-- <a href="{{ url('viewproduct/'.$bidding['id']) }}"> -->
               <span>Bidding closes in: {{date('M d, Y',strtotime($bidding['endDate']))}}</span>
-              <h4>Price Limt: <b>₱{{$bidding['maxPriceLimit']}}</b></h4>
+              <h4>Price Limit: <b>₱{{$bidding['quotationPrice']}}</b></h4>
               @if(count($bidding->bids))
                 <?php $bids = array(); ?>
-                <span>Lowest bid:
+                <span>Lowest offer:
                   @foreach($bidding->bids as $bid)
-                    <?php array_push($bids, $bid['bidAmount']) ?>
+                    <?php array_push($bids, $bid['quotationPrice']) ?>
                   @endforeach
                     ₱{{min($bids)}}
                 </span>

@@ -98,22 +98,22 @@
                                     <span>by: {{$bidding->owner['fname'].' '.$bidding->owner['lname']}} </span><br>
                                     <span>Bidding closes in: </span> <span id="demo{{$bidcounter}}"></span>
                                     <a href="#">
-                                        <h6>${{ number_format($bidding['maxPriceLimit']) }}</h6>
+                                        <h6>₱{{ number_format($bidding['quotationPrice']) }}</h6>
                                     </a>
                                     <p class="product-price">{{ $bidding['productName'] }}</p>
                                     <input name="endDate" id="endDate" value="{{ $bidding['endDate'] }}" hidden>
                                     @if(count($bidding->bids))
                                     <?php $bids = array(); ?>
                                     <span>
-                                        Lowest bid:
+                                        Lowest offer:
                                     @foreach($bidding->bids as $bid)
-                                        <?php array_push($bids, $bid['bidAmount']) ?>
+                                        <?php array_push($bids, $bid['quotationPrice']) ?>
                                         <!-- {{$bid['bidAmount']}} -->
                                     @endforeach
-                                        {{min($bids)}}
+                                        ₱{{min($bids)}}
                                     </span>
                                     @else
-                                    <span>No bids</span>
+                                    <span>No offers</span>
                                     @endif
 
                                     <!-- Hover Content -->

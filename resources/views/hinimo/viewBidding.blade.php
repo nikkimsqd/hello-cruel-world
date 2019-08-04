@@ -61,7 +61,16 @@
                                     <span style="color: #0315ff;">{{$bidding->order['status']}}</span>
                                     @endif
                                 </li>
-                                <li><span>Payment Status</span> <span style="color: red;">{{$bidding->order['paymentStatus']}}</span></li>
+                                <li><span>Payment Status</span> 
+                                    <span style="color: red; text-align: right;">
+                                        {{$bidding->order['paymentStatus']}}
+                                        @if($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] != null)
+                                        <br><i style="color: red;">(You are required to pay first so the boutique can start processing your item.)</i>
+                                        @elseif($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] == null)
+                                        <br><i style="color: red;">(You can start processing your payment after you submit your measurements.)</i>
+                                        @endif
+                                    </span>
+                                </li>
                             </ul>
                             
                             @if($bidding->order['status'] == "For Pickup" || $bidding->order['status'] == "For Delivery")
@@ -77,64 +86,183 @@
 
                         </div><br><br> <!-- card closing -->
 
-                        @if($bidding->order['paymentStatus'] == "Not Yet Paid")
-                        <i style="color: red;">(You are required to pay first so the boutique can start processing your item.)</i>
+                        @if($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] != null)
+                        
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="orderTransactionID" value="{{$bidding->order['id']}}" hidden>
                             <input type="text" id="total" value="{{$bidding->order['total']}}" hidden>
                         </div><br><br>
                         @endif
-
                     </div>
                 </div>
             </div>
             <div class="col-md-12">
+                <section class="single_product_details_area d-flex align-items-center">
+                    <!-- Single Product Thumb -->
+                    <div class="single_product_thumb clearfix">
+                        <!-- <div class="product_thumbnail_slides owl-carousel"> -->
+                            @foreach($bidding->productFile as $image)
+                            <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+                            @endforeach
+                        <!-- </div> -->
+                    </div>
+
+                    <?php
+                    if($bidding->measurement != null){
+                        $measurements = json_decode($bidding->measurement->data);
+                    }
+                    ?>
+
+                    <!-- Single Product Description -->
+                    <div class="single_product_desc clearfix">
+                        <span>By: &nbsp; {{$bidding->owner['fname'].' '.$bidding->owner['lname']}}</span>
+                        <!-- <h4>Maximum Price Limit: ₱{{ $bidding['maxPriceLimit'] }}</h4> -->
+                        <p class="product-price"></p>
+                        <p class="product-price"><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bidding['quotationPrice'] }}</p>
+                        <p><b>Bidding End Date:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['endDate'])) }}</p>
+                        <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</p>
+                        <hr>
+                        <p><b>Your notes/instructions:</b></p>
+                        <p class="">{{ $bidding['notes'] }}</p>
+                        <p><b>Quantity:</b> &nbsp; {{$bidding['quantity']}}pcs.</p>
+                        <!-- <hr>
+                        @if($bidding->measurement != null)
+                        <a href="" data-toggle="modal" data-target="#measurementsModal">View measurements here</a>
+                        @else
+                        <p>You have not submitted any measurememnts</p>
+                        @endif -->
+                        <hr>
+                        <p><b>Your chosen Bid</b></p>
+                        <p><b>Boutique Name:</b> &nbsp; {{$bidding->bid->owner['boutiqueName']}}</p>
+                        @if($bidding->bid['fabricName'] != null)
+                        <p><b>Boutique's Fabric Choice:</b> &nbsp; {{$bidding->bid['fabricName']}}</p>
+                        @endif
+                        <p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bidding->bid['quotationPrice']}}</p>
+                    </div>
+                </section><br><br><hr>
+            </div>
+            <div class="col-12 col-md-11" id="measurements">
+                <div class="regular-page-content-wrapper section-padding-80">
+                    <div class="regular-page-text">
+                    @if($bidding['measurementID'] == null)
+                        <form action="{{url('submitMeasurementforBidding')}}" method="post">
+                            {{csrf_field()}}
+                            <h4>Submit Measurements</h4><br>
+
+                            <div class="row"> 
+                                <div class="col-md-8">
+                                    @for($counter = 1; $bidding['quantity'] >= $counter; $counter++)
+                                    <h5>Enter name for Person {{$counter}}</h5>
+                                    <input type="text" name="person[{{$counter}}]" class="form-control"><br>
+
+                                    <div class="row"> 
+                                        <div class="col-md-8">
+                                            @foreach($mrequests as $mrequest)
+                                                <?php $measurementNames = json_decode($mrequest->measurements); ?>
+
+                                                <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                @foreach($measurementNames as $measurementName)
+
+                                                    <label>{{$measurementName}}</label>
+                                                    <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                @endforeach<br>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endfor
+                                    <input type="submit" name="btn_submit" value="Submit">
+                                </div>
+                            </div>
 
 
-                        <section class="single_product_details_area d-flex align-items-center">
-                            <!-- Single Product Thumb -->
-                            <div class="single_product_thumb clearfix">
-                                <!-- <div class="product_thumbnail_slides owl-carousel"> -->
-                                    @foreach($bidding->productFile as $image)
-                                    <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+                            <input type="text" name="biddingID" value="{{$bidding['id']}}" hidden>
+                        </form>
+                    @else
+                        <h4>Measurements Submitted</h4><br>
+                    <div class="row">
+                        <div class="col-md-12" style="column-count: 2">
+                        @foreach($measurements as $measurement)
+                            @foreach($measurement as $person)
+                            @if(is_array($person)) <!-- filter if naay array si person -->
+                                @foreach($person as $personData)
+                                @if(is_object($personData)) <!-- filter if naay object si personData -->
+                                    <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                                    @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                        <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                        <label><b>{{strtoupper($measurementName)}}</b></label><br>
+                                        @foreach($dataArray as $dataName => $data)
+                                            <label>{{$dataName}}: &nbsp; {{$data}}"</label><br>
+                                        @endforeach
                                     @endforeach
-                                <!-- </div> -->
-                            </div>
-
-                            <?php
-                                $measurements = json_decode($bidding->measurement->data);
-                            ?>
-
-                            <!-- Single Product Description -->
-                            <div class="single_product_desc clearfix">
-                                <span>By: &nbsp; {{$bidding->owner['fname'].' '.$bidding->owner['lname']}}</span>
-                                <!-- <h4>Maximum Price Limit: ₱{{ $bidding['maxPriceLimit'] }}</h4> -->
-                                <p class="product-price"></p>
-                                <p class="product-price"><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bidding['maxPriceLimit'] }}</p>
-                                <p><b>Bidding End Date:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['endDate'])) }}</p>
-                                <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</p>
-                                <hr>
-                                <p><b>Your notes/instructions:</b></p>
-                                <p class="">{{ $bidding['notes'] }}</p>
-                                <hr>
-                                <p><b>Your Measurements:</b></p>
-                                @foreach($measurements as $measurementName => $measurement)
-                                <p>{{$measurementName.': '. $measurement}}</p>
+                                @endif
                                 @endforeach
-                                <p><b>Your height:</b> &nbsp; {{ $bidding['height'] }}</p>
                                 <hr>
-                                <p><b>Your chosen Bid</b></p>
-                                <p><b>Boutique Name:</b> &nbsp; {{$bidding->bid->owner['boutiqueName']}}</p>
-                                <p><b>Boutique's plan:</b> &nbsp; {{$bidding->bid['plans']}}</p>
-                                <p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bidding->bid['bidAmount']}}</p>
-                            </div>
-                        </section><br><br>
-                
+                            @else
+                                <label><b>Name:</b> {{strtoupper($person)}}</label><br>
+                            @endif
+                            @endforeach
+                        @endforeach
+                        </div>
+                    </div>
+
+                    @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- MODAL -->
+<div class="modal fade" id="measurementsModal" role="dialog">
+    <div class="modal-dialog modal-md">
+      <!-- Modal content-->
+      <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title"><b>Measurements Submitted</b></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <div class="modal-body">
+                <!-- <p><b>Measurements Submitted:</b></p> -->
+                @if($bidding['measurementID'] != null)
+                @foreach($measurements as $measurement)
+                    @foreach($measurement as $person)
+                    @if(is_array($person)) <!-- filter if naay array si person -->
+                        @foreach($person as $personData)
+                        @if(is_object($personData)) <!-- filter if naay object si personData -->
+                            <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                            @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                <p><b>{{strtoupper($measurementName)}}</b></p>
+                                @foreach($dataArray as $dataName => $data)
+                                    <p>{{$dataName}}: &nbsp; {{$data}}"</p>
+                                @endforeach
+                            @endforeach
+                        @else
+                            <p>haynakoo</p>
+                        @endif
+                        @endforeach
+                        <hr>
+                    @else
+                        <p><b>Name:</b> {{strtoupper($person)}}</p>
+                    @endif
+                    @endforeach
+                @endforeach
+                @endif
+          </div>
+
+          <div class="modal-footer">
+            <!-- <input type="submit" class="btn essence-btn" value="Place Request"> -->
+            <input type="submit" class="btn essence-btn" value="Cancel">
+          </div>
+      </div> 
+    </div>
+</div>
+
+
 
 <!-- </div> -->
 <style type="text/css">

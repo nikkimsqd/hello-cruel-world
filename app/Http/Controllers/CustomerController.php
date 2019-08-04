@@ -30,6 +30,7 @@ use App\Fabric;
 use App\Sharepercentage;
 use App\Gallery;
 use App\Set;
+use App\Measurementrequest;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -747,8 +748,8 @@ class CustomerController extends Controller
     {
         $userID = Auth()->user()->id;
 
-        $measurement = $request->input('measurement');
-        $mName = json_encode($measurement);
+        // $measurement = $request->input('measurement');
+        // $mName = json_encode($measurement);
         $deadlineOfProduct = date('Y-m-d',strtotime($request->input('deadlineOfProduct')));
         $time = time();
         // dd(date("Y-m-d",$time));
@@ -756,25 +757,25 @@ class CustomerController extends Controller
 
         $bidding = Bidding::create([
             'userID' => $userID,
-            'maxPriceLimit' => $request->input('maxPriceLimit'), 
+            'quotationPrice' => $request->input('quotationPrice'), 
             'endDate' => $request->input('endDate'), 
             'deadlineOfProduct' => $deadlineOfProduct,
-            'height' => $request->input('height'), 
-            'category' => $request->input('category'), 
+            'quantity' => $request->input('quantity'), 
+            'fabChoice' => $request->input('fabChoice'), 
             'notes' => $request->input('notes'), 
             'status' => "Open"
         ]);
 
-        $measurement = Measurement::create([
-            'userID' => $userID,
-            'type' => 'bidding',
-            'typeID' => $bidding['id'],
-            'data' => $mName
-        ]);
+        // $measurement = Measurement::create([
+        //     'userID' => $userID,
+        //     'type' => 'bidding',
+        //     'typeID' => $bidding['id'],
+        //     'data' => $mName
+        // ]);
 
-        $bidding->update([
-            'measurementID' => $measurement['id']
-        ]);
+        // $bidding->update([
+        //     'measurementID' => $measurement['id']
+        // ]);
 
         $gallery = Gallery::create([
             'userID' => $userID
@@ -809,7 +810,7 @@ class CustomerController extends Controller
         return redirect('/biddings');
     }
 
-    public function viewBidding($bididngID)
+    public function viewBidding($biddingID)
     {
         if (Auth::check()) {
         $userID = Auth()->user()->id;
@@ -826,10 +827,11 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
-        $bidding = Bidding::where('id', $bididngID)->first();
+        $bidding = Bidding::where('id', $biddingID)->first();
         $bids = Bid::where('biddingID', $bidding['id'])->get();
+        $bidsCount = $bids->count();
 
-        return view('hinimo/bidding-details', compact('user', 'userID', 'page_title', 'cart', 'cartCount', 'boutiques', 'bidding', 'bids', 'notificationsCount', 'notifications'));
+        return view('hinimo/bidding-details', compact('user', 'userID', 'page_title', 'cart', 'cartCount', 'boutiques', 'bidding', 'bids', 'notificationsCount', 'notifications', 'bidsCount'));
         }
     }
 
@@ -991,6 +993,51 @@ class CustomerController extends Controller
         return redirect('/view-bidding-order/'.$bidding['id']);
     }
 
+    public function submitMeasurementforBidding(Request $request)
+    {
+        $userID = Auth()->user()->id;
+        $biddingID = $request->input('biddingID');
+        $persons = $request->input('person');
+        $mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $biddingID)->get();
+        $data = array();
+        $counter = 1;
+
+        foreach($persons as $person){
+            $measurementArray = array();
+            array_push($measurementArray, $person);
+
+            foreach($mrequests as $mrequest){
+                $cmArray = array();
+                $categoryName = $mrequest->category['categoryName'];
+                $measurements = $request->input("$counter");
+
+                // array_push($cmArray, $categoryName);
+                array_push($cmArray, $measurements);
+            }
+
+            // $personJson = json_encode($measurementArray); wa ni gamit hahah
+            array_push($measurementArray, $cmArray);
+            array_push($data, $measurementArray);
+            $counter++;
+        }
+            // dd($data);
+
+        $dataJson = json_encode($data);
+
+        $measurement = Measurement::create([
+            'userID' => $userID,
+            'type' => 'bidding',
+            'typeID' => $biddingID,
+            'data' => $dataJson
+        ]);
+
+        Bidding::where('id', $biddingID)->update([
+            'measurementID' => $measurement['id']
+        ]);
+        
+        return redirect('view-bidding-order/'.$biddingID);
+    }
+
     public function notifications()
     {
         $page_title = "Notifications";
@@ -1089,6 +1136,11 @@ class CustomerController extends Controller
                     }elseif($order['biddingID'] != null){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
                     }
+
+                }elseif($notification->type == 'App\Notifications\MeasurementRequests'){
+                    $notification->markAsRead();
+
+                    return redirect('/view-bidding-order/'.$notification->data['biddingID'].'#measurements');
 
                 }
             }
@@ -1276,10 +1328,10 @@ class CustomerController extends Controller
         }
 
         $bidding = Bidding::find($biddingID);
-        // dd($bidding->bid->owner);
+        $mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $biddingID)->get();
 
 
-        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding'));
+        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests'));
     }
 
     public function viewOrder($orderID)

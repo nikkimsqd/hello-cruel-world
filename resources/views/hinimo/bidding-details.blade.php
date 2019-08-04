@@ -18,7 +18,7 @@
     </div>
 
     <?php
-        $measurements = json_decode($bidding->measurement->data);
+        // $measurements = json_decode($bidding->measurement->data);
     ?>
 
     <!-- Single Product Description -->
@@ -28,23 +28,19 @@
         @endif
         <span>By: &nbsp; {{$bidding->owner['fname'].' '.$bidding->owner['lname']}}</span>
         <!-- <h4>Maximum Price Limit: ₱{{ $bidding['maxPriceLimit'] }}</h4> -->
-        <p><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bidding['maxPriceLimit'] }}</p>
+        <p><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bidding['quotationPrice'] }}</p>
         <p><b>Bidding End Date:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['endDate'])) }}</p>
         <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</p>
         <hr>
         <p><b>Customer's notes/instructions:</b></p>
         <p class="">{{ $bidding['notes'] }}</p>
         <hr>
-        <p><b>Customer's Measurements:</b></p>
-        @foreach($measurements as $measurementName => $measurement)
-        <p>{{$measurementName.': '. $measurement}}</p>
-        @endforeach
-        <p><b>Customer's height:</b> &nbsp; {{ $bidding['height'] }}</p>
+        <p><b>Number of offers:</b> &nbsp; {{$bidsCount}}</p>
         
 
         <br>
         <!-- Cart & Favourite Box -->
-        @if($bidding['status'] == "Closed")
+        @if($bidding['status'] == "Closed" && $bidding['bidID'] != null)
         <div class="cart-fav-box d-flex align-items-center">
             <a href="{{url('view-bidding-order/'.$bidding['id'])}}" class="btn essence-btn">View Order Details</a>
         </div>
@@ -53,13 +49,13 @@
     </div>
 </section>
 
-@if($bidding['userID'] == $userID && $bidding['status'] == "Open")
+@if($bidding['userID'] == $userID && $bidding['bidID'] == null)
 <hr>
 <section class="align-items-center">
     <div class="row justify-content-center section-padding-80">
         <div class="col-md-10">
-            @if(count($bids) && $bidding['status'] == "Open")
-            <h3>Your current bidders</h3>
+            @if(count($bids))
+            <h3>Your bidders</h3>
             @foreach($bids as $bid)
             <hr>
             <table class="table table-borderless">
@@ -71,61 +67,19 @@
                 <tr>
                     <td><p><b>Boutique Address:</b> &nbsp; {{$bid->owner['boutiqueAddress']}}</p></td>
                 </tr>
+                @if($bid['fabricName'] != null)
                 <tr>
-                    <td><p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p></td>
+                    <td><p><b>Boutique's Fabric Suggestion:</b> &nbsp; {{$bid['fabricName']}}</p></td>
                 </tr>
+                @endif
                 <tr>
-                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</td></p>
-                </tr>
-            </table>
-            @endforeach
-            @elseif($bidding['status'] == "Closed")
-            <h3>Your current bidders</h3>
-            @foreach($bids as $bid)
-            <hr>
-            <table class="table table-borderless">
-                <col width="698"><col width="349">
-                <tr>
-                    <td><p><b>Boutique Name:</b> &nbsp; {{$bid->owner['boutiqueName']}}</p></td>
-                    <td rowspan="3"> <a href="{{url('reviewBidding/'.$bid['id'])}}" class="btn essence-btn">Accept Offer</a></td>
-                </tr>
-                <tr>
-                    <td><p><b>Boutique Address:</b> &nbsp; {{$bid->owner['boutiqueAddress']}}</p></td>
-                </tr>
-                <tr>
-                    <td><p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p></td>
-                </tr>
-                <tr>
-                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</td></p>
+                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['quotationPrice']}}</td></p>
                 </tr>
             </table>
             @endforeach
             @else
-                <h3>You currently have no bidders</h3>
+                <h3>You have no bidders</h3>
             @endif
-
-          <!--   @if(count($bids))
-            <h3>Your current bidders</h3>
-            @foreach($bids as $bid)
-            <hr>
-            <table class="table table-borderless">
-                <col width="698"><col width="349">
-                <tr>
-                    <td><p><b>Boutique Name:</b> &nbsp; {{$bid->owner['boutiqueName']}}</p></td>
-                    <td rowspan="3"> <a href="{{url('acceptBid/'.$bid['id'])}}" class="btn essence-btn">Accept Offer</a></td>
-                </tr>
-                <tr>
-                    <td><p><b>Boutique Address:</b> &nbsp; {{$bid->owner['boutiqueAddress']}}</p></td>
-                </tr>
-                <tr>
-                    <td><p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p></td>
-                </tr>
-                <tr>
-                    <td><p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</td></p>
-                </tr>
-            </table>
-            @endforeach
-            @endif -->
         </div>
     </div>
 </section>

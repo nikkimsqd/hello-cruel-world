@@ -13,15 +13,16 @@ class MeasurementRequests extends Notification
 
     private $measurementrequest;
     private $boutique;
+    private $biddingID;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($measurementrequest, $boutique)
+    public function __construct($biddingID, $boutique)
     {
-        $this->measurementrequest = $measurementrequest;
+        $this->biddingID = $biddingID;
         $this->boutique = $boutique;
     }
 
@@ -59,8 +60,8 @@ class MeasurementRequests extends Notification
     public function toArray($notifiable)
     {
         return [
-            'text' => $this->boutique.' requests you to submit your measurements.',
-            'measurementrequest' => $this->measurementrequest
+            'text' => $this->boutique['boutiqueName'].' requests you to submit your measurements.',
+            'biddingID' => $this->biddingID
         ];
     }
 }

@@ -17,32 +17,25 @@
         <!-- </div> -->
     </div>
 
-    <?php
-        $measurements = json_decode($bid->bidding->measurement->data);
-    ?>
 
     <!-- Single Product Description -->
     <div class="single_product_desc clearfix">
         <span>By: &nbsp; {{$bid->bidding->owner['fname'].' '.$bid->bidding->owner['lname']}}</span>
         <!-- <h4>Maximum Price Limit: ₱{{ $bid->bidding['maxPriceLimit'] }}</h4> -->
         <p class="product-price"></p>
-        <p class="product-price"><b>Maximum Price Limit:</b> &nbsp;  ₱{{ $bid->bidding['maxPriceLimit'] }}</p>
+        <p class="product-price"><b>Your Quotation Price:</b> &nbsp;  ₱{{ $bid->bidding['quotationPrice'] }}</p>
         <p><b>Bidding End Date:</b> &nbsp; {{ date('M d, Y',strtotime($bid->bidding['endDate'])) }}</p>
         <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($bid->bidding['deadlineOfProduct'])) }}</p>
         <hr>
         <p><b>Your notes/instructions:</b></p>
         <p class="">{{ $bid->bidding['notes'] }}</p>
         <hr>
-        <p><b>Your Measurements:</b></p>
-        @foreach($measurements as $measurementName => $measurement)
-        <p>{{$measurementName.': '. $measurement}}</p>
-        @endforeach
-        <p><b>Your height:</b> &nbsp; {{ $bid->bidding['height'] }}</p>
-        <hr>
-        <p><b>Your chosen Bid</b></p>
+        <p><b>YOUR CHOSEN OFFER:</b></p>
         <p><b>Boutique Name:</b> &nbsp; {{$bid->owner['boutiqueName']}}</p>
-        <p><b>Boutique's plan:</b> &nbsp; {{$bid['plans']}}</p>
-        <p class="product-price"><b>Bid:</b> &nbsp; ₱{{$bid['bidAmount']}}</p>
+        @if($bid['fabricName'] != null)
+        <p><b>Boutique's Fabric Suggestion:</b> &nbsp; {{$bid['fabricName']}}</p>
+        @endif
+        <p class="product-price"><b>Boutique's offer:</b> &nbsp; ₱{{$bid['quotationPrice']}}</p>
 
         <br>
         <span>When you continue, you will be creating an order for your bidding item</span>
@@ -50,6 +43,8 @@
 
     </div>
 </section>
+
+<hr>
 
 
 <style type="text/css">

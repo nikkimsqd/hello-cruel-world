@@ -19,7 +19,7 @@
     <!-- <link rel="stylesheet" href="{{ asset('essence/css/bootstrap.min.css') }}"> -->
     <link rel="stylesheet" href="{{ asset('essence/style.css') }}">
 
-    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" type="text/css" media="all">
+    <!-- <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" type="text/css" media="all"> -->
 
     <!-- FROM THIRD PARTY -->
     <!-- Bootstrap 3.3.7 -->

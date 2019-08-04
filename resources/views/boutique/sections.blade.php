@@ -203,9 +203,13 @@
       <a href="{{url('boutique-view-biddings')}}">
         <i class="fa fa-edit"></i> <span>Biddings</span>
         <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
           <!-- <small class="label pull-right bg-green">new</small> -->
         </span>
       </a>
+      <ul class="treeview-menu">
+        <li class="bids"><a href="{{url('boutique-bids')}}"><i class="fa fa-circle-o"></i> Bids</a></li>
+      </ul>
     </li>
 
     <li class="treeview products">

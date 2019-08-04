@@ -37,37 +37,49 @@
                                         <input name="file" type="file" class="form-control" multiple required>
                                     </div>
 
-                                    <div class="col-md-12 mb-3">
+                                    <!-- <div class="col-md-12 mb-3">
                                         <label>Category of item  <span>*</span></label>
                                         <select class="mb-3" name="gender" id="gender-select">
                                             <option disabled selected>Choose gender</option>
-                                            <!-- <option value="mens">Mens</option> -->
+                                            <option value="mens">Mens</option>
                                             <option value="womens">Womens</option>
                                         </select><br><br><br>
 
                                         <select class="mb-3" name="category" id="category-select" disabled required>
-                                            <!-- @foreach($categories as $category)
-                                            <option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-                                            @endforeach -->
+
                                         </select>
-                                    </div><br><br>
+                                    </div><br><br> -->
 
                                     <!-- <hr> -->
-                                    <div class="col-md-12 mb-3">
+                                    <!-- <div class="col-md-12 mb-3">
                                         <label>Measurements (inches)</label> 
                                         <span><a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">See guide on how to measure youself here.</a></span>
                                         <div class="mb-3" id="measurement-input">
                                         </div>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-12 mb-3">
+                                    <!-- <div class="col-md-12 mb-3">
                                         <label>Height (cm)</label>
                                         <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm" required>
-                                    </div>
+                                    </div> -->
 
                                     <div class="col-md-12 mb-3">
                                         <label>Instructions/Notes</label>
                                             <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of fabric for your item etc." required></textarea>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label>Enter Quantity</label>
+                                        <input name="quantity" type="number" class="form-control" required>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label>Fabric Choice</label><br>
+
+                                        <input id="provide" name="fabChoice" type="checkbox" value="provide">
+                                        <label for="provide">Provide Fabric to boutique</label><br>
+                                        <input id="askboutique" name="fabChoice" type="checkbox" value="askboutique">
+                                        <label for="askboutique">Let boutique provide the fabric</label>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
@@ -81,8 +93,8 @@
                                     </div>
 
                                     <div class="col-md-12 mb-3">
-                                        <label>Your Maximum Price</label>
-                                        <input name="maxPriceLimit" type="number" class="form-control" required>
+                                        <label>Your Quotation Price</label>
+                                        <input name="quotationPrice" type="number" class="form-control" required>
                                     </div><br>
 
 

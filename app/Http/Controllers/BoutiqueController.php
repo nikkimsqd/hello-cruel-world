@@ -17,7 +17,6 @@ use App\Categoryrequest;
 use App\Mto;
 use App\Measurementtype;
 use App\Measurement;
-use App\MeasurementRequest;
 use App\Categorymeasurement;
 use App\Province;
 use App\Region;
@@ -33,6 +32,7 @@ use App\Bidding;
 use App\Bid;
 use App\Set;
 use App\Setitem;
+use App\Measurementrequest;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -43,6 +43,7 @@ use App\Notifications\BoutiqueDeclinesMto;
 use App\Notifications\NotifyForAlterations;
 use App\Notifications\NewBid;
 use App\Notifications\NotifyCourierForPickup;
+use App\Notifications\MeasurementRequests;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -1144,9 +1145,10 @@ class BoutiqueController extends Controller
 		$notificationsCount = $user->unreadNotifications->count();
     	$bidding = Bidding::where('id', $biddingID)->first();
     	$bid = Bid::where('biddingID', $biddingID)->where('boutiqueID', $boutique['id'])->first();
+    	$bidsCount = Bid::where('biddingID', $biddingID)->count();
     	// dd($bid);
 
-    	return view('boutique/viewBidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications'));
+    	return view('boutique/view-bidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications', 'bidsCount'));
     }
 
     public function submitBid(Request $request)
@@ -1162,8 +1164,8 @@ class BoutiqueController extends Controller
     	$bid = Bid::create([
     		'biddingID' => $biddingID,
     		'boutiqueID' => $boutique['id'],
-    		'bidAmount' => $request->input('bidAmount'),
-    		'plans' => $request->input('plans')
+    		'quotationPrice' => $request->input('quotationPrice'),
+    		'fabricName' => $request->input('fabricName')
     	]);
 
     	$customer = User::where('id', $bidding->owner['id'])->first();
@@ -1184,14 +1186,14 @@ class BoutiqueController extends Controller
     	// dd($bid);
 
 		$bid->update([
-			'bidAmount' =>$request->input('bidAmount'),
-    		'plans' => $request->input('plans')
+			'quotationPrice' =>$request->input('quotationPrice'),
+    		'fabricName' => $request->input('fabricName')
 		]);
 
     	$customer = User::where('id', $bidding->owner['id'])->first();
     	$customer->notify(new NewBid($bidding));
 
-    	return redirect('boutique-bidding/'.$biddingID.'#bidSubmitted');
+    	return redirect('boutique-view-bidding/'.$biddingID.'#bidSubmitted');
     }
 
     public function boutiqueBiddings()
@@ -1217,7 +1219,71 @@ class BoutiqueController extends Controller
 	    $notificationsCount = $user->unreadNotifications->count();
 	    $bidding = Bidding::where('id', $biddingID)->first();
 
-	    return view('boutique/boutique-biddingInfo', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'bidding'));
+	    $categories = Category::all();
+        $mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $biddingID)->get();
+	    
+
+	    return view('boutique/boutique-biddingInfo', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'bidding', 'categories', 'mrequests'));
+    }
+
+    public function bids()
+    {
+        $userID = Auth()->user()->id;
+		$user = User::find($userID);
+        $page_title = 'Bids';
+        $biddingsCount = Bidding::all()->count();
+    	$boutique = Boutique::where('userID', $userID)->first();
+        $bids = Bid::where('boutiqueID', $boutique['id'])->get();
+        $notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
+
+        return view('boutique/bids', compact('user', 'page_title', 'userID', 'biddingsCount', 'boutique', 'bids', 'notificationsCount', 'notifications'));
+    }
+
+    public function requestMeasurement(Request $request)
+    {
+    	$biddingID = $request->input('biddingID');
+    	$category = $request->input('category');
+    	$bidding = Bidding::where('id', $biddingID)->first();
+
+    	// foreach($category as $cat){
+    	// 	$measurements = $request->input("$cat");
+    	// 	$measurementsArray = array();
+    	// 	foreach($measurements as $measurementName => $measurement){
+    	// 		array_push($measurementsArray, $measurementName);
+    	// 	}
+    	// 	$mjson = json_encode($measurementsArray);
+    	// 	dd($mjson);
+    	// }
+
+    	foreach($category as $cat){
+	    	$mr = Measurementrequest::create([
+	    		'type' => 'bidding',
+	    		'typeID' => $biddingID,
+	    		'categoryID' => $cat,
+	    	]);
+
+	    	$measurements = $request->input("$cat");
+    		$measurementsArray = array();
+
+    		foreach($measurements as $measurementName => $measurement){
+    			array_push($measurementsArray, $measurementName);
+    		}
+
+    		$mjson = json_encode($measurementsArray);
+
+    		$mr->update([
+    			'measurements' => $mjson
+    		]);
+    	}
+    	// dd($mr['id']);
+
+    	$boutique = Boutique::where('id', $bidding->bid->boutiqueID)->first();
+    	$customer = User::where('id', $bidding->owner['id'])->first();
+    	$customer->notify(new MeasurementRequests($biddingID, $boutique));
+
+    	return redirect('boutique-bidding/'.$biddingID);
+
     }
 
     public function archiveOrders()

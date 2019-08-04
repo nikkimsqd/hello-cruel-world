@@ -161,6 +161,10 @@ Route::get('/boutique-view-bidding/{biddingID}', 'BoutiqueController@viewBidding
 Route::get('/boutique-biddings', 'BoutiqueController@boutiqueBiddings');
 Route::get('/boutique-bidding/{biddingID}', 'BoutiqueController@viewBoutiqueBidding');
 
+Route::get('/boutique-bids', 'BoutiqueController@bids');
+
+Route::post('/requestMeasurement', 'BoutiqueController@requestMeasurement');
+
 
 //ARCHIVES
 Route::get('/archive-orders', 'BoutiqueController@archiveOrders');
@@ -234,6 +238,7 @@ Route::get('/reviewBidding/{bidID}', 'CustomerController@reviewBidding');
 Route::get('/bidding/inputAddress/{bidID}', 'CustomerController@inputAddressforBiding');
 Route::post('/makeOrderforBidding', 'CustomerController@makeOrderforBidding');
 Route::get('/view-bidding-order/{biddingID}', 'CustomerController@viewBiddingOrder');
+Route::post('/submitMeasurementforBidding', 'CustomerController@submitMeasurementforBidding');
 
 
 //NOTIFICATIONS
