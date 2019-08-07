@@ -260,6 +260,7 @@ Route::post('/makeOrderforMTO', 'CustomerController@makeOrderforMTO');
 // Route::get('/receiveMto/{orderID}', 'CustomerController@receiveMto');
 Route::get('/inputAddress/{mtoID}/{type}', 'CustomerController@inputAddress');
 Route::get('/cancelMto/{mtoID}', 'CustomerController@cancelMto');
+Route::post('/submitMeasurementforMto', 'CustomerController@submitMeasurementforMto');
 
 
 //TRANSACTIONS

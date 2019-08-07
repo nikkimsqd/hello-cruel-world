@@ -175,6 +175,49 @@
                             <input type="text" id="total" value="{{$rent->order['total']}}" hidden>
                         </div>
                         @endif
+
+
+                        <div class="col-12 col-md-11" id="measurements">
+                            <div class="regular-page-content-wrapper section-padding-80">
+                                <div class="regular-page-text">
+
+                                <?php
+                                if($rent->measurement != null){
+                                    $measurements = json_decode($rent->measurement->data);
+                                }
+                                ?>
+                                @if($rent['measurementID'] != null)
+                                    <h4>Measurements Submitted</h4><br>
+                                <div class="row">
+                                    <div class="col-md-12" style="column-count: 2">
+                                    @foreach($measurements as $measurement)
+                                        @foreach($measurement as $person)
+                                        @if(!is_array($person)) <!-- filter if naay array si person -->
+                                            @foreach($person as $name => $personData)
+                                            @if(is_object($personData)) <!-- filter if naay object si personData -->
+                                                <label><b>{{strtoupper($name)}}</b></label><br>
+                                                <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                                                @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                                    <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                                    @foreach($dataArray as $dataName => $data)
+                                                        <label>{{$measurementName}}: &nbsp; {{$data}}"</label><br>
+                                                    @endforeach
+                                                @endforeach
+                                            @endif
+                                            @endforeach
+                                            <hr>
+                                        @else
+                                            <label><b>Name:</b> </label><br>
+                                        @endif
+                                        @endforeach
+                                    @endforeach
+                                    </div>
+                                </div>
+
+                                @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

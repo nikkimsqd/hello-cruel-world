@@ -50,6 +50,11 @@
                                     <div class="cart-page-heading">
                                         <h5>Your Order Details</h5>
                                     </div>
+                                    <?php
+                                    if($mto->measurement != null){
+                                        $measurements = json_decode($mto->measurement->data);
+                                    }
+                                    ?>
 
                                     <ul class="order-details-form mb-4">
                                         <li><span>Order ID</span> <span>{{$mto->order['id']}}</span></li>
@@ -102,11 +107,6 @@
                                     <div class="cart-page-heading">
                                         <h5>Your Made-to-Order</h5>
                                     </div>
-                                    <?php
-                                        $measurements = json_decode($mto->measurement->data);
-                                        $fabricChoice = json_decode($mto['fabricChoice']);
-                                        $fabricSuggestion = json_decode($mto['fabricSuggestion']);
-                                    ?>
 
                                     <ul class="order-details-form mb-4">
                                         @if($mto['status'] == "Cancelled")
@@ -116,17 +116,21 @@
                                         @endif
                                         <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
                                         <li><span>Boutique Name</span> <span>{{$mto->boutique['boutiqueName']}}</span></li>
-                                        <li><span>Date of use of the product</span> <span>{{$mto['dateOfUse']}}</span></li>
-                                        <li><span>Category of item</span> <span>{{$mto->category['categoryName']}}</span></li>
-                                        <li><span>Height</span> <span>{{$mto['height']}} cm</span></li>
-                                        <li><span>Measurements</span> 
-                                            <span style="text-align: right;">
-                                                @foreach($measurements as $measurementName => $measurement)
-                                                {{$measurementName.': '. $measurement}} inches<br>
-                                                @endforeach
-                                            </span></li>
+                                        <li><span>Deadline of product</span> <span>{{date('M d, Y',strtotime($mto['deadlineOfProduct']))}}</span></li>
+                                        <li><span>Quantity</span> <span>{{$mto['quantity']}} pcs.</span></li>
+                                        <li><span>Number of wearers</span> <span>{{$mto['numOfPerson']}}</span></li>
+                                        
 
                                         <li><span>Instructions/Notes</span> <span>{{$mto['notes']}}</span></li>
+                                        <li><span>Fabric</span> 
+                                            <span>
+                                            @if($mto['fabChoice'] == "provide")
+                                            <i>[You chose to provide boutique the fabric]</i>
+                                            @elseif($mto['fabChoice'] == "askboutique")
+                                            <i>[You chose to let boutique provide the fabric]</i>
+                                            @endif
+                                        </span>
+                                        </li>
                                         @if($mto['price'] != null && $mto['orderID'] == null)
                                             <li><span>Price</span> <span style="color: #0315ff;">Final Price will be shown here</span></li>
                                         @elseif($mto['price'] != null && $mto['orderID'] != null)
@@ -140,72 +144,28 @@
 
                         @if($mto['orderID'] == null && $mto['status'] == "Active") <!-- IF WALA PAY ORDER ANG MTO -->
                             <!-- if naay chosen fabric & naghatag ug price si boutique -->
-                            @if($mto['fabricID'] != null && $mto['price'] != null)
-                                <h5 class="normal">Boutique's price for item with the fabric of your choice:</h5>
+                            @if($mto['fabChoice'] != null && $mto['price'] != null)
+                                <h5 class="normal">Boutique's price for item:</h5>
                                 <div class="row">
-                                    <div class="col-md-5">
-                                        @foreach($fabrics as $fabric)
-                                        @if($fabric['id'] == $mto['fabricID']) 
-                                            <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
-                                            <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h5>
-                                        @endif
-                                        @endforeach
+                                    <div class="col-md-5"> 
+                                        <h4 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h4>
                                     </div>
                                     <div class="col-md-3">
-                                        <br>
-                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFPrice')}}" class="btn essence-btn">Accept Offer</a>
-                                    </div>
-                                </div><br>
-                            <!-- if ni hatag si customer ug fabric nga wala ni boutique and ni hatag nasad ug price si boutique -->
-                            @elseif($mto['fabricChoice'] != null && $mto['price'] != null) <!-- mtoID: 1 -->
-                                <h5 class="normal">Boutique's price for item with the fabric of your choice:</h5>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <h5 class="normal">Fabric Type: <b>{{ucfirst($fabricChoice->fabricType)}}</b></h5>
-                                        <h5 class="normal">Fabric Color: <b>{{ucfirst($fabricChoice->fabricColor)}}</b></h5>
-                                        <h5 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h5>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <br>
-                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFCPrice')}}" class="btn essence-btn">Accept Offer</a>
+                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFabricPrice')}}" class="btn essence-btn">Accept Offer</a>
                                     </div>
                                 </div><br>
                             @endif
 
-                            <!-- if nangayo ug suggestion si user & naay gi suggest si boutique nga fabric -->
-                            @if($mto['fabricSuggestion'] != null && $mto['suggestFabric'] != null)
+                            <!-- if nangayo si boutique ang pa provide'on ni client -->
+                            @if($mto['fabSuggestion'] != null)
                                 <h5 class="normal">Boutique's suggestion of fabric with price:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
-                                        @foreach($fabrics as $fabric)
-                                        @if($fabric['id'] == $fabricSuggestion->fabricID) 
-                                            <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
-                                            <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>₱{{$fabricSuggestion->price}}</b></h5>
-                                        @endif
-                                        @endforeach
+                                        <h5 class="normal">Fabric Type: <b>{{ucfirst($mto['fabSuggestion'])}}</b></h5>
                                     </div>
                                     <div class="col-md-3">
                                         <!-- <br> -->
-                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptSFPrice')}}" class="btn essence-btn">Accept Offer</a><br><br>
-                                    </div>
-                                </div><br>
-                            @elseif($mto['fabricSuggestion'] != null && $mto['suggestFabric'] == null)
-                                <h5 class="normal">Boutique has a suggestion you might like & consider:</h5>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        @foreach($fabrics as $fabric)
-                                        @if($fabric['id'] == $fabricSuggestion->fabricID) 
-                                            <h5 class="normal">Fabric Type: <b>{{ucfirst($fabric['name'])}}</b></h5>
-                                            <h5 class="normal">Fabric Color: <b>{{ucfirst($fabric['color'])}}</b></h5>
-                                            <h5 class="normal">Price: <b>₱{{ucfirst($fabricSuggestion->price)}}</b></h5>
-                                        @endif
-                                        @endforeach
-                                    </div>
-                                    <div class="col-md-3">
-                                        <br>
-                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFSPrice')}}" class="btn essence-btn">Accept Offer</a>
+                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptSuggestedFabricPrice')}}" class="btn essence-btn">Accept Offer</a><br><br>
                                     </div>
                                 </div><br>
                             @endif
@@ -215,6 +175,77 @@
                                 <br><br>
                             </div>
                         @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
+
+
+                        <div class="col-12 col-md-11" id="measurements">
+                            <div class="regular-page-content-wrapper section-padding-80">
+                                <div class="regular-page-text">
+                                @if($mto['measurementID'] == null)
+                                    <form action="{{url('submitMeasurementforMto')}}" method="post">
+                                        {{csrf_field()}}
+                                        <h4>Submit Measurements</h4><br>
+
+                                        <div class="row"> 
+                                            <div class="col-md-8">
+                                                @for($counter = 1; $mto['numOfPerson'] >= $counter; $counter++)
+                                                <h5>Enter name for Person {{$counter}}</h5>
+                                                <input type="text" name="person[{{$counter}}]" class="form-control"><br>
+
+                                                <div class="row"> 
+                                                    <div class="col-md-8">
+                                                        @foreach($mrequests as $mrequest)
+                                                            <?php $measurementNames = json_decode($mrequest->measurements); ?>
+
+                                                            <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                            @foreach($measurementNames as $measurementName)
+
+                                                                <label>{{$measurementName}}</label>
+                                                                <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                            @endforeach<br>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                @endfor
+                                                <input type="submit" name="btn_submit" value="Submit">
+                                            </div>
+                                        </div>
+
+
+                                        <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
+                                    </form>
+                                @else
+                                    <h4>Measurements Submitted</h4><br>
+                                <div class="row">
+                                    <div class="col-md-12" style="column-count: 2">
+                                    @foreach($measurements as $measurement)
+                                        @foreach($measurement as $person)
+                                        @if(is_array($person)) <!-- filter if naay array si person -->
+                                            @foreach($person as $personData)
+                                            @if(is_object($personData)) <!-- filter if naay object si personData -->
+                                                <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                                                @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                                    <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                                    <label><b>{{strtoupper($measurementName)}}</b></label><br>
+                                                    @foreach($dataArray as $dataName => $data)
+                                                        <label>{{$dataName}}: &nbsp; {{$data}}"</label><br>
+                                                    @endforeach
+                                                @endforeach
+                                            @endif
+                                            @endforeach
+                                            <hr>
+                                        @else
+                                            <label><b>Name:</b> {{strtoupper($person)}}</label><br>
+                                        @endif
+                                        @endforeach
+                                    @endforeach
+                                    </div>
+                                </div>
+
+                                @endif
+                                </div>
+                            </div>
+                        </div>
 
 
                             </div>
@@ -227,26 +258,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="notificationsModal" role="dialog">
-    <div class="modal-dialog modal-lg">
-      <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title"><b>Chat</b></h3>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <div class="modal-body">
-                
-            </div>
-
-            <div class="modal-footer">
-              <!-- <input type="submit" class="btn essence-btn" value="Place Request"> -->
-              <input type="" class="btn btn-danger" data-dismiss="modal" value="Close">
-            </div>
-        </div> 
-    </div>
-</div>
 
 <style type="text/css">
     .normal{font-weight: normal;}

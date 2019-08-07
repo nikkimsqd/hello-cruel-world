@@ -51,7 +51,7 @@
 
 @if($bidding['userID'] == $userID && $bidding['bidID'] == null)
 <hr>
-<section class="align-items-center">
+<section class="align-items-center" id="bidders">
     <div class="row justify-content-center section-padding-80">
         <div class="col-md-10">
             @if(count($bids))

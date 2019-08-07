@@ -812,11 +812,6 @@ class BoutiqueController extends Controller
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 		$mtos = Mto::where('boutiqueID', $boutique['id'])->where('status', 'Active')->get();
 
-
-		// $pendings = Mto::where('boutiqueID', $boutique['id'])->where('status', "Pending")->get();
-		// $intransactions = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Transaction")->get();
-		// $inprogress = Mto::where('boutiqueID', $boutique['id'])->where('status', "In-Progress")->get();
-
 		// dd($inprogress);
 
 		return view('boutique/madetoorders',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos'));
@@ -833,11 +828,11 @@ class BoutiqueController extends Controller
 		$fabrics = Fabric::where('boutiqueID', $boutique['id'])->get();
         $fabs = $fabrics->groupBy('name');
 
-		// $measurementNames = Categorymeasurement::where('categoryID', $mto['categoryID'])->get();
-		$measurements = Measurement::where('typeID', $mto['id'])->first();
 
+		$categories = Category::all();
+        $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mto)->get();
 
-        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics'));
+        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests'));
     }
 
     public function halfapproveMto($mtoID)
@@ -874,12 +869,13 @@ class BoutiqueController extends Controller
     	$mtoID = $request->input('mtoID');
 		$mto = Mto::where('id', $mtoID)->first();
 
-		$fabricSuggestion = $request->input('fabricSuggestion');
-        $fabSuggestion = json_encode($fabricSuggestion);
+		// $fabSuggestion = $request->input('fabricSuggestion');
+        // $fabSuggestion = json_encode($fabricSuggestion);
         // dd($fabSuggestion);
 
     	Mto::where('id', $mtoID)->update([
-    		'fabricSuggestion' => $fabSuggestion
+    		'price' => $request->input('price'),
+    		'fabSuggestion' => $request->input('fabSuggestion')
     	]);
 
     	$customer = $mto->customer;
@@ -1242,9 +1238,7 @@ class BoutiqueController extends Controller
 
     public function requestMeasurement(Request $request)
     {
-    	$biddingID = $request->input('biddingID');
     	$category = $request->input('category');
-    	$bidding = Bidding::where('id', $biddingID)->first();
 
     	// foreach($category as $cat){
     	// 	$measurements = $request->input("$cat");
@@ -1256,33 +1250,69 @@ class BoutiqueController extends Controller
     	// 	dd($mjson);
     	// }
 
-    	foreach($category as $cat){
-	    	$mr = Measurementrequest::create([
-	    		'type' => 'bidding',
-	    		'typeID' => $biddingID,
-	    		'categoryID' => $cat,
-	    	]);
+    	if($request->input('biddingID') != null){
+    		$biddingID = $request->input('biddingID');
+    		$bidding = Bidding::where('id', $transactionID)->first();
+	    	foreach($category as $cat){
+		    	$mr = Measurementrequest::create([
+		    		'type' => 'bidding',
+		    		'typeID' => $transactionID,
+		    		'categoryID' => $cat,
+		    	]);
 
-	    	$measurements = $request->input("$cat");
-    		$measurementsArray = array();
+		    	$measurements = $request->input("$cat");
+	    		$measurementsArray = array();
 
-    		foreach($measurements as $measurementName => $measurement){
-    			array_push($measurementsArray, $measurementName);
-    		}
+	    		foreach($measurements as $measurementName => $measurement){
+	    			array_push($measurementsArray, $measurementName);
+	    		}
 
-    		$mjson = json_encode($measurementsArray);
+	    		$mjson = json_encode($measurementsArray);
 
-    		$mr->update([
-    			'measurements' => $mjson
-    		]);
+	    		$mr->update([
+	    			'measurements' => $mjson
+	    		]);
+	    	}
+
+
+	    	$transactionType = 'bidding';
+	    	$boutique = Boutique::where('id', $bidding->bid->boutiqueID)->first();
+	    	$customer = User::where('id', $bidding->owner['id'])->first();
+	    	$customer->notify(new MeasurementRequests($transactionID, $boutique, $transactionType));
+
+	    	return redirect('boutique-bidding/'.$biddingID);
+
+    	}elseif($request->input('mtoID') != null){
+    		$transactionID = $request->input('mtoID');
+    		$mto = Mto::where('id', $transactionID)->first();
+    		foreach($category as $cat){
+		    	$mr = Measurementrequest::create([
+		    		'type' => 'mto',
+		    		'typeID' => $transactionID,
+		    		'categoryID' => $cat,
+		    	]);
+
+		    	$measurements = $request->input("$cat");
+	    		$measurementsArray = array();
+
+	    		foreach($measurements as $measurementName => $measurement){
+	    			array_push($measurementsArray, $measurementName);
+	    		}
+
+	    		$mjson = json_encode($measurementsArray);
+
+	    		$mr->update([
+	    			'measurements' => $mjson
+	    		]);
+	    	}
+
+	    	$transactionType = 'mto';
+	    	$boutique = Boutique::where('id', $mto['boutiqueID'])->first();
+	    	$customer = User::where('id', $mto->customer['id'])->first();
+	    	$customer->notify(new MeasurementRequests($transactionID, $boutique, $transactionType));
+
+	    	return redirect('made-to-orders/'.$transactionID);
     	}
-    	// dd($mr['id']);
-
-    	$boutique = Boutique::where('id', $bidding->bid->boutiqueID)->first();
-    	$customer = User::where('id', $bidding->owner['id'])->first();
-    	$customer->notify(new MeasurementRequests($biddingID, $boutique));
-
-    	return redirect('boutique-bidding/'.$biddingID);
 
     }
 

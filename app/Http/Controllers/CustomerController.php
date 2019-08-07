@@ -39,6 +39,7 @@ use App\Notifications\CustomerAcceptsBid;
 use App\Notifications\NewOrder;
 use App\Notifications\CustomerPaysOrder;
 use App\Notifications\NewBidding;
+use App\Notifications\CustomerDoesntAcceptOffer;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -990,6 +991,15 @@ class CustomerController extends Controller
         $boutiqueseller = User::find($boutique['userID']);
         $boutiqueseller->notify(new CustomerAcceptsBid($bidding));
 
+        $bids = Bid::where('biddingID', $bidding['id'])->get();
+        foreach($bids as $deniedBid){
+            if($deniedBid['id'] != $bid['id']){
+                $deniedBoutique = Boutique::where('id', $deniedBid['boutiqueID'])->first();
+                $deniedBoutiqueSeller = User::where('id', $deniedBoutique['userID'])->first();
+                $deniedBoutiqueSeller->notify(new CustomerDoesntAcceptOffer($deniedBid));
+            }
+        }
+
         return redirect('/view-bidding-order/'.$bidding['id']);
     }
 
@@ -1013,6 +1023,7 @@ class CustomerController extends Controller
 
                 // array_push($cmArray, $categoryName);
                 array_push($cmArray, $measurements);
+                DD($measurements);
             }
 
             // $personJson = json_encode($measurementArray); wa ni gamit hahah
@@ -1117,7 +1128,7 @@ class CustomerController extends Controller
                 }elseif($notification->type == 'App\Notifications\NewBid'){
                     $notification->markAsRead();
 
-                    return redirect('/view-bidding/'.$notification->data['biddingID']);
+                    return redirect('/view-bidding/'.$notification->data['biddingID'].'#bidders');
 
                 }elseif($notification->type == 'App\Notifications\NotifyForPickup'){
                     $notification->markAsRead();
@@ -1140,9 +1151,15 @@ class CustomerController extends Controller
                 }elseif($notification->type == 'App\Notifications\MeasurementRequests'){
                     $notification->markAsRead();
 
-                    return redirect('/view-bidding-order/'.$notification->data['biddingID'].'#measurements');
+                    if($notification->data['transactionType'] == "bidding"){
+                        return redirect('/view-bidding-order/'.$notification->data['transactionID'].'#measurements');
 
+                    }elseif($notification->data['transactionType'] == "mto"){
+                        return redirect('/view-mto/'.$notification->data['transactionID'].'#measurements');
+
+                    }
                 }
+
             }
         }
     }
@@ -1180,74 +1197,38 @@ class CustomerController extends Controller
         return view('hinimo/madetoorder', compact('categories', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'categoryArray', 'fabrics', 'fabs'));
     }
 
-    public function getFabricColor($boutiqueID, $type)
-    {
-        $colors = Fabric::where('name', $type)->where('boutiqueID', $boutiqueID)->get();
+    // public function getFabricColor($boutiqueID, $type)
+    // {
+    //     $colors = Fabric::where('name', $type)->where('boutiqueID', $boutiqueID)->get();
 
-        return response()->json(['colors' => $colors]);
-    }
+    //     return response()->json(['colors' => $colors]);
+    // }
 
     public function saveMadeToOrder(Request $request)
     {
-        $dateOfUse = date('Y-m-d',strtotime($request->input('dateOfUse')));
+        $deadlineOfProduct = date('Y-m-d',strtotime($request->input('deadlineOfProduct')));
         $userID = Auth()->user()->id;
         $boutiqueID = $request->input('boutiqueID');
-        $measurement = $request->input('measurement');
-        $mCategories = $request->input('mCategory');
-        $fabricChoice = $request->input('fabricChoice');
 
-        $fabChoice = json_encode($fabricChoice);
-        $mName = json_encode($measurement);
-       
-        // dd($request->input('fabric'));
-        // if($fabChoice == null){
-        // dd("sud");
-        // }else{
-        //     dd($fabricChoice);
-        // }
+        // dd($deadlineOfProduct);
 
         $mto = Mto::create([
             'userID' => $userID,
             'boutiqueID' => $boutiqueID,
-            'dateOfUse' => $dateOfUse,
+            'deadlineOfProduct' => $deadlineOfProduct,
             'notes' => $request->input('notes'),
-            'height' => $request->input('height'),
-            'categoryID' => $request->input('category'),
-            // 'fabricChoice' => $fabChoice,
-            'fabricChoice' => null,
-            'price' => $request->input('price'),
+            'quantity' => $request->input('quantity'),
+            'numOfPerson' => $request->input('numOfPerson'),
+            'fabChoice' => $request->input('fabChoice'),
             'orderID' => $request->input('orderID'),
             'status' => "Active"
             ]);
-
-        if($request->input('fabric') == "suggest"){
-            $mto->update([
-                'suggestFabric' => "true"
-            ]);
-
-        }elseif($request->input('fabric') == "choose"){
-            $mto->update([
-                'fabricID' => $request->input('fabricID')
-            ]);
-        }
-
-        $measurement = Measurement::create([
-            'userID' => $userID,
-            'type' => 'mto',
-            'typeID' => $mto['id'],
-            'data' => $mName
-        ]);
-
-        Mto::where('id', $mto['id'])->update([
-            'measurementID' => $measurement['id']
-        ]);
 
         $gallery = Gallery::create([
             'userID' => $userID
         ]);
 
         $upload = $request->file('file');
-
         if($request->hasFile('file')) {
             $files = new File();
             // $name = $upload->getClientOriginalName();
@@ -1269,6 +1250,52 @@ class CustomerController extends Controller
         $boutiqueseller->notify(new NewMTO($mto));
 
       return redirect('boutique/'.$boutiqueID);
+    }
+
+    public function submitMeasurementforMto(Request $request)
+    {
+        $userID = Auth()->user()->id;
+        $mtoID = $request->input('mtoID');
+        $persons = $request->input('person');
+        $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
+        $data = array();
+        $counter = 1;
+
+        foreach($persons as $person){
+            $measurementArray = array();
+            array_push($measurementArray, $person);
+
+            foreach($mrequests as $mrequest){
+                $cmArray = array();
+                $categoryName = $mrequest->category['categoryName'];
+                $measurements = $request->input("$counter");
+
+                // array_push($cmArray, $categoryName);
+                array_push($cmArray, $measurements);
+                // dd($cmArray);
+            }
+
+            // $personJson = json_encode($measurementArray); wa ni gamit hahah
+            array_push($measurementArray, $cmArray);
+            array_push($data, $measurementArray);
+            $counter++;
+        }
+            // dd($data);
+
+        $dataJson = json_encode($data);
+
+        $measurement = Measurement::create([
+            'userID' => $userID,
+            'type' => 'mto',
+            'typeID' => $mtoID,
+            'data' => $dataJson
+        ]);
+
+        Mto::where('id', $mtoID)->update([
+            'measurementID' => $measurement['id']
+        ]);
+        
+        return redirect('view-mto/'.$mtoID);
     }
 
     public function getMeasurements($categoryID)
@@ -1374,6 +1401,9 @@ class CustomerController extends Controller
 
         $rent = Rent::find($rentID);
 
+        $measurements = json_decode($rent->measurement->data);
+        // dd($measurements);
+
         return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent'));
     }
 
@@ -1393,13 +1423,15 @@ class CustomerController extends Controller
         }
 
         $mto = Mto::find($mtoID);
-        $measurement = json_decode($mto->measurement->data);
+        // $measurement = json_decode($mto->measurement->data);
         $fabrics = Fabric::where('boutiqueID', $mto->boutique['id'])->get();
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         // dd($fabrics);
+        $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage'));
+
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests'));
     }
 
     public function inputAddress($mtoID, $type)
@@ -1419,23 +1451,13 @@ class CustomerController extends Controller
         }
 
         $mto = Mto::find($mtoID);  
-        $measurements = json_decode($mto->measurement->data);
-        $fabricChoice = json_decode($mto['fabricChoice']);
-        $fabricSuggestion = json_decode($mto['fabricSuggestion']);
 
-        if($type == "acceptFPrice"){
-            $mtoPrice = $mto['price'];
-
-        }elseif($type == "acceptFCPrice"){ //fabricChoice
-            $mtoPrice = $mto['price'];
-
-        }elseif($type == "acceptSFPrice"){ //suggestFabric
-            $mtoPrice = $fabricSuggestion->price;
-
-        }elseif($type == "acceptFSPrice"){ //fabricSuggestion
-            $mtoPrice = $fabricSuggestion->price;
-
-        }
+        // if($type == "acceptFabricPrice"){
+        //     $mtoPrice = $mto['price'];
+        // }elseif($type == "acceptSuggestedFabricPrice"){ //suggestFabric
+        //     $mtoPrice = $fabricSuggestion->price;
+        // }
+        $mtoPrice = $mto['price'];
 
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
@@ -1811,29 +1833,49 @@ class CustomerController extends Controller
         $deliveryAddress = $request->input('deliveryAddress');
         $addressID = $request->input('selectAddress');
 
-        if($deliveryAddress != null && $addressID == "addAddress"){
-            $address = Address::create([
-                'userID' => $id, 
-                'contactName' => $request->input('billingName'), 
-                'phoneNumber' => $request->input('phoneNumber'),
-                'completeAddress' => $request->input('deliveryAddress'),
-                'lat' => $request->input('lat'), 
-                'lng' => $request->input('lng'), 
-                'status' => "Not Default"
-            ]);
-            $addressID = $address['id'];
-        }elseif($deliveryAddress != null && $addressID != "addAddress"){
-            //leave empty lang para mo exit na sa condition
-        }
+        // if($deliveryAddress != null && $addressID == "addAddress"){
+        //     $address = Address::create([
+        //         'userID' => $id, 
+        //         'contactName' => $request->input('billingName'), 
+        //         'phoneNumber' => $request->input('phoneNumber'),
+        //         'completeAddress' => $request->input('deliveryAddress'),
+        //         'lat' => $request->input('lat'), 
+        //         'lng' => $request->input('lng'), 
+        //         'status' => "Not Default"
+        //     ]);
+        //     $addressID = $address['id'];
+        // }elseif($deliveryAddress != null && $addressID != "addAddress"){
+        //     //leave empty lang para mo exit na sa condition
+        // }
 
-        $rent = Rent::create([
-            'boutiqueID' => $request->input('boutiqueID'),
-            'customerID' => $id, 
-            'status' => "In-Progress", 
-            'setID' => $request->input('setID'), 
-            'dateToUse' => $dateuse, 
-            'dateToBeReturned' => $dateToBeReturned, 
-            'additionalNotes' => $request->input('additionalNotes')
+        // $rent = Rent::create([
+        //     'boutiqueID' => $request->input('boutiqueID'),
+        //     'customerID' => $id, 
+        //     'status' => "In-Progress", 
+        //     'setID' => $request->input('setID'), 
+        //     'dateToUse' => $dateuse, 
+        //     'dateToBeReturned' => $dateToBeReturned, 
+        //     'additionalNotes' => $request->input('additionalNotes')
+        // ]);
+
+        $data = array();
+        $cmArray = array();
+        // $categoryName = $mrequest->category['categoryName'];
+        $measurements = $request->input('measurement');
+
+        // array_push($cmArray, $categoryName);
+        array_push($cmArray, $measurements);
+
+        array_push($data, $cmArray);
+
+        $dataJson = json_encode($data);
+        DD($dataJson);
+
+        $measurement = Measurement::create([
+            'userID' => $userID,
+            'type' => 'bidding',
+            'typeID' => $biddingID,
+            'data' => $dataJson
         ]);
 
         $measurement = Measurement::create([

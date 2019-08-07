@@ -13,17 +13,19 @@ class MeasurementRequests extends Notification
 
     private $measurementrequest;
     private $boutique;
-    private $biddingID;
+    private $transactionID;
+    private $transactionType;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($biddingID, $boutique)
+    public function __construct($transactionID, $boutique, $transactionType)
     {
-        $this->biddingID = $biddingID;
+        $this->transactionID = $transactionID;
         $this->boutique = $boutique;
+        $this->transactionType = $transactionType;
     }
 
     /**
@@ -61,7 +63,8 @@ class MeasurementRequests extends Notification
     {
         return [
             'text' => $this->boutique['boutiqueName'].' requests you to submit your measurements.',
-            'biddingID' => $this->biddingID
+            'transactionID' => $this->transactionID,
+            'transactionType' => $this->transactionType
         ];
     }
 }

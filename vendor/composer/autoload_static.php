@@ -402,6 +402,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Notifications\\CustomerAcceptsBid' => __DIR__ . '/../..' . '/app/Notifications/CustomerAcceptsBid.php',
         'App\\Notifications\\CustomerAcceptsOffer' => __DIR__ . '/../..' . '/app/Notifications/CustomerAcceptsOffer.php',
         'App\\Notifications\\CustomerCancelMto' => __DIR__ . '/../..' . '/app/Notifications/CustomerCancelMto.php',
+        'App\\Notifications\\CustomerDoesntAcceptOffer' => __DIR__ . '/../..' . '/app/Notifications/CustomerDoesntAcceptOffer.php',
         'App\\Notifications\\CustomerPaysOrder' => __DIR__ . '/../..' . '/app/Notifications/CustomerPaysOrder.php',
         'App\\Notifications\\MeasurementRequests' => __DIR__ . '/../..' . '/app/Notifications/MeasurementRequests.php',
         'App\\Notifications\\MtoUpdateForCustomer' => __DIR__ . '/../..' . '/app/Notifications/MtoUpdateForCustomer.php',

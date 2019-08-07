@@ -52,6 +52,7 @@ return array(
     'App\\Notifications\\CustomerAcceptsBid' => $baseDir . '/app/Notifications/CustomerAcceptsBid.php',
     'App\\Notifications\\CustomerAcceptsOffer' => $baseDir . '/app/Notifications/CustomerAcceptsOffer.php',
     'App\\Notifications\\CustomerCancelMto' => $baseDir . '/app/Notifications/CustomerCancelMto.php',
+    'App\\Notifications\\CustomerDoesntAcceptOffer' => $baseDir . '/app/Notifications/CustomerDoesntAcceptOffer.php',
     'App\\Notifications\\CustomerPaysOrder' => $baseDir . '/app/Notifications/CustomerPaysOrder.php',
     'App\\Notifications\\MeasurementRequests' => $baseDir . '/app/Notifications/MeasurementRequests.php',
     'App\\Notifications\\MtoUpdateForCustomer' => $baseDir . '/app/Notifications/MtoUpdateForCustomer.php',

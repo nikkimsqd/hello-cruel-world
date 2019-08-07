@@ -13,28 +13,21 @@
       <div class="box">
 
         <div class="box-header with-border">
-          <h3 class="box-title">By: {{ $bidding->owner['fname'].' '.$bidding->owner['lname'] }}</h3>
+          <h3 class="box-title">By: {{ $bidding->owner['fname'].' '.$bidding->owner['lname'] }}
+            @if($bidding['status'] == "Closed")
+            <span class="label label-danger">Closed</span>
+            @endif
+          </h3>
         </div>
 
         <div class="box-body">
           <div class="col-md-6">
-            <?php 
-              $measurementData = json_decode($bidding->measurement['data']);
-            ?>
-            @if($measurementData != null)
-
-            <h4>Customer's Measurements:</h4>
-            @foreach($measurementData as $measurementName => $value)
-              <h4>{{$measurementName}}: <b>{{$value}} inches</b></h4>
-            @endforeach
-            <hr>
-            @endif
 
             <h4>Bidding Ends in: <b>{{ date('M d, Y',strtotime($bidding['endDate'])) }}</b></h4>
             <h4>Deadline of Product: <b>{{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</b></h4>
             <h4>Customer's notes/instructions:</h4>
             <h4><b>{{ $bidding['notes'] }}</b></h4>
-            <h4>Quantity: <b>{{ $bidding['quantity'] }}</b></h4>
+            <h4>Quantity: <b>{{ $bidding['quantity'] }} pcs.</b></h4>
             <h4>Maximum Price Limit: <b>₱{{ $bidding['quotationPrice'] }}</b></h4>
             @if($bidding['fabChoice'] == "askboutique")
             <h4><i><b>Customer wants you to provide the fabric</b></i></h4>
@@ -53,7 +46,12 @@
             @else
               <h4>No bids</h4>
             @endif
+            <h4>Number of Offers: {{$bidsCount}}</h4>
             <hr>
+            @if($bidding->bid['boutiqueID'] == $boutique['id'])
+              <h4>Your offer has been chosen by the client.</h4>
+            @endif
+
             @if($bid != null)
               @if($bid['fabricName'] != null)
                 <h4>Your Fabric Suggestion: <b>{{$bid['fabricName']}}</b></h4>
@@ -62,11 +60,13 @@
             <hr>
             @endif
 
+            @if($bidding['status'] == "Open")
             <!-- <br> -->
-            @if($bid == null)
-            <a href="" class="btn btn-success btn-lg" data-toggle="modal" data-target="#submitABidModal{{$bidding['id']}}">Submit a Bid</a>
-            @else
-            <a href="" class="btn btn-success btn-lg" data-toggle="modal" data-target="#editBidModal{{$bidding['id']}}">Update your Bid</a>
+              @if($bid == null)
+              <a href="" class="btn btn-success btn-lg" data-toggle="modal" data-target="#submitABidModal{{$bidding['id']}}">Submit a Bid</a>
+              @else
+              <a href="" class="btn btn-success btn-lg" data-toggle="modal" data-target="#editBidModal{{$bidding['id']}}">Update your Bid</a>
+              @endif
             @endif
           </div>
 

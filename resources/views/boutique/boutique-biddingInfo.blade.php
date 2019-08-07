@@ -22,7 +22,6 @@
               $measurements = json_decode($bidding->measurement['data']);
             ?>
 
-
             <h4>Bidding Ends in: <b>{{ date('M d, Y',strtotime($bidding['endDate'])) }}</b></h4>
             <h4>Deadline of Product: <b>{{ date('M d, Y',strtotime($bidding['deadlineOfProduct'])) }}</b></h4>
             <h4>Customer's notes/instructions:</h4>
@@ -41,6 +40,7 @@
             @else
               <h4>No bids</h4>
             @endif
+
             <hr>
             @if($bid != null)
               @if($bid['fabricName'] != null)
@@ -254,7 +254,6 @@ $('#category-select').on('change', function(){
 
       }
     });
-
 }); 
 
 </script>

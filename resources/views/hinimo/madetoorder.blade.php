@@ -34,77 +34,34 @@
                             </div>
 
                             <div class="col-md-8 mb-3 dateOfUse">
-                                <label>Date of use of the product</label>
-                                <input name="dateOfUse" type="text" class="form-control" id="dateOfUse" placeholder="mm / dd / yyyy" required>
+                                <label>Deadline of product</label>
+                                <input name="deadlineOfProduct" type="text" class="form-control" id="deadlineOfProduct" placeholder="mm / dd / yyyy" required>
                                 <!-- <input name="date" type="date" class="form-control" id="date"> -->
                             </div>
 
                             <div class="col-md-8 mb-3">
-                                <label>Height (cm)</label>
-                                <input name="height" type="number" class="form-control"  placeholder="Ex: 165 cm" required>
+                                <label>Quantity</label><br>
+                                <input name="quantity" type="number" class="form-control" required style="width: 100px; display: inline;"> pcs.
                             </div>
 
                             <div class="col-md-8 mb-3">
-                                <label>Type of item  <span>*</span></label>
-                                <select class="mb-3" name="gender" id="gender-select" required>
-                                    <option disabled selected>Choose gender</option>
-                                    <!-- <option value="mens">Mens</option> -->
-                                    <option value="womens">Womens</option>
-                                </select><br><br><br>
-
-                                <select class="mb-3" name="category" id="category-select" disabled required>
-                                    <option></option>
-                                    <!-- @foreach($categories as $category)
-                                    <option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-                                    @endforeach -->
-                                </select>
-                            </div><br><br>
-
-                            <!-- <hr> -->
-                            <div class="col-md-8 mb-3">
-                                <label>Measurements (inches)</label>
-                                <span><a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">See guide on how to measure youself here.</a></span>
-                                <div class="mb-3" id="measurement-input">
-                                </div>
+                                <label>Number of wearers</label><br>
+                                <input name="numOfPerson" type="number" class="form-control" required style="width: 100px; display: inline;"> person
                             </div>
 
-                            <div class="col-md-8 mb-3">
-                                <label>Choose Fabric</label><br>
-                                    <input id="suggest" class="fabric-radio" type="radio" name="fabric" value="suggest" required>
-                                    <label for="suggest"> Ask boutique for fabric suggestions</label> <br>
-
-                                    <input id="choose" class="fabric-radio" type="radio" name="fabric" value="choose" required>
-                                    <label for="choose"> Choose available fabric from boutique</label> <br>
-                            </div>
-
-                            <div class="col-md-8 mb-3" id="fabric-select" hidden="">
-                                <!-- <label>Choose Fabric</label> -->
-                               <!--  <select id="fabric-type" class="mb-3">
-                                    @foreach($fabrics as $fabric)
-                                    @if($fabric == $fabric)
-                                    <option value="{{$fabric['name']}}">{{$fabric['name']}}</option>
-                                    @endif
-                                    @endforeach
-                                </select><br><br><br> -->
-                                <select id="fabric-type" class="mb-3">
-                                    <option disabled selected>Choose fabric type</option>
-                                    @foreach($fabs as $fab => $name)
-                                    <option value="{{$fab}}">{{$fab}}</option>
-                                    @endforeach
-                                </select><br><br><br>
-                                <select id="fabric-color" class="mb-3" name="fabricID">
-                                    <option disabled selected="selected">Choose fabric color</option>
-                                </select><br><br>
-
-                                <!-- di lang sa maka buot si customer sa fabric -->
-                                <!-- <label>Cannot find the right fabric and color? Type it below!</label>
-                                <input type="text" name="fabricChoice[fabricType]" class="form-control mb-3" placeholder="Fabric Type">
-                                <input type="text" name="fabricChoice[fabricColor]" class="form-control" placeholder="Fabric Color"> -->
+                            <div class="col-md-12 mb-3">
+                                <label>Fabric Choice</label><br>
+                                &nbsp;&nbsp;&nbsp;
+                                <input id="provide" name="fabChoice" type="checkbox" value="provide">
+                                <label for="provide">Provide Fabric to boutique</label><br>
+                                &nbsp;&nbsp;&nbsp;
+                                <input id="askboutique" name="fabChoice" type="checkbox" value="askboutique">
+                                <label for="askboutique">Let boutique provide the fabric</label>
                             </div>
 
                             <div class="col-md-8 mb-3">
                                 <label>Instructions/Notes</label>
-                                    <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of cloth for your item etc." required></textarea>
+                                <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of cloth for your item etc." required></textarea>
                             </div>  
 
                             <div class="col-md-8 mb-3">
@@ -143,7 +100,7 @@ var dateToday = new Date();
 var dateNextMonth = new Date();
 dateNextMonth.setDate(dateToday.getDate()+30);
 
-$('#dateOfUse').datepicker({
+$('#deadlineOfProduct').datepicker({
     startDate: dateNextMonth
 });
 

@@ -48,9 +48,9 @@
 
               <hr>
               <h4><b>Customer's Measurements Details</b></h4>
-              @foreach($measurements as $mName => $measurement)
-              <h4>{{$mName}}: <b>{{$measurement}} inches</b></h4>
-              @endforeach
+              <!-- foreach(measurements as mName => measurement)
+              <h4>mName: <b>{measurement inches</b></h4>
+              endforeach -->
 
               <hr>
              <!--  <h4>Status: 

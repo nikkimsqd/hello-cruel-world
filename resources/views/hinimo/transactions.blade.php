@@ -66,11 +66,13 @@
                             <tr>
                                 <td style="text-align: center;">{{$order['id']}}</td>
                                 <td style="text-align: center;"><b>RENT</b></td>
+                                <td>
                                 @if($order->rent['productID'] != null)
-                                    <td>{{$order->rent->product['productName']}}</td>
-                                @else
-                                    <td>{{$order->rent->set['setName']}}</td>
+                                    {{$order->rent->product['productName']}}
+                                @elseif($order->rent['setID'] != null)
+                                    {{$order->rent->set['setName']}}
                                 @endif
+                                </td>
                                 <td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
                                 <td style="text-align: center;"><a href="{{url('/view-rent/'.$order->rent['rentID'])}}">View Transaction</a></td>
                             </tr>
