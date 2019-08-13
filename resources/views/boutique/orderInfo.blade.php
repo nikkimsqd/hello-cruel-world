@@ -158,6 +158,7 @@
           </div>
 
         </div>
+        
         <div class="box-footer" style="text-align: right;">
         @if($order['cartID'] != null)
           <a class="btn btn-default" href="{{url('orders')}}"> Back</a>

@@ -151,6 +151,7 @@
   </div>
 </div>
 
+<!-- VIEW MEASUREMENT -->
 <div class="modal fade" id="measurementsModal" role="dialog">
   <div class="modal-dialog modal-md">
     <!-- Modal content-->
@@ -253,7 +254,7 @@
 </div>
 
 
-<!-- DECLINE RENT -->
+<!-- DECLINE MTO -->
 <div class="modal fade" id="declineModal" role="dialog">
   <div class="modal-dialog modal-md">
     <!-- Modal content-->

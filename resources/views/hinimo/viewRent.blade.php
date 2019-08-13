@@ -41,7 +41,7 @@
                         @if($rent->order['status'] == "On Rent")
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 style="color: red; text-align: center;">You are required to visit the boutique personally on returning the item and claiming your deposit.</h5><br>
+                                <h5 style="color: red; text-align: center;">You are required to visit the boutique personally on returning the item and claiming your cashban.</h5><br>
                             </div>
                         </div>
 
@@ -115,7 +115,7 @@
                             </div>
 
                             <ul class="order-details-form mb-4">
-                                <li><span>Boutique Name</span> <span>{{$rent->order->boutique['boutiqueName']}}</span></li>
+                                <li><span>Boutique Name</span> <span>{{$rent->boutique['boutiqueName']}}</span></li>
                                 <li><span>Rent ID</span> <span>{{$rent['rentID']}}</span></li>
                                 <li><span>Product/s</span> 
                                     @if($rent->product != null)
@@ -127,7 +127,7 @@
                                 <li><span>Date to use</span> <span>{{date('M d, Y',strtotime($rent['dateToUse']))}}</span></li>
                                 <li><span>Your notes / instructions</span> <span>{{$rent['additionalNotes']}}</span></li>
                                 <li><span>Date to be returned</span> <span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
-                                <li><span>Required Deposit Amount</span> 
+                                <li><span>Cashban</span> 
                                     @if($rent->product != null)
                                     <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
                                     @else
@@ -234,12 +234,13 @@
 
 @section('scripts')
 
-<script src="https://www.paypal.com/sdk/js?client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
+<script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
     var rentOrderID = document.getElementById('rentOrderID').value;
     var rentID = document.getElementById('rentID').value;
-    var total = document.getElementById('total').value;
+    // var total = document.getElementById('total').value;
+    var total = 1;
 
     paypal.Buttons({
         createOrder: function(data, actions) {

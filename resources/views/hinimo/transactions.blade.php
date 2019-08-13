@@ -110,7 +110,7 @@
 
                     <!-- @if(count($rents) > 0)
                         <table class="table table-hover table-bordered">
-                            <col width="100"><col width="582"><col width="170"><col width="150">
+                            <col width="100"><col width="572"><col width="180"><col width="150">
                             <thead>
                             <tr>
                                 <th style="text-align: center;">RENT ID</th>
@@ -120,9 +120,16 @@
                             </tr>
                             </thead>
                             @foreach($rents as $rent)
+                            @if($rent['orderID'] == null)
                             <tr>
                                 <td style="text-align: center;">{{$rent['rentID']}}</td>
-                                <td>{{$rent->product['productName']}}</td>
+                                <td>
+                                @if($rent['productID'] != null)
+                                    {{$rent->product['productName']}}
+                                @elseif($rent['setID'] != null)
+                                    {{$rent->set['setName']}}
+                                @endif
+                                </td>
                                 <td style="text-align: center;">
                                     @if($rent['orderID'] != null)
                                     {{$rent->order['status']}}
@@ -132,6 +139,7 @@
                                 </td>
                                 <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Transaction</a></td>
                             </tr>
+                            @endif
                             @endforeach
                         </table>
                         <br><br><br>

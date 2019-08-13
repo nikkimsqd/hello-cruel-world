@@ -58,7 +58,7 @@
 
                         <div id="addAddressDIV" hidden=""><br><br>
                             <label>Contact Number:</label>
-                            <input type="text" name="phoneNumber" class="form-control" maxlength="11" required><br>
+                            <input type="text" name="phoneNumber" class="form-control" maxlength="11"><br>
                             <label for="deliveryAddress">Input Address <span>*</span></label>
                             <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
                             <div class="col-12 mb-3" id="map"></div>
@@ -120,7 +120,7 @@
                         </div>
 
                         <div class="row">
-                            <label class="col-md-5 col-form-label">Required Deposit Amount:</label>
+                            <label class="col-md-5 col-form-label">Cashban:</label>
                             <div class="col-md-6">
                                 <label class="col-form-label">₱ {{$product->rentDetails['depositAmount']}}</label>
                             </div>

@@ -301,6 +301,17 @@ class BoutiqueController extends Controller
 	{
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
+		$category = $request->input('category');
+
+    	$measurements = $request->input("$category");
+		$measurementsArray = array();
+
+		foreach($measurements as $measurementName => $measurement){
+			array_push($measurementsArray, $measurementName);
+		}
+
+		$mjson = json_encode($measurementsArray);
+    	// dd($mjson);
     	
     	$product = Product::create([
     		'boutiqueID' => $boutique['id'],
@@ -308,6 +319,7 @@ class BoutiqueController extends Controller
     		'productDesc' => $request->input('productDesc'),
     		'price' => $request->input('retailPrice'),
     		'category' => $request->input('category'),
+			'measurements' => $mjson,
     		'productStatus' => "Available",
     		'quantity' => $request->input('quantity')
     		]);
@@ -540,6 +552,20 @@ class BoutiqueController extends Controller
 
 	}
 
+	public function deleteSet($setID)
+	{
+		$set = Set::where('id', $setID)->first();
+
+		if($set['rpID'] != null){
+			$rp = Rentableproduct::where('id', $set['rpID'])->delete();
+		}
+		
+		$set->delete();
+
+		return redirect('/sets');
+
+	}
+
 	public function rents()
 	{
 		if(Auth()->user()->roles == "boutique") {
@@ -574,8 +600,12 @@ class BoutiqueController extends Controller
 
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
+
+			$categories = Category::all();
+        	$mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $rentID)->get();
 		
-			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'measurements'));
+			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'measurements', 'categories', 
+				'mrequests'));
 		}else {
 			return redirect('/shop');
 		}

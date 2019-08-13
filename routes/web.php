@@ -102,6 +102,7 @@ Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
 Route::get('/editView/{productID}', 'BoutiqueController@editView');
 Route::post('/editproduct/{productID}', 'BoutiqueController@editProduct');
 Route::get('/delete/{productID}', 'BoutiqueController@delete');
+Route::get('/deleteSet/{setID}', 'BoutiqueController@deleteSet');
 
 //view products
 Route::get('/products', 'BoutiqueController@showProducts');

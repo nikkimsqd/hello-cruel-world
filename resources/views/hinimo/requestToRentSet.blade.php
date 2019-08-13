@@ -123,7 +123,7 @@
                         </div>
 
                         <div class="row">
-                            <label class="col-md-5 col-form-label">Required Deposit Amount:</label>
+                            <label class="col-md-5 col-form-label">Cashban:</label>
                             <div class="col-md-6">
                                 <label class="col-form-label">₱ {{$product->rentDetails['depositAmount']}}</label>
                             </div>

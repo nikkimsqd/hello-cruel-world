@@ -620,7 +620,7 @@ class CustomerController extends Controller
         $rent = Rent::create([
             'boutiqueID' => $request->input('boutiqueID'),
             'customerID' => $id, 
-            'status' => "In-Progress", 
+            'status' => "Pending", 
             'productID' => $request->input('productID'), 
             'dateToUse' => $dateuse, 
             'dateToBeReturned' => $dateToBeReturned, 
@@ -634,31 +634,31 @@ class CustomerController extends Controller
             'data' => $mName
         ]);
 
-        $order = Order::create([
-            'userID' => $id,
-            'rentID' => $rent['rentID'],
-            'boutiqueID' => $request->input('boutiqueID'),
-            'subtotal' => $request->input('subtotal'),
-            'deliveryfee' => $request->input('deliveryfee'),
-            'total' => $request->input('total'),
-            'deliveryAddress' => $addressID,
-            'status' => "Pending",
-            'paymentStatus' => "Not Yet Paid",
-            'billingName' => $request->input('billingName'), 
-            'phoneNumber' => $request->input('phoneNumber'),
-            'boutiqueShare' => $request->input('boutiqueShare'),
-            'adminShare' => $request->input('adminShare'),
-            'addressID' => $addressID
-        ]);
+        // $order = Order::create([
+        //     'userID' => $id,
+        //     'rentID' => $rent['rentID'],
+        //     'boutiqueID' => $request->input('boutiqueID'),
+        //     'subtotal' => $request->input('subtotal'),
+        //     'deliveryfee' => $request->input('deliveryfee'),
+        //     'total' => $request->input('total'),
+        //     'deliveryAddress' => $addressID,
+        //     'status' => "Pending",
+        //     'paymentStatus' => "Not Yet Paid",
+        //     'billingName' => $request->input('billingName'), 
+        //     'phoneNumber' => $request->input('phoneNumber'),
+        //     'boutiqueShare' => $request->input('boutiqueShare'),
+        //     'adminShare' => $request->input('adminShare'),
+        //     'addressID' => $addressID
+        // ]);
 
         $rent->update([
-            'orderID' => $order['id'],
+            // 'orderID' => $order['id'],
             'measurementID' => $measurement['id']
         ]);
 
-        Product::where('id', $rent['productID'])->update([
-            'productStatus' => "Not Available"
-        ]);
+        // Product::where('id', $rent['productID'])->update([
+        //     'productStatus' => "Not Available"
+        // ]);
 
         $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
         $boutiqueseller = User::find($boutique['userID']);
@@ -1023,7 +1023,7 @@ class CustomerController extends Controller
 
                 // array_push($cmArray, $categoryName);
                 array_push($cmArray, $measurements);
-                DD($measurements);
+                // DD($measurements);
             }
 
             // $personJson = json_encode($measurementArray); wa ni gamit hahah
@@ -1401,7 +1401,7 @@ class CustomerController extends Controller
 
         $rent = Rent::find($rentID);
 
-        $measurements = json_decode($rent->measurement->data);
+        // $measurements = json_decode($rent->measurement->data);
         // dd($measurements);
 
         return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent'));
@@ -1581,6 +1581,9 @@ class CustomerController extends Controller
         if($request->rentID != null){
             $rent = Rent::where('rentID', $request->rentID)->first();
             $order = Order::where('id', $request->rentOrderID)->first();
+            $rent->update([
+                'status' => 'In-Progress'
+            ]);
             $order->update([
                 'status' => 'In-Progress',
                 'paymentStatus' => 'Paid',
@@ -1823,8 +1826,8 @@ class CustomerController extends Controller
         $id = Auth()->user()->id;
         $user = User::find($id);
 
-        $measurement = $request->input('measurement');
-        $mName = json_encode($measurement);
+        // $measurement = $request->input('measurement');
+        // $mName = json_encode($measurement);
 
         $dateuse = date('Y-m-d',strtotime($request->input('dateToUse')));
         $toadd = $request->input('limitOfDays');
@@ -1833,30 +1836,30 @@ class CustomerController extends Controller
         $deliveryAddress = $request->input('deliveryAddress');
         $addressID = $request->input('selectAddress');
 
-        // if($deliveryAddress != null && $addressID == "addAddress"){
-        //     $address = Address::create([
-        //         'userID' => $id, 
-        //         'contactName' => $request->input('billingName'), 
-        //         'phoneNumber' => $request->input('phoneNumber'),
-        //         'completeAddress' => $request->input('deliveryAddress'),
-        //         'lat' => $request->input('lat'), 
-        //         'lng' => $request->input('lng'), 
-        //         'status' => "Not Default"
-        //     ]);
-        //     $addressID = $address['id'];
-        // }elseif($deliveryAddress != null && $addressID != "addAddress"){
-        //     //leave empty lang para mo exit na sa condition
-        // }
+        if($deliveryAddress != null && $addressID == "addAddress"){
+            $address = Address::create([
+                'userID' => $id, 
+                'contactName' => $request->input('billingName'), 
+                'phoneNumber' => $request->input('phoneNumber'),
+                'completeAddress' => $request->input('deliveryAddress'),
+                'lat' => $request->input('lat'), 
+                'lng' => $request->input('lng'), 
+                'status' => "Not Default"
+            ]);
+            $addressID = $address['id'];
+        }elseif($deliveryAddress != null && $addressID != "addAddress"){
+            //leave empty lang para mo exit na sa condition
+        }
 
-        // $rent = Rent::create([
-        //     'boutiqueID' => $request->input('boutiqueID'),
-        //     'customerID' => $id, 
-        //     'status' => "In-Progress", 
-        //     'setID' => $request->input('setID'), 
-        //     'dateToUse' => $dateuse, 
-        //     'dateToBeReturned' => $dateToBeReturned, 
-        //     'additionalNotes' => $request->input('additionalNotes')
-        // ]);
+        $rent = Rent::create([
+            'boutiqueID' => $request->input('boutiqueID'),
+            'customerID' => $id, 
+            'status' => "Pending", 
+            'setID' => $request->input('setID'), 
+            'dateToUse' => $dateuse, 
+            'dateToBeReturned' => $dateToBeReturned, 
+            'additionalNotes' => $request->input('additionalNotes')
+        ]);
 
         $data = array();
         $cmArray = array();
@@ -1869,20 +1872,20 @@ class CustomerController extends Controller
         array_push($data, $cmArray);
 
         $dataJson = json_encode($data);
-        DD($dataJson);
+        // DD($dataJson);
 
-        $measurement = Measurement::create([
-            'userID' => $userID,
-            'type' => 'bidding',
-            'typeID' => $biddingID,
-            'data' => $dataJson
-        ]);
+        // $measurement = Measurement::create([
+        //     'userID' => $userID,
+        //     'type' => 'bidding',
+        //     'typeID' => $biddingID,
+        //     'data' => $dataJson
+        // ]);
 
         $measurement = Measurement::create([
             'userID' => $id,
             'type' => 'rent',
             'typeID' => $rent['rentID'],
-            'data' => $mName
+            'data' => $dataJson
         ]);
 
         $order = Order::create([
@@ -1907,9 +1910,9 @@ class CustomerController extends Controller
             'measurementID' => $measurement['id']
         ]);
 
-        Product::where('id', $rent['productID'])->update([
-            'productStatus' => "Not Available"
-        ]);
+        // Product::where('id', $rent['productID'])->update([
+        //     'productStatus' => "Not Available"
+        // ]);
 
         $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
         $boutiqueseller = User::find($boutique['userID']);

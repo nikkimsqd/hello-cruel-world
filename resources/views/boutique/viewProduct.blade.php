@@ -40,9 +40,7 @@
               @elseif($product['price'] != null)
               <h4>Retail Price</h4>
               <p>₱{{ number_format($product['price']) }}</p>
-
               @endif
-
 
 
               <h4>Product Category</h4>
@@ -61,6 +59,16 @@
               @else
               <p>You have not yet set the availability for this item.</p>
               @endif
+
+              
+              <h4>Measurements:</h4>
+              <?php $measurements = json_decode($product['measurements']); ?>
+
+              @foreach($measurements as $measurement)
+
+                  <label>{{$measurement}}</label><br>
+                  <!-- <input type="text" name="{{$counter}}[{{$measurement}}]" placeholder="{{$measurement}}" class="form-control"><br> -->
+              @endforeach
 
               <!-- <h4>Tags:</h4>
               @foreach($tags as $tag)

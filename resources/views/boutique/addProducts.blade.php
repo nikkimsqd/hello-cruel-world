@@ -48,6 +48,9 @@
           <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
           @endforeach -->
         </select>
+
+        <div class="col-md-12" id="measurement-input" style="column-count: 2">
+        </div>
       </div>
 
       <div class="form-group">
@@ -92,8 +95,6 @@
         <label>Amount of fine incase item is lost by user</label>
         <input type="number" name="fine" class="input form-control"><br>
 
-        <label>Cities item is available for rent</label><br>
-
         <!-- <label>Select Region:</label>
         <select name="region" class="form-control" id="region-select">
           <option selected="selected"> </option>
@@ -110,7 +111,7 @@
         <select name="locationsAvailable" class="form-control" id="city-selects" disabled>
         </select><br> -->
 
-        <label id="city-id" hidden>Select Cities:</label>
+        <label id="city-id">Select cities item is available for rent:</label><br>
         <div name="cities" id="city-select" style="column-count: 3">
         @foreach($cities as$city)
         <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
@@ -138,27 +139,25 @@
 
 
 <style type="text/css">
+  .tags label {
+    display: inline-block;
+    width: auto;
+    padding: 10px;
+    border: solid 1px #ccc;
+    transition: all 0.3s;
+    background-color: #e3e2e2;
+    border-radius: 5px;
+  }
 
-.tags label {
-  display: inline-block;
-  width: auto;
-  padding: 10px;
-  border: solid 1px #ccc;
-  transition: all 0.3s;
-  background-color: #e3e2e2;
-  border-radius: 5px;
-}
+  .tags input[type="checkbox"] {
+    display: none;
+  }
 
-.tags input[type="checkbox"] {
-  display: none;
-}
-
-.tags input[type="checkbox"]:checked + label {
-  border: solid 1px #e7e7e7;
-  background-color: #ef1717;
-  color: #fff;
-}
-
+  .tags input[type="checkbox"]:checked + label {
+    border: solid 1px #e7e7e7;
+    background-color: #ef1717;
+    color: #fff;
+  }
 </style>
 
 @endsection
@@ -206,30 +205,49 @@ $('#gender-select').on('change', function(){
   });
 });
 
-// LOCATIONS-----------------------------------------------------------------------------
-$("#region-select").on('change', function(){
-  $('#province-select').empty();
-  $('#city-select').empty();
-  $('#brgy-select').empty();
-  var regCode = $(this).val();
+$('#category-select').on('change', function(){
+  var categoryID = $(this).val();
 
-  $('#city-select').prop('disabled',true);
-  $('#province-select').prop('disabled',false);
-            
+  $('#measurement-input').empty();
 
   $.ajax({
-    url: "/hinimo/public/boutique-getProvince/"+regCode,
+    url:"/hinimo/public/getMeasurements/"+categoryID,
     success:function(data){
+      data.measurements.forEach(function(measurement){
+        // $('#measurement-input').append('<input type="text" name="mCategory[]" class="form-control" value="'+measurement.id+'" hidden>');
+        $('#measurement-input').append('<input type="checkbox" id="'+ measurement.id +'" name="'+ categoryID +'['+measurement.mName +']" class="mb-3" placeholder="'+measurement.mName+'">&nbsp;');
+        $('#measurement-input').append('<label for="'+ measurement.id +'">'+ measurement.mName +'</label><br>');
+      });
 
-      $('#province-select').append('<option selected disabled value=""></option>');
-        data.provinces.forEach(function(province){
-          $('#province-select').append(
-              '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
-              );
-        });
+
     }
   });
-});
+}); 
+
+// LOCATIONS-----------------------------------------------------------------------------
+// $("#region-select").on('change', function(){
+//   $('#province-select').empty();
+//   $('#city-select').empty();
+//   $('#brgy-select').empty();
+//   var regCode = $(this).val();
+
+//   $('#city-select').prop('disabled',true);
+//   $('#province-select').prop('disabled',false);
+            
+
+//   $.ajax({
+//     url: "/hinimo/public/boutique-getProvince/"+regCode,
+//     success:function(data){
+
+//       $('#province-select').append('<option selected disabled value=""></option>');
+//         data.provinces.forEach(function(province){
+//           $('#province-select').append(
+//               '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
+//               );
+//         });
+//     }
+//   });
+// });
 
 
 // $('#province-select').on('change', function(){
@@ -259,28 +277,29 @@ $("#region-select").on('change', function(){
 // });
 
 
-$('#province-select').on('change', function(){
-  $('#city-select').empty();
-  // $('#brgy-select').empty();
-  var provCode = $(this).val();
+// USED FUNCTION
+// $('#province-select').on('change', function(){
+//   $('#city-select').empty();
+//   // $('#brgy-select').empty();
+//   var provCode = $(this).val();
   
-  // $('#city-select').prop('disabled',false);;
+//   // $('#city-select').prop('disabled',false);;
 
-  $.ajax({
-    url: "/hinimo/public/boutique-getCity/"+provCode,
-    success:function(data){
+//   $.ajax({
+//     url: "/hinimo/public/boutique-getCity/"+provCode,
+//     success:function(data){
 
-      $('#city-id').prop('hidden',false);
+//       $('#city-id').prop('hidden',false);
 
-        data.cities.forEach(function(city){
-        console.log(city);
-         $('#city-select').append(
-        '<input type="checkbox" name="locationsAvailable[]" value="'+city.citymunCode+'" id="'+city.citymunDesc+'"> '+city.citymunDesc+'<br>'
-        );
-      });
-    }
-  }); //ajaxclosing
-});
+//         data.cities.forEach(function(city){
+//         console.log(city);
+//          $('#city-select').append(
+//         '<input type="checkbox" name="locationsAvailable[]" value="'+city.citymunCode+'" id="'+city.citymunDesc+'"> '+city.citymunDesc+'<br>'
+//         );
+//       });
+//     }
+//   }); //ajaxclosing
+// });
 
 
 // $('#city-select').on('change', function(){

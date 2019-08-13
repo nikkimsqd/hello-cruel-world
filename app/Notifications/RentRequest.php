@@ -57,7 +57,7 @@ class RentRequest extends Notification //FOR BOUTIQUE
     public function toArray($notifiable)
     {
         return [
-            'text' => "You have a new rent order.",
+            'text' => "You have a new rent request.",
             'rentID' => $this->rent['rentID'] //rentID ra ang ipass nga data para way hasol
         ];
     }

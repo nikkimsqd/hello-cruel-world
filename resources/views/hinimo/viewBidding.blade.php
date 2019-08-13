@@ -65,12 +65,13 @@
                                     <span style="color: red; text-align: right;">
                                         {{$bidding->order['paymentStatus']}}
                                         @if($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] != null)
-                                        <br><i style="color: red;">(You are required to pay first so the boutique can start processing your item.)</i>
+                                        <br><i style="color: red;">(You are required to pay the downpayment first so the boutique can start processing your item.)</i>
                                         @elseif($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] == null)
                                         <br><i style="color: red;">(You can start processing your payment after you submit your measurements.)</i>
                                         @endif
                                     </span>
                                 </li>
+                                <li><span>Downpayment</span> <span>50%</span></li>
                             </ul>
                             
                             @if($bidding->order['status'] == "For Pickup" || $bidding->order['status'] == "For Delivery")
@@ -88,7 +89,7 @@
 
                         @if($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] != null)
                         
-                        <h5>Pay here:</h5>
+                        <h5>Pay downpayment here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="orderTransactionID" value="{{$bidding->order['id']}}" hidden>
                             <input type="text" id="total" value="{{$bidding->order['total']}}" hidden>
@@ -278,7 +279,7 @@
 
 @section('scripts')
 
-<script src="https://www.paypal.com/sdk/js?client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
+<script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
     var orderTransactionID = document.getElementById('orderTransactionID').value;
@@ -289,11 +290,12 @@
           // Set up the transaction
           return actions.order.create({
             purchase_units: [{
-              amount: {
-                value: total, 
-                currencyCode: 'PHP'
+            amount: {
+            value: total, 
+            currencyCode: 'PHP'
               }
             }]
+
           });
         },
         onApprove: function(data, actions) {
