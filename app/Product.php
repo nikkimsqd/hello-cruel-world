@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
 	// protected $primaryKey = 'productID';
-    protected $fillable = ['boutiqueID', 'productName', 'productDesc', 'price', 'category', 'productStatus', 'rpID', 'quantity', 'setID'];
+    protected $fillable = ['boutiqueID', 'productName', 'productDesc', 'price', 'category', 'productStatus', 'rpID', 'quantity', 'setID', 'measurements', 'measurementNames', 'rtwID'];
 
     public function productFile()
     {
@@ -32,5 +32,10 @@ class Product extends Model
     public function rentDetails()
     {
         return $this->hasOne('App\Rentableproduct', 'id', 'rpID');
+    }
+
+    public function rtwDetails()
+    {
+        return $this->hasOne('App\Rtw', 'id', 'rtwID');
     }
 }

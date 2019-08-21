@@ -435,6 +435,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Region' => __DIR__ . '/../..' . '/app/Region.php',
         'App\\Rent' => __DIR__ . '/../..' . '/app/Rent.php',
         'App\\Rentableproduct' => __DIR__ . '/../..' . '/app/Rentableproduct.php',
+        'App\\Rtw' => __DIR__ . '/../..' . '/app/Rtw.php',
         'App\\Set' => __DIR__ . '/../..' . '/app/Set.php',
         'App\\Setitem' => __DIR__ . '/../..' . '/app/Setitem.php',
         'App\\Sharepercentage' => __DIR__ . '/../..' . '/app/Sharepercentage.php',

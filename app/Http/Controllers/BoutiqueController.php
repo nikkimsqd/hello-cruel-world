@@ -33,6 +33,7 @@ use App\Bid;
 use App\Set;
 use App\Setitem;
 use App\Measurementrequest;
+use App\Rtw;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -302,29 +303,21 @@ class BoutiqueController extends Controller
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$category = $request->input('category');
-
-    	$measurements = $request->input("$category");
-		$measurementsArray = array();
-
-		foreach($measurements as $measurementName => $measurement){
-			array_push($measurementsArray, $measurementName);
-		}
-
-		$mjson = json_encode($measurementsArray);
-    	// dd($mjson);
-    	
+	    	
+	//TO ADD ITEM ON DATABASE ------------------------------------------------------
     	$product = Product::create([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
     		'price' => $request->input('retailPrice'),
     		'category' => $request->input('category'),
-			'measurements' => $mjson,
     		'productStatus' => "Available",
     		'quantity' => $request->input('quantity')
     		]);
+	//------------------------------------------------------------------------------
 
 
+	//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
     	if($request->input('rentPrice') != null){
 			$locations = json_encode($request->input('locationsAvailable'));
 	    	$rp = Rentableproduct::create([
@@ -340,19 +333,60 @@ class BoutiqueController extends Controller
 	    		'rpID' => $rp['id']
 	    	]);
     	}
+	//------------------------------------------------------------------------------
 
-  //   	$tags = $request->input('tags');
-  //       foreach($tags as $tag) {
-	 //    	Prodtag::create([
-	 //    		'tagID' => $tag,
-	 //    		'productID' => $product['id']
-	 //    	]);
+
+	//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
+    	if($request->input('itemType') == 'yes'){
+    		$rtw = Rtw::create([
+    			'productID' => $product['id'],
+    			'xs' => $request->input('XSquantity'),
+    			's' => $request->input('Squantity'),
+    			'm' => $request->input('Mquantity'),
+    			'l' => $request->input('Lquantity'),
+    			'xl' => $request->input('XLquantity'),
+    			'xxl' => $request->input('XLquantity')
+    		]);
+
+    		$product->update([
+    			'rtwID' => $rtw['id']
+    		]);
+    		// dd('u here');
+
+    	}elseif($request->input('itemType') == 'no'){
+
+		// if($request->input("$category") != null){
+	    	$measurementNames = $request->input("$category");
+			$measurementNamesArray = array();
+
+			foreach($measurementNames as $measurementName => $measurement){
+				array_push($measurementNamesArray, $measurementName);
+			}
+
+			$mNameJson = json_encode($measurementNamesArray);
+	    	
+	    	$measurementData = $request->input('measurementData');
+	    	$mjson = json_encode($measurementData);
+	    // }
+
+    		$product->update([
+				'measurementNames' => $mNameJson,
+				'measurements' => $mjson
+    		]);
+    	}
+	//------------------------------------------------------------------------------
+
+	// FOR TAGS --------------------------------------------------------------------
+		// $tags = $request->input('tags');
+		// foreach($tags as $tag) {
+		// 	Prodtag::create([
+		// 		'tagID' => $tag,
+		// 		'productID' => $product['id']
+		// 	]);
 		// }
+	//------------------------------------------------------------------------------
 
-
-		$randomKey = str_random(10);
-		// dd($randomKey);
-
+	// FOR FILE UPLOAD -------------------------------------------------------------
     	$uploads = $request->file('file');
     	if($request->hasFile('file')) {
     	foreach($uploads as $upload){
@@ -370,23 +404,7 @@ class BoutiqueController extends Controller
 	      	$filename = "/".$random;
     	}
       }
-
-     //  if($request->hasFile('file')) {
-    	// foreach($uploads as $upload){
-    	// 	$files = new File();
-    	// 	$name = $upload->getClientOriginalName();
-	    //     $destinationPath = public_path('uploads');
-	    //     // $filename = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$file->getClientOriginalName();
-	    //     $filename = $destinationPath.'\\'. $name;
-	    //     $upload->move($destinationPath, $filename);
-
-	    //    	$files->userID = $id;
-	    //    	$files->productID = $product['id'];
-	    //     $files->filename = "/".$name;
-	    //   	$files->save();
-	    //   	$filename = "/".$name;
-    	// }
-     //  }
+	//------------------------------------------------------------------------------
 
     	return redirect('/products');
 	}
@@ -449,15 +467,18 @@ class BoutiqueController extends Controller
 		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$product = Product::where('id', $productID)->first();
+		$category = $request->input('category');
 
 		$product->update([
-    		'boutiqueID' => $boutique['id'],
+    		// 'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
     		'category' => $request->input('category'),
-    		'productStatus' => $request->input('productStatus')
+    		'productStatus' => $request->input('productStatus'),
+			'quantity' => $request->input('quantity')
     		]);
 
+	//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
 		if($request->input('forRent') != null) {
 			$rp = Rentableproduct::where('id', $product['rpID'])->first();
 
@@ -489,50 +510,95 @@ class BoutiqueController extends Controller
 			}
 		}else {
 			$product->update([
+	    		'price' => $request->input('productPrice'),
 	    		'rpID' => null
 	    	]);
 		}
+	//------------------------------------------------------------------------------
 
-		if($request->input('forSale') != null) {
+	//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
+		if($request->input('itemType') == 'yes'){
+			$rtw = Rtw::where('id', $product['rtwID'])->first();
+
+			if($rtw != null){
+				$rtw->update([
+					'productID' => $product['id'],
+					'xs' => $request->input('XSquantity'),
+					's' => $request->input('Squantity'),
+					'm' => $request->input('Mquantity'),
+					'l' => $request->input('Lquantity'),
+					'xl' => $request->input('XLquantity'),
+					'xxl' => $request->input('XLquantity')
+				]);
+			}else{
+				$rtw = Rtw::create([
+					'productID' => $product['id'],
+					'xs' => $request->input('XSquantity'),
+					's' => $request->input('Squantity'),
+					'm' => $request->input('Mquantity'),
+					'l' => $request->input('Lquantity'),
+					'xl' => $request->input('XLquantity'),
+					'xxl' => $request->input('XLquantity')
+				]);
+
+				$product->update([
+					'rtwID' => $rtw['id']
+				]);
+			}
+
+		}elseif($request->input('itemType') == 'no'){
+
+	    	$measurementNames = $request->input("$category");
+			$measurementNamesArray = array();
+
+			foreach($measurementNames as $measurementName => $measurement){
+				array_push($measurementNamesArray, $measurementName);
+			}
+
+			$mNameJson = json_encode($measurementNamesArray);
+	    	
+	    	$measurementData = $request->input('measurementData');
+	    	$mjson = json_encode($measurementData);
 
 			$product->update([
-	    		'price' => $request->input('productPrice')
-	    	]);
-
-		}else {
-			$product->update([
-	    		'price' => null
-	    	]);
+				'measurementNames' => $mNameJson,
+				'measurements' => $mjson
+			]);
 		}
+	//------------------------------------------------------------------------------
 
-  //   	Prodtag::where('productID', $product['id'])->delete();
-  //   	$tags = $request->input('tags');
-  //       foreach($tags as $tag) {
-	 //    	Prodtag::create([
-	 //    		'tagID' => $tag,
-	 //    		'productID' => $product['id']
-	 //    	]);
+	
+	// FOR TAGS --------------------------------------------------------------------
+		// Prodtag::where('productID', $product['id'])->delete();
+		// $tags = $request->input('tags');
+		// 	foreach($tags as $tag) {
+		// 	Prodtag::create([
+		// 		'tagID' => $tag,
+		// 		'productID' => $product['id']
+		// 	]);
 		// }
+	//------------------------------------------------------------------------------
 
+	// FOR FILE UPLOAD -------------------------------------------------------------
     	$uploads = $request->file('file');
-
     	if($request->hasFile('file')) {
     	File::where('productID', $productID)->delete();
     	
     	foreach($uploads as $upload){
     		$files = new File();
-    		$name = $upload->getClientOriginalName();
 	        $destinationPath = public_path('uploads');
-	        $filename = $destinationPath.'\\'. $name;
+        	$random = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
+	        $filename = $destinationPath.'\\'. $random;
 	        $upload->move($destinationPath, $filename);
 
 	       	$files->userID = $id;
 	       	$files->productID = $productID;
-	        $files->filename = "/".$name;
+	        $files->filename = "/".$random;
 	      	$files->save();
-	      	$filename = "/".$name;
+	      	$filename = "/".$random;
     	}
       }
+	//------------------------------------------------------------------------------
 
       return redirect('viewproduct/'.$productID);
 

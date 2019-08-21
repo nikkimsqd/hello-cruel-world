@@ -29,6 +29,7 @@
                         <a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">&nbsp; See guide on how to measure youself here.</a><br>
 
                         <div class="row justify-content-center">
+                            <?php $measurements = json_decode($product['measurements']) ?>
                             <div class="col-md-11">
                             @foreach($product->getCategory->getMeasurements as $measurements)
                             <label>{{$measurements['mName']}}:</label>

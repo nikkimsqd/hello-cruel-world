@@ -48,7 +48,15 @@
                     </select>
                 </div> -->
             <p class="product-desc">In Stock: {{ $product['quantity'] }}</p>
-
+            <hr>
+            @if($product['measurements'] != null)
+            <p class="product-desc">Maximum Measurement:</p>
+            <?php $measurements = json_decode($product['measurements']) ?>
+            @foreach($measurements as $measurementName => $value)
+                <p>{{$measurementName}}: &nbsp; {{$value}} inches</p>
+            @endforeach
+            <br>
+            @endif
                 <!-- Cart & Favourite Box -->
                 <div class="cart-fav-box d-flex align-items-center">
                 @if ($product['price'] != null && $product['rpID'] != null)
@@ -137,6 +145,7 @@
     </div>
 
 <style type="text/css">
+    p{margin-bottom: 0;}
     .product-price{font-size: 20px !important; line-height: 1.5;}
     .price{text-align: right;}
     .payment-info{color: #0000;}

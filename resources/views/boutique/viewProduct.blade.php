@@ -17,59 +17,61 @@
         </div>
 
         <div class="box-body">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="form-group">
-                <h4>Product Name</h4>
-                <p>{{ $product['productName'] }}</p>
+                <h4 class="heading">Product Name</h4>
+                <h4>{{ $product['productName'] }}</h4>
               </div>
 
-              <h4>Product Description</h4>
-              <p>{{ $product['productDesc'] }}</p>
-
-              @if($product['price'] != null && $product['rpID'] != null)
-              <h4>Retail Price</h4>
-              <p>₱{{ number_format($product['price']) }}</p>
-
-              <h4>Rent Price</h4>
-              <p>₱{{ number_format($product->rentDetails['price']) }}</p>
               
-              @elseif($product['rpID'] != null)
-              <h4>Rent Price</h4>
-              <p>₱{{ number_format($product->rentDetails['price']) }}</p>
-
-              @elseif($product['price'] != null)
-              <h4>Retail Price</h4>
-              <p>₱{{ number_format($product['price']) }}</p>
-              @endif
 
 
-              <h4>Product Category</h4>
-              <p>{{ $product->getCategory['categoryName']}}<p>
 
-              <h4>Product Status</h4>
-              <p>{{ $product['productStatus'] }}</p>
+              <h4 class="heading">Product Category</h4>
+              <h4>{{ $product->getCategory['categoryName']}}<h4>
 
-              <h4>Item Availability:</h4>
-              @if($product['rpID'] != null && $product['price'] != null)
-              <p>Item is for RENT & for SALE.</p>
-              @elseif($product['rpID'] == null && $product['price'] != null)
-              <p>Item is for SALE only.</p>
-              @elseif($product['rpID'] != null && $product['price'] == null)
-              <p>Item is for RENT only.</p>
-              @else
-              <p>You have not yet set the availability for this item.</p>
-              @endif
+              <h4 class="heading">In Stock</h4>
+              <h4>{{$product['quantity']}} pcs.</h4>
 
-              
-              <h4>Measurements:</h4>
-              <?php $measurements = json_decode($product['measurements']); ?>
+              @if($product['measurementNames'] != null)
+                <?php $measurementNames = json_decode($product['measurementNames']); 
+                $measurements = json_decode($product['measurements']);
+                ?>
 
-              @foreach($measurements as $measurement)
+                <h4 class="heading">Measurements Needed</h4>
+                @foreach($measurementNames as $measurementName)
+                  <label>{{$measurementName}}</label><br>
+                @endforeach
 
-                  <label>{{$measurement}}</label><br>
+                <h4>Measurements</h4>
+                @foreach($measurements as $measurement => $value)
+                  <label>{{$measurement}}: {{$value}} inches</label><br>
                   <!-- <input type="text" name="{{$counter}}[{{$measurement}}]" placeholder="{{$measurement}}" class="form-control"><br> -->
-              @endforeach
-
+                @endforeach
+              @elseif($product['rtwID'] != null)
+                <h4 class="heading">Available Sizes</h4>
+                <ul>
+                  @if($product->rtwDetails['xs'] != null)
+                    <li><h4><b>XS:</b> {{$product->rtwDetails['xs']}} pcs.</h4></li>
+                  @endif
+                  @if($product->rtwDetails['s'] != null)
+                    <li><h4><b>S:</b> {{$product->rtwDetails['s']}} pcs.</h4></li>
+                  @endif
+                  @if($product->rtwDetails['m'] != null)
+                    <li><h4><b>M:</b> {{$product->rtwDetails['m']}} pcs.</h4></li>
+                  @endif
+                  @if($product->rtwDetails['l'] != null)
+                    <li><h4><b>L:</b> {{$product->rtwDetails['l']}} pcs.</h4></li>
+                  @endif
+                  @if($product->rtwDetails['xl'] != null)
+                    <li><h4><b>XL:</b> {{$product->rtwDetails['xl']}} pcs.</h4></li>
+                  @endif
+                  @if($product->rtwDetails['xxl'] != null)
+                    <li><h4><b>XXL:</b> {{$product->rtwDetails['xxl']}} pcs.</h4></li>
+                  @endif
+                </ul>
+              @endif
+              
               <!-- <h4>Tags:</h4>
               @foreach($tags as $tag)
               <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['name']}}</h2>
@@ -77,7 +79,41 @@
 
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-4">
+              <h4 class="heading">Product Description</h4>
+              <h4>{{ $product['productDesc'] }}</h4>
+
+              <h4 class="heading">Product Status</h4>
+              <h4>{{ $product['productStatus'] }}</h4>
+            </div>
+            <div class="col-md-4">
+              @if($product['price'] != null && $product['rpID'] != null)
+              <h4 class="heading">Retail Price</h4>
+              <h4>₱{{ number_format($product['price']) }}</h4>
+
+              <h4 class="heading">Rent Price</h4>
+              <h4>₱{{ number_format($product->rentDetails['price']) }}</h4>
+              
+              @elseif($product['rpID'] != null)
+              <h4 class="heading">Rent Price</h4>
+              <h4>₱{{ number_format($product->rentDetails['price']) }}</h4>
+
+              @elseif($product['price'] != null)
+              <h4 class="heading">Retail Price</h4>
+              <h4>₱{{ number_format($product['price']) }}</h4>
+              @endif
+
+              <h4 class="heading">Item Availability</h4>
+              @if($product['rpID'] != null && $product['price'] != null)
+              <h4>Item is for RENT & for SALE.</h4>
+              @elseif($product['rpID'] == null && $product['price'] != null)
+              <h4>Item is for SALE only.</h4>
+              @elseif($product['rpID'] != null && $product['price'] == null)
+              <h4>Item is for RENT only.</h4>
+              @else
+              <h4>You have not yet set the availability for this item.</h4>
+              @endif
+              
               <?php $counter = 1; ?>
                 @foreach( $product->productFile as $image)
                  @if($counter == 1)
@@ -100,7 +136,7 @@
 </section>
 
 <style type="text/css">
-  h4{font-weight: bold;}
+  .heading{font-weight: bold;}
 </style>
 
 

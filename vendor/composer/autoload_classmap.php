@@ -85,6 +85,7 @@ return array(
     'App\\Region' => $baseDir . '/app/Region.php',
     'App\\Rent' => $baseDir . '/app/Rent.php',
     'App\\Rentableproduct' => $baseDir . '/app/Rentableproduct.php',
+    'App\\Rtw' => $baseDir . '/app/Rtw.php',
     'App\\Set' => $baseDir . '/app/Set.php',
     'App\\Setitem' => $baseDir . '/app/Setitem.php',
     'App\\Sharepercentage' => $baseDir . '/app/Sharepercentage.php',
