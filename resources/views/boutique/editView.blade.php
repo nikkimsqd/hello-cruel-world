@@ -209,7 +209,54 @@
 				        <input type="number" name="XXLquantity" class="input form-control">
 				      </div>
 			        @endif
-				      @endif
+			        @else
+      
+				      <div class="form-group rtwSizes" hidden>
+				        <label class="excluded">Choose available sizes:</label>
+				        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
+				        <label for="XS">XS</label>
+				        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
+				        <label for="S">S</label>
+				        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
+				        <label for="M">M</label>
+				        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
+				        <label for="L">L</label>
+				        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
+				        <label for="XL">XL</label>
+				        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
+				        <label for="XXL">XXL</label>
+				      </div>
+      
+				      <div class="form-group" id="XSquantity" hidden>
+				        <label>Enter quantity for XS:</label>
+				        <input type="number" name="XSquantity" class="input form-control">
+				      </div>
+				      
+				      <div class="form-group" id="Squantity" hidden>
+				        <label>Enter quantity for S:</label>
+				        <input type="number" name="Squantity" class="input form-control">
+				      </div>
+				      
+				      <div class="form-group" id="Mquantity" hidden>
+				        <label>Enter quantity for M:</label>
+				        <input type="number" name="Mquantity" class="input form-control">
+				      </div>
+				      
+				      <div class="form-group" id="Lquantity" hidden>
+				        <label>Enter quantity for L:</label>
+				        <input type="number" name="Lquantity" class="input form-control">
+				      </div>
+				      
+				      <div class="form-group" id="XLquantity" hidden>
+				        <label>Enter quantity for XL:</label>
+				        <input type="number" name="XLquantity" class="input form-control">
+				      </div>
+				      
+				      <div class="form-group" id="XXLquantity" hidden>
+				        <label>Enter quantity for XXL:</label>
+				        <input type="number" name="XXLquantity" class="input form-control">
+				      </div>
+				      @endif <!-- end sa if(in_array('xs', checked)) -->
 
 					    <div class="form-group">
 					      <h4>Product Category</h4>
@@ -221,22 +268,56 @@
 							@elseif($product->getCategory['gender'] === "Mens")
 								<option value="Womens">Womens</option>
 								<option selected value="Mens">Mens</option>
-							@else
+							<!-- @else
 								<option selected disabled></option>
 								<option value="Womens">Womens</option>
-								<option  value="Mens">Mens</option>
+								<option  value="Mens">Mens</option> -->
 							@endif
 						  </select><br>
 
-			        <select class="form-control select2" name="category" id="category-select" disabled required>
-			          <option selected="selected"></option>
+						  @if($product['category'] != null)
+			        <select class="form-control select2" name="category" id="category-select" required>
+			        	@foreach($categories as $category)
+			        	@if($category['id'] == $product['category'])
+			          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+			          @else
+			          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+			          @endif
+			          @endforeach
 			        </select><br>
+			        @endif
 
 			        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
+			        	@if($product['measurementNames'] != null)
+			        	<?php
+			        		$measurementNames = json_decode($product['measurementNames']);
+			        		$selectedMeasurements = [];
+			        	?>
+			        	@foreach($measurementNames as $measurementName)
+									<?php array_push($selectedMeasurements, $measurementName); ?>
+								@endforeach
+
+			        	@foreach($product->getCategory->getMeasurements as $getMeasurements)
+									@if(in_array($getMeasurements['mName'], $selectedMeasurements))
+				        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
+									<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+									@else
+				        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
+									<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+									@endif
+								@endforeach
+								@endif
 			        </div>
 
 			        <br><br>
 			        <div class="col-md-12" id="measurement-input">
+			        	@if($product['measurements'] != null)
+			        	<?php $measurements = json_decode($product['measurements']); ?>
+			        	@foreach($measurements as $measurement => $value)
+									<label for="">{{$measurement}}</label><br> &nbsp; 
+									<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
+								@endforeach
+								@endif
 			        </div>
  
 						  <!--<select class="form-control select2" name="category">
@@ -256,11 +337,9 @@
 				    	</div>
 
 
-				    	
-
-					    <!-- <label>Add Tags:</label> -->
-					    <!-- <div class="form-group tags">
-					    	@if(count($prodtags) > 0)
+				    	@if(count($prodtags) > 0)
+					    <label>Add Tags:</label>
+					    <div class="form-group tags">
 								@foreach($prodtags as $prodtag)
 								@if($prodtag['productID'] == $product['id'])
 									<input type="checkbox" name="tags[]" id="{{$prodtag->tag['name']}}" value="{{$prodtag->tag['id']}}" checked>
@@ -274,8 +353,9 @@
 									<label for="{{$tag['id']}}">{{$tag['name']}}</label>
 								@endif
 								@endforeach
-								@endif
-				      </div> -->
+				      </div>
+							@endif
+
 						</div>
 <!-- 
 						<div class="col-md-6">
@@ -601,10 +681,11 @@
 	});
 
 	$('#category-select').on('change', function(){
+		var rtw = $(".rtw-choice:checked").val();
 	  var categoryID = $(this).val();
 	  $('#measurement-choices').empty();
 	  $('#measurement-input').empty();
-	  // console.log(rtw);
+	  console.log(rtw);
 
 	  if(rtw == 'no'){
 	  $.ajax({
@@ -626,6 +707,7 @@
 	$('body').on('change', '.measurements', function() {
 	  var measurement = $(this).val();
 	  console.log(measurement);
+	  $('#measurement-input').append('<label for="">'+measurement +'</label><br> &nbsp;');
 	  $('#measurement-input').append('<input type="text" name="measurementData['+measurement +']" class="mb-10" placeholder="'+measurement+'">&nbsp; <br>');
 	  // $('#forRentPrice').attr('hidden',!this.checked)
 	}); 

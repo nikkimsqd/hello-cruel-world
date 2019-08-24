@@ -437,7 +437,7 @@ class BoutiqueController extends Controller
 		if(Auth()->user()->roles == "boutique") {
 			$page_title = "Edit Product";
 			$user = Auth()->user()->id;
-			$boutiques = Boutique::where('userID', $user)->get();
+			$boutique = Boutique::where('userID', $user)->first();
 			$product = Product::where('id', $productID)->first();
 			$categories = Category::all();
 			$tags = Tag::all();
@@ -447,9 +447,10 @@ class BoutiqueController extends Controller
 	        $regions = Region::all();
 	        $cities = City::all();
 
-			foreach ($boutiques as $boutique) {
-				$boutique;
-			}
+			// foreach ($boutiques as $boutique) {
+			// 	$boutique;
+			// }
+			// dd($boutique); wa ni gamit
 			foreach ($categories as $category) {
 				$category;
 			}
@@ -464,10 +465,13 @@ class BoutiqueController extends Controller
 
 	public function editProduct($productID, Request $request)
 	{
+		// dd($request->input('forRent'));
+		// dd($request->input('forSale'));
 		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$product = Product::where('id', $productID)->first();
 		$category = $request->input('category');
+		// dd($category);
 
 		$product->update([
     		// 'boutiqueID' => $boutique['id'],
@@ -479,7 +483,7 @@ class BoutiqueController extends Controller
     		]);
 
 	//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
-		if($request->input('forRent') != null) {
+		if($request->input('forRent') != null){
 			$rp = Rentableproduct::where('id', $product['rpID'])->first();
 
 			if($rp != null){
@@ -508,10 +512,19 @@ class BoutiqueController extends Controller
 		    		'rpID' => $rp['id']
 		    	]);
 			}
-		}else {
+		}elseif($request->input('forRent') == null){
+			$product->update([
+	    		'rpID' => null
+	    	]);
+		}
+
+		if($request->input('forSale') != null){
 			$product->update([
 	    		'price' => $request->input('productPrice'),
-	    		'rpID' => null
+	    	]);
+		}elseif($request->input('forSale') == null){
+			$product->update([
+	    		'price' => null
 	    	]);
 		}
 	//------------------------------------------------------------------------------
@@ -530,6 +543,11 @@ class BoutiqueController extends Controller
 					'xl' => $request->input('XLquantity'),
 					'xxl' => $request->input('XLquantity')
 				]);
+
+				$product->update([
+					'measurements' => null,
+					'measurementNames' => null
+				]);
 			}else{
 				$rtw = Rtw::create([
 					'productID' => $product['id'],
@@ -542,7 +560,9 @@ class BoutiqueController extends Controller
 				]);
 
 				$product->update([
-					'rtwID' => $rtw['id']
+					'rtwID' => $rtw['id'],
+					'measurements' => null,
+					'measurementNames' => null
 				]);
 			}
 
@@ -560,9 +580,12 @@ class BoutiqueController extends Controller
 	    	$measurementData = $request->input('measurementData');
 	    	$mjson = json_encode($measurementData);
 
+	    	// if($product['rtwID'] != null)
+
 			$product->update([
 				'measurementNames' => $mNameJson,
-				'measurements' => $mjson
+				'measurements' => $mjson,
+				'rtwID' => null
 			]);
 		}
 	//------------------------------------------------------------------------------
