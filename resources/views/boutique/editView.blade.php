@@ -141,7 +141,7 @@
 							@if(in_array('xs', $checked))
 				      <div class="form-group" id="XSquantity">
 				        <label>Enter quantity for XS:</label>
-				        <input type="number" name="XSquantity" class="input form-control" value="{{$product->rtwDetails['xs']}}">
+				        <input id="XS" type="number" name="XSquantity" class="input form-control" value="{{$product->rtwDetails['xs']}}">
 				      </div>
 			        @else
 				      <div class="form-group" id="XSquantity" hidden>
@@ -261,79 +261,79 @@
 					    <div class="form-group">
 					      <h4>Product Category</h4>
 					      <select class="form-control select2" name="gender" id="gender-select">
-							@if($product->getCategory['gender'] === "Womens")
+								@if($product->getCategory['gender'] === "Womens")
 								<option selected value="Womens">Womens</option>
 								<option value="Mens">Mens</option>
 
-							@elseif($product->getCategory['gender'] === "Mens")
+								@elseif($product->getCategory['gender'] === "Mens")
 								<option value="Womens">Womens</option>
 								<option selected value="Mens">Mens</option>
-							<!-- @else
+								<!-- @else
 								<option selected disabled></option>
 								<option value="Womens">Womens</option>
 								<option  value="Mens">Mens</option> -->
-							@endif
-						  </select><br>
+								@endif
+						  	</select><br>
 
-						  @if($product['category'] != null)
-			        <select class="form-control select2" name="category" id="category-select" required>
-			        	@foreach($categories as $category)
-			        	@if($category['id'] == $product['category'])
-			          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
-			          @else
-			          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-			          @endif
-			          @endforeach
-			        </select><br>
-			        @endif
+							  @if($product['category'] != null)
+				        <select class="form-control select2" name="category" id="category-select" required>
+				        	@foreach($categories as $category)
+				        	@if($category['id'] == $product['category'])
+				          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+				          @else
+				          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+				          @endif
+				          @endforeach
+				        </select><br>
+				        @endif
 
-			        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
-			        	@if($product['measurementNames'] != null)
-			        	<?php
-			        		$measurementNames = json_decode($product['measurementNames']);
-			        		$selectedMeasurements = [];
-			        	?>
-			        	@foreach($measurementNames as $measurementName)
-									<?php array_push($selectedMeasurements, $measurementName); ?>
-								@endforeach
+				        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
+				        	@if($product['measurementNames'] != null)
+				        	<?php
+				        		$measurementNames = json_decode($product['measurementNames']);
+				        		$selectedMeasurements = [];
+				        	?>
+				        	@foreach($measurementNames as $measurementName)
+										<?php array_push($selectedMeasurements, $measurementName); ?>
+									@endforeach
 
-			        	@foreach($product->getCategory->getMeasurements as $getMeasurements)
-									@if(in_array($getMeasurements['mName'], $selectedMeasurements))
-				        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
-									<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
-									@else
-				        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
-									<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+				        	@foreach($product->getCategory->getMeasurements as $getMeasurements)
+										@if(in_array($getMeasurements['mName'], $selectedMeasurements))
+					        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
+										<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+										@else
+					        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
+										<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+										@endif
+									@endforeach
 									@endif
-								@endforeach
-								@endif
-			        </div>
+				        </div>
 
-			        <br><br>
-			        <div class="col-md-12" id="measurement-input">
-			        	@if($product['measurements'] != null)
-			        	<?php $measurements = json_decode($product['measurements']); ?>
-			        	@foreach($measurements as $measurement => $value)
-									<label for="">{{$measurement}}</label><br> &nbsp; 
-									<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
-								@endforeach
-								@endif
-			        </div>
+				        <br><br>
+				        <div class="col-md-12" id="measurement-input">
+				        	@if($product['measurements'] != null)
+				        	<?php $measurements = json_decode($product['measurements']); ?>
+				        	@foreach($measurements as $measurement => $value)
+										<label for="">{{$measurement}}</label><br> &nbsp; 
+										<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
+									@endforeach
+									@endif
+				        </div>
  
-						  <!--<select class="form-control select2" name="category">
+							  <!--<select class="form-control select2" name="category">
 
-						  @foreach($categories as $category)
-						  @if($category['gender'] == $product->getCategory['gender'])
-							  @if($category['categoryName'] == $product->getCategory['categoryName'])
-							  	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+							  @foreach($categories as $category)
+							  @if($category['gender'] == $product->getCategory['gender'])
+								  @if($category['categoryName'] == $product->getCategory['categoryName'])
+								  	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+								  @endif
+								  @if($category['categoryName'] != $product->getCategory['categoryName'])
+								  	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+								  @endif
 							  @endif
-							  @if($category['categoryName'] != $product->getCategory['categoryName'])
-							  	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-							  @endif
-						  @endif
-						  @endforeach
+							  @endforeach
 
-						  </select> -->
+							  </select> -->
 				    	</div>
 
 
@@ -373,7 +373,7 @@
 
 				      <div class="form-group">
 				        <h4>In-Stock:</h4>
-				        <input type="number" name="quantity" id="quantity" class="input form-control" required value="{{$product['quantity']}}">
+				        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}">
 				      </div>
 
 					    <div class="form-group">
@@ -616,7 +616,51 @@
 
 	  if(value == 'yes'){
 	    $('.rtwSizes').attr('hidden', !this.checked);
-	    rtw = 'yes';
+	    // rtw = 'yes';
+
+			if($("#XS").prop("checked") == true){
+	    	$('#XSquantity').attr('hidden', !this.checked);
+				// console.log($("#XS").val());
+			}else{
+	    	$('#XSquantity').attr('hidden', this.checked);
+	    	// console.log($("#XSquantity").find("input").val());
+			}
+
+			if($("#S").prop("checked") == true){
+	    	$('#Squantity').attr('hidden', !this.checked);
+				// console.log($("#S:checked").val());
+			}else{
+	    	$('#Squantity').attr('hidden', this.checked);
+			}
+			
+			if($("#M").prop("checked") == true){
+	    	$('#Mquantity').attr('hidden', !this.checked);
+				// console.log($("#M:checked").val());
+			}else{
+	    	$('#Mquantity').attr('hidden', this.checked);
+			}
+			
+			if($("#L").prop("checked") == true){
+	    	$('#Lquantity').attr('hidden', !this.checked);
+				// console.log($("#L:checked").val());
+			}else{
+	    	$('#Lquantity').attr('hidden', this.checked);
+			}
+			
+			if($("#XL").prop("checked") == true){
+	    	$('#XLquantity').attr('hidden', !this.checked);
+				// console.log($("#XL:checked").val());
+			}else{
+	    	$('#XLquantity').attr('hidden', this.checked);
+			}
+			
+			if($("#XXL").prop("checked") == true){
+	    	$('#XXLquantity').attr('hidden', !this.checked);
+				// console.log($("#XXL:checked").val());
+			}else{
+	    	$('#XXLquantity').attr('hidden', this.checked);
+			}
+			
 
 	    $('#measurement-choices').empty();
 	    $('#measurement-input').empty(); //para ma wala ang existing if ever naa
@@ -630,7 +674,7 @@
 	    $('#Lquantity').attr('hidden', this.checked);
 	    $('#XLquantity').attr('hidden', this.checked);
 	    $('#XXLquantity').attr('hidden', this.checked);
-	    rtw = 'no';
+	    // rtw = 'no';
 	  }
 	});
 
@@ -653,6 +697,26 @@
 	    $('#XXLquantity').attr('hidden', !this.checked);
 	  }
 
+	  if($("#XS").prop("checked") == false){
+    	$("#XSquantity").find("input").val(null);
+    	// console.log($("#XSquantity").find("input").val())
+		}
+		if($("#S").prop("checked") == false){
+    	$("#Squantity").find("input").val(null);
+		}
+		if($("#M").prop("checked") == false){
+    	$("#Mquantity").find("input").val(null);
+		}
+		if($("#L").prop("checked") == false){
+    	$("#Lquantity").find("input").val(null);
+		}
+		if($("#XL").prop("checked") == false){
+    	$("#XLquantity").find("input").val(null);
+		}
+		if($("#XXL").prop("checked") == false){
+    	$("#XXLquantity").find("input").val(null);
+		}
+
 	  // totalQuantity = $('#Squantity').val() + $('#Mquantity').val() + $('#Lquantity').val() + $('#XLquantity').val() + $('#XXLquantity').val() + $('#XLquantity').val();
 	  // console.log(totalQuantity);
 
@@ -661,6 +725,7 @@
 	});
 
 	$('#gender-select').on('change', function(){
+	  $('#measurement-choices').empty();
 	  $('#measurement-input').empty();
 	  $('#category-select').empty();
 
@@ -685,7 +750,7 @@
 	  var categoryID = $(this).val();
 	  $('#measurement-choices').empty();
 	  $('#measurement-input').empty();
-	  console.log(rtw);
+	  // console.log(rtw);
 
 	  if(rtw == 'no'){
 	  $.ajax({
@@ -706,7 +771,7 @@
 
 	$('body').on('change', '.measurements', function() {
 	  var measurement = $(this).val();
-	  console.log(measurement);
+	  // console.log(measurement);
 	  $('#measurement-input').append('<label for="">'+measurement +'</label><br> &nbsp;');
 	  $('#measurement-input').append('<input type="text" name="measurementData['+measurement +']" class="mb-10" placeholder="'+measurement+'">&nbsp; <br>');
 	  // $('#forRentPrice').attr('hidden',!this.checked)

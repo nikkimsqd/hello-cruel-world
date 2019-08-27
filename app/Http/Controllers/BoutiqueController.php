@@ -304,7 +304,7 @@ class BoutiqueController extends Controller
 		$boutique = Boutique::where('userID', $id)->first();
 		$category = $request->input('category');
 	    	
-	//TO ADD ITEM ON DATABASE ------------------------------------------------------
+		//TO ADD ITEM ON DATABASE ------------------------------------------------------
     	$product = Product::create([
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
@@ -314,10 +314,10 @@ class BoutiqueController extends Controller
     		'productStatus' => "Available",
     		'quantity' => $request->input('quantity')
     		]);
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
 
-	//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
+		//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
     	if($request->input('rentPrice') != null){
 			$locations = json_encode($request->input('locationsAvailable'));
 	    	$rp = Rentableproduct::create([
@@ -333,10 +333,10 @@ class BoutiqueController extends Controller
 	    		'rpID' => $rp['id']
 	    	]);
     	}
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
 
-	//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
+		//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
     	if($request->input('itemType') == 'yes'){
     		$rtw = Rtw::create([
     			'productID' => $product['id'],
@@ -374,9 +374,9 @@ class BoutiqueController extends Controller
 				'measurements' => $mjson
     		]);
     	}
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
-	// FOR TAGS --------------------------------------------------------------------
+		// FOR TAGS --------------------------------------------------------------------
 		// $tags = $request->input('tags');
 		// foreach($tags as $tag) {
 		// 	Prodtag::create([
@@ -384,9 +384,9 @@ class BoutiqueController extends Controller
 		// 		'productID' => $product['id']
 		// 	]);
 		// }
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
-	// FOR FILE UPLOAD -------------------------------------------------------------
+		// FOR FILE UPLOAD -------------------------------------------------------------
     	$uploads = $request->file('file');
     	if($request->hasFile('file')) {
     	foreach($uploads as $upload){
@@ -404,7 +404,7 @@ class BoutiqueController extends Controller
 	      	$filename = "/".$random;
     	}
       }
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
     	return redirect('/products');
 	}
@@ -472,6 +472,16 @@ class BoutiqueController extends Controller
 		$product = Product::where('id', $productID)->first();
 		$category = $request->input('category');
 		// dd($category);
+
+		//para automatic sa pagkuha sa quantity (only on rtw's)
+		$xs = $request->input('XSquantity');
+		$s = $request->input('Squantity');
+		$m = $request->input('Mquantity');
+		$l = $request->input('Lquantity');
+		$xl = $request->input('XLquantity');
+		$xxl = $request->input('XLquantity');
+		$totalQuantity = $xs + $s + $m + $l + $xxl + $xxl;
+		// dd($totalQuantity);
 
 		$product->update([
     		// 'boutiqueID' => $boutique['id'],

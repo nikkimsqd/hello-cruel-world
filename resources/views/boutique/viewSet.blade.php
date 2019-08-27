@@ -20,36 +20,39 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <h4>Set Name</h4>
+                <h4 class="heading">Set Name</h4>
                 <p>{{ $set['setName'] }}</p>
               </div>
 
-              <h4>Set Description</h4>
+              <h4 class="heading">Set Description</h4>
               <p>{{ $set['setDesc'] }}</p>
 
               @if($set['price'] != null && $set['rpID'] != null)
-              <h4>Retail Price</h4>
+              <h4 class="heading">Retail Price</h4>
               <p>₱{{ number_format($set['price']) }}</p>
 
-              <h4>Rent Price</h4>
+              <h4 class="heading">Rent Price</h4>
               <p>₱{{ number_format($set->rentDetails['price']) }}</p>
               
               @elseif($set['rpID'] != null)
-              <h4>Rent Price</h4>
+              <h4 class="heading">Rent Price</h4>
               <p>₱{{ number_format($set->rentDetails['price']) }}</p>
 
               @elseif($set['price'] != null)
-              <h4>Retail Price</h4>
+              <h4 class="heading">Retail Price</h4>
               <p>₱{{ number_format($set['price']) }}</p>
 
               @endif
             </div>
 
             <div class="col-md-6">
-              <h4>Set Status</h4>
+              <h4 class="heading">Quantity</h4>
+              <p>{{ $set['quantity'] }}</p>
+
+              <h4 class="heading">Set Status</h4>
               <p>{{ $set['setStatus'] }}</p>
 
-              <h4>Item Availability:</h4>
+              <h4 class="heading">Item Availability:</h4>
               @if($set['rpID'] != null && $set['price'] != null)
               <p>Item is for RENT & for SALE.</p>
               @elseif($set['rpID'] == null && $set['price'] != null)
@@ -90,7 +93,8 @@
 </section>
 
 <style type="text/css">
-  h4{font-weight: bold;}
+  .heading{font-weight: bold;}
+  /*h4{font-weight: bold;}*/
 </style>
 
 

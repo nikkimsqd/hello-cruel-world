@@ -89,10 +89,19 @@
 
                         @if($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] != null)
                         
+                        <?php
+                            $total = $bidding->order['total'];
+                            $fiftyPercent = $total * 0.50;
+                        ?>
+
                         <h5>Pay downpayment here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
+                            <input type="text" id="total" value="{{$total}}" hidden>
+                            <input type="text" id="fiftyPercent" value="{{$fiftyPercent}}" hidden>
+                            <input type="text" id="amount" class="form-control mb-10">
+                            <!-- <input type="text" id="amount" class="form-control mb-10" min="{{$fiftyPercent}}" max="{{$total}}"> -->
                             <input type="text" id="orderTransactionID" value="{{$bidding->order['id']}}" hidden>
-                            <input type="text" id="total" value="{{$bidding->order['total']}}" hidden>
+                            <!-- <input type="text" id="total" value="{{$bidding->order['total']}}" hidden> -->
                         </div><br><br>
                         @endif
                     </div>
@@ -272,6 +281,7 @@
     .price{text-align: right;}
     .payment-info{color: #0000;}
     .back_to_page{background-color: #ff084e; border-radius: 0;  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3); color: #ffffff; font-size: 18px;  height: 40px; line-height: 40px; right: 60px; left: 20px; top: 110px; text-align: center;  width: 40px; position: fixed; z-index: 2147483647; display: block;}
+    .mb-10{margin-bottom: 10px;}
     /*a:hover{font-size: 18px; color: #ffffff;}*/
 </style>
 @endsection
@@ -282,21 +292,43 @@
 <script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
-    var orderTransactionID = document.getElementById('orderTransactionID').value;
-    var total = document.getElementById('total').value;
-    // console.log(orderTransactionID);
+    var orderTransactionID = $('#orderTransactionID').val();
+    var total = $('#total').val();
+    var fiftyPercent = $('#fiftyPercent').val();
+    var amount = $('#amount').val();
+
+    // if(amount >= fiftyPercent){
+    //     if(amount <= total){
+    //         console.log("here");
+    //         console.log(amount);
+    //     }else{
+    //         console.log("gawas");
+    //     }
+    // }else{
+    //     console.log('there');
+    //     console.log(amount);
+    // }
+
     paypal.Buttons({
         createOrder: function(data, actions) {
-          // Set up the transaction
-          return actions.order.create({
-            purchase_units: [{
-            amount: {
-            value: total, 
-            currencyCode: 'PHP'
-              }
-            }]
-
-          });
+            var total = $('#total').val();
+            var fiftyPercent = $('#fiftyPercent').val();
+            var amount = $('#amount').val();
+            
+            if(amount){
+                if(amount >= fiftyPercent){
+                    if(amount <= total){
+                        return actions.order.create({
+                            purchase_units: [{
+                            amount: {
+                            value: amount, 
+                            currencyCode: 'PHP'
+                              }
+                            }]
+                      });
+                    }
+                }
+            }
         },
         onApprove: function(data, actions) {
           // Capture the funds from the transaction
