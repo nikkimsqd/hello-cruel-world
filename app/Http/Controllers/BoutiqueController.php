@@ -1159,14 +1159,15 @@ class BoutiqueController extends Controller
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
 
-    	$rent = Rent::where('paypalOrderID', $orderId)->first();
-    	$mto = Mto::where('paypalOrderID', $orderId)->first();
+    	$rent = Order::where('paypalOrderID', $orderId)->first();
+    	$mto = Order::where('mtoID', '1')->where('paypalOrderID', $orderId)->first();
     	// $order = Order::where('paypalOrderID', $orderId)->first();
 
     	if($rent != null){
     		$client = PayPalClient::client();
 	        $response = $client->execute(new OrdersGetRequest($orderId));
 	        $order = $response->result;
+	        // dd($order);
 
         	return view('boutique/paypalOrderDetails', compact('user', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'rent', 'mto', 'order'));
 
@@ -1380,7 +1381,7 @@ class BoutiqueController extends Controller
     	// }
 
     	if($request->input('biddingID') != null){
-    		$biddingID = $request->input('biddingID');
+    		$transactionID = $request->input('biddingID');
     		$bidding = Bidding::where('id', $transactionID)->first();
 	    	foreach($category as $cat){
 		    	$mr = Measurementrequest::create([
@@ -1409,7 +1410,7 @@ class BoutiqueController extends Controller
 	    	$customer = User::where('id', $bidding->owner['id'])->first();
 	    	$customer->notify(new MeasurementRequests($transactionID, $boutique, $transactionType));
 
-	    	return redirect('boutique-bidding/'.$biddingID);
+	    	return redirect('boutique-bidding/'.$transactionID);
 
     	}elseif($request->input('mtoID') != null){
     		$transactionID = $request->input('mtoID');

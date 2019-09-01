@@ -26,7 +26,7 @@
                     <div class="regular-page-text">
                         
                         @if($bidding->order['status'] == "For Alterations")
-                             <div class="row">
+                            <div class="row">
                                 <div class="col-md-12">
                                 <table class="table table-borderless">
                                     <tr>
@@ -36,8 +36,22 @@
                                 </table>
                                     <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
                                 </div>
-                             </div>
-                             @endif
+                            </div>
+                        @endif
+                        
+                        <?php
+                        $total = $bidding->order['total'];
+                        $minimumPaymentRequired = $total * 0.50;
+                        $measurementID = $bidding['measurementID'];
+                        $balance = $bidding->order['total'];
+
+                        if(count($payments) > 0){
+                            foreach($bidding->order->payments as $payment){
+                                $minimumPaymentRequired = $payment['balance'];
+                                $balance = $payment['balance'];
+                            }
+                        }
+                        ?>
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
@@ -71,7 +85,9 @@
                                         @endif
                                     </span>
                                 </li>
-                                <li><span>Downpayment</span> <span>50%</span></li>
+                                @if(count($payments) == 0){
+                                <li><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                @endif
                             </ul>
                             
                             @if($bidding->order['status'] == "For Pickup" || $bidding->order['status'] == "For Delivery")
@@ -87,21 +103,41 @@
 
                         </div><br><br> <!-- card closing -->
 
-                        @if($bidding->order['paymentStatus'] == "Not Yet Paid" && $bidding['measurementID'] != null)
-                        
-                        <?php
-                            $total = $bidding->order['total'];
-                            $fiftyPercent = $total * 0.50;
-                        ?>
+                        @if(count($payments) > 0)
+                        <?php $counter = 1; ?>
+                        <div class="order-details-confirmation"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5>Payment History</h5>
+                            </div>
+                            <ul class="order-details-form mb-4">
+                                @foreach($bidding->order->payments as $payment)
+                                <li class="payment-heading"><span></span><span><h6>Payment Transaction {{$counter}}</h6></span><span></span></li>
 
-                        <h5>Pay downpayment here:</h5>
+                                <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
+
+                                <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
+                                <li><span>Balance</span> <span>₱{{$payment['balance']}}</span></li>
+
+                                <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
+
+                                <?php $counter++; ?>
+                                @endforeach
+                            </ul>
+                        </div><br><br> <!-- card closing -->
+                        @endif
+
+                        @if($bidding->order['paymentStatus'] != "Fully Paid" && $bidding['measurementID'] != null)
+
+                        <h5>Pay here:</h5>
+                        <p class="note"><i>Note: PayPal does not accept payments with decimals.</i></p>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="total" value="{{$total}}" hidden>
-                            <input type="text" id="fiftyPercent" value="{{$fiftyPercent}}" hidden>
+                            <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>
                             <input type="text" id="amount" class="form-control mb-10">
-                            <!-- <input type="text" id="amount" class="form-control mb-10" min="{{$fiftyPercent}}" max="{{$total}}"> -->
-                            <input type="text" id="orderTransactionID" value="{{$bidding->order['id']}}" hidden>
-                            <!-- <input type="text" id="total" value="{{$bidding->order['total']}}" hidden> -->
+                            <input type="text" id="biddingID" value="{{$bidding['id']}}" hidden>
+                            <input type="text" id="biddingOrderID" value="{{$bidding->order['id']}}" hidden>
+                            <input type="text" id="measurementID" class="form-control mb-10" value="{{$measurementID}}" hidden>
+                            <input type="text" id="balance" value="{{$balance}}" hidden>
                         </div><br><br>
                         @endif
                     </div>
@@ -282,6 +318,9 @@
     .payment-info{color: #0000;}
     .back_to_page{background-color: #ff084e; border-radius: 0;  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3); color: #ffffff; font-size: 18px;  height: 40px; line-height: 40px; right: 60px; left: 20px; top: 110px; text-align: center;  width: 40px; position: fixed; z-index: 2147483647; display: block;}
     .mb-10{margin-bottom: 10px;}
+    .payment-heading{background-color: aliceblue;}
+    h6{margin-bottom: 0;}
+    .note{font-size: 14px !important; margin-bottom: 10px !important; color: red; font-weight: bold !important;}
     /*a:hover{font-size: 18px; color: #ffffff;}*/
 </style>
 @endsection
@@ -292,12 +331,16 @@
 <script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
-    var orderTransactionID = $('#orderTransactionID').val();
+    var biddingOrderID = $('#biddingOrderID').val();
+    var biddingID = $('#biddingID').val();
     var total = $('#total').val();
-    var fiftyPercent = $('#fiftyPercent').val();
-    var amount = $('#amount').val();
+    var minimumPaymentRequired = $('#minimumPaymentRequired').val();
+    var measurementID = $('#measurementID').val();
+    var balance = $('#balance').val();
+    // var amount = $('#amount').val();
+            // console.log(amount);
 
-    // if(amount >= fiftyPercent){
+    // if(amount >= minimumPaymentRequired){
     //     if(amount <= total){
     //         console.log("here");
     //         console.log(amount);
@@ -308,15 +351,19 @@
     //     console.log('there');
     //     console.log(amount);
     // }
-
+    if(measurementID != null){
     paypal.Buttons({
         createOrder: function(data, actions) {
             var total = $('#total').val();
-            var fiftyPercent = $('#fiftyPercent').val();
+            var minimumPaymentRequired = $('#minimumPaymentRequired').val();
             var amount = $('#amount').val();
+
+            console.log(total);
+            console.log(minimumPaymentRequired);
+            console.log(amount);
             
             if(amount){
-                if(amount >= fiftyPercent){
+                if(amount >= minimumPaymentRequired){
                     if(amount <= total){
                         return actions.order.create({
                             purchase_units: [{
@@ -343,8 +390,14 @@
                 'content-type': 'application/json'
               },
               body: JSON.stringify({
-                orderID: data.orderID,
-                orderTransactionID: orderTransactionID
+                paypalOrderID: data.orderID,
+                biddingOrderID: biddingOrderID,
+                biddingID: biddingID,
+                amount: amount,
+                total: total,
+                details: details,
+                balance: balance
+
               })
             });
           });
@@ -353,6 +406,7 @@
             alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');
+    } //if closing
 </script>
 
 @endsection

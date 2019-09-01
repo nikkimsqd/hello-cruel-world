@@ -24,7 +24,8 @@
         {{$pu->shipping->address->address_line_1}}<br>
         {{$pu->shipping->address->admin_area_2}}, {{$pu->shipping->address->admin_area_1}} {{$pu->shipping->address->country_code}} {{$pu->shipping->address->postal_code}}<br>
         Phone: (555) 539-1037<br>
-        Email: {{$pu->payee->email_address}}
+        Email: {{$pu->payee->email_address}}<br>
+        amount: {{$pu->amount->value}}
         @endforeach
       </address>
     </div>

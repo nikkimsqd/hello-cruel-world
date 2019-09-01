@@ -69,6 +69,7 @@ return array(
     'App\\Notifications\\RentRequest' => $baseDir . '/app/Notifications/RentRequest.php',
     'App\\Notifications\\RentUpdateForCustomer' => $baseDir . '/app/Notifications/RentUpdateForCustomer.php',
     'App\\Order' => $baseDir . '/app/Order.php',
+    'App\\Payment' => $baseDir . '/app/Payment.php',
     'App\\Prodtag' => $baseDir . '/app/Prodtag.php',
     'App\\Product' => $baseDir . '/app/Product.php',
     'App\\Profiling' => $baseDir . '/app/Profiling.php',

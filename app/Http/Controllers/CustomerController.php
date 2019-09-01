@@ -31,6 +31,7 @@ use App\Sharepercentage;
 use App\Gallery;
 use App\Set;
 use App\Measurementrequest;
+use App\Payment;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -1357,8 +1358,10 @@ class CustomerController extends Controller
         $bidding = Bidding::find($biddingID);
         $mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $biddingID)->get();
 
+        $payments = Payment::where('orderID', $bidding->order['id'])->get();
+        // dd($payments);
 
-        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests'));
+        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests', 'payments'));
     }
 
     public function viewOrder($orderID)
@@ -1612,6 +1615,50 @@ class CustomerController extends Controller
             return redirect('/view-mto/'.$mto['id']);
 
 
+        }elseif($request->biddingID != null){
+
+            $order = Order::where('id', $request->biddingOrderID)->first();
+            $existingPayments = Payment::where('orderID', $request->biddingOrderID)->get();
+            $amount = 0;
+
+            $purchaseUnits = $request->details['purchase_units'];
+            foreach($purchaseUnits as $purchaseUnit){
+               $amount += $purchaseUnit['amount']['value'];
+            }
+
+            // if($existingPayments != null){
+            //     foreach($existingPayments as $existingPayment){
+
+            //     }
+            // }
+
+            $newBalance = $request->balance - $amount;
+            if($newBalance > 0){
+                $status = 'Paid Partially';
+            }elseif($newBalance == 0){
+                $status = 'Fully Paid';
+            }
+
+            $payment = Payment::create([
+                'orderID' => $request->biddingOrderID,
+                'amount' => $amount,
+                'balance' => $newBalance,
+                'paypalOrderID' => $request->paypalOrderID, 
+                'status' => $status
+            ]);
+
+            $order->update([
+                'status' => 'In-Progress',
+                'paymentStatus' => $status,
+                'paypalOrderID' => $request->paypalOrderID
+            ]);
+
+            $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
+            $boutiqueseller->notify(new CustomerPaysOrder($order));
+
+            return redirect('view-bidding-order/'.$request->biddingID);
+
+            
         }elseif($request->orderTransactionID != null){
 
             // print_r($request->paypalOrderID);

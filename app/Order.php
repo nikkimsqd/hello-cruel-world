@@ -43,5 +43,10 @@ class Order extends Model
     {
         return $this->hasOne('App\Bidding', 'id', 'biddingID');
     }
+
+    public function payments()
+    {
+        return $this->hasMany('App\Payment', 'orderID', 'id');
+    }
     
 }

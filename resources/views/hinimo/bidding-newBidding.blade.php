@@ -76,9 +76,9 @@
                                     <div class="col-md-12 mb-3">
                                         <label>Fabric Choice</label><br>
 
-                                        <input id="provide" name="fabChoice" type="checkbox" value="provide">
+                                        <input id="provide" name="fabChoice" type="radio" value="provide">
                                         <label for="provide">Provide Fabric to boutique</label><br>
-                                        <input id="askboutique" name="fabChoice" type="checkbox" value="askboutique">
+                                        <input id="askboutique" name="fabChoice" type="radio" value="askboutique">
                                         <label for="askboutique">Let boutique provide the fabric</label>
                                     </div>
 
