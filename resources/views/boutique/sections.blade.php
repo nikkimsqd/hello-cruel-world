@@ -1,5 +1,5 @@
 @section('titletext')
-  {{$boutique['boutiqueName']}}
+  Hinimo | {{$boutique['boutiqueName']}}
 @endsection
 
 @section('page_title')
@@ -158,7 +158,7 @@
     <!-- Menu Footer-->
     <li class="user-footer">
       <div class="pull-left">
-        <a href="#" class="btn btn-default btn-flat">Profile</a>
+        <a href="{{url('boutique-profile')}}" class="btn btn-default btn-flat">Profile</a>
       </div>
       <div class="pull-right">
         <a href="{{ route('logout') }}" class="btn btn-default btn-flat" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
@@ -275,6 +275,15 @@
         <li class="archive-mtos"><a href="{{url('archive-made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
         <li class="archive-boutique-biddings"><a href="{{url('archive-boutique-biddings')}}"><i class="fa fa-circle-o"></i> Biddings</a></li>
       </ul>
+    </li>
+   
+    <li class="paypal-account">
+      <a href="{{url('paypal-account')}}">
+        <i class="fa fa-paypal"></i> <span>PayPal Account</span>
+        <span class="pull-right-container">
+          <!-- <small class="label pull-right bg-green">new</small> -->
+        </span>
+      </a>
     </li>
 
   </ul>

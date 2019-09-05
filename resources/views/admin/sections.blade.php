@@ -187,6 +187,20 @@
       </ul>
     </li>
 
+    <li class="payouts">
+      <a href="{{url('admin-payouts')}}">
+        <i class="fa fa-gear"></i>
+        <span>Payouts</span>
+        <span class="pull-right-container">
+          <!-- <i class="fa fa-angle-left pull-right"></i> -->
+        </span>
+      </a>
+      <!-- <ul class="treeview-menu">
+        <li class="locations"><a href="{{url('admin-payouts')}}"><i class="fa fa-circle-o"></i> Pendings</a></li>
+        <li class="accounts"><a href="{{url('admin-addAccount')}}"><i class="fa fa-circle-o"></i> Add Account</a></li>
+      </ul> -->
+    </li>
+
   </ul>
 </section>
 

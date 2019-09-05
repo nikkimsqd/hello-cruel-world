@@ -70,6 +70,7 @@ return array(
     'App\\Notifications\\RentUpdateForCustomer' => $baseDir . '/app/Notifications/RentUpdateForCustomer.php',
     'App\\Order' => $baseDir . '/app/Order.php',
     'App\\Payment' => $baseDir . '/app/Payment.php',
+    'App\\Paypalaccount' => $baseDir . '/app/Paypalaccount.php',
     'App\\Prodtag' => $baseDir . '/app/Prodtag.php',
     'App\\Product' => $baseDir . '/app/Product.php',
     'App\\Profiling' => $baseDir . '/app/Profiling.php',

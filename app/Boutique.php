@@ -18,4 +18,9 @@ class Boutique extends Model
     {
         return $this->hasOne('App\Address', 'id', 'addressID');
     }
+
+    public function paypalEmail()
+    {
+        return $this->hasOne('App\Paypalaccount', 'id', 'paypalAccountID');
+    }
 }

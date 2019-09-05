@@ -44,8 +44,23 @@
                                 <h5 style="color: red; text-align: center;">You are required to visit the boutique personally on returning the item and claiming your cashban.</h5><br>
                             </div>
                         </div>
-
                         @endif
+
+
+                        <?php
+                        $total = $rent->order['total'];
+                        $minimumPaymentRequired = $total * 0.50;
+                        $measurementID = $rent['measurementID'];
+                        $balance = $rent->order['total'];
+
+                        if(count($payments) > 0){
+                            foreach($rent->order->payments as $payment){
+                                $minimumPaymentRequired = $payment['balance'];
+                                $balance = $payment['balance'];
+                            }
+                        }
+                        ?>
+
                              
                         @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
                         <div class="order-details-confirmation"> <!-- card opening -->
@@ -92,6 +107,9 @@
                                 <li><span>Payment Status</span>
                                     <span style="color: red;">{{$rent->order['paymentStatus']}}</span>
                                 </li>
+                                @if(count($payments) == 0)
+                                <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                @endif
                             </ul>
                             @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery")
                             <div class="notif-area cart-area" style="text-align: right;">
@@ -165,14 +183,49 @@
                             </ul>
                         </div> <!-- card closing --> <br>
 
+
+                        @if(count($payments) > 0)
+                        <?php $counter = 1; ?>
+                        <div class="order-details-confirmation"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5>Payment History</h5>
+                            </div>
+                            <ul class="order-details-form mb-4">
+                                @foreach($rent->order->payments as $payment)
+                                <li class="payment-heading"><span></span><span><h6>Payment Transaction {{$counter}}</h6></span><span></span></li>
+
+                                <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
+
+                                <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
+                                <li><span>Balance</span> 
+                                    <span>
+                                    @if($payment['balance'] == 0)
+                                    -
+                                    @else
+                                    ₱{{$payment['balance']}}
+                                    @endif
+                                    </span>
+                                </li>
+
+                                <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
+
+                                <?php $counter++; ?>
+                                @endforeach
+                            </ul>
+                        </div><br><br> <!-- card closing -->
+                        @endif
                         
 
-                        @if($rent->order['paymentStatus'] == "Not Yet Paid")
+                        @if($rent->order['paymentStatus'] != "Fully Paid")
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
+                            <input type="text" id="amount" class="form-control mb-10">
                             <input type="text" id="rentID" value="{{$rent['rentID']}}" hidden>
                             <input type="text" id="rentOrderID" value="{{$rent->order['id']}}" hidden>
-                            <input type="text" id="total" value="{{$rent->order['total']}}" hidden>
+                            <input type="text" id="total" value="{{$total}}" hidden>
+                            <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>
+                            <input type="text" id="measurementID" value="{{$measurementID}}" hidden>
+                            <input type="text" id="balance" value="{{$balance}}" hidden>
                         </div>
                         @endif
 
@@ -227,6 +280,8 @@
 
 <style type="text/css">
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
+    .mb-10{margin-bottom: 10px;}
+    .payment-heading{background-color: aliceblue;}
 </style>
 
 <!-- </div> -->
@@ -237,28 +292,37 @@
 <script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
-    var rentOrderID = document.getElementById('rentOrderID').value;
-    var rentID = document.getElementById('rentID').value;
-    // var total = document.getElementById('total').value;
-    var total = 1;
+    var rentOrderID = $('#rentOrderID').val();
+    var rentID = $('#rentID').val();
+    var total = $('#total').val();
+    var balance = $('#balance').val();
+    var measurementID = $('#measurementID').val();
 
+    if(measurementID != null){
     paypal.Buttons({
         createOrder: function(data, actions) {
-          // Set up the transaction
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: total
-              }
-            }]
-          });
+            var total = parseInt($('#total').val());
+            var minimumPaymentRequired = parseInt($('#minimumPaymentRequired').val());
+            var amount = parseInt($('#amount').val());
+
+            if(amount){
+                if(amount >= minimumPaymentRequired){
+                    if(amount <= total){
+                        return actions.order.create({
+                            purchase_units: [{
+                            amount: {
+                            value: amount,
+                            currencyCode: 'PHP'
+                                }
+                            }]
+                        });
+                    }
+                }
+            }
         },
         onApprove: function(data, actions) {
           // Capture the funds from the transaction
           return actions.order.capture().then(function(details) {
-            // Show a success message to your buyer
-            // alert('Transaction completed by ' + details.payer.name.given_name);
-            // alert('Transaction completed by ' + details.payer);
             return fetch('/hinimo/public/paypal-transaction-complete', {
 
               method: 'post',
@@ -268,8 +332,14 @@
               body: JSON.stringify({
                 paypalOrderID: data.orderID,
                 rentOrderID: rentOrderID,
-                rentID: rentID
+                rentID: rentID,
+                amount: amount,
+                total: total,
+                details: details,
+                balance: balance
               })
+            }).then(function (){
+                location.reload();
             });
           });
         },
@@ -277,6 +347,7 @@
             alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');
+    } //if closing
 </script>
 
 @endsection

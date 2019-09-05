@@ -1359,7 +1359,7 @@ class CustomerController extends Controller
         $mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $biddingID)->get();
 
         $payments = Payment::where('orderID', $bidding->order['id'])->get();
-        // dd($payments);
+        // dd($mrequests);
 
         return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests', 'payments'));
     }
@@ -1381,10 +1381,11 @@ class CustomerController extends Controller
         }
 
         $order = Order::find($orderID);
+        $payments = Payment::where('orderID', $order['id'])->get();
         // $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
         // dd($boutiqueseller);
 
-        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order'));
+        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order', 'payments'));
     }
 
     public function viewRent($rentID)
@@ -1403,11 +1404,12 @@ class CustomerController extends Controller
         }
 
         $rent = Rent::find($rentID);
+        $payments = Payment::where('orderID', $rent->order['id'])->get();
 
         // $measurements = json_decode($rent->measurement->data);
-        // dd($measurements);
+        // dd(count($payments));
 
-        return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent'));
+        return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent', 'payments'));
     }
 
     public function viewMto($mtoID)
@@ -1430,11 +1432,12 @@ class CustomerController extends Controller
         $fabrics = Fabric::where('boutiqueID', $mto->boutique['id'])->get();
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
-        // dd($fabrics);
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
+        $payments = Payment::where('orderID', $mto->order['id'])->get();
+        // dd($payments);
 
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests'));
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments'));
     }
 
     public function inputAddress($mtoID, $type)
@@ -1579,17 +1582,38 @@ class CustomerController extends Controller
 
     public function paypalTransactionComplete(Request $request)
     {
-        // print_r($request->mtoOrderID);
-
         if($request->rentID != null){
             $rent = Rent::where('rentID', $request->rentID)->first();
             $order = Order::where('id', $request->rentOrderID)->first();
+            $existingPayments = Payment::where('orderID', $request->rentOrderID)->get();
+            $amount = 0;
+
+            $purchaseUnits = $request->details['purchase_units'];
+            foreach($purchaseUnits as $purchaseUnit){
+               $amount += $purchaseUnit['amount']['value'];
+            }
+
+            $newBalance = $request->balance - $amount;
+            if($newBalance > 0){
+                $status = 'Paid Partially';
+            }elseif($newBalance == 0){
+                $status = 'Fully Paid';
+            }
+
+            $payment = Payment::create([
+                'orderID' => $request->rentOrderID,
+                'amount' => $amount,
+                'balance' => $newBalance,
+                'paypalOrderID' => $request->paypalOrderID, 
+                'status' => $status
+            ]);
+
             $rent->update([
                 'status' => 'In-Progress'
             ]);
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => 'Paid',
+                'paymentStatus' => $status,
                 'paypalOrderID' => $request->paypalOrderID
             ]);
 
@@ -1603,9 +1627,32 @@ class CustomerController extends Controller
 
             $mto = Mto::where('id', $request->mtoID)->first();
             $order = Order::where('id', $request->mtoOrderID)->first();
+            $existingPayments = Payment::where('orderID', $request->mtoOrderID)->get();
+            $amount = 0;
+
+            $purchaseUnits = $request->details['purchase_units'];
+            foreach($purchaseUnits as $purchaseUnit){
+               $amount += $purchaseUnit['amount']['value'];
+            }
+
+            $newBalance = $request->balance - $amount;
+            if($newBalance > 0){
+                $status = 'Paid Partially';
+            }elseif($newBalance == 0){
+                $status = 'Fully Paid';
+            }
+
+            $payment = Payment::create([
+                'orderID' => $request->mtoOrderID,
+                'amount' => $amount,
+                'balance' => $newBalance,
+                'paypalOrderID' => $request->paypalOrderID, 
+                'status' => $status
+            ]);
+
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => 'Paid',
+                'paymentStatus' => $status,
                 'paypalOrderID' => $request->paypalOrderID
             ]);
 
@@ -1626,11 +1673,6 @@ class CustomerController extends Controller
                $amount += $purchaseUnit['amount']['value'];
             }
 
-            // if($existingPayments != null){
-            //     foreach($existingPayments as $existingPayment){
-
-            //     }
-            // }
 
             $newBalance = $request->balance - $amount;
             if($newBalance > 0){
@@ -1663,11 +1705,38 @@ class CustomerController extends Controller
 
             // print_r($request->paypalOrderID);
             $order = Order::where('id', $request->orderTransactionID)->first();
+            $existingPayments = Payment::where('orderID', $request->orderTransactionID)->get();
+            $amount = 0;
+
+            $purchaseUnits = $request->details['purchase_units'];
+            foreach($purchaseUnits as $purchaseUnit){
+               $amount += $purchaseUnit['amount']['value'];
+            }
+
+
+            $newBalance = $request->balance - $amount;
+            if($newBalance > 0){
+                $status = 'Paid Partially';
+            }elseif($newBalance == 0){
+                $status = 'Fully Paid';
+            }
+
+            $payment = Payment::create([
+                'orderID' => $request->orderTransactionID,
+                'amount' => $amount,
+                'balance' => $newBalance,
+                'paypalOrderID' => $request->paypalOrderID, 
+                'status' => $status
+            ]);
+            
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => 'Paid',
+                'paymentStatus' => $status,
                 'paypalOrderID' => $request->paypalOrderID
             ]);
+            
+            print_r($payment);
+            exit();
 
             $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
             $boutiqueseller->notify(new CustomerPaysOrder($order));

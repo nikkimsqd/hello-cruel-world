@@ -38,6 +38,8 @@
   <link rel="stylesheet" href="{{asset('adminlte/bower_components/select2/dist/css/select2.min.css') }}">
   <!-- DataTables -->
   <link rel="stylesheet" href="{{asset('adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="{{asset('adminlte/plugins/timepicker/bootstrap-timepicker.min.css') }}">
 
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

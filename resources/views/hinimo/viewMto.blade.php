@@ -44,6 +44,20 @@
                                 </div>
                              </div>
                              @endif
+                        
+                            <?php
+                            $total = $mto->order['total'];
+                            $minimumPaymentRequired = $total * 0.50;
+                            $measurementID = $mto['measurementID'];
+                            $balance = $mto->order['total'];
+
+                            if(count($payments) > 0){
+                                foreach($mto->order->payments as $payment){
+                                    $minimumPaymentRequired = $payment['balance'];
+                                    $balance = $payment['balance'];
+                                }
+                            }
+                            ?>
 
                             @if($mto['orderID'] != null)
                                 <div class="order-details-confirmation"> <!-- card opening -->
@@ -74,11 +88,20 @@
                                         <li><span>Total</span> <span style="color: #0315ff;">₱{{$mto->order['total']}}</span></li>
                                         <li><span>Payment Status</span>
                                             @if($mto->order['paymentStatus'] == "Not Yet Paid")
-                                            <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
+                                            <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}
+                                                @if($mto->order['paymentStatus'] == "Not Yet Paid" && $mto['measurementID'] != null)
+                                                <br><i>(You are first required to pay so the boutique can start processing your item.)</i>
+                                                @elseif($mto->order['paymentStatus'] == "Not Yet Paid" && $mto['measurementID'] == null)
+                                                <br><i>(You can start processing your payment after you submit your measurements.)</i>
+                                                @endif
+                                            </span>
                                             @else
                                             <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}</span>
                                             @endif
                                         </li>
+                                        @if(count($payments) == 0)
+                                        <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                        @endif
                                     </ul>
                                     @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery")
                                     <div class="notif-area cart-area" style="text-align: right;">
@@ -92,59 +115,98 @@
                                     @endif
                                 </div> <!-- card closing --><br><br>
 
-                                @if($mto->order['paymentStatus'] == "Not Yet Paid")
+                            @if(count($payments) > 0)
+                            <?php $counter = 1; ?>
+                            <div class="order-details-confirmation"> <!-- card opening -->
+                                <div class="cart-page-heading">
+                                    <h5>Payment History</h5>
+                                </div>
+                                <ul class="order-details-form mb-4">
+                                    @foreach($mto->order->payments as $payment)
+                                    <li class="payment-heading"><span></span><span><h6>Payment Transaction {{$counter}}</h6></span><span></span></li>
+
+                                    <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
+
+                                    <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
+                                    <li><span>Balance</span> 
+                                        <span>
+                                        @if($payment['balance'] == 0)
+                                        -
+                                        @else
+                                        ₱{{$payment['balance']}}
+                                        @endif
+                                        </span>
+                                    </li>
+
+                                    <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
+
+                                    <?php $counter++; ?>
+                                    @endforeach
+                                </ul>
+                            </div><br><br> <!-- card closing -->
+                            @endif
+
+                                @if($mto->order['paymentStatus'] != "Fully Paid" && $mto['measurementID'] != null)
                                 <h5>Pay here:</h5>
                                 <div class="col-md-3" id="paypal-button-container">
+                                    <input type="text" id="amount" class="form-control mb-10">
                                     <input type="text" id="mtoOrderID" value="{{$mto->order['id']}}" hidden>
                                     <input type="text" id="mtoID" value="{{$mto['id']}}" hidden>
-                                    <input type="text" id="total" value="{{$mto->order['total']}}" hidden>
+                                    <input type="text" id="total" value="{{$total}}" hidden>
+                                    <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>
+                                    <input type="text" id="measurementID" value="{{$measurementID}}" hidden>
+                                    <input type="text" id="balance" value="{{$balance}}" hidden>
                                 </div><br><br>
                                 @endif
                             @endif
 
 
-                                <div class="order-details-confirmation">
-                                    <div class="cart-page-heading">
-                                        <h5>Your Made-to-Order</h5>
-                                    </div>
+                            <div class="order-details-confirmation">
+                                <div class="cart-page-heading">
+                                    <h5>Your Made-to-Order</h5>
+                                </div>
 
-                                    <ul class="order-details-form mb-4">
-                                        @if($mto['status'] == "Cancelled")
-                                            <li><span></span><span style="color: red;">MTO has been cancelled</span><span></span></li>
-                                        @elseif($mto['status'] != "Cancelled" && $mto['status'] != "Active")
-                                            <li style="color: red;"><span>MTO has been declined</span><span>Reason: {{$mto->declineDetails['reason']}}</span></li>
-                                        @endif
-                                        <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
-                                        <li><span>Boutique Name</span> <span>{{$mto->boutique['boutiqueName']}}</span></li>
-                                        <li><span>Deadline of product</span> <span>{{date('M d, Y',strtotime($mto['deadlineOfProduct']))}}</span></li>
-                                        <li><span>Quantity</span> <span>{{$mto['quantity']}} pcs.</span></li>
-                                        <li><span>Number of wearers</span> <span>{{$mto['numOfPerson']}}</span></li>
-                                        
+                                <ul class="order-details-form mb-4">
+                                    @if($mto['status'] == "Cancelled")
+                                        <li><span></span><span style="color: red;">MTO has been cancelled</span><span></span></li>
+                                    @elseif($mto['status'] != "Cancelled" && $mto['status'] != "Active")
+                                        <li style="color: red;"><span>MTO has been declined</span><span>Reason: {{$mto->declineDetails['reason']}}</span></li>
+                                    @endif
+                                    <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
+                                    <li><span>Boutique Name</span> <span>{{$mto->boutique['boutiqueName']}}</span></li>
+                                    <li><span>Deadline of product</span> <span>{{date('M d, Y',strtotime($mto['deadlineOfProduct']))}}</span></li>
+                                    <li><span>Quantity</span> <span>{{$mto['quantity']}} pcs.</span></li>
+                                    <li><span>Number of wearers</span> <span>{{$mto['numOfPerson']}}</span></li>
+                                    
 
-                                        <li><span>Instructions/Notes</span> <span>{{$mto['notes']}}</span></li>
-                                        <li><span>Fabric</span> 
-                                            <span>
-                                            @if($mto['fabChoice'] == "provide")
-                                            <i>[You chose to provide boutique the fabric]</i>
-                                            @elseif($mto['fabChoice'] == "askboutique")
-                                            <i>[You chose to let boutique provide the fabric]</i>
+                                    <li><span>Instructions/Notes</span> <span>{{$mto['notes']}}</span></li>
+                                    <li><span>Fabric</span> 
+                                        <span>
+                                        @if($mto['fabChoice'] == "provide")
+                                        <i>[You chose to provide boutique the fabric]</i>
+                                        @elseif($mto['fabChoice'] == "askboutique")
+                                            @if($mto['orderID'] != null)
+                                                {{$mto['fabSuggestion']}}
+                                            @else
+                                                <i>[You chose to let boutique provide the fabric]</i>
                                             @endif
-                                        </span>
-                                        </li>
-                                        @if($mto['price'] != null && $mto['orderID'] == null)
-                                            <li><span>Price</span> <span style="color: #0315ff;">Final Price will be shown here</span></li>
-                                        @elseif($mto['price'] != null && $mto['orderID'] != null)
-                                            <li><span>Price</span> <span style="color: #0315ff;">₱{{$mto['price']}}</span></li>
-                                        @else
-                                            <li><span>Price</span> <span style="color: #0315ff;">Boutique has not set a price yet</span></li>
                                         @endif
-                                    </ul>
-                                </div><br><br>
+                                    </span>
+                                    </li>
+                                    @if($mto['price'] != null && $mto['orderID'] == null)
+                                        <li><span>Price</span> <span style="color: #0315ff;">Final Price will be shown here</span></li>
+                                    @elseif($mto['price'] != null && $mto['orderID'] != null)
+                                        <li><span>Price</span> <span style="color: #0315ff;">₱{{$mto['price']}}</span></li>
+                                    @else
+                                        <li><span>Price</span> <span style="color: #0315ff;">Boutique has not set a price yet</span></li>
+                                    @endif
+                                </ul>
+                            </div><br><br>
                                 
 
                         @if($mto['orderID'] == null && $mto['status'] == "Active") <!-- IF WALA PAY ORDER ANG MTO -->
                             <!-- if naay chosen fabric & naghatag ug price si boutique -->
-                            @if($mto['fabChoice'] != null && $mto['price'] != null)
+                            @if($mto['fabChoice'] == "provide" && $mto['price'] != null)
                                 <h5 class="normal">Boutique's price for item:</h5>
                                 <div class="row">
                                     <div class="col-md-5"> 
@@ -157,11 +219,12 @@
                             @endif
 
                             <!-- if nangayo si boutique ang pa provide'on ni client -->
-                            @if($mto['fabSuggestion'] != null)
+                            @if($mto['fabSuggestion'] != null && $mto['fabChoice'] == "askboutique")
                                 <h5 class="normal">Boutique's suggestion of fabric with price:</h5>
                                 <div class="row">
                                     <div class="col-md-5">
                                         <h5 class="normal">Fabric Type: <b>{{ucfirst($mto['fabSuggestion'])}}</b></h5>
+                                        <h4 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h4>
                                     </div>
                                     <div class="col-md-3">
                                         <!-- <br> -->
@@ -177,6 +240,7 @@
                         @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
 
 
+                        @if($mto['orderID'] != null) <!-- IF WALA PAY ORDER ANG MTO -->
                         <div class="col-12 col-md-11" id="measurements">
                             <div class="regular-page-content-wrapper section-padding-80">
                                 <div class="regular-page-text">
@@ -187,6 +251,7 @@
 
                                         <div class="row"> 
                                             <div class="col-md-8">
+                                                @if(count($mrequests) > 0)
                                                 @for($counter = 1; $mto['numOfPerson'] >= $counter; $counter++)
                                                 <h5>Enter name for Person {{$counter}}</h5>
                                                 <input type="text" name="person[{{$counter}}]" class="form-control"><br>
@@ -208,6 +273,10 @@
                                                 </div>
                                                 @endfor
                                                 <input type="submit" name="btn_submit" value="Submit">
+                                                @else
+                                                <p style="color: #0315ff;"><i>Please wait for boutique's request...</i></p>
+
+                                                @endif
                                             </div>
                                         </div>
 
@@ -246,6 +315,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
 
 
                             </div>
@@ -263,6 +333,8 @@
     .normal{font-weight: normal;}
     .table{margin-bottom: 0;}
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
+    .mb-10{margin-bottom: 10px;}
+    .payment-heading{background-color: aliceblue;}
 </style>
 
 <!-- </div> -->
@@ -273,20 +345,33 @@
 <script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
-    var mtoOrderID = document.getElementById('mtoOrderID').value;
-    var mtoID = document.getElementById('mtoID').value;
-    var total = document.getElementById('total').value;
+    var mtoOrderID = $('#mtoOrderID').val();
+    var mtoID = $('#mtoID').val();
+    var total = $('#total').val();
+    var balance = $('#balance').val();
+    var measurementID = $('#measurementID').val();
   
+    if(measurementID != null){
     paypal.Buttons({
         createOrder: function(data, actions) {
-          // Set up the transaction
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: total
-              }
-            }]
-          });
+            var total = parseInt($('#total').val());
+            var minimumPaymentRequired = parseInt($('#minimumPaymentRequired').val());
+            var amount = parseInt($('#amount').val());
+
+            if(amount){
+                if(amount >= minimumPaymentRequired){
+                    if(amount <= total){
+                        return actions.order.create({
+                            purchase_units: [{
+                            amount: {
+                            value: amount,
+                            currencyCode: 'PHP'
+                              }
+                            }]
+                        });
+                    }
+                }
+            }
         },
         onApprove: function(data, actions) {
           // Capture the funds from the transaction
@@ -302,14 +387,21 @@
               body: JSON.stringify({
                 paypalOrderID: data.orderID,
                 mtoOrderID: mtoOrderID,
-                mtoID: mtoID
+                mtoID: mtoID,
+                total: total,
+                details: details,
+                balance: balance
               })
+            }).then(function (){
+                location.reload();
             });
           });
         },
         onError: function (err) {
             alert("An error has occured during the transaction. Please try again.");
         }
-    }).render('#paypal-button-container');</script>
+    }).render('#paypal-button-container');
+    } //if closing
+</script>
 
 @endsection

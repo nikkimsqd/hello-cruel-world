@@ -210,12 +210,13 @@
         {{csrf_field()}}
 
           <h4>Fabric Type:</h4> 
-          <select id="fabric-type" name="fabSuggestion" class="form-control mb-3" required>
+          <input type="text" name="fabSuggestion" class="form-control mb-3" required>
+          <!-- <select id="fabric-type" name="fabSuggestion" class="form-control mb-3" required>
             <option disabled selected>Choose fabric type</option>
             @foreach($fabs as $fab => $name)
             <option value="{{$fab}}">{{$fab}}</option>
             @endforeach
-          </select><br>
+          </select> --><br>
           <h4>Price:</h4> 
           <!-- <input type="number" name="fabricSuggestion[price]" class="form-control" placeholder="Price" required> -->
           <input type="number" name="price" class="form-control" placeholder="Price" required>

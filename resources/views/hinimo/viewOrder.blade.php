@@ -24,6 +24,20 @@
             <div class="col-12 col-md-11">
                 <div class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
+                        
+                        <?php
+                        $total = $order['total'];
+                        $minimumPaymentRequired = $total * 0.50;
+                        // $measurementID = $mto['measurementID'];
+                        $balance = $order['total'];
+
+                        if(count($payments) > 0){
+                            foreach($order->payments as $payment){
+                                $minimumPaymentRequired = $payment['balance'];
+                                $balance = $payment['balance'];
+                            }
+                        }
+                        ?>
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
@@ -67,6 +81,9 @@
                                     @endif
                                 </li>
                                 <li><span>Payment Status</span> <span style="color: red;">{{$order['paymentStatus']}}</span></li>
+                                @if(count($payments) == 0)
+                                <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                @endif
                             </ul>
 
                             @if($order['status'] == "For Pickup" || $order['status'] == "For Delivery")
@@ -81,12 +98,46 @@
                             @endif
                         </div><br><br> <!-- card closing -->
 
-                        @if($order['paymentStatus'] == "Not Yet Paid")
+                        @if(count($payments) > 0)
+                        <?php $counter = 1; ?>
+                        <div class="order-details-confirmation"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5>Payment History</h5>
+                            </div>
+                            <ul class="order-details-form mb-4">
+                                @foreach($order->payments as $payment)
+                                <li class="payment-heading"><span></span><span><h6>Payment Transaction {{$counter}}</h6></span><span></span></li>
+
+                                <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
+
+                                <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
+                                <li><span>Balance</span> 
+                                    <span>
+                                    @if($payment['balance'] == 0)
+                                    -
+                                    @else
+                                    ₱{{$payment['balance']}}
+                                    @endif
+                                    </span>
+                                </li>
+
+                                <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
+
+                                <?php $counter++; ?>
+                                @endforeach
+                            </ul>
+                        </div><br><br> <!-- card closing -->
+                        @endif
+
+                        @if($order['paymentStatus'] != "Fully Paid")
                         <span>You are required to pay first so boutique can start on working with your item</span>
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
+                            <input type="text" id="amount" class="form-control mb-10">
                             <input type="text" id="orderTransactionID" value="{{$order['id']}}" hidden>
-                            <input type="text" id="total" value="{{$order['total']}}" hidden>
+                            <input type="text" id="total" value="{{$total}}" hidden>
+                            <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>
+                            <input type="text" id="balance" value="{{$balance}}" hidden>
                         </div>
                         @endif
 
@@ -99,6 +150,8 @@
 
 <style type="text/css">
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
+    .mb-10{margin-bottom: 10px;}
+    .payment-heading{background-color: aliceblue;}
 </style>
 
 <!-- </div> -->
@@ -110,19 +163,31 @@
 <script src="https://www.paypal.com/sdk/js?currency=PHP&client-id=AamTreWezrZujgbQmvQoAQzyjY1UemHZa0WvMJApWAVsIje-yCaVzyR9b_K-YxDXhzTXlml17JeEnTKm"></script>
 <script>
     
-    var orderTransactionID = document.getElementById('orderTransactionID').value;
-    var total = document.getElementById('total').value;
+    var orderTransactionID = $('#orderTransactionID').val();
+    var total = $('#total').val();
+    var balance = $('#balance').val();
 
+    if(orderTransactionID != null){ //gi butang ko ni para dili mo gawas ang error alert sa paypal
     paypal.Buttons({
         createOrder: function(data, actions) {
-          // Set up the transaction
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: total
-              }
-            }]
-          });
+            var total = parseInt($('#total').val());
+            var minimumPaymentRequired = parseInt($('#minimumPaymentRequired').val());
+            var amount = parseInt($('#amount').val());
+        
+            if(amount){
+                if(amount >= minimumPaymentRequired){
+                    if(amount <= total){
+                        return actions.order.create({
+                            purchase_units: [{
+                            amount: {
+                            value: amount,
+                            currencyCode: 'PHP'
+                            }
+                            }]
+                        });
+                    }
+                }
+            }
         },
         onApprove: function(data, actions) {
           // Capture the funds from the transaction
@@ -136,8 +201,13 @@
               },
               body: JSON.stringify({
                 paypalOrderID: data.orderID,
-                orderTransactionID: orderTransactionID
+                orderTransactionID: orderTransactionID,
+                total: total,
+                details: details,
+                balance: balance
               })
+            }).then(function (){
+                location.reload();
             });
           });
         },
@@ -145,6 +215,7 @@
             alert("An error has occured during the transaction. Please try again.");
         }
     }).render('#paypal-button-container');
+    } //if closing
 </script>
 
 @endsection

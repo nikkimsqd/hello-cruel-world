@@ -61,13 +61,13 @@
                             <ul class="order-details-form mb-4">
                                 <li><span>Order ID</span> <span>{{$bidding->order['id']}}</span></li>
                                 <li><span>Boutique Name</span> <span>{{$bidding->bid->owner['boutiqueName']}}</span></li>
-                                <li><span>Address of Delivery</span> <span>{{$bidding->order['deliveryAddress']}}</span></li>
+                                <li><span>Address of Delivery</span> <span>{{$bidding->order->address['completeAddress']}}</span></li>
                                 
 
 
-                                <li><span>Subtotal</span> <span>{{$bidding->order['subtotal']}}</span></li>
-                                <li><span>Delivery Fee</span> <span>{{$bidding->order['deliveryfee']}}</span></li>
-                                <li><span>Total</span> <span>{{$bidding->order['total']}}</span></li>
+                                <li><span>Subtotal</span> <span>₱{{$bidding->order['subtotal']}}</span></li>
+                                <li><span>Delivery Fee</span> <span>₱{{$bidding->order['deliveryfee']}}</span></li>
+                                <li><span>Total</span> <span>₱{{$bidding->order['total']}}</span></li>
                                 <li><span>Status</span> 
                                     @if($bidding->order['status'] == "For Pickup")
                                     <span style="color: #0315ff;">To be picked up by courier</span>
@@ -85,8 +85,8 @@
                                         @endif
                                     </span>
                                 </li>
-                                @if(count($payments) == 0){
-                                <li><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                @if(count($payments) == 0)
+                                <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
                                 @endif
                             </ul>
                             
@@ -116,7 +116,15 @@
                                 <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
 
                                 <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
-                                <li><span>Balance</span> <span>₱{{$payment['balance']}}</span></li>
+                                <li><span>Balance</span> 
+                                    <span>
+                                    @if($payment['balance'] == 0)
+                                    -
+                                    @else
+                                    ₱{{$payment['balance']}}
+                                    @endif
+                                    </span>
+                                </li>
 
                                 <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
 
@@ -198,6 +206,7 @@
 
                             <div class="row"> 
                                 <div class="col-md-8">
+                                    @if(count($mrequests) > 0)
                                     @for($counter = 1; $bidding['quantity'] >= $counter; $counter++)
                                     <h5>Enter name for Person {{$counter}}</h5>
                                     <input type="text" name="person[{{$counter}}]" class="form-control"><br>
@@ -219,6 +228,10 @@
                                     </div>
                                     @endfor
                                     <input type="submit" name="btn_submit" value="Submit">
+                                    @else
+                                    <p style="color: #0315ff;"><i>Please wait for boutique's request...</i></p>
+
+                                    @endif
                                 </div>
                             </div>
 
@@ -321,6 +334,7 @@
     .payment-heading{background-color: aliceblue;}
     h6{margin-bottom: 0;}
     .note{font-size: 14px !important; margin-bottom: 10px !important; color: red; font-weight: bold !important;}
+    .order-details-confirmation .order-details-form li{padding: 20px 5px;}
     /*a:hover{font-size: 18px; color: #ffffff;}*/
 </style>
 @endsection
@@ -337,30 +351,18 @@
     var minimumPaymentRequired = $('#minimumPaymentRequired').val();
     var measurementID = $('#measurementID').val();
     var balance = $('#balance').val();
-    // var amount = $('#amount').val();
-            // console.log(amount);
 
-    // if(amount >= minimumPaymentRequired){
-    //     if(amount <= total){
-    //         console.log("here");
-    //         console.log(amount);
-    //     }else{
-    //         console.log("gawas");
-    //     }
-    // }else{
-    //     console.log('there');
-    //     console.log(amount);
-    // }
+
     if(measurementID != null){
     paypal.Buttons({
         createOrder: function(data, actions) {
-            var total = $('#total').val();
-            var minimumPaymentRequired = $('#minimumPaymentRequired').val();
-            var amount = $('#amount').val();
+            var total = parseInt($('#total').val());
+            var minimumPaymentRequired = parseInt($('#minimumPaymentRequired').val());
+            var amount = parseInt($('#amount').val());
 
-            console.log(total);
-            console.log(minimumPaymentRequired);
-            console.log(amount);
+            // console.log($.type(total));
+            // console.log($.type(minimumPaymentRequired));
+            // console.log($.type(amount));
             
             if(amount){
                 if(amount >= minimumPaymentRequired){
@@ -399,12 +401,14 @@
                 balance: balance
 
               })
+            }).then(function (){
+                location.reload();
             });
           });
-        },
-        onError: function (err) {
-            alert("An error has occured during the transaction. Please try again.");
         }
+        // onError: function (err) {
+        //     alert("An error has occured during the transaction. Please try again.");
+        // }
     }).render('#paypal-button-container');
     } //if closing
 </script>

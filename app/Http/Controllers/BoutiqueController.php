@@ -34,6 +34,7 @@ use App\Set;
 use App\Setitem;
 use App\Measurementrequest;
 use App\Rtw;
+use App\Paypalaccount;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -67,10 +68,13 @@ class BoutiqueController extends Controller
 	public function reqToVerify(Request $request)
 	{
 		$boutiqueID = $request->input('boutiqueID');
+		$operatingDays = json_encode($request->input('operatingDays'));
+		// dd($request->input('operatingDays'));
 
 		$boutique = Boutique::where('id', $boutiqueID)->update([
 			'openingHours' => $request->input('openingHours'),
 			'closingHours' => $request->input('closingHours'),
+			'operatingDays' => $operatingDays,
 			'status' => 'Verified'
 		]);
 
@@ -1594,6 +1598,62 @@ class BoutiqueController extends Controller
 
 		return view('boutique/viewSet', compact('boutique', 'user', 'page_title', 'notifications', 
 		'notificationsCount', 'set'));
+	}
+
+	public function boutiqueProfile()
+	{
+   		$id = Auth()->user()->id;
+		$user = User::find($id);
+    	$boutique = Boutique::where('userID', $id)->first();
+		$page_title = 'Profile';
+		$notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
+
+		return view('boutique/boutique-profile', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount'));
+	}
+
+	public function paypalAccount()
+	{
+   		$id = Auth()->user()->id;
+		$user = User::find($id);
+    	$boutique = Boutique::where('userID', $id)->first();
+		$page_title = 'Profile';
+		$notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
+
+		$paypalAccount = Paypalaccount::where('id', $boutique['paypalAccountID'])->first();
+		// dd($paypalAccount);
+
+		return view('boutique/paypal-account', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'paypalAccount'));
+
+	}
+
+	public function updatePaypalAccount(Request $request)
+	{
+		$boutiqueID = $request->input('boutiqueID');
+		$boutique = Boutique::where('id', $boutiqueID)->first();
+
+		$paypalAccount = Paypalaccount::where('id', $boutique['paypalEmail'])->update([
+			'paypalEmail' => $request->input('paypalEmail')
+		]);
+
+	}
+
+	public function addPaypalAccount(Request $request)
+	{
+		$boutiqueID = $request->input('boutiqueID');
+		$boutique = Boutique::where('id', $boutiqueID)->first();
+
+		$paypalAccount = Paypalaccount::create([
+			'boutiqueID' => $boutiqueID,
+			'paypalEmail' => $request->input('paypalEmail')
+		]);
+
+		$boutique->update([
+			'paypalEmail' => $paypalAccount['id']
+		]);
+
+		return redirect('/paypal-account');
 	}
 
 

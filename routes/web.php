@@ -79,7 +79,10 @@ Route::get('/admin-measurements', 'AdminController@measurements');
 Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 
 
+Route::get('/admin-payouts', 'AdminController@payouts');
+
 //BOUTIQUE----------------------------------------------------------------------------------------
+Route::get('/boutique-profile', 'BoutiqueController@boutiqueProfile');
 Route::get('/reqToActivateAccount', 'BoutiqueController@reqToActivateAccount');
 Route::post('/reqToVerify', 'BoutiqueController@reqToVerify');
 
@@ -175,6 +178,9 @@ Route::get('/archive-boutique-biddings', 'BoutiqueController@archiveBiddings');
 
 
 
+Route::get('/paypal-account', 'BoutiqueController@paypalAccount');
+Route::post('/updatePaypalAccount', 'BoutiqueController@updatePaypalAccount');
+Route::post('/addPaypalAccount', 'BoutiqueController@addPaypalAccount');
 
 
 

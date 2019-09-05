@@ -464,4 +464,55 @@ class AdminController extends Controller
 
     	return redirect('admin-addAccount');
     }
+
+    public function payouts()
+    {
+		$page_title = "Payouts";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$orders = Order::where('status', 'Completed')->get();
+		// $payouts = Order::where('status', 'Completed')->where('payoutID', '!=', null)->get();
+		// dd($orders[0]->boutique->paypalEmail);
+
+
+
+		// dd(date('Y-mdhis'));
+
+		foreach($orders as $order)
+		{
+			$orders->map(function ($order){
+				if($order->boutique['paypalAccountID'] != null) {
+					$date = date('Y_mdhis');
+					$ordersArray = array();
+
+					$ordersArray['sender_batch_header'] = array(
+						'sender_batch_id' => 'Payouts_'.$date,
+						'email_subject' => 'You have a payout!',
+						'email_message' => 'You have received a payout! Thanks for using our service!'
+					);
+
+					$item = array();
+					$item['recipient_type'] = 'EMAIL';
+					$item['amount']['value'] = $order['boutiqueShare'];
+					$item['amount']['currency'] = 'PHP';
+					$item['note'] = 'Thanks for your patronage!';
+					$item['sender_item_id'] = $order['id'];
+					$item['receiver'] = $order->boutique->paypalEmail['paypalEmail'];
+
+					$ordersArray['items'] = array(
+						$item
+					);
+
+					$orderJson = json_encode($ordersArray);
+
+					$order['json'] = $orderJson;
+					return $order;
+				}
+			});
+		}
+
+		return view('admin/payouts', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders'));
+    }
 }

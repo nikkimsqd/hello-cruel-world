@@ -1,6 +1,10 @@
 @extends('layouts.boutique')
 @extends('boutique.sections')
 
+@section('titletext')
+  Hinimo | {{$boutique['boutiqueName']}} - Dashboard
+@endsection
+
 
 @section('content')
 
