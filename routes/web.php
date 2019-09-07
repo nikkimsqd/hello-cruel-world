@@ -80,6 +80,8 @@ Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 
 
 Route::get('/admin-payouts', 'AdminController@payouts');
+Route::get('/savePayout/{orderID}/{batchID}', 'AdminController@savePayout');
+Route::get('/requestPaypalAccount/{orderID}', 'AdminController@requestPaypalAccount');
 
 //BOUTIQUE----------------------------------------------------------------------------------------
 Route::get('/boutique-profile', 'BoutiqueController@boutiqueProfile');

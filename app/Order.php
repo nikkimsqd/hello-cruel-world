@@ -49,9 +49,9 @@ class Order extends Model
         return $this->hasMany('App\Payment', 'orderID', 'id');
     }
 
-    public function payouts()
+    public function payout()
     {
-        return $this->hasMany('App\Payout', 'id', 'payoutID');
+        return $this->hasOne('App\Payout', 'id', 'payoutID');
     }
     
 }

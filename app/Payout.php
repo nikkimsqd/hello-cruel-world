@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payout extends Model
 {
-    protected $fillable = ['boutiqueID', 'paypalEmail'];
+    protected $fillable = ['orderID', 'batchID', 'amount'];
 
     public function order()
     {

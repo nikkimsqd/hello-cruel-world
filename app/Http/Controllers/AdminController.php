@@ -25,8 +25,11 @@ use App\Measurement;
 use App\Measurementtype;
 use App\Categorymeasurement;
 use App\Sharepercentage;
+use App\Payout;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
+use App\Notifications\RequestPaypalAccount;
+use App\Notifications\PayoutReleased;
 
 
 class AdminController extends Controller
@@ -474,7 +477,7 @@ class AdminController extends Controller
 		$notificationsCount = $admin->unreadNotifications->count();
 		$orders = Order::where('status', 'Completed')->get();
 		// $payouts = Order::where('status', 'Completed')->where('payoutID', '!=', null)->get();
-		// dd($orders[0]->boutique->paypalEmail);
+		// dd($orders[0]['payoutID']);
 
 
 
@@ -509,10 +512,50 @@ class AdminController extends Controller
 
 					$order['json'] = $orderJson;
 					return $order;
+
+				}else{
+
+					$order['json'] = "null";
+					return $order;
 				}
 			});
 		}
 
 		return view('admin/payouts', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders'));
+    }
+
+    public function savePayout($orderID, $batchID)
+    {
+    	$order = Order::where('id', $orderID)->first();
+    	$payout = Payout::create([
+    		'orderID' => $orderID,
+    		'batchID' => $batchID,
+    		'amount' => $order['boutiqueShare']
+    	]);
+
+    	$order->update([
+    		'payoutID' => $payout['id']
+    	]);
+
+    	$boutique = Boutique::where('id', $order->boutique['id'])->first();
+
+    	$boutiqueSeller = User::where('id', $boutique['userID'])->first();
+    	$boutiqueSeller->notify(new PayoutReleased($payout['id']));
+
+
+    	// dd($payout);
+    	return redirect('admin-payouts');
+
+    }
+
+    public function requestPaypalAccount($orderID)
+    {
+    	$order = Order::where('id', $orderID)->first();
+    	$boutique = Boutique::where('id', $order->boutique['id'])->first();
+
+    	$boutiqueSeller = User::where('id', $boutique['userID'])->first();
+    	$boutiqueSeller->notify(new RequestPaypalAccount($orderID));
+
+    	return redirect('admin-payouts');
     }
 }

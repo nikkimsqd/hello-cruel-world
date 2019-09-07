@@ -35,6 +35,7 @@ use App\Setitem;
 use App\Measurementrequest;
 use App\Rtw;
 use App\Paypalaccount;
+use App\Payout;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -162,7 +163,6 @@ class BoutiqueController extends Controller
 					$notification->markAsRead();
 					$bidding = Bidding::where('id', $notif->data['biddingID'])->first();
 
-					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/boutique-bidding/'.$bidding['id']);
 
 				}elseif ($notification->type == 'App\Notifications\NewBidding') {
@@ -170,7 +170,6 @@ class BoutiqueController extends Controller
 					$notification->markAsRead();
 					$bidding = Bidding::where('id', $notif->data['biddingID'])->first();
 
-					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/boutique-view-bidding/'.$bidding['id']);
 
 				}elseif ($notification->type == 'App\Notifications\AdminAcceptsCategoryRequest') {
@@ -178,7 +177,6 @@ class BoutiqueController extends Controller
 					$notification->markAsRead();
 					$catReq = Categoryrequest::where('id', $notif->data['catReqID'])->first();
 
-					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/categories');
 
 				}elseif ($notification->type == 'App\Notifications\AdminDeclinesCategoryRequest') {
@@ -186,8 +184,27 @@ class BoutiqueController extends Controller
 					$notification->markAsRead();
 					$catReq = Categoryrequest::where('id', $notif->data['catReqID'])->first();
 
-					// return view('boutique/mtoNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'mto'));
 					return redirect('/categories');
+
+				}elseif ($notification->type == 'App\Notifications\PayoutReleased') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$payout = Payout::where('id', $notif->data['payoutID'])->first();
+
+					$data = "Payout has been released. Check it out now.";
+
+					return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'data'));
+					// return redirect('/categories');
+
+				}elseif ($notification->type == 'App\Notifications\RequestPaypalAccount') {
+					$notif = $notification;
+					$notification->markAsRead();
+					$payout = Payout::where('id', $notif->data['orderID'])->first();
+
+					$data = "You are about to receive your payout. Please add your PayPal account to continue.";
+
+					return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'data'));
+					// return redirect('/categories');
 
 				}
 			}
@@ -204,6 +221,8 @@ class BoutiqueController extends Controller
     	$boutique = Boutique::where('userID', $id)->first();
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
+
+		return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount'));
 	}
 
 	public function dashboard()
