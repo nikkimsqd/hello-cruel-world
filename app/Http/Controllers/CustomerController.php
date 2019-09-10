@@ -581,12 +581,46 @@ class CustomerController extends Controller
         $cities = City::all();
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
-        // dd($product->rentDetails['locationsAvailable']);
+
+
+
+        $daysBefore = 2;
+        $daysAfter = 2;
+        $datesArray = array();  
+        $rentSchedules = Rent::where('productID', $productID)->get();
+
+
+        foreach($rentSchedules as $rentSchedule){
+            array_push($datesArray, $rentSchedule['dateToUse']);
+
+            $dateNew = $rentSchedule['dateToUse'];
+            for ($i=0; $i < $daysBefore; $i++) { 
+                $addDaysBefore = date('Y-m-d', strtotime($dateNew.'- 1 days'));
+                $dateNew = $addDaysBefore;
+                array_push($datesArray, $addDaysBefore);
+            } //26New
+
+            $dateNew = $rentSchedule['dateToUse'];
+            for ($i=0; $i < $daysBefore; $i++) { 
+                $addDaysBefore = date('Y-m-d', strtotime($dateNew.'+ 1 days'));
+                $dateNew = $addDaysBefore;
+                array_push($datesArray, $addDaysBefore);
+            }
+        }
+
+        // dd($datesArray);
         
         // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-        return view('hinimo/requestToRent', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses'));
+        return view('hinimo/requestToRent', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses', 'datesArray'));
     }
+
+    // public function getRentDates($productID)
+    // {
+
+    //     return response()->json(['datesArray' => $datesArray]);
+
+    // }
 
     public function requestToRent(Request $request)
     {
@@ -625,7 +659,8 @@ class CustomerController extends Controller
             'productID' => $request->input('productID'), 
             'dateToUse' => $dateuse, 
             'dateToBeReturned' => $dateToBeReturned, 
-            'additionalNotes' => $request->input('additionalNotes')
+            'additionalNotes' => $request->input('additionalNotes'),
+            'addressID' => $addressID
         ]);
 
         $measurement = Measurement::create([
@@ -635,22 +670,22 @@ class CustomerController extends Controller
             'data' => $mName
         ]);
 
-        // $order = Order::create([
-        //     'userID' => $id,
-        //     'rentID' => $rent['rentID'],
-        //     'boutiqueID' => $request->input('boutiqueID'),
-        //     'subtotal' => $request->input('subtotal'),
-        //     'deliveryfee' => $request->input('deliveryfee'),
-        //     'total' => $request->input('total'),
-        //     'deliveryAddress' => $addressID,
-        //     'status' => "Pending",
-        //     'paymentStatus' => "Not Yet Paid",
-        //     'billingName' => $request->input('billingName'), 
-        //     'phoneNumber' => $request->input('phoneNumber'),
-        //     'boutiqueShare' => $request->input('boutiqueShare'),
-        //     'adminShare' => $request->input('adminShare'),
-        //     'addressID' => $addressID
-        // ]);
+        $order = Order::create([
+            'userID' => $id,
+            'rentID' => $rent['rentID'],
+            'boutiqueID' => $request->input('boutiqueID'),
+            'subtotal' => $request->input('subtotal'),
+            'deliveryfee' => $request->input('deliveryfee'),
+            'total' => $request->input('total'),
+            'deliveryAddress' => $addressID,
+            'status' => "Pending",
+            'paymentStatus' => "Not Yet Paid",
+            'billingName' => $request->input('billingName'), 
+            'phoneNumber' => $addressID,
+            'boutiqueShare' => $request->input('boutiqueShare'),
+            'adminShare' => $request->input('adminShare'),
+            'addressID' => $addressID
+        ]);
 
         $rent->update([
             // 'orderID' => $order['id'],
@@ -1211,7 +1246,28 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         $boutiqueID = $request->input('boutiqueID');
 
-        // dd($deadlineOfProduct);
+        //changes nga wa pajuy sure kay wa nahuman jud------------------------------------------------------------------------
+        $names = array();
+        $data = array();
+
+        $nameOfWearers = $request->input('nameOfWearers');
+        foreach($nameOfWearers as $nameOfWearer){
+            array_push($names, $nameOfWearer);
+
+            $pcsOfWearers = $request->input('pcsOfWearers');
+            foreach($pcsOfWearers as $pcsOfWearer){
+                $wearers = array();
+                array_push($wearers, $pcsOfWearer);
+            }
+        }
+
+        // array_push($wearers, $pcsOfWearers);
+        // array_push($wearers, $pcsOfWearers);
+        // array_push($data[$nameOfWearers], $wearers);
+
+        array_push($data, $data);
+        dd($wearers);
+        //---------------------------------------------------------------------------------
 
         $mto = Mto::create([
             'userID' => $userID,
@@ -1220,6 +1276,7 @@ class CustomerController extends Controller
             'notes' => $request->input('notes'),
             'quantity' => $request->input('quantity'),
             'numOfPerson' => $request->input('numOfPerson'),
+            'nameOfWearers' => $request->input('numOfPerson'),
             'fabChoice' => $request->input('fabChoice'),
             'orderID' => $request->input('orderID'),
             'status' => "Active"
@@ -1608,9 +1665,6 @@ class CustomerController extends Controller
                 'status' => $status
             ]);
 
-            $rent->update([
-                'status' => 'In-Progress'
-            ]);
             $order->update([
                 'status' => 'In-Progress',
                 'paymentStatus' => $status,

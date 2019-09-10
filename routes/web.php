@@ -82,6 +82,7 @@ Route::post('/admin-addMeasurement', 'AdminController@addMeasurement');
 Route::get('/admin-payouts', 'AdminController@payouts');
 Route::get('/savePayout/{orderID}/{batchID}', 'AdminController@savePayout');
 Route::get('/requestPaypalAccount/{orderID}', 'AdminController@requestPaypalAccount');
+Route::get('/view-payout/{orderID}', 'AdminController@viewPayout');
 
 //BOUTIQUE----------------------------------------------------------------------------------------
 Route::get('/boutique-profile', 'BoutiqueController@boutiqueProfile');
@@ -129,8 +130,9 @@ Route::get('/viewset/{setID}', 'BoutiqueController@viewSet');
 //TRANSACTIONS-RENT
 Route::get('/rents', 'BoutiqueController@rents');
 Route::get('/rents/{rentID}', 'BoutiqueController@getRentInfo');
-Route::post('/approveRent', 'BoutiqueController@approveRent');
-// Route::post('/declineRent', 'BoutiqueController@declineRent');
+Route::get('/approveRent/{rentID}', 'BoutiqueController@approveRent');
+// Route::post('/approveRent', 'BoutiqueController@approveRent');
+Route::post('/declineRent', 'BoutiqueController@declineRent');
 // Route::post('/updateRentInfo', 'BoutiqueController@updateRentInfo');
 // Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
 Route::get('/rentReturned/{rentID}', 'BoutiqueController@rentReturned');
@@ -208,6 +210,7 @@ Route::post('/editProfile', 'CustomerController@editProfile');
 Route::get('/requestToRent/{productID}', 'CustomerController@submitRequestToRent');
 Route::post('/requestToRent', 'CustomerController@requestToRent');
 Route::get('/receiveRent/{rentID}', 'CustomerController@receiveRent');
+// Route::get('/getRentDates/{productID}', 'CustomerController@getRentDates');
 
 Route::get('/requestToRentSet/{setID}', 'CustomerController@submitRequestToRentSet');
 Route::post('/requestToRentSet', 'CustomerController@requestToRentSet');

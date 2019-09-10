@@ -133,8 +133,8 @@
                             </div>
 
                             <ul class="order-details-form mb-4">
-                                <li><span>Boutique Name</span> <span>{{$rent->boutique['boutiqueName']}}</span></li>
                                 <li><span>Rent ID</span> <span>{{$rent['rentID']}}</span></li>
+                                <li><span>Boutique Name</span> <span>{{$rent->boutique['boutiqueName']}}</span></li>
                                 <li><span>Product/s</span> 
                                     @if($rent->product != null)
                                     <span>{{$rent->product['productName']}}</span>
@@ -159,8 +159,9 @@
                                     <span>₱{{$rent->set->rentDetails['penaltyAmount']}}</span>
                                     @endif
                                 </li>
-                                @if($rent->order['status'] == "Pending" || $rent->order['status'] == "In-Progress")
-                                <li><span>Status</span> <span style="color: #0315ff;">{{$rent->order['status']}}</span></li>
+                                <li><span>Status</span> <span style="color: #0315ff;">{{$rent['status']}}</span></li>
+                                @if($rent['status'] == "Approved")
+                                    @if($rent->order['status'] == "Pending" || $rent->order['status'] == "In-Progress")
                                     <li><span></span><span>Payment Info</span><span></span></li>
                                     <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
                                     <li><span>Deposit Amount</span> 
@@ -171,14 +172,18 @@
                                         @endif
                                     </li>
                                     <li><span>Delivery Fee</span> <span>₱{{$rent->order['deliveryfee']}}</span></li>
-                                        <li><span>Total</span> <span style="color: red; font-weight: bold;">₱{{$rent->order['total']}}</span></li>
-                                        <li><span>Payment Status</span> 
-                                            @if($rent->order['paymentStatus'] == "Not Yet Paid")
-                                            <span style="color: red; text-align: right;">{{$rent->order['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
-                                            @else
-                                            <span style="color: #0315ff;">{{$rent->order['paymentStatus']}}</span>
-                                            @endif
-                                        </li>
+                                    <li><span>Total</span> <span style="color: red; font-weight: bold;">₱{{$rent->order['total']}}</span></li>
+                                    <li><span>Payment Status</span> 
+                                        @if($rent->order['paymentStatus'] == "Not Yet Paid")
+                                        <span style="color: red; text-align: right;">{{$rent->order['paymentStatus']}}<br><i>(You are first required to pay so the boutique can start processing your item.)</i></span>
+                                        @else
+                                        <span style="color: #0315ff;">{{$rent->order['paymentStatus']}}</span>
+                                        @endif
+                                    </li>
+                                        @if(count($payments) == 0)
+                                        <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                        @endif
+                                    @endif
                                 @endif
                             </ul>
                         </div> <!-- card closing --> <br>
@@ -216,7 +221,7 @@
                         @endif
                         
 
-                        @if($rent->order['paymentStatus'] != "Fully Paid")
+                        @if($rent->order['paymentStatus'] != "Fully Paid" && $rent['status'] == "Approved")
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="amount" class="form-control mb-10">
@@ -243,27 +248,33 @@
                                     <h4>Measurements Submitted</h4><br>
                                 <div class="row">
                                     <div class="col-md-12" style="column-count: 2">
-                                    @foreach($measurements as $measurement)
-                                        @foreach($measurement as $person)
-                                        @if(!is_array($person)) <!-- filter if naay array si person -->
-                                            @foreach($person as $name => $personData)
-                                            @if(is_object($personData)) <!-- filter if naay object si personData -->
-                                                <label><b>{{strtoupper($name)}}</b></label><br>
-                                                <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
-                                                @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
-                                                    <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
-                                                    @foreach($dataArray as $dataName => $data)
-                                                        <label>{{$measurementName}}: &nbsp; {{$data}}"</label><br>
+                                    @if($rent['setID'] != null)
+                                        @foreach($measurements as $measurement)
+                                            @foreach($measurement as $person)
+                                            @if(!is_array($person)) <!-- filter if naay array si person -->
+                                                @foreach($person as $name => $personData)
+                                                @if(is_object($personData)) <!-- filter if naay object si personData -->
+                                                    <label><b>{{strtoupper($name)}}</b></label><br>
+                                                    <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                                                    @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                                        <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                                        @foreach($dataArray as $dataName => $data)
+                                                            <label>{{$measurementName}}: &nbsp; {{$data}}"</label><br>
+                                                        @endforeach
                                                     @endforeach
+                                                @endif
                                                 @endforeach
+                                                <hr>
+                                            @else
+                                                <label><b>Name:</b> </label><br>
                                             @endif
                                             @endforeach
-                                            <hr>
-                                        @else
-                                            <label><b>Name:</b> </label><br>
-                                        @endif
                                         @endforeach
-                                    @endforeach
+                                    @else
+                                        @foreach($measurements as $measurement => $data)
+                                            <label>{{$measurement}}: &nbsp; {{$data}}"</label><br>
+                                        @endforeach
+                                    @endif
                                     </div>
                                 </div>
 

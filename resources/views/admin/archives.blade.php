@@ -29,9 +29,10 @@
               <th>Order Type</th>
               <th>Boutique Name</th>
               <th class="align-center">Status</th>
-              <th>Boutique's revenue</th>
-              <th>Hinimo's revenue</th>
+              <th class="align-center">Boutique's revenue</th>
+              <th class="align-center">Hinimo's revenue</th>
               <th class="align-center">Total</th>
+              <th class="align-center">Payout Status</th>
               <th></th>
               <!-- <th></th> -->
             </tr>
@@ -50,31 +51,18 @@
               @endif
               <td>{{$order->boutique['boutiqueName']}}</td>
               <td class="align-center">
-                @if($order['status'] == "In-Progress")
-                <span class="label label-warning">{{$order['status']}}</span>
-
-                @elseif($order['status'] == "For Alterations")
-                <span class="label label-info">{{$order['status']}}</span>
-
-                @elseif($order['status'] == "For Pickup")
-                <span class="label bg-navy">{{$order['status']}}</span>
-
-                @elseif($order['status'] == "For Delivery")
-                <span class="label bg-olive">{{$order['status']}}</span>
-
-                @elseif($order['status'] == "On Delivery")
-                <span class="label bg-maroon">{{$order['status']}}</span>
-
-                @elseif($order['status'] == "Delivered")
                 <span class="label label-success">{{$order['status']}}</span>
-
-                @elseif($order['status'] == "Completed")
-                <span class="label label-success">{{$order['status']}}</span>
-                @endif
               </td>
               <td class="align-center">{{$order['boutiqueShare']}}</td>
               <td class="align-center">{{$order['adminShare']}}</td>
               <td class="align-center">P{{$order['total']}}</td>
+              <td class="align-center">
+                @if($order['payoutID'] != null)
+                <span class="label label-success">OK</span>
+                @else
+                <span class="label label-warning">not ok</span>
+                @endif
+              </td>
               <td><a href="{{url('admin-archives/'.$order['id'])}}" class="btn btn-default btn-sm">View Order</a></td>
             </tr>
             @endforeach

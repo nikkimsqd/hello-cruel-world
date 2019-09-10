@@ -18,27 +18,7 @@
             <h4>Boutique Name: <b>{{$order->boutique['boutiqueName']}}</b></h4>
             <h4>Delivery Address: <b>{{$order->address['completeAddress']}}</b></h4>
             <h4>Status: 
-              @if($order['status'] == "In-Progress")
-              <span class="label label-warning">{{$order['status']}}</span>
-
-              @elseif($order['status'] == "For Alterations")
-              <span class="label label-info">{{$order['status']}}</span>
-
-              @elseif($order['status'] == "For Pickup")
-              <span class="label bg-navy">{{$order['status']}}</span>
-
-              @elseif($order['status'] == "For Delivery")
-              <span class="label bg-olive">{{$order['status']}}</span>
-
-              @elseif($order['status'] == "On Delivery")
-              <span class="label bg-maroon">{{$order['status']}}</span>
-
-              @elseif($order['status'] == "Delivered")
               <span class="label label-success">{{$order['status']}}</span>
-
-              @elseif($order['status'] == "Completed")
-              <span class="label label-success">{{$order['status']}}</span>
-              @endif
             </h4>
             <h4>Order Type: 
               @if($order['cartID'] != null)
@@ -49,6 +29,14 @@
                 <b>MTO</b>
               @elseif($order['biddingID'] != null)
                 <b>Bidding</b>
+              @endif
+            </h4>
+            <h4>Payout Status:
+              @if($order['payoutID'] != null)
+              <span class="label label-success">OK</span>
+              @else
+              <span class="label label-warning">Not Ok</span> | 
+              <a href="{{url('admin-payouts')}}">Payout here</a>
               @endif
             </h4>
             <br>
@@ -122,12 +110,13 @@
 
         </div>
         <div class="box-footer" style="text-align: right;">
-          <a class="btn btn-default" href="{{url('admin-orders')}}"> Back</a>
+          <a class="btn btn-default" href="{{url('admin-archives')}}"> Back</a>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 
 
 

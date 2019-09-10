@@ -8,7 +8,17 @@
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title"><b>RENT DETAILS</b></h3>
+          <h3 class="box-title">
+            RENT ID: {{$rent['rentID']}} | 
+            @if($rent['status'] == "Pending")
+              <span class="label label-warning">{{ $rent['status']}}</span>
+            @elseif($rent['status'] == "Approved")
+              <span class="label label-success">Approved</span>
+            @elseif($rent['status'] != "Pending" && $rent['status'] != "Approved")
+              <span class="label label-danger">Declined</span>
+            @endif
+          </h3>
+
         </div>
         <!-- /.box-header -->
 
@@ -26,7 +36,7 @@
               <h4><b>Rent ID: {{$rent['rentID']}}</b></h4>
               <h4>Customer Name: <b>{{$rent->customer['fname'].' '.$rent->customer['lname']}}</b></h4>
               <h4>Request placed at: <b>{{$rent['created_at']->format('M d, Y')}}</b></h4>
-              <h4>Address of Delivery: <b>{{$rent->order->address['completeAddress']}}</b></h4>
+              <h4>Address of Delivery: <b>{{$rent->address['completeAddress']}}</b></h4>
 
               <hr>
               <h4><b>Rent Details</b></h4>
@@ -57,28 +67,7 @@
               <h4>mName: <b>{measurement inches</b></h4>
               endforeach -->
 
-              <!-- <hr>
-              <h4>Status: 
-                @if($rent['status'] == "Pending")
-                <span class="label label-warning">{{ $rent['status']}}</span>
-                @elseif($rent['status'] == "In-Progress")
-                <span class="label label-info">{{ $rent['status']}}</span>
-                @elseif($rent['status'] == "Declined")
-                <span class="label label-danger">{{ $rent['status']}}</span>
-                @elseif($rent['status'] == "On Delivery")
-                <span class="label label-primary">{{ $rent['status']}}</span>
-                @elseif($rent['status'] == "For Pickup")
-                <span class="label bg-teal">{{$rent['status']}}</span>
-                @elseif($rent['status'] == "For Delivery")
-                <span class="label bg-olive">{{$rent['status']}}</span>
-                @elseif($rent['status'] == "On Delivery")
-                <span class="label label-navy">{{$rent['status']}}</span>
-                @elseif($rent['status'] == "On Rent")
-                <span class="label bg-maroon">{{$rent['status']}}</span><
-                @else
-                <span class="label label-default">{{ $rent['status']}}</span>
-                @endif
-              </h4> -->
+              <hr>
 
               <br><br>
             </div>
@@ -110,15 +99,19 @@
 
         <div class="box-footer" style="text-align: right;">
           <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
-          <!-- <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a> -->
-          @if($rent['orderID'] != null)
-          <!-- <a href="{{url('orders/'.$rent['orderID'])}}" class="btn btn-primary">View Order Details</a> -->
+          <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a>
+          @if($rent['status'] == "Pending")
+          <a href="" class="btn btn-danger" data-toggle="modal" data-target="#declineModal{{$rent['rentID']}}">Decline Request</a>
+          <!-- <a href="{{url('approveRent/'.$rent['id'])}}" class="btn btn-danger">Decline Request</a> -->
+          <a href="{{url('approveRent/'.$rent['rentID'])}}" class="btn btn-success">Accept Request</a>
           @endif
           </form>
         </div>
       </div>
 
       <!-- RENT ORDER DETAILS ================================================================ -->
+      @if($rent['status'] != "Pending")
+      @if($rent['orderID'] != null)
       <div class="box">
         <div class="box-header">
           <h3 class="box-title"><b>ORDER DETAILS</b></h3>
@@ -243,11 +236,13 @@
         @elseif($rent->order['paymentStatus'] == "Not Yet Paid" && $rent->order['status'] == "In-Progress")
           <input type="submit" value="For Alterations" class="btn btn-primary" disabled>
         @elseif($rent->order['status'] == "On Rent")
-          <a href="{{url('rentReturned/'.$order['rentID'])}}" class="btn btn-primary">Item Returned</a>
+          <a href="{{url('rentReturned/'.$rent->order['rentID'])}}" class="btn btn-primary">Item Returned</a>
         @endif
         </div>
 
       </div>
+      @endif
+      @endif
     </div>
   </div>
 </section>
@@ -343,27 +338,33 @@
           <div class="modal-body">
                 <!-- <p><b>Measurements Submitted:</b></p> -->
                 @if($rent['measurementID'] != null)
-                @foreach($measurements as $measurement)
-                  @foreach($measurement as $person)
-                  @if(!is_array($person)) <!-- filter if naay array si person -->
-                    @foreach($person as $name => $personData)
-                    @if(is_object($personData)) <!-- filter if naay object si personData -->
-                      <h4><b>{{strtoupper($name)}}</b></h4>
-                      <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
-                      @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
-                        <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
-                        @foreach($dataArray as $dataName => $data)
-                            <label>{{$measurementName}}: &nbsp; {{$data}}"</label><br>
+                  @if($rent['setID'] != null)
+                    @foreach($measurements as $measurement)
+                      @foreach($measurement as $person)
+                      @if(!is_array($person)) <!-- filter if naay array si person -->
+                        @foreach($person as $name => $personData)
+                        @if(is_object($personData)) <!-- filter if naay object si personData -->
+                          <h4><b>{{strtoupper($name)}}</b></h4>
+                          <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                          @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                            <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                            @foreach($dataArray as $dataName => $data)
+                                <label>{{$measurementName}}: &nbsp; {{$data}}"</label><br>
+                            @endforeach
+                          @endforeach
+                        @endif
+                        <hr>
                         @endforeach
+                      @else
+                          <label><b>Name:</b> </label><br>
+                      @endif
                       @endforeach
-                    @endif
-                    <hr>
                     @endforeach
                   @else
-                      <label><b>Name:</b> </label><br>
+                      @foreach($measurements as $measurement => $data)
+                          <label>{{$measurement}}: &nbsp; {{$data}}"</label><br>
+                      @endforeach
                   @endif
-                  @endforeach
-                @endforeach
                 @endif
           </div>
 
@@ -377,7 +378,7 @@
 
 <!-- DECLINE RENT -->
 <div class="modal fade" id="declineModal{{$rent['rentID']}}" role="dialog">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -386,7 +387,7 @@
       </div>
 
       <div class="modal-body">
-        <form action="{{url('/declinedRent')}}" method="post">
+        <form action="{{url('/declineRent')}}" method="post">
         {{csrf_field()}}
         <textarea name="reason" rows="3" cols="50" class="input form-control" placeholder="Place your reason here"></textarea>
       </div>

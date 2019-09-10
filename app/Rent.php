@@ -9,7 +9,7 @@ class Rent extends Model
 	protected $primaryKey = 'rentID';
     protected $dates = ['approved_at'];
 
-    protected $fillable = ['boutiqueID', 'customerID', 'status', 'productID', 'dateToUse', 'locationToBeUsed', 'addressOfDelivery', 'additionalNotes', 'dateToBeReturned', 'approved_at', 'completed_at', 'orderID', 'subtotal', 'deliveryFee', 'total', 'measurementID', 'paymentStatus', 'paypalOrderID', 'amountDeposit', 'amountPenalty', 'setID'];
+    protected $fillable = ['boutiqueID', 'customerID', 'status', 'productID', 'dateToUse', 'locationToBeUsed', 'addressID', 'additionalNotes', 'dateToBeReturned', 'approved_at', 'completed_at', 'orderID', 'subtotal', 'deliveryFee', 'total', 'measurementID', 'paymentStatus', 'paypalOrderID', 'amountDeposit', 'amountPenalty', 'setID'];
 
 
     public function customer()
@@ -29,7 +29,7 @@ class Rent extends Model
 
     public function address()
     {
-        return $this->hasOne('App\Address', 'id', 'addressOfDelivery');
+        return $this->hasOne('App\Address', 'id', 'addressID');
     }
 
     public function measurement()
@@ -50,5 +50,10 @@ class Rent extends Model
     public function set()
     {
         return $this->hasOne('App\Set', 'id', 'setID');
+    }
+
+    public function declineDetails()
+    {
+        return $this->hasOne('App\Declinedtransaction', 'id', 'status');
     }
 }

@@ -20,7 +20,7 @@
                         {{csrf_field()}}
 
 
-                    <div class="col-md-12 mb-3">
+                        <div class="col-md-12 mb-3">
 
                         <label >Name:</label>
                         <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}" required><br>  
@@ -109,7 +109,7 @@
                         </div>
 
                         <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
-                        <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                        <input type="text" id="productID" name="productID" value="{{$product['id']}}" hidden>
 
                         <hr>
                         <div class="row">
@@ -206,110 +206,123 @@
 
 <script type="text/javascript">
 
-var dateToday = new Date();
-var dateTomorrow = new Date();
-var dateNextMonth = new Date();
-dateTomorrow.setDate(dateToday.getDate()+1);
-dateNextMonth.setDate(dateToday.getDate()+14);
+    var dateToday = new Date();
+    var dateTomorrow = new Date();
+    var dateNextMonth = new Date();
+    dateTomorrow.setDate(dateToday.getDate()+1);
+    dateNextMonth.setDate(dateToday.getDate()+14);
+    var productID = $("#productID").val();
+    var allDates = <?php echo json_encode($datesArray); ?>;
+    console.log(allDates);
 
-$('#dateToUse').datepicker({
-    startDate: dateNextMonth
-});
+    $('#dateToUse').datepicker({
+        startDate: dateNextMonth,
+        format: 'yyyy-mm-dd',
+        datesDisabled: allDates
+    });
 
-    var mapChecker = false;
+    // $.ajax({
+    //     url: "hinimo/public/getRentDates"+productID,
+    //     success:function(data){
+    //   data.datesArray.forEach(function(measurement){
+    //   });
+    //     }
+    // });
 
-$('#addressBtn').click(function(){
-    var deliveryfee;
-    var selectAddress = $('#selectAddress').val();
-    var deliveryAddress = $('#deliveryAddress').val();
-    var lat = $("#lat").val();
-    var lng = $("#lng").val();
-    // console.log(deliveryAddress);
+        var mapChecker = false;
 
-    if(selectAddress){
-        if(selectAddress == "addAddress"){
-            deliveryAddress = $("#deliveryAddress").val();
-            // console.log(deliveryAddress);
-            $('.order-details-confirmation').removeAttr('hidden');
-        }else{
-            deliveryAddress = selectAddress;
-            console.log(deliveryAddress);
-            $('.order-details-confirmation').removeAttr('hidden');
-        }
-    }else{
-        alert("Please enter a valid address");
-    }
-});
+    $('#addressBtn').click(function(){
+        var deliveryfee;
+        var selectAddress = $('#selectAddress').val();
+        var deliveryAddress = $('#deliveryAddress').val();
+        var lat = $("#lat").val();
+        var lng = $("#lng").val();
+        // console.log(deliveryAddress);
 
-$('#selectAddress').on('change', function(){
-
-    if($(this).val() == "addAddress"){
-        $('#addAddressDIV').removeAttr('hidden');
-        $('.order-details-confirmation').attr('hidden', "hidden");
-        // console.log($(this).val());
-
-
-        if(!mapChecker){
-            // MAPS ==================================================================================
-            var mylat = '10.2892368502206';
-            var mylong = '123.86207342147829';
-            var myzoom = '12';
-
-
-            var map = L.map('map').setView([mylat, mylong], myzoom);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              maxZoom: 18,
-              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-
-            mapChecker = true;
-
-
-            var geocoder = L.Control.Geocoder.nominatim();
-            if (URLSearchParams && location.search) {
-              // parse /?geocoder=nominatim from URL
-              var params = new URLSearchParams(location.search);
-              var geocoderString = params.get('geocoder');
-              if (geocoderString && L.Control.Geocoder[geocoderString]) {
-                console.log('Using geocoder', geocoderString);
-                geocoder = L.Control.Geocoder[geocoderString]();
-              } else if (geocoderString) {
-                console.warn('Unsupported geocoder', geocoderString);
-              }
+        if(selectAddress){
+            if(selectAddress == "addAddress"){
+                deliveryAddress = $("#deliveryAddress").val();
+                // console.log(deliveryAddress);
+                $('.order-details-confirmation').removeAttr('hidden');
+            }else{
+                deliveryAddress = selectAddress;
+                console.log(deliveryAddress);
+                $('.order-details-confirmation').removeAttr('hidden');
             }
-
-
-            //SET LOCATION W/ MARKER ===========================================================================
-            var marker = L.marker([0,0]).addTo(map);
-            map.on('click', function (e) {
-              geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
-                var r = results[0];
-                if(r) {
-                  // marker.setLatLng(e.latlng);
-                  $("#deliveryAddress").val(r.name);
-                  $("#lat").val(r.center.lat);
-                  $("#lng").val(r.center.lng);
-                }
-              });
-                  marker.setLatLng(e.latlng);
-
-            });
-            // ==================================================================================================//
-
-            var search = BootstrapGeocoder.search({
-              inputTag: 'deliveryAddress',
-              // placeholder: 'Search for places or addresses',
-              useMapBounds: false
-            }).addTo(map);
+        }else{
+            alert("Please enter a valid address");
         }
-        
-    }else{
-        $('#addAddressDIV').attr('hidden', "hidden");
-    }
+    });
+
+    $('#selectAddress').on('change', function(){
+
+        if($(this).val() == "addAddress"){
+            $('#addAddressDIV').removeAttr('hidden');
+            $('.order-details-confirmation').attr('hidden', "hidden");
+            // console.log($(this).val());
+
+
+            if(!mapChecker){
+                // MAPS ==================================================================================
+                var mylat = '10.2892368502206';
+                var mylong = '123.86207342147829';
+                var myzoom = '12';
+
+
+                var map = L.map('map').setView([mylat, mylong], myzoom);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  maxZoom: 18,
+                  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                mapChecker = true;
+
+
+                var geocoder = L.Control.Geocoder.nominatim();
+                if (URLSearchParams && location.search) {
+                  // parse /?geocoder=nominatim from URL
+                  var params = new URLSearchParams(location.search);
+                  var geocoderString = params.get('geocoder');
+                  if (geocoderString && L.Control.Geocoder[geocoderString]) {
+                    console.log('Using geocoder', geocoderString);
+                    geocoder = L.Control.Geocoder[geocoderString]();
+                  } else if (geocoderString) {
+                    console.warn('Unsupported geocoder', geocoderString);
+                  }
+                }
+
+
+                //SET LOCATION W/ MARKER ===========================================================================
+                var marker = L.marker([0,0]).addTo(map);
+                map.on('click', function (e) {
+                  geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+                    var r = results[0];
+                    if(r) {
+                      // marker.setLatLng(e.latlng);
+                      $("#deliveryAddress").val(r.name);
+                      $("#lat").val(r.center.lat);
+                      $("#lng").val(r.center.lng);
+                    }
+                  });
+                      marker.setLatLng(e.latlng);
+
+                });
+                // ==================================================================================================//
+
+                var search = BootstrapGeocoder.search({
+                  inputTag: 'deliveryAddress',
+                  // placeholder: 'Search for places or addresses',
+                  useMapBounds: false
+                }).addTo(map);
+            }
+            
+        }else{
+            $('#addAddressDIV').attr('hidden', "hidden");
+        }
 
 
 
-});
+    });
 
 
 

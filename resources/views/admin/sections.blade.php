@@ -189,7 +189,7 @@
 
     <li class="payouts">
       <a href="{{url('admin-payouts')}}">
-        <i class="fa fa-gear"></i>
+        <i class="fa fa-money"></i>
         <span>Payouts</span>
         <span class="pull-right-container">
           <!-- <i class="fa fa-angle-left pull-right"></i> -->

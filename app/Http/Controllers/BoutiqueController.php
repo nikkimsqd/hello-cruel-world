@@ -47,6 +47,7 @@ use App\Notifications\NotifyForAlterations;
 use App\Notifications\NewBid;
 use App\Notifications\NotifyCourierForPickup;
 use App\Notifications\MeasurementRequests;
+use App\Notifications\RentDeclined;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -713,7 +714,7 @@ class BoutiqueController extends Controller
 	public function getRentInfo($rentID)
 	{
 		if(Auth()->user()->roles == "boutique") {
-			$page_title = "Rent Information";
+			$page_title = "Rent Details";
 	    	$id = Auth()->user()->id;
 	    	$boutique = Boutique::where('userID', $id)->first();
 
@@ -733,23 +734,20 @@ class BoutiqueController extends Controller
 		}
 	}
 
-	public function approveRent(Request $request)
+	public function approveRent($rentID)
 	{
 		$id = Auth()->user()->id;
     	$boutique = Boutique::where('userID', $id)->first();
 		$currentDate = date('Y-m-d');
-		$rentID = $request->input('rentID');
-		$customerID = $request->input('customerID');
-		$customer = User::where('id', $customerID)->first();
-		$rent = rent::where('rentID', $rentID)->first();
+		$rent = Rent::where('rentID', $rentID)->first();
+		$customer = User::where('id', $rent['customerID'])->first();
+		$order = Order::where('rentID', $rentID)->first();
 
-		$product = Product::where('id', $rent['productID'])->update([
-			'productStatus' => "Not Available"
-		]);
 
-		Rent::where('rentID', $rentID)->update([
+		$rent->update([
+            'orderID' => $order['id'],
 			'approved_at' => $currentDate,
-			'status' => "In-Progress"
+			'status' => "Approved"
 		]);
     	
 
@@ -782,20 +780,27 @@ class BoutiqueController extends Controller
 	// 	return redirect('rents/'.$rentID);
 	// }
 
-	// public function declineRent(Request $request)
-	// {
-	// 	$declinedrent = DeclinedRent::create([
-	// 		'rentID' => $request->input('rentID'),
-	// 		'reason' => $request->input('reason')
-	// 	]);
-	// 	// dd($declinedrent);
+	public function declineRent(Request $request)
+	{
+		$rentID = $request->input('rentID');
+		$rent = Rent::where('id', $rentID)->first();
+		$dt = Declinedtransaction::create([
+			'type' => 'rent',
+			'typeID' => $rentID,
+			'reason' => $request->input('reason')
+		]);
+		// dd($declinedrent);
 
-	// 	Rent::where('rentID', $request->input('rentID'))->update([
-	// 		'status' => "Declined"
-	// 	]);
+		Rent::where('rentID', $rentID)->update([
+			'status' => $dt['id']
+		]);
 
-	// 	return redirect('/rents');
-	// }
+
+    	$customer = User::where('id', $rent->customer['id'])->first();
+        $customer->notify(new RentDeclined($rent));
+
+		return redirect('/rents/'.$rentID);
+	}
 
 	// public function makeOrderforRent(Request $request)
 	// {
@@ -987,19 +992,19 @@ class BoutiqueController extends Controller
         return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests'));
     }
 
-    public function halfapproveMto($mtoID)
-    {
-		$mto = Mto::where('id', $mtoID)->first();
+  //   public function halfapproveMto($mtoID)
+  //   {
+		// $mto = Mto::where('id', $mtoID)->first();
 
-		Mto::where('id', $mtoID)->update([
-			'status' => 'In-Transaction'
-		]);
+		// Mto::where('id', $mtoID)->update([
+		// 	'status' => 'In-Transaction'
+		// ]);
 
-		$customer = $mto->customer;
-        $customer->notify(new ContactCustomer($mto['id'], $mto->boutique['boutiqueName']));
+		// $customer = $mto->customer;
+  //       $customer->notify(new ContactCustomer($mto['id'], $mto->boutique['boutiqueName']));
 
-		return redirect('/made-to-orders/'.$mto['id']);    	
-    }
+		// return redirect('/made-to-orders/'.$mto['id']);    	
+  //   }
 
     public function addPrice(Request $request)
     {
@@ -1036,15 +1041,15 @@ class BoutiqueController extends Controller
     	return redirect('/made-to-orders/'.$mtoID);
     }
 
-    public function acceptMto($mtoID)
-    {
-    	$mto = Mto::where('id', $mtoID)->first();
-    	$mto->update([
-    		'status' => 'In-Progress'
-    	]);
+    // public function acceptMto($mtoID)
+    // {
+    // 	$mto = Mto::where('id', $mtoID)->first();
+    // 	$mto->update([
+    // 		'status' => 'In-Progress'
+    // 	]);
 
-    	return redirect('/made-to-orders/'.$mto['id']);
-    }
+    // 	return redirect('/made-to-orders/'.$mto['id']);
+    // }
 
     public function declineMto(Request $request)
     {

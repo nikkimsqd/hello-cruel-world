@@ -558,4 +558,16 @@ class AdminController extends Controller
 
     	return redirect('admin-payouts');
     }
+
+    public function viewPayout($orderID)
+    {
+		$page_title = "View Payout";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+    	$order = Order::where('id', $orderID)->first();
+
+    	return view('admin/viewPayout', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order'));
+    }
 }

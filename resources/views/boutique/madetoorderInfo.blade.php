@@ -65,9 +65,11 @@
 
               @endif
 
-              @if($mto['fabChoice'] == "provide" && $mto['orderID'] == null)
+              @if($mto['fabChoice'] == "provide" && $mto['orderID'] == null && $mto['status'] == "Active")
               <hr>
-                <h4>Your price: <b>₱{{$mto['price']}}</b></h4>
+                @if($mto['price'] != null)
+                  <h4>Your price: <b>₱{{$mto['price']}}</b></h4>
+                @endif
 
               <form action="{{url('/addPrice')}}" method="post">
                 {{csrf_field()}}
