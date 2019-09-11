@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mto extends Model
 {
-    protected $fillable = ['userID', 'boutiqueID', 'notes', 'deadlineOfProduct', 'measurementID', 'fabChoice', 'quantity', 'numOfPerson', 'price', 'orderID', 'status'];
+    protected $fillable = ['userID', 'boutiqueID', 'notes', 'deadlineOfProduct', 'measurementID', 'fabChoice', 'quantity', 'numOfPerson', 'price', 'orderID', 'status', 'nameOfWearers'];
 
     public function customer()
     {

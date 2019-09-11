@@ -986,6 +986,12 @@ class BoutiqueController extends Controller
         $fabs = $fabrics->groupBy('name');
 
 
+		// $nameOfWearers = json_decode($mto['nameOfWearers']); 
+		// // $namesCounter = count($nameOfWearers);
+		// // dd(gettype($nameOfWearers));
+		// dd(sizeof($nameOfWearers));
+
+
 		$categories = Category::all();
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mto)->get();
 

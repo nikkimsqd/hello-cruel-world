@@ -28,6 +28,22 @@
             <h4>Customer's notes/instructions:</h4>
             <h4><b>{{ $bidding['notes'] }}</b></h4>
             <h4>Quantity: <b>{{ $bidding['quantity'] }} pcs.</b></h4>
+              <h4>Number of wearers: 
+                @if($bidding['numOfPerson'] == "equals")
+                  <b>{{$bidding['quantity']}}</b>
+                @else
+                  <?php 
+                    $nameOfWearers = json_decode($bidding['nameOfWearers']); 
+                    // $namesCounter = count($nameOfWearers);
+                    $counter = 0;
+                  ?>
+                  {{$counter}}<br>
+                  @foreach($nameOfWearers as $nameOfWearer => $value)
+                  <?php $counter +=1; ?>
+                  <b>{{$nameOfWearer}}: {{$value}}pc/s.</b><br>
+                  @endforeach
+                @endif
+              </h4>
             <h4>Maximum Price Limit: <b>₱{{ $bidding['quotationPrice'] }}</b></h4>
             @if($bidding['fabChoice'] == "askboutique")
             <h4><i><b>Customer wants you to provide the fabric</b></i></h4>

@@ -598,7 +598,7 @@ class CustomerController extends Controller
                 $addDaysBefore = date('Y-m-d', strtotime($dateNew.'- 1 days'));
                 $dateNew = $addDaysBefore;
                 array_push($datesArray, $addDaysBefore);
-            } //26New
+            }
 
             $dateNew = $rentSchedule['dateToUse'];
             for ($i=0; $i < $daysBefore; $i++) { 
@@ -791,13 +791,36 @@ class CustomerController extends Controller
         $time = time();
         // dd(date("Y-m-d",$time));
         // dd($time);
+        $wearers = null;
+
+        //changes nga wa pajuy sure kay wa nahuman jud------------------------------------------------------------------------
+        if($request->input('nameOfWearers') != null){
+            $wearersArray = array();
+
+            $nameOfWearers = $request->input('nameOfWearers');
+            $pcsOfWearers = $request->input('pcsOfWearers');
+     
+            $counter = 0;
+            foreach($nameOfWearers as $nameOfWearer){
+                $wearersArray[$nameOfWearer] = $pcsOfWearers[$counter];
+
+                $counter++;
+            }
+
+            $wearers = json_encode($wearersArray);
+
+        }
+        //---------------------------------------------------------------------------------
+            // dd($wearers);
 
         $bidding = Bidding::create([
             'userID' => $userID,
             'quotationPrice' => $request->input('quotationPrice'), 
             'endDate' => $request->input('endDate'), 
             'deadlineOfProduct' => $deadlineOfProduct,
-            'quantity' => $request->input('quantity'), 
+            'quantity' => $request->input('quantity'),
+            'numOfPerson' => $request->input('numOfPerson'),
+            'nameOfWearers' => $wearers,
             'fabChoice' => $request->input('fabChoice'), 
             'notes' => $request->input('notes'), 
             'status' => "Open"
@@ -1245,29 +1268,27 @@ class CustomerController extends Controller
         $deadlineOfProduct = date('Y-m-d',strtotime($request->input('deadlineOfProduct')));
         $userID = Auth()->user()->id;
         $boutiqueID = $request->input('boutiqueID');
+        $wearers = null;
 
         //changes nga wa pajuy sure kay wa nahuman jud------------------------------------------------------------------------
-        $names = array();
-        $data = array();
+        if($request->input('nameOfWearers') != null){
+            $wearersArray = array();
 
-        $nameOfWearers = $request->input('nameOfWearers');
-        foreach($nameOfWearers as $nameOfWearer){
-            array_push($names, $nameOfWearer);
-
+            $nameOfWearers = $request->input('nameOfWearers');
             $pcsOfWearers = $request->input('pcsOfWearers');
-            foreach($pcsOfWearers as $pcsOfWearer){
-                $wearers = array();
-                array_push($wearers, $pcsOfWearer);
+     
+            $counter = 0;
+            foreach($nameOfWearers as $nameOfWearer){
+                $wearersArray[$nameOfWearer] = $pcsOfWearers[$counter];
+
+                $counter++;
             }
+
+            $wearers = json_encode($wearersArray);
+
         }
-
-        // array_push($wearers, $pcsOfWearers);
-        // array_push($wearers, $pcsOfWearers);
-        // array_push($data[$nameOfWearers], $wearers);
-
-        array_push($data, $data);
-        dd($wearers);
         //---------------------------------------------------------------------------------
+            // dd($wearers);
 
         $mto = Mto::create([
             'userID' => $userID,
@@ -1276,7 +1297,7 @@ class CustomerController extends Controller
             'notes' => $request->input('notes'),
             'quantity' => $request->input('quantity'),
             'numOfPerson' => $request->input('numOfPerson'),
-            'nameOfWearers' => $request->input('numOfPerson'),
+            'nameOfWearers' => $wearers,
             'fabChoice' => $request->input('fabChoice'),
             'orderID' => $request->input('orderID'),
             'status' => "Active"

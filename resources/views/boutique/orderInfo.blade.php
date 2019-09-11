@@ -54,7 +54,7 @@
               <h4>Date Item will be used: <b>{{date('M d, Y',strtotime($order->rent['dateToUse']))}}</b></h4>
               @elseif($order['mtoID'] != null)
                 <b>MADE-TO-ORDER</b>
-                <h4>Date of item's use: <b>{{date('M d, Y',strtotime($order->mto['dateOfUse']))}}</b></h4>
+                <h4>Date of item's use: <b>{{date('M d, Y',strtotime($order->mto['deadlineOfProduct']))}}</b></h4>
               @elseif($order['biddingID'] != null)
                 <b>BIDDING</b>
                 <h4>Deadline of Product: <b>{{ date('M d, Y',strtotime($order->bidding['deadlineOfProduct'])) }}</b></h4>

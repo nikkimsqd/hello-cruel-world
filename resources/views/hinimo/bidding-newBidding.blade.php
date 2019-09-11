@@ -70,15 +70,32 @@
 
                                     <div class="col-md-12 mb-3">
                                         <label>Enter Quantity</label>
-                                        <input name="quantity" type="number" class="form-control" required>
+                                        <input id="quantity" name="quantity" type="number" class="form-control" required>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label> Select number of wearers</label><br>
+                                        <input type="radio" name="numOfPerson" id="equals" value="equals" class="numOfPerson" checked>
+                                        <label for="equals">Number of wearers is <u>equals</u> to number of quantity</label><br>
+                                        <input type="radio" name="numOfPerson" id="notEquals" value="notEquals" class="numOfPerson">
+                                        <label for="notEquals">Number of wearers is <u>not equals</u> to number of quantity</label><br>
+
+                                        <div class="col-md-8" id="numOfWearersDIV" hidden>
+                                            <label>Enter number of wearers</label><br>
+                                            <input id="numOfWearers" name="numOfWearers" type="number" class="form-control"><br>
+                                        </div>
+
+                                        <div class="col-md-12" id="nameOfWearersDIV">
+                                        </div>
+
                                     </div>
 
                                     <div class="col-md-12 mb-3">
                                         <label>Fabric Choice</label><br>
 
-                                        <input id="provide" name="fabChoice" type="radio" value="provide">
+                                        <input id="provide" name="fabChoice" type="radio" value="provide" class="fabChoice">
                                         <label for="provide">Provide Fabric to boutique</label><br>
-                                        <input id="askboutique" name="fabChoice" type="radio" value="askboutique">
+                                        <input id="askboutique" name="fabChoice" type="radio" value="askboutique" class="fabChoice">
                                         <label for="askboutique">Let boutique provide the fabric</label>
                                     </div>
 
@@ -115,33 +132,33 @@
 
 <style type="text/css">
 
-label{
-    font-size: 13px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
+    label{
+        font-size: 13px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
 
-.tags label {
-  display: inline-block;
-  width: auto;
-  padding: 10px;
-  border: solid 1px #ccc;
-  transition: all 0.3s;
-  background-color: #e3e2e2;
-  border-radius: 5px;
-}
+    .tags label {
+      display: inline-block;
+      width: auto;
+      padding: 10px;
+      border: solid 1px #ccc;
+      transition: all 0.3s;
+      background-color: #e3e2e2;
+      border-radius: 5px;
+    }
 
-.tags input[type="checkbox"] {
-  display: none;
-}
+    .tags input[type="checkbox"] {
+      display: none;
+    }
 
-.tags input[type="checkbox"]:checked + label {
-  border: solid 1px #e7e7e7;
-  background-color: #ef1717;
-  color: #fff;
-}
+    .tags input[type="checkbox"]:checked + label {
+      border: solid 1px #e7e7e7;
+      background-color: #ef1717;
+      color: #fff;
+    }
 
-.datepicker-dropdown{position: absolute; top: 935px; left: 281.5px; z-index: 11; display: block;}
+    .datepicker-dropdown{position: absolute; top: 935px; left: 281.5px; z-index: 11; display: block;}
 
 </style>
 @endsection
@@ -163,6 +180,48 @@ dateNextMonth.setDate(dateToday.getDate()+30);
 
 $('#deadlineOfProduct').datepicker({
     startDate: dateNextMonth
+});
+
+$('.numOfPerson').on('change', function(){
+    if($(this).val() == "notEquals"){
+        $('#numOfWearersDIV').removeAttr('hidden');
+        $('#nameOfWearersDIV').removeAttr('hidden');
+    }else{
+        $('#numOfWearersDIV').attr('hidden', 'hidden');
+        $('#nameOfWearersDIV').attr('hidden', 'hidden');
+    }
+});
+
+$('#numOfWearers').on('keyup', function(){
+    var num = 0;
+    var num =  parseInt($(this).val());
+    // console.log(num);
+
+    $('#nameOfWearersDIV').empty();
+    for(var counter=1; counter <= num; counter++){
+        $('#nameOfWearersDIV').append('<br><label>Person '+counter+': </label> <input type="text" name="nameOfWearers[]" class="form-control" style="width: 200px; display: inline;" placeholder="Name">&nbsp; = &nbsp; '+
+            '<input id="pcsOfWearers'+counter+'" type="text" name="pcsOfWearers[]" class="form-control pcsOfWearers" style="width: 100px; display: inline;" placeholder="Pcs"><br>');
+    }
+});
+
+$('.fabChoice').on('change', function(){
+    var quantity =  parseInt($('#quantity').val());
+    var num =  parseInt($('#numOfWearers').val());
+    var counter = 1;
+    // var pcsOfWearersArray = [];
+    var pcsOfWearers = 0;
+
+    for(var counter=1; counter <= num; counter++){
+        var pcsOfWearersInput = parseInt($('#nameOfWearersDIV').find('#pcsOfWearers'+counter).val());
+        pcsOfWearers += pcsOfWearersInput;
+    }
+
+    if(pcsOfWearers > quantity){
+        alert('Oops! You exceeded!');
+    }else if(pcsOfWearers < quantity){
+        alert('Oops! You lack!');
+    }
+
 });
 
 $('#gender-select').on('change', function(){

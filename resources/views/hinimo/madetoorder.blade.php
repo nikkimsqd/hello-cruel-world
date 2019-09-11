@@ -41,40 +41,32 @@
 
                             <div class="col-md-8 mb-3">
                                 <label>Quantity</label><br>
-                                <input name="quantity" type="number" class="form-control" required style="width: 100px; display: inline;"> pcs.
+                                <input id="quantity" name="quantity" type="number" class="form-control" required style="width: 100px; display: inline;"> pcs.
                             </div>
 
                             <div class="col-md-8 mb-3">
                                 <label> Select number of wearers</label><br>
-                                <input type="radio" name="numOfPerson" id="equals" value="equals" class="numOfPerson">
+                                <input type="radio" name="numOfPerson" id="equals" value="equals" class="numOfPerson" checked>
                                 <label for="equals">Number of wearers is <u>equals</u> to number of quantity</label><br>
                                 <input type="radio" name="numOfPerson" id="notEquals" value="notEquals" class="numOfPerson">
                                 <label for="notEquals">Number of wearers is <u>not equals</u> to number of quantity</label><br>
 
                                 <div class="col-md-8" id="numOfWearersDIV" hidden>
                                     <label>Enter number of wearers</label><br>
-                                    <input id="numOfWearers" name="quantity" type="number" class="form-control"><br>
+                                    <input id="numOfWearers" name="numOfWearers" type="number" class="form-control"><br>
                                 </div>
 
                                 <div class="col-md-12" id="nameOfWearersDIV">
-                                    <!-- <label>Person 1:</label>
-                                    <input type="text" name="nameOfWearers[]" class="form-control" style="width: 200px; display: inline;" placeholder="Name">&nbsp; = &nbsp; <input type="text" name="nameOfWearers[]" class="form-control" style="width: 100px; display: inline;" placeholder="Pcs"><br> -->
                                 </div>
 
                             </div>
-                            <!-- 
-                            <div class="col-md-8 mb-3">
-                                <label>Number of wearers</label><br>
-                                <input name="numOfPerson" type="number" class="form-control" required style="width: 100px; display: inline;"> person
-                            </div> -->
 
                             <div class="col-md-12 mb-3">
                                 <label>Fabric Choice</label><br>
-                                &nbsp;&nbsp;&nbsp;
-                                <input id="provide" name="fabChoice" type="checkbox" value="provide">
+
+                                <input id="provide" name="fabChoice" type="radio" value="provide" class="fabChoice">
                                 <label for="provide">Provide Fabric to boutique</label><br>
-                                &nbsp;&nbsp;&nbsp;
-                                <input id="askboutique" name="fabChoice" type="checkbox" value="askboutique">
+                                <input id="askboutique" name="fabChoice" type="radio" value="askboutique" class="fabChoice">
                                 <label for="askboutique">Let boutique provide the fabric</label>
                             </div>
 
@@ -147,17 +139,30 @@ $('#numOfWearers').on('keyup', function(){
 
     $('#nameOfWearersDIV').empty();
     for(var counter=1; counter <= num; counter++){
-        $('#nameOfWearersDIV').append('<br><label>Person '+counter+': </label> <input id="name-input" type="text" name="nameOfWearers[]" class="form-control" style="width: 200px; display: inline;" placeholder="Name">&nbsp; = &nbsp; <input type="text" name="pcsOfWearers[]" class="form-control" style="width: 100px; display: inline;" placeholder="Pcs"><br>');
+        $('#nameOfWearersDIV').append('<br><label>Person '+counter+': </label> <input type="text" name="nameOfWearers[]" class="form-control" style="width: 200px; display: inline;" placeholder="Name">&nbsp; = &nbsp; '+
+            '<input id="pcsOfWearers'+counter+'" type="text" name="pcsOfWearers[]" class="form-control pcsOfWearers" style="width: 100px; display: inline;" placeholder="Pcs"><br>');
     }
 });
 
-// $('#name-input').on('keyup', function(){
-//     var name = $(this).val();
-//     console.log(name);
-//     console.log("name");
-//         $('#name-input').append('<input type="text" name="nameOfWearers[]" class="form-control" style="width: 100px; display: inline;" placeholder="Pcs"><br>');
+$('.fabChoice').on('change', function(){
+    var quantity =  parseInt($('#quantity').val());
+    var num =  parseInt($('#numOfWearers').val());
+    var counter = 1;
+    // var pcsOfWearersArray = [];
+    var pcsOfWearers = 0;
 
-// });
+    for(var counter=1; counter <= num; counter++){
+        var pcsOfWearersInput = parseInt($('#nameOfWearersDIV').find('#pcsOfWearers'+counter).val());
+        pcsOfWearers += pcsOfWearersInput;
+    }
+
+    if(pcsOfWearers > quantity){
+        alert('Oops! You exceeded!');
+    }else if(pcsOfWearers < quantity){
+        alert('Oops! You lack!');
+    }
+
+});
 
 $('.fabric-radio').on('change', function() {
     if($(this).val() == "choose"){

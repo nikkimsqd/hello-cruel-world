@@ -240,83 +240,6 @@
                         @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
 
 
-                        @if($mto['orderID'] != null) <!-- IF WALA PAY ORDER ANG MTO -->
-                        <div class="col-12 col-md-11" id="measurements">
-                            <div class="regular-page-content-wrapper section-padding-80">
-                                <div class="regular-page-text">
-                                @if($mto['measurementID'] == null)
-                                    <form action="{{url('submitMeasurementforMto')}}" method="post">
-                                        {{csrf_field()}}
-                                        <h4>Submit Measurements</h4><br>
-
-                                        <div class="row"> 
-                                            <div class="col-md-8">
-                                                @if(count($mrequests) > 0)
-                                                @for($counter = 1; $mto['numOfPerson'] >= $counter; $counter++)
-                                                <h5>Enter name for Person {{$counter}}</h5>
-                                                <input type="text" name="person[{{$counter}}]" class="form-control"><br>
-
-                                                <div class="row"> 
-                                                    <div class="col-md-8">
-                                                        @foreach($mrequests as $mrequest)
-                                                            <?php $measurementNames = json_decode($mrequest->measurements); ?>
-
-                                                            <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
-                                                            @foreach($measurementNames as $measurementName)
-
-                                                                <label>{{$measurementName}}</label>
-                                                                <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
-
-                                                            @endforeach<br>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                                @endfor
-                                                <input type="submit" name="btn_submit" value="Submit">
-                                                @else
-                                                <p style="color: #0315ff;"><i>Please wait for boutique's request...</i></p>
-
-                                                @endif
-                                            </div>
-                                        </div>
-
-
-                                        <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
-                                    </form>
-                                @else
-                                    <h4>Measurements Submitted</h4><br>
-                                <div class="row">
-                                    <div class="col-md-12" style="column-count: 2">
-                                    @foreach($measurements as $measurement)
-                                        @foreach($measurement as $person)
-                                        @if(is_array($person)) <!-- filter if naay array si person -->
-                                            @foreach($person as $personData)
-                                            @if(is_object($personData)) <!-- filter if naay object si personData -->
-                                                <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
-                                                @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
-                                                    <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
-                                                    <label><b>{{strtoupper($measurementName)}}</b></label><br>
-                                                    @foreach($dataArray as $dataName => $data)
-                                                        <label>{{$dataName}}: &nbsp; {{$data}}"</label><br>
-                                                    @endforeach
-                                                @endforeach
-                                            @endif
-                                            @endforeach
-                                            <hr>
-                                        @else
-                                            <label><b>Name:</b> {{strtoupper($person)}}</label><br>
-                                        @endif
-                                        @endforeach
-                                    @endforeach
-                                    </div>
-                                </div>
-
-                                @endif
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-
 
                             </div>
                         </div>
@@ -324,6 +247,132 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-12">
+                <section class="single_product_details_area d-flex align-items-center">
+                    <!-- Single Product Thumb -->
+                    <div class="single_product_thumb clearfix">
+                        <!-- <div class="product_thumbnail_slides owl-carousel"> -->
+                            <img src="{{ asset('/uploads').$mto->productFile['filename'] }}" alt="">
+                        <!-- </div> -->
+                    </div>
+
+                    <?php
+                    if($mto->measurement != null){
+                        $measurements = json_decode($mto->measurement->data);
+                    }
+                    ?>
+
+                    <!-- Single Product Description -->
+                    <div class="single_product_desc clearfix">
+                        <p><b>Made-to-order ID:</b> &nbsp; {{$mto['id']}}</p>
+                        <!-- <h4>Maximum Price Limit: ₱{{ $mto['maxPriceLimit'] }}</h4> -->
+                        <p class="product-price"></p>
+                        <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($mto['deadlineOfProduct'])) }}</p>
+                        <hr>
+                        <p><b>Quantity:</b> &nbsp; {{$mto['quantity']}}pcs.</p>
+                        <p><b>Number of wearers:</b> &nbsp; {{$mto['nameOfWearers']}}</p>
+                        <p><b>Fabric:</b> &nbsp; 
+                            @if($mto['fabChoice'] == "provide")
+                                <i>[You chose to provide boutique the fabric]</i>
+                            @elseif($mto['fabChoice'] == "askboutique")
+                                @if($mto['orderID'] != null)
+                                    {{$mto['fabSuggestion']}}
+                                @else
+                                    <i>[You chose to let boutique provide the fabric]</i>
+                                @endif
+                            @endif
+                        </p>
+                        <p><b>Your notes/instructions:</b></p>
+                        <p class="">{{ $mto['notes'] }}</p>
+                        <hr>
+                        <p><b>Boutique Name:</b> &nbsp; {{$mto->boutique['boutiqueName']}}</p>
+                        @if($mto->bid['fabricName'] != null)
+                        <p><b>Boutique's Fabric Choice:</b> &nbsp; {{$mto->bid['fabricName']}}</p>
+                        @endif
+                        <p class="product-price"><b>Price:</b> &nbsp; ₱{{$mto['price']}}</p>
+                    </div>
+                </section><br><br><hr>
+            </div>
+
+
+
+            @if($mto['orderID'] != null) <!-- IF WALA PAY ORDER ANG MTO -->
+            <div class="col-12 col-md-11" id="measurements">
+                <div class="regular-page-content-wrapper section-padding-80">
+                    <div class="regular-page-text">
+                    @if($mto['measurementID'] == null)
+                        <form action="{{url('submitMeasurementforMto')}}" method="post">
+                            {{csrf_field()}}
+                            <h4>Submit Measurements</h4><br>
+
+                            <div class="row"> 
+                                <div class="col-md-8">
+                                    @if(count($mrequests) > 0)
+                                    @for($counter = 1; $mto['numOfPerson'] >= $counter; $counter++)
+                                    <h5>Enter name for Person {{$counter}}</h5>
+                                    <input type="text" name="person[{{$counter}}]" class="form-control"><br>
+
+                                    <div class="row"> 
+                                        <div class="col-md-8">
+                                            @foreach($mrequests as $mrequest)
+                                                <?php $measurementNames = json_decode($mrequest->measurements); ?>
+
+                                                <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                @foreach($measurementNames as $measurementName)
+
+                                                    <label>{{$measurementName}}</label>
+                                                    <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                @endforeach<br>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endfor
+                                    <input type="submit" name="btn_submit" value="Submit">
+                                    @else
+                                    <p style="color: #0315ff;"><i>Please wait for boutique's request. You'll get notified when the boutique has assigned measurements for your item&hellip;</i></p>
+
+                                    @endif
+                                </div>
+                            </div>
+
+
+                            <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
+                        </form>
+                    @else
+                        <h4>Measurements Submitted</h4><br>
+                    <div class="row">
+                        <div class="col-md-12" style="column-count: 2">
+                        @foreach($measurements as $measurement)
+                            @foreach($measurement as $person)
+                            @if(is_array($person)) <!-- filter if naay array si person -->
+                                @foreach($person as $personData)
+                                @if(is_object($personData)) <!-- filter if naay object si personData -->
+                                    <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                                    @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                        <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                        <label><b>{{strtoupper($measurementName)}}</b></label><br>
+                                        @foreach($dataArray as $dataName => $data)
+                                            <label>{{$dataName}}: &nbsp; {{$data}}"</label><br>
+                                        @endforeach
+                                    @endforeach
+                                @endif
+                                @endforeach
+                                <hr>
+                            @else
+                                <label><b>Name:</b> {{strtoupper($person)}}</label><br>
+                            @endif
+                            @endforeach
+                        @endforeach
+                        </div>
+                    </div>
+
+                    @endif
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -335,6 +384,8 @@
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
     .mb-10{margin-bottom: 10px;}
     .payment-heading{background-color: aliceblue;}
+    .single_product_details_area .single_product_desc .product-price{font-size: 18px ;}
+    p{margin-bottom: 0;}
 </style>
 
 <!-- </div> -->
