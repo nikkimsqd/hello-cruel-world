@@ -1847,26 +1847,27 @@ class CustomerController extends Controller
         print_r(json_encode($response->result, JSON_PRETTY_PRINT));
     }
 
-    public function mixnmatch($boutiqueID)
+    public function mixnmatch()
     {
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $boutiques = Boutique::all();
-        $boutique = Boutique::where('id', $boutiqueID)->first();
-        $products = Product::where('boutiqueID', $boutique['id'])->get();
+        $boutique = Boutique::all();
+        $products = Product::all();
+        $productsCount = $products->count();
         $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
         if($cart != null){
             $cartCount = $cart->items->count();
         }else{
             $cartCount = 0;
         }
-        $page_title = "Mix & Match by ".$boutique['boutiqueName'];
+        $page_title = "Mix & Match by ";
 
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
         // dd($products);
-        return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount'));
+        return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount', 'productsCount'));
     }
 
     public function getMProduct($productID)

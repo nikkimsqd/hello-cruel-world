@@ -180,7 +180,7 @@
 
 <!--               <label for="deliveryAddress">Input Address <span>*</span></label>
               <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus> -->
-              <div class="col-12 mb-3" id="map"></div>
+              <div class="col-12 mb-3" id="maps"></div>
               <input type="text" name="lat" id="lat" value="{{$order->address['lat']}}" hidden>
               <input type="text" name="lng" id="lng" value="{{$order->address['lng']}}" hidden>
               <input type="text" name="customerName" id="customerName" value="{{$order->address['contactName']}}" hidden>
@@ -221,7 +221,7 @@
   .content-wrapper{min-height: 580px !important; position: relative;}
   .align-right{text-align: right;}
   .box-footer{z-index: 5000;}
-  #map {
+  #maps {
     width: 100%;
     height: 500px;
     background-color: grey;
@@ -263,7 +263,7 @@ var boutiqueLng = $("#boutiqueLng").val();
 var boutiqueName = $("#boutiqueName").val();
 var myzoom = '12';
 
-var map = L.map('map').setView([mylat, mylng], myzoom);
+var map = L.map('maps').setView([mylat, mylng], myzoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

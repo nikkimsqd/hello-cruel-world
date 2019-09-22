@@ -288,6 +288,7 @@ Route::post('/paypal-transaction-complete', 'CustomerController@paypalTransactio
 
 //MIX&MATCH
 Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
+Route::get('mixnmatch', 'CustomerController@mixnmatch');
 Route::get('/getMProduct/{productID}', 'CustomerController@getMProduct');
 Route::post('/submitMixnmatch', 'CustomerController@submitMixnmatch');
 Route::get('/addmnmtoCart/{top}/{bottom}', 'CustomerController@addmnmtoCart');
