@@ -26,6 +26,7 @@ use App\Measurementtype;
 use App\Categorymeasurement;
 use App\Sharepercentage;
 use App\Payout;
+use App\Event;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
@@ -569,5 +570,45 @@ class AdminController extends Controller
     	$order = Order::where('id', $orderID)->first();
 
     	return view('admin/viewPayout', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order'));
+    }
+
+    public function getEvents()
+    {
+		$page_title = "Events";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$tags = Tag::all();
+		$events = Event::all();
+        $eventNames = $events->groupBy('event');
+        // dd($eventNames);
+
+    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'tags', 'events', 'eventNames'));
+    }
+
+    public function saveEvent(Request $request)
+    {
+    	foreach($request->input('tags') as $tag){
+	    	$event = Event::create([
+	    		'event' => ucfirst($request->input('event')),
+	    		'tagID' => $tag
+	    	]);
+	    }
+
+	    return redirect('admin-events');
+    }
+
+    public function viewEvent($eventName)
+    {
+		$page_title = "Added events with their tags";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+    	$events = Event::where('event', $eventName)->get();
+        $eventName = $eventName;
+
+    	return view('admin/viewEvent', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'events', 'eventName'));
     }
 }

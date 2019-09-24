@@ -34,7 +34,7 @@
 @section('favorites')
 <!-- Favourite Area -->
     <div class="favourite-area">
-        <a href="#"><img src="{{ asset('essence/img/core-img/heart.svg') }}" alt=""></a>
+        <a href="{{url('favorites')}}"><img src="{{ asset('essence/img/core-img/heart.svg') }}" alt="Favorites"></a>
     </div>
 @endsection
 

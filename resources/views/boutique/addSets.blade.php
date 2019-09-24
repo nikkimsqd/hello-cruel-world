@@ -35,13 +35,13 @@
           <input type="number" name="quantity" class="input form-control">
         </div>
         
-        <!-- <label>Add Tags:</label>
+        <label>Add Tags:</label>
         <div class="form-group tags">
            @foreach($tags as $tag)
            <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
            <label for="{{$tag['name']}}">{{$tag['name']}}</label>
            @endforeach
-        </div> -->
+        </div>
       </div> <!-- column closing -->
 
       <div class="col-md-6">

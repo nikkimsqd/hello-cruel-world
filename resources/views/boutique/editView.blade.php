@@ -15,33 +15,33 @@
 
 				<form action="{{url('editproduct/'.$product['id'])}}" method="post" enctype="multipart/form-data">
 					{{ csrf_field() }}
-				  <div class="box-body">
+				  	<div class="box-body">
 						<div class="col-md-6">
-					    <div class="form-group">
-					    	<h4>Edit Image:</h4>
-							<input type="file" name="file[]" multiple>
-					    </div>
+						    <div class="form-group">
+						    	<h4>Edit Image:</h4>
+								<input type="file" name="file[]" multiple>
+						    </div>
 
-					    <div class="form-group">
-					      <h4>Product Name</h4>
-							<input type="text" name="productName" class="input form-control" value="{{ $product['productName'] }}" required>
-					    </div>
+						    <div class="form-group">
+						      <h4>Product Name</h4>
+								<input type="text" name="productName" class="input form-control" value="{{ $product['productName'] }}" required>
+						    </div>
 
-					    <div class="form-group">
-					      <h4>Product Description</h4>
-					      <textarea name="productDesc" rows="3" cols="50" class="input form-control" required>{{ $product['productDesc'] }}</textarea>
-					    </div>
+						    <div class="form-group">
+						      <h4>Product Description</h4>
+						      <textarea name="productDesc" rows="3" cols="50" class="input form-control" required>{{ $product['productDesc'] }}</textarea>
+						    </div>
 
-					    <div class="form-group">
-				      	<h4>Product Status</h4>
-				      	@if($product->productStatus == "Available")
-				      		<input type="radio" id="available" name="productStatus" value="Available" checked> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="radio" id="nAvailable" name="productStatus" value="Not Available"> <label for="nAvailable"> Not Available</label>
-				      	@else
-				      		<input type="radio" id="available" name="productStatus" value="Available"> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="radio" id="nAvailable" name="productStatus" value="Not Available" checked> <label for="nAvailable"> Not Available</label>
-							@endif
-					    </div>
+						    <div class="form-group">
+					      	<h4>Product Status</h4>
+					      	@if($product->productStatus == "Available")
+					      		<input type="radio" id="available" name="productStatus" value="Available" checked> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" id="nAvailable" name="productStatus" value="Not Available"> <label for="nAvailable"> Not Available</label>
+					      	@else
+					      		<input type="radio" id="available" name="productStatus" value="Available"> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="radio" id="nAvailable" name="productStatus" value="Not Available" checked> <label for="nAvailable"> Not Available</label>
+								@endif
+						    </div>
 
 							<div class="form-group">
 								<h4>Is this a ready-to-wear item?:</h4>
@@ -59,7 +59,7 @@
 							</div>
 	      
 							@if($product['rtwID'] != null)
-				      <div class="form-group rtwSizes">
+				      		<div class="form-group rtwSizes">
 								<?php
 									$checked = [];
 
@@ -87,180 +87,180 @@
 									}
 									echo " Mao ni naa sa db";
 								?>
-				        <h4>Choose available sizes:</h4>
+					        	<h4>Choose available sizes:</h4>
 								@if(in_array('xs', $checked))
-				        	<input type="checkbox" name="sizes" id="XS" value="XS" class="sizes" checked>
-				        	<label for="XS">XS</label>
-				        @else
-					        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
-					        <label for="XS">XS</label>
-				        @endif
+					        	<input type="checkbox" name="sizes" id="XS" value="XS" class="sizes" checked>
+					        	<label for="XS">XS</label>
+					        	@else
+						        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
+						        <label for="XS">XS</label>
+					        	@endif
 
 								@if(in_array('s', $checked))
-					        <input type="checkbox" name="sizes" id="S" value="S" class="sizes" checked>
-					        <label for="S">S</label>
-				        @else
-					        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
-					        <label for="S">S</label>
-				        @endif
+						        <input type="checkbox" name="sizes" id="S" value="S" class="sizes" checked>
+						        <label for="S">S</label>
+					        	@else
+						        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
+						        <label for="S">S</label>
+					        	@endif
 
 								@if(in_array('m', $checked))
-					        <input type="checkbox" name="sizes" id="M" value="M" class="sizes" checked>
-					        <label for="M">M</label>
-				        @else
-					        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
-					        <label for="M">M</label>
-				        @endif
+						        <input type="checkbox" name="sizes" id="M" value="M" class="sizes" checked>
+						        <label for="M">M</label>
+					        	@else
+						        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
+						        <label for="M">M</label>
+					        	@endif
 
 								@if(in_array('l', $checked))
-					        <input type="checkbox" name="sizes" id="L" value="L" class="sizes" checked>
-					        <label for="L">L</label>
-				        @else
-					        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
-					        <label for="L">L</label>
-				        @endif
+						        <input type="checkbox" name="sizes" id="L" value="L" class="sizes" checked>
+						        <label for="L">L</label>
+					        	@else
+						        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
+						        <label for="L">L</label>
+					        	@endif
 
 								@if(in_array('xl', $checked))
-					        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes" checked>
-					        <label for="XL">XL</label>
-				        @else
-					        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
-					        <label for="XL">XL</label>
-				        @endif
+						        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes" checked>
+						        <label for="XL">XL</label>
+					        	@else
+						        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
+						        <label for="XL">XL</label>
+					        	@endif
 
 								@if(in_array('xxl', $checked))
-					        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes" checked>
-					        <label for="XXL">XXL</label>
-				        @else
-					        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
-					        <label for="XXL">XXL</label>
-				        @endif
-				      </div>
+						        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes" checked>
+						        <label for="XXL">XXL</label>
+					        	@else
+						        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
+						        <label for="XXL">XXL</label>
+					        	@endif
+					      	</div>
 				      
-				      <!-- INPUT FIELDS -->
+				      		<!-- INPUT FIELDS -->
 							@if(in_array('xs', $checked))
-				      <div class="form-group" id="XSquantity">
-				        <label>Enter quantity for XS:</label>
-				        <input id="XS" type="number" name="XSquantity" class="input form-control" value="{{$product->rtwDetails['xs']}}">
-				      </div>
-			        @else
-				      <div class="form-group" id="XSquantity" hidden>
-				        <label>Enter quantity for XS:</label>
-				        <input type="number" name="XSquantity" class="input form-control">
-				      </div>
-			        @endif
+						    <div class="form-group" id="XSquantity">
+						        <label>Enter quantity for XS:</label>
+						        <input id="XS" type="number" name="XSquantity" class="input form-control" value="{{$product->rtwDetails['xs']}}">
+						    </div>
+					        @else
+					      	<div class="form-group" id="XSquantity" hidden>
+						        <label>Enter quantity for XS:</label>
+						        <input type="number" name="XSquantity" class="input form-control">
+					      	</div>
+					        @endif
 				      
 							@if(in_array('s', $checked))
-				      <div class="form-group" id="Squantity">
-				        <label>Enter quantity for S:</label>
-				        <input type="number" name="Squantity" class="input form-control" value="{{$product->rtwDetails['s']}}">
-				      </div>
-			        @else
-			        <div class="form-group" id="Squantity" hidden>
-				        <label>Enter quantity for S:</label>
-				        <input type="number" name="Squantity" class="input form-control">
-				      </div>
-			        @endif
+					      	<div class="form-group" id="Squantity">
+						        <label>Enter quantity for S:</label>
+						        <input type="number" name="Squantity" class="input form-control" value="{{$product->rtwDetails['s']}}">
+					      	</div>
+					        @else
+					        <div class="form-group" id="Squantity" hidden>
+						        <label>Enter quantity for S:</label>
+						        <input type="number" name="Squantity" class="input form-control">
+						      </div>
+					        @endif
 				      
 							@if(in_array('m', $checked))
-				      <div class="form-group" id="Mquantity">
-				        <label>Enter quantity for M:</label>
-				        <input type="number" name="Mquantity" class="input form-control" value="{{$product->rtwDetails['m']}}">
-				      </div>
-			        @else
-			        <div class="form-group" id="Mquantity" hidden>
-				        <label>Enter quantity for M:</label>
-				        <input type="number" name="Mquantity" class="input form-control">
-				      </div>
-			        @endif
+						    <div class="form-group" id="Mquantity">
+						        <label>Enter quantity for M:</label>
+						        <input type="number" name="Mquantity" class="input form-control" value="{{$product->rtwDetails['m']}}">
+					      	</div>
+					        @else
+					        <div class="form-group" id="Mquantity" hidden>
+						        <label>Enter quantity for M:</label>
+						        <input type="number" name="Mquantity" class="input form-control">
+					      	</div>
+					        @endif
 				      
 							@if(in_array('l', $checked))
-				      <div class="form-group" id="Lquantity" >
-				        <label>Enter quantity for L:</label>
-				        <input type="number" name="Lquantity" class="input form-control" value="{{$product->rtwDetails['l']}}">
-				      </div>
-			        @else
-			        <div class="form-group" id="Lquantity" hidden>
-				        <label>Enter quantity for L:</label>
-				        <input type="number" name="Lquantity" class="input form-control">
-				      </div>
-			        @endif
+					      	<div class="form-group" id="Lquantity" >
+						        <label>Enter quantity for L:</label>
+						        <input type="number" name="Lquantity" class="input form-control" value="{{$product->rtwDetails['l']}}">
+					      	</div>
+					        @else
+					        <div class="form-group" id="Lquantity" hidden>
+						        <label>Enter quantity for L:</label>
+						        <input type="number" name="Lquantity" class="input form-control">
+					      	</div>
+				        	@endif
 				      
 							@if(in_array('xl', $checked))
-				      <div class="form-group" id="XLquantity">
-				        <label>Enter quantity for XL:</label>
-				        <input type="number" name="XLquantity" class="input form-control" value="{{$product->rtwDetails['xl']}}">
-				      </div>
-			        @else
-			        <div class="form-group" id="XLquantity" hidden>
-				        <label>Enter quantity for XL:</label>
-				        <input type="number" name="XLquantity" class="input form-control">
-				      </div>
-			        @endif
+					      	<div class="form-group" id="XLquantity">
+						        <label>Enter quantity for XL:</label>
+						        <input type="number" name="XLquantity" class="input form-control" value="{{$product->rtwDetails['xl']}}">
+					      	</div>
+					        @else
+					        <div class="form-group" id="XLquantity" hidden>
+						        <label>Enter quantity for XL:</label>
+						        <input type="number" name="XLquantity" class="input form-control">
+					      	</div>
+					        @endif
 				      
 							@if(in_array('xxl', $checked))
-				      <div class="form-group" id="XXLquantity">
-				        <label>Enter quantity for XXL:</label>
-				        <input type="number" name="XXLquantity" class="input form-control" value="{{$product->rtwDetails['xxl']}}">
-				      </div>
-			        @else
-			        <div class="form-group" id="XXLquantity" hidden>
-				        <label>Enter quantity for XXL:</label>
-				        <input type="number" name="XXLquantity" class="input form-control">
-				      </div>
-			        @endif
-			        @else
+					      	<div class="form-group" id="XXLquantity">
+						        <label>Enter quantity for XXL:</label>
+						        <input type="number" name="XXLquantity" class="input form-control" value="{{$product->rtwDetails['xxl']}}">
+					      	</div>
+					        @else
+					        <div class="form-group" id="XXLquantity" hidden>
+						        <label>Enter quantity for XXL:</label>
+						        <input type="number" name="XXLquantity" class="input form-control">
+					      	</div>
+					        @endif
+					        @else
       
-				      <div class="form-group rtwSizes" hidden>
-				        <label class="excluded">Choose available sizes:</label>
-				        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
-				        <label for="XS">XS</label>
-				        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
-				        <label for="S">S</label>
-				        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
-				        <label for="M">M</label>
-				        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
-				        <label for="L">L</label>
-				        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
-				        <label for="XL">XL</label>
-				        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
-				        <label for="XXL">XXL</label>
-				      </div>
+				      	<div class="form-group rtwSizes" hidden>
+					        <label class="excluded">Choose available sizes:</label>
+					        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
+					        <label for="XS">XS</label>
+					        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
+					        <label for="S">S</label>
+					        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
+					        <label for="M">M</label>
+					        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
+					        <label for="L">L</label>
+					        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
+					        <label for="XL">XL</label>
+					        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
+					        <label for="XXL">XXL</label>
+				      	</div>
       
-				      <div class="form-group" id="XSquantity" hidden>
-				        <label>Enter quantity for XS:</label>
-				        <input type="number" name="XSquantity" class="input form-control">
-				      </div>
-				      
-				      <div class="form-group" id="Squantity" hidden>
-				        <label>Enter quantity for S:</label>
-				        <input type="number" name="Squantity" class="input form-control">
-				      </div>
-				      
-				      <div class="form-group" id="Mquantity" hidden>
-				        <label>Enter quantity for M:</label>
-				        <input type="number" name="Mquantity" class="input form-control">
-				      </div>
-				      
-				      <div class="form-group" id="Lquantity" hidden>
-				        <label>Enter quantity for L:</label>
-				        <input type="number" name="Lquantity" class="input form-control">
-				      </div>
-				      
-				      <div class="form-group" id="XLquantity" hidden>
-				        <label>Enter quantity for XL:</label>
-				        <input type="number" name="XLquantity" class="input form-control">
-				      </div>
-				      
-				      <div class="form-group" id="XXLquantity" hidden>
-				        <label>Enter quantity for XXL:</label>
-				        <input type="number" name="XXLquantity" class="input form-control">
-				      </div>
-				      @endif <!-- end sa if(in_array('xs', checked)) -->
+				      	<div class="form-group" id="XSquantity" hidden>
+					        <label>Enter quantity for XS:</label>
+					        <input type="number" name="XSquantity" class="input form-control">
+				      	</div>
+					      
+				      	<div class="form-group" id="Squantity" hidden>
+					        <label>Enter quantity for S:</label>
+					        <input type="number" name="Squantity" class="input form-control">
+				      	</div>
+					      
+				      	<div class="form-group" id="Mquantity" hidden>
+					        <label>Enter quantity for M:</label>
+					        <input type="number" name="Mquantity" class="input form-control">
+				      	</div>
+					      
+				      	<div class="form-group" id="Lquantity" hidden>
+					        <label>Enter quantity for L:</label>
+					        <input type="number" name="Lquantity" class="input form-control">
+				      	</div>
+					      
+				      	<div class="form-group" id="XLquantity" hidden>
+					        <label>Enter quantity for XL:</label>
+					        <input type="number" name="XLquantity" class="input form-control">
+				      	</div>
+					      
+				      	<div class="form-group" id="XXLquantity" hidden>
+					        <label>Enter quantity for XXL:</label>
+					        <input type="number" name="XXLquantity" class="input form-control">
+				      	</div>
+				      	@endif <!-- end sa if(in_array('xs', checked)) -->
 
 					    <div class="form-group">
-					      <h4>Product Category</h4>
-					      <select class="form-control select2" name="gender" id="gender-select">
+					      	<h4>Product Category</h4>
+					      	<select class="form-control select2" name="gender" id="gender-select">
 								@if($product->getCategory['gender'] === "Womens")
 								<option selected value="Womens">Womens</option>
 								<option value="Mens">Mens</option>
@@ -275,50 +275,50 @@
 								@endif
 						  	</select><br>
 
-							  @if($product['category'] != null)
-				        <select class="form-control select2" name="category" id="category-select" required>
-				        	@foreach($categories as $category)
-				        	@if($category['id'] == $product['category'])
-				          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
-				          @else
-				          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-				          @endif
-				          @endforeach
-				        </select><br>
-				        @endif
+						  	@if($product['category'] != null)
+					        <select class="form-control select2" name="category" id="category-select" required>
+					        	@foreach($categories as $category)
+					        	@if($category['id'] == $product['category'])
+					          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+				          		@else
+					          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+					          	@endif
+					          	@endforeach
+					        </select><br>
+					        @endif
 
-				        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
-				        	@if($product['measurementNames'] != null)
-				        	<?php
-				        		$measurementNames = json_decode($product['measurementNames']);
-				        		$selectedMeasurements = [];
-				        	?>
-				        	@foreach($measurementNames as $measurementName)
-										<?php array_push($selectedMeasurements, $measurementName); ?>
-									@endforeach
+					        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
+					        	@if($product['measurementNames'] != null)
+					        	<?php
+					        		$measurementNames = json_decode($product['measurementNames']);
+					        		$selectedMeasurements = [];
+					        	?>
+					        	@foreach($measurementNames as $measurementName)
+											<?php array_push($selectedMeasurements, $measurementName); ?>
+										@endforeach
 
-				        	@foreach($product->getCategory->getMeasurements as $getMeasurements)
-										@if(in_array($getMeasurements['mName'], $selectedMeasurements))
-					        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
-										<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
-										@else
-					        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
-										<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+					        	@foreach($product->getCategory->getMeasurements as $getMeasurements)
+											@if(in_array($getMeasurements['mName'], $selectedMeasurements))
+						        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
+											<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+											@else
+						        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
+											<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+											@endif
+										@endforeach
 										@endif
-									@endforeach
-									@endif
-				        </div>
+					        </div>
 
-				        <br><br>
-				        <div class="col-md-12" id="measurement-input">
-				        	@if($product['measurements'] != null)
-				        	<?php $measurements = json_decode($product['measurements']); ?>
-				        	@foreach($measurements as $measurement => $value)
-										<label for="">{{$measurement}}</label><br> &nbsp; 
-										<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
-									@endforeach
-									@endif
-				        </div>
+					        <br><br>
+					        <div class="col-md-12" id="measurement-input">
+					        	@if($product['measurements'] != null)
+					        	<?php $measurements = json_decode($product['measurements']); ?>
+					        	@foreach($measurements as $measurement => $value)
+											<label for="">{{$measurement}}</label><br> &nbsp; 
+											<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
+										@endforeach
+										@endif
+					        </div>
  
 							  <!--<select class="form-control select2" name="category">
 
@@ -340,21 +340,29 @@
 				    	@if(count($prodtags) > 0)
 					    <label>Add Tags:</label>
 					    <div class="form-group tags">
-								@foreach($prodtags as $prodtag)
-								@if($prodtag['productID'] == $product['id'])
-									<input type="checkbox" name="tags[]" id="{{$prodtag->tag['name']}}" value="{{$prodtag->tag['id']}}" checked>
-									<label for="{{$prodtag->tag['name']}}">{{$prodtag->tag['name']}}</label>
-								@endif
-								@endforeach
-
-								@foreach($tags as $tag)
-								@if($tag['id'] != $prodtag->tag['id'])
-									<input type="checkbox" name="tags[]" id="{{$tag['id']}}" value="{{$tag['id']}}">
-									<label for="{{$tag['id']}}">{{$tag['name']}}</label>
-								@endif
-								@endforeach
-				      </div>
+							@foreach($prodtags as $prodtag)
+							@if($prodtag['itemID'] == $product['id'])
+								<input type="checkbox" name="tags[]" id="{{$prodtag->tag['name']}}" value="{{$prodtag->tag['id']}}" checked>
+								<label for="{{$prodtag->tag['name']}}">{{$prodtag->tag['name']}}</label>
 							@endif
+							@endforeach
+
+							@foreach($tags as $tag)
+							@if($tag['id'] != $prodtag->tag['id'])
+								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
+								<label for="tag{{$tag['id']}}">{{$tag['name']}}</label>
+							@endif
+							@endforeach
+				      	</div>
+				      	@else
+					    <h4>Add Tags:</h4>
+					    <div class="form-group tags">
+							@foreach($tags as $tag)
+								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
+								<label for="tag{{$tag['id']}}">{{$tag['name']}}</label>
+							@endforeach
+				      	</div>
+						@endif
 
 						</div>
 <!-- 

@@ -65,11 +65,6 @@
                 @endif
 
                 <a href="{{url('requestToRentSet/'.$set['id'])}}" class="btn essence-btn">Request to Rent</a>
-                <!-- <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentSet{{$set['id']}}"> -->
-
-                <div class="product-favourite ml-4">
-                    <a href="#" class="favme fa fa-heart"></a>
-                </div>
 
                 @elseif($set['rpID'] != null)
                 <a href="{{url('requestToRentSet/'.$set['id'])}}" class="btn essence-btn">Request to Rent</a>
@@ -83,6 +78,18 @@
                 @else
                     <input type="submit" class="btn essence-btn" value="Add to Cart" data-toggle="modal" data-target="#LoginModal">
                 @endif
+                @endif
+
+                @if($set->inFavorites)
+                <div class="product-favourite ml-4">
+                    <input type="text" name="productID" value="{{$set['id']}}" hidden>
+                    <a href="#" class="favme fa fa-heart active"></a>
+                </div>
+                @else
+                <div class="product-favourite ml-4">
+                    <input type="text" name="productID" value="{{$set['id']}}" hidden>
+                    <a href="#" class="favme fa fa-heart"></a>
+                </div>
                 @endif
                 </div>
 
@@ -167,41 +174,61 @@ $('#dateToUse').datepicker({
 });
 
 
- $('.add-to-cart-btn').on('click', function(){
- var productID = $(this).find("input").val();
- var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
+$('.add-to-cart-btn').on('click', function(){
+    var productID = $(this).find("input").val();
+    var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
 
 
- $.ajax({
-     url: "/hinimo/public/addSettoCart/"+productID,
-     // type: "POST",
-     // data: {id: productID}
- });
+    $.ajax({
+        url: "/hinimo/public/addSettoCart/"+productID
+    });
 
 
- $.ajax({
-     url: "/hinimo/public/getCart/"+productID,
-     success:function(data){
-         // $("#product").html(data.product)x    
-         $(".cart-list").append('<div class="single-cart-item">' +
-                    '<a href="#" class="product-image">' +
-                        '<img src="'+ image +'" class="cart-thumb" alt="">' +
+    $.ajax({
+        url: "/hinimo/public/getCart/"+productID,
+        success:function(data){
+            // $("#product").html(data.product)x    
+            $(".cart-list").append('<div class="single-cart-item">' +
+                '<a href="#" class="product-image">' +
+                    '<img src="'+ image +'" class="cart-thumb" alt="">' +
 
-                     
-                        '<div class="cart-item-desc">' +
-                          '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
-                            '<span class="badge">'+ data.owner.fname +'</span>' +
-                            '<h6>'+ data.product.productName +'</h6>' +
-                            '<p class="price">$'+ data.product.price +'</p>' +
-                        '</div>' +
-                    '</a>' +
-                '</div>'
-                );
-     }
-
- }); //second ajax
+                 
+                    '<div class="cart-item-desc">' +
+                      '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
+                        '<span class="badge">'+ data.owner.fname +'</span>' +
+                        '<h6>'+ data.product.productName +'</h6>' +
+                        '<p class="price">$'+ data.product.price +'</p>' +
+                    '</div>' +
+                '</a>' +
+            '</div>'
+            );
+        }
+    }); //second ajax
     
- }); //main ending
+}); //main ending
+
+
+$('.product-favourite').on('click', function(){
+    var setID = $(this).find("input").val();
+
+    $.ajax({
+        url: "{{url('addSetToFavorites')}}/"+setID,
+        success:function(){
+            location.reload();
+        }
+    });
+});
+
+$('.unfavorite-set').on('click', function(){
+    var setID = $(this).find("input").val();
+
+    $.ajax({
+        url: "{{url('unFavoriteSet')}}/"+setID,
+        success:function(){
+            location.reload();
+        }
+    });
+});
 
 
 

@@ -170,6 +170,7 @@
         <li class="categories"><a href="{{url('admin-categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
         <li class="tags"><a href="{{url('admin-tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
         <li class="measurements"><a href="{{url('admin-measurements')}}"><i class="fa fa-circle-o"></i> Measurements</a></li>
+        <li class="events"><a href="{{url('admin-events')}}"><i class="fa fa-circle-o"></i> Events</a></li>
       </ul>
     </li>
 

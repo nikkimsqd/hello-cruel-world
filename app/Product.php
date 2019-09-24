@@ -38,4 +38,9 @@ class Product extends Model
     {
         return $this->hasOne('App\Rtw', 'id', 'rtwID');
     }
+
+    public function inFavorites()
+    {
+        return $this->hasOne('App\Favorite', 'productID', 'id');
+    }
 }

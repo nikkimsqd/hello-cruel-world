@@ -145,10 +145,18 @@
                                         <span>FOR RENT ONLY</span>
                                     </div>
                                 @endif
-                                    <!-- Favourite -->
-                                    <div class="product-favourite">
+
+                                @if($set->inFavorites)
+                                    <div class="product-favourite unfavorite-set">
+                                        <input type="text" name="productID" value="{{$set['id']}}" hidden>
+                                        <a href="#" class="favme fa fa-heart active"></a>
+                                    </div>
+                                @else
+                                    <div class="product-favourite ml-4 favorite-set">
+                                        <input type="text" name="productID" value="{{$set['id']}}" hidden>
                                         <a href="#" class="favme fa fa-heart"></a>
                                     </div>
+                                @endif
                                 </div>
 
                                 <!-- Product Description -->
@@ -187,40 +195,46 @@
                             <div class="col-12 col-sm-6 col-lg-4">
 	                        <div class="single-product-wrapper">
 	                            <!-- Product Image -->
-                                <?php 
-                                    $counter = 1;
-                                ?>
+                                <?php $counter = 1; ?>
                             
-                            @foreach($product->productFile as $image)
-                                
-	                            <div class="product-img">
-	                            @if($counter == 1)    
-                                    <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
-                                @elseif($counter == 2)    
-                                    <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
-                                @endif
+                                <div class="product-img">
+                                    @foreach($product->productFile as $image)
+                                    
+    	                            @if($counter == 1)    
+                                        <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                    @elseif($counter == 2)    
+                                        <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                    @endif
 
-                                @if($product['productStatus'] == "Not Available")
-                                    <div class="product-badge offer-badge">
-                                        <span>NOT AVAILABLE</span>
-                                    </div>
-                                @elseif($product['rpID'] != null && $product['price'] != null)
-                                    <div class="product-badge new-badge">
-                                        <span>RENTABLE</span>
-                                    </div>
-                                @elseif($product['rpID'] != null && $product['price'] == null)
-                                    <div class="product-badge new-badge">
-                                        <span>FOR RENT ONLY</span>
-                                    </div>
-                                @endif
-	                                <!-- Favourite -->
-	                                <div class="product-favourite">
-	                                    <a href="#" class="favme fa fa-heart"></a>
-	                                </div>
-	                            </div>
-                                
-                                <?php $counter++; ?>
-                                @endforeach
+                                    @if($product['productStatus'] == "Not Available")
+                                        <div class="product-badge offer-badge">
+                                            <span>NOT AVAILABLE</span>
+                                        </div>
+                                    @elseif($product['rpID'] != null && $product['price'] != null)
+                                        <div class="product-badge new-badge">
+                                            <span>RENTABLE</span>
+                                        </div>
+                                    @elseif($product['rpID'] != null && $product['price'] == null)
+                                        <div class="product-badge new-badge">
+                                            <span>FOR RENT ONLY</span>
+                                        </div>
+                                    @endif
+                                        
+                                    @if($product->inFavorites)
+                                        <div class="product-favourite unfavorite-product">
+                                            <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                            <a href="#" class="favme fa fa-heart active"></a>
+                                        </div>
+                                    @else
+                                        <div class="product-favourite ml-4 favorite-product">
+                                            <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                            <a href="#" class="favme fa fa-heart"></a>
+                                        </div>
+                                    @endif
+                                    
+                                    <?php $counter++; ?>
+                                    @endforeach
+                                </div>
 
 	                            <!-- Product Description -->
 	                            <div class="product-description">
@@ -348,20 +362,65 @@ $('#sortByselect').on('change', function(){
                 '<div class="product-description">' +
                 '<span>' + product.owner.username +'</span>' +
                 '<a href="#"> <h6>' + product.productName + '</h6> </a>' +
-                '<p class="product-price">$' + product.productPrice + '</p>' +
+                '<p class="product-price">$' + product.price + '</p>' +
 
                 '<div class="hover-content">' +
                 '<div class="add-to-cart-btn">' +
-                '<input type="text" name="productID" value="' + product.productID + '" hidden>' +
-                '<a href="single-product-details/' + product.productID + '" class="btn essence-btn">View Product</a>' +
+                '<input type="text" name="productID" value="' + product.id + '" hidden>' +
+                '<a href="single-product-details/' + product.id + '" class="btn essence-btn">View Product</a>' +
                 '</div> </div> </div> </div> </div>'
                 );
 
 
-            console.log(product.productID);
+            console.log(product.id);
             console.log(product.productName);
         });
      }
+    });
+});
+
+
+$('.favorite-set').on('click', function(){
+    var setID = $(this).find("input").val();
+
+    $.ajax({
+        url: "{{url('addSetToFavorites')}}/"+setID,
+        success:function(){
+            location.reload();
+        }
+    });
+});
+
+$('.unfavorite-set').on('click', function(){
+    var setID = $(this).find("input").val();
+
+    $.ajax({
+        url: "{{url('unFavoriteSet')}}/"+setID,
+        success:function(){
+            location.reload();
+        }
+    });
+});
+
+$('.favorite-product').on('click', function(){
+    var productID = $(this).find("input").val();
+
+    $.ajax({
+        url: "{{url('addToFavorites')}}/"+productID,
+        success:function(){
+            location.reload();
+        }
+    });
+});
+
+$('.unfavorite-product').on('click', function(){
+    var productID = $(this).find("input").val();
+
+    $.ajax({
+        url: "{{url('unFavoriteProduct')}}/"+productID,
+        success:function(){
+            location.reload();
+        }
     });
 });
 

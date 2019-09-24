@@ -23,10 +23,6 @@
                 <h4>{{ $product['productName'] }}</h4>
               </div>
 
-              
-
-
-
               <h4 class="heading">Product Category</h4>
               <h4>{{ $product->getCategory['categoryName']}}<h4>
 
@@ -43,7 +39,7 @@
                   <label>{{$measurementName}}</label><br>
                 @endforeach
 
-                <h4>Measurements</h4>
+                <h4 class="heading">Measurements</h4>
                 @foreach($measurements as $measurement => $value)
                   <label>{{$measurement}}: {{$value}} inches</label><br>
                   <!-- <input type="text" name="{{$counter}}[{{$measurement}}]" placeholder="{{$measurement}}" class="form-control"><br> -->
@@ -72,10 +68,10 @@
                 </ul>
               @endif
               
-              <!-- <h4>Tags:</h4>
+              <h4 class="heading">Tags:</h4>
               @foreach($tags as $tag)
               <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['name']}}</h2>
-              @endforeach -->
+              @endforeach
 
             </div>
 

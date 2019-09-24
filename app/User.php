@@ -29,6 +29,11 @@ class User extends Authenticatable
 
     public function boutique()
     {
-        return $this->hasOne('App\Boutique', 'id', 'id');
+        return $this->hasOne('App\Boutique', 'id', 'id'); //? wat is dis. does dis still exist
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany('App\Favorite', 'userID', 'id');
     }
 }

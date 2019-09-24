@@ -11,7 +11,7 @@ use App\Boutique;
 use App\Rent;
 use App\Tag;
 use App\Declinedtransaction;
-use App\Prodtag;
+use App\Itemtag;
 use App\Order;
 use App\Categoryrequest;
 use App\Mto;
@@ -401,13 +401,14 @@ class BoutiqueController extends Controller
 		//------------------------------------------------------------------------------
 
 		// FOR TAGS --------------------------------------------------------------------
-		// $tags = $request->input('tags');
-		// foreach($tags as $tag) {
-		// 	Prodtag::create([
-		// 		'tagID' => $tag,
-		// 		'productID' => $product['id']
-		// 	]);
-		// }
+		$tags = $request->input('tags');
+		foreach($tags as $tag) {
+			Itemtag::create([
+				'tagID' => $tag,
+				'itemID' => $product['id'],
+				'itemType' => 'product'
+			]);
+		}
 		//------------------------------------------------------------------------------
 
 		// FOR FILE UPLOAD -------------------------------------------------------------
@@ -441,7 +442,7 @@ class BoutiqueController extends Controller
 			$boutiques = Boutique::where('userID', $user)->get();
 			$product = Product::where('id', $productID)->first();
 			$category = Category::where('id', $product['category'])->first();
-			$tags = ProdTag::where('productID', $productID)->get();
+			$tags = Itemtag::where('itemID', $productID)->get();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
@@ -465,7 +466,7 @@ class BoutiqueController extends Controller
 			$product = Product::where('id', $productID)->first();
 			$categories = Category::all();
 			$tags = Tag::all();
-			$prodtags = ProdTag::where('productID', $productID)->get();
+			$prodtags = Itemtag::where('itemID', $productID)->get();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
@@ -626,14 +627,15 @@ class BoutiqueController extends Controller
 
 	
 	// FOR TAGS --------------------------------------------------------------------
-		// Prodtag::where('productID', $product['id'])->delete();
-		// $tags = $request->input('tags');
-		// 	foreach($tags as $tag) {
-		// 	Prodtag::create([
-		// 		'tagID' => $tag,
-		// 		'productID' => $product['id']
-		// 	]);
-		// }
+		Itemtag::where('itemID', $product['id'])->delete();
+		$tags = $request->input('tags');
+			foreach($tags as $tag) {
+			Itemtag::create([
+				'tagID' => $tag,
+				'itemID' => $product['id'],
+				'itemType' => 'product'
+			]);
+		}
 	//------------------------------------------------------------------------------
 
 	// FOR FILE UPLOAD -------------------------------------------------------------
@@ -1604,6 +1606,17 @@ class BoutiqueController extends Controller
 	    	]);
 		}
 
+		// FOR TAGS --------------------------------------------------------------------
+		$tags = $request->input('tags');
+		foreach($tags as $tag) {
+			Itemtag::create([
+				'tagID' => $tag,
+				'itemID' => $set['id'],
+				'itemType' => 'set'
+			]);
+		}
+		//------------------------------------------------------------------------------
+
 		return redirect('/sets');
     }
 
@@ -1619,7 +1632,7 @@ class BoutiqueController extends Controller
 
 		// $product = Product::where('id', $productID)->first();
 		// $category = Category::where('id', $product['category'])->first();
-		// $tags = ProdTag::where('productID', $productID)->get();
+		// $tags = Itemtag::where('productID', $productID)->get();
 
 
 		foreach ($boutiques as $boutique) {
@@ -1628,6 +1641,42 @@ class BoutiqueController extends Controller
 
 		return view('boutique/viewSet', compact('boutique', 'user', 'page_title', 'notifications', 
 		'notificationsCount', 'set'));
+	}
+
+	public function editViewSet($setID)
+	{
+		if(Auth()->user()->roles == "boutique") {
+			$page_title = "Edit Set";
+			$user = Auth()->user()->id;
+			$boutique = Boutique::where('userID', $user)->first();
+			$set = Set::where('id', $setID)->first();
+			$product = Product::where('id', $setID)->first();
+			$categories = Category::all();
+			$tags = Tag::all();
+			$prodtags = Itemtag::where('itemID', $setID)->get();
+			$notifications = Auth()->user()->notifications;
+			$notificationsCount = Auth()->user()->unreadNotifications->count();
+	        $regions = Region::all();
+	        $cities = City::all();
+
+			foreach ($categories as $category) {
+				$category;
+			}
+
+			// dd($prodtags);
+
+			return view('boutique/editViewSet', compact('set', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
+			}else {
+			return redirect('/shop');
+		}
+	}
+
+	public function editSet(Request $request)
+	{
+		$user = Auth()->user()->id;
+
+		dd("u here");
+
 	}
 
 	public function boutiqueProfile()

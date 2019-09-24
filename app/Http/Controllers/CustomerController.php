@@ -17,7 +17,7 @@ use App\Rent;
 use App\Profiling;
 use App\Bidding;
 use App\Bid;
-use App\Prodtag;
+use App\Itemtag;
 use App\Tag;
 use App\Order;
 use App\File;
@@ -32,6 +32,8 @@ use App\Gallery;
 use App\Set;
 use App\Measurementrequest;
 use App\Payment;
+use App\Favorite;
+use App\Event;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -64,19 +66,9 @@ class CustomerController extends Controller
                 }else{
                     $cartCount = 0;
                 }
+                $favorites = Favorite::where('userID', $userID)->get();
 
-                // dd($cart);
-                // foreach($cart->items as $item)
-                // {
-                //     foreach($item->product->productFile as $file)
-                //     {
-                //         dd($file['productID']);
-                //     }
-                // }
-
-                // $productsArray = $products->toArray();
-                // array_multisort(array_column($products, "created_at"), SORT_DESC, $products);
-                // dd($products);
+              
 
                 $sets = Set::all();
 
@@ -1847,13 +1839,21 @@ class CustomerController extends Controller
         print_r(json_encode($response->result, JSON_PRETTY_PRINT));
     }
 
+    public function getOrderHistory()
+    {
+        $userID = Auth()->user()->id;
+        $orderHistory = Order::where('userID', $userID)->get();
+
+        return $orderHistory;
+    }
+
     public function mixnmatch()
     {
+        $page_title = "Reco";
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $boutiques = Boutique::all();
-        $boutique = Boutique::all();
-        $products = Product::all();
+        $products = Product::where('productStatus', 'Available')->get();
         $productsCount = $products->count();
         $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
         if($cart != null){
@@ -1861,13 +1861,110 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
-        $page_title = "Mix & Match by ";
-
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        $orderHistories = Order::where('userID', $userID)->get();
+        $favorites = Favorite::where('userID', $userID)->get();
+        $events = Event::all();
+        $eventNames = $events->groupBy('event');
         // dd($products);
-        return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount', 'productsCount'));
+
+
+        foreach($orderHistories as $orderHistory){
+            // if($orderHistory->cart){
+            //     dd($orderHistory);
+            // }
+            // else if($orderHistory->rent){
+            //     dd($orderHistory);
+            // }
+            // elseif($orderHistory->mto){
+            //     dd($orderHistory);
+            // }
+            // elseif($orderHistory->bidding){
+            //     dd($orderHistory);
+            // }
+        }
+
+
+        return view('hinimo/mixnmatch', compact('page_title', 'userID', 'categories', 'products', 'cart', 'cartCount', 'boutiques', 'notifications', 'notificationsCount', 'productsCount', 'events', 'eventNames'));
+    }
+
+    public function getEventTags($eventName)
+    {   
+        $eventArray = array();
+        $productsArray = array();
+        $setsArray = array();
+        $storage = array();
+        $scores = array();
+        $productReference = array();
+        $sortedProducts = array();
+        $productURL = array();
+        $setURL = array();
+        $events = Event::where('event', $eventName)->get();
+
+        //events
+        foreach($events as $event){
+            $counter = 0;
+            $tag = Tag::where('id', $event->tag['id'])->first();
+
+            //tags on items
+            $itemtags = Itemtag::where('tagID', $tag['id'])->get();
+
+            if($itemtags){
+
+                //pagkuha sa tag on item
+                foreach($itemtags as $itemtag){
+
+                    //pagkuha sa item
+                    if($itemtag['itemType'] == 'product'){
+
+                        $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
+                        array_push($storage, $product['id']);
+                        $productReference[$product['id']] = 'product';
+                        $productsArray[$product['id']] = $product;
+                        $productURL[$product['id']][] = $product->productFile[0]['filename'];
+                        // dd($productURL);
+
+                    }elseif($itemtag['itemType'] == 'set'){
+                        $product = Set::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->first();
+                        // dd($product);
+                        array_push($storage, $product['id']);
+                        $productReference[$product['id']] = 'set';
+                        $setsArray[$product['id']] = $product;
+
+                        foreach($product->items as $item){
+                            $prod = Product::where('id', $item['productID'])->first();
+                            $setURL[$product['id']][] = $prod->productFile[0]['filename'];
+                        }
+                        // $productURL[$product['id']] = ''
+                    }
+
+                }
+            }
+
+            array_push($eventArray, $tag);
+        }
+        $scores = array_count_values($storage);
+
+        arsort($scores);
+
+        foreach($scores as $id => $score){
+            if($productReference[$id]  == 'product'){
+                array_push($sortedProducts, $productsArray[$id]);
+            }else{
+                array_push($sortedProducts, $setsArray[$id]);
+            }
+        }
+
+
+        return response()->json([
+            'tags' => $eventArray,
+            'sortedProducts' => $sortedProducts,
+            'productURL' => $productURL,
+            'setURL' => $setURL
+        ]);
+        
     }
 
     public function getMProduct($productID)
@@ -2112,6 +2209,71 @@ class CustomerController extends Controller
         $boutiqueseller->notify(new RentRequest($rent));
 
         return redirect('/view-rent/'.$rent['rentID']);
+    }
+
+    public function favorites()
+    {
+        $page_title = "Favorites";
+        $userID = Auth()->user()->id;
+        $favorites = Favorite::where('userID', $userID)->get();
+        $favoritesCount = $favorites->count();
+        $boutiques = Boutique::all();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+
+        // dd($favorites[1]->product->productFile);
+
+        return view('hinimo/favorites', compact('favorites', 'cart', 'cartCount', 'userID', 'favoritesCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+    }
+
+    public function addToFavorites($productID)
+    {
+        $userID = Auth()->user()->id;
+        $favorites = Favorite::where('userID', $userID)->get();
+        $product = Product::where('id', $productID)->first();
+
+        $favorites = Favorite::create([
+            'userID' => $userID,
+            'productID' => $productID
+        ]);
+
+        return response()->json([
+            'favorites' => $favorites
+        ]);
+    }
+
+    public function unFavoriteProduct($productID)
+    {
+        Favorite::where('productID', $productID)->delete();
+    }
+
+    public function addSetToFavorites($setID)
+    {
+        $userID = Auth()->user()->id;
+        $favorites = Favorite::where('userID', $userID)->get();
+        $set = Set::where('id', $setID)->first();
+
+        $favorites = Favorite::create([
+            'userID' => $userID,
+            'setID' => $setID
+        ]);
+
+        return response()->json([
+            'favorites' => $favorites
+        ]);
+    }
+
+    public function unFavoriteSet($setID)
+    {
+        Favorite::where('setID', $setID)->delete();
     }
 
 

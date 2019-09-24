@@ -72,10 +72,6 @@
                 <a href="{{url('requestToRent/'.$product['id'])}}" class="btn essence-btn">Request to Rent</a>
                 <!-- <input type="submit" class="btn essence-btn" value="Request to Rent" data-toggle="modal" data-target="#requestToRentModal{{$product['id']}}"> -->
 
-                <div class="product-favourite ml-4">
-                    <a href="#" class="favme fa fa-heart"></a>
-                </div>
-
                 @elseif($product['rpID'] != null)
                 <a href="{{url('requestToRent/'.$product['id'])}}" class="btn essence-btn">Request to Rent</a>
             
@@ -88,6 +84,18 @@
                 @else
                     <input type="submit" class="btn essence-btn" value="Add to Cart" data-toggle="modal" data-target="#LoginModal">
                 @endif
+                @endif
+
+                @if($product->inFavorites)
+                <div class="product-favourite ml-4">
+                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                    <a href="#" class="favme fa fa-heart active"></a>
+                </div>
+                @else
+                <div class="product-favourite ml-4">
+                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                    <a href="#" class="favme fa fa-heart"></a>
+                </div>
                 @endif
                 </div>
 
@@ -173,42 +181,59 @@ $('#dateToUse').datepicker({
 });
 
 
- $('.add-to-cart-btn').on('click', function(){
- var productID = $(this).find("input").val();
- var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
+$('.add-to-cart-btn').on('click', function(){
+  var productID = $(this).find("input").val();
+  var image = $(this).closest('.product-description').siblings('.product-img').find('img').attr('src');
 
 
- $.ajax({
-     url: "/hinimo/public/addtoCart/"+productID,
-     // type: "POST",
-     // data: {id: productID}
- });
+  $.ajax({
+    url: "/hinimo/public/addtoCart/"+productID
+  });
 
 
- $.ajax({
-     url: "/hinimo/public/getCart/"+productID,
-     success:function(data){
-         // $("#product").html(data.product)x    
-         $(".cart-list").append('<div class="single-cart-item">' +
-                    '<a href="#" class="product-image">' +
-                        '<img src="'+ image +'" class="cart-thumb" alt="">' +
+  $.ajax({
+    url: "/hinimo/public/getCart/"+productID,
+    success:function(data){
+        // $("#product").html(data.product)x    
+      $(".cart-list").append('<div class="single-cart-item">' +
+          '<a href="#" class="product-image">' +
+              '<img src="'+ image +'" class="cart-thumb" alt="">' +
 
-                     
-                        '<div class="cart-item-desc">' +
-                          '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
-                            '<span class="badge">'+ data.owner.fname +'</span>' +
-                            '<h6>'+ data.product.productName +'</h6>' +
-                            '<p class="price">$'+ data.product.price +'</p>' +
-                        '</div>' +
-                    '</a>' +
-                '</div>'
-                );
-     }
+           
+              '<div class="cart-item-desc">' +
+                '<span id="delete" class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>' +
+                  '<span class="badge">'+ data.owner.fname +'</span>' +
+                  '<h6>'+ data.product.productName +'</h6>' +
+                  '<p class="price">$'+ data.product.price +'</p>' +
+              '</div>' +
+          '</a>' +
+      '</div>'
+      );
+    }
+  }); //second ajax 
+}); //main ending
 
- }); //second ajax
-    
- }); //main ending
+$('.product-favourite').on('click', function(){
+  var productID = $(this).find("input").val();
 
+  $.ajax({
+    url: "{{url('addToFavorites')}}/"+productID,
+    success:function(){
+      location.reload();
+    }
+  });
+});
+
+$('.unfavorite-product').on('click', function(){
+  var productID = $(this).find("input").val();
+
+  $.ajax({
+    url: "{{url('unFavoriteProduct')}}/"+productID,
+    success:function(){
+      location.reload();
+    }
+  });
+});
 
 
 

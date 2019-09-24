@@ -83,8 +83,8 @@
         </div>
 
         <div class="box-footer" style="text-align: right;">
-          <a href="/hinimo/public/products" class="btn btn-warning"><i class="fa fa-arrow-left"> Back to products</i></a>
-          <a href="/hinimo/public/editView/{{$set['id']}}" class="btn btn-success"><i class="fa fa-edit"> Edit</i></a>
+          <a href="/hinimo/public/sets" class="btn btn-warning"><i class="fa fa-arrow-left"> Back to products</i></a>
+          <a href="/hinimo/public/editViewSet/{{$set['id']}}" class="btn btn-success"><i class="fa fa-edit"> Edit</i></a>
           <a href="/hinimo/public/deleteSet/{{$set['id']}}" class="btn btn-danger"><i class="fa fa-trash"> Delete</i></a>
         </div>
       </div>

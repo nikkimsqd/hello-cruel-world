@@ -20,22 +20,22 @@
   	<div class="col-md-6">
 
       <div class="form-group">
-        <label>Add Image:</label>
+        <h4>Add Image:</h4>
         <input type="file" name="file[]" multiple required>
       </div>
       
 	    <div class="form-group">
-	     <label>Product Name</label>
+	     <h4>Product Name</h4>
 			 <input type="text" name="productName" class="input form-control" placeholder="Enter product name" required>
 	    </div>
 
 	    <div class="form-group">
-	      <label>Product Description</label>
+	      <h4>Product Description</h4>
 	      <textarea name="productDesc" rows="3" cols="50" class="input form-control" required></textarea>
 	    </div>
 
       <div class="form-group">
-        <label>Is this a ready-to-wear item?:</label><br>
+        <h4>Is this a ready-to-wear item?:</h4>
         <input type="radio" id="yes" name="itemType" class="minimal-red rtw-choice" value="yes">
         <label for="yes">Yes</label>&nbsp;&nbsp;&nbsp;
         <input type="radio" id="no" name="itemType" class="minimal-red rtw-choice" value="no">
@@ -43,7 +43,7 @@
       </div>
       
       <div class="form-group rtwSizes" hidden>
-        <label class="excluded">Choose available sizes:</label>
+        <h4 class="excluded">Choose available sizes:</h4>
         <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
         <label for="XS">XS</label>
         <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
@@ -89,7 +89,7 @@
       </div>
 
       <div class="form-group">
-        <label>Product Category</label>
+        <h4>Product Category</h4>
         <select class="form-control select2" name="gender" id="gender-select" required>
           <option selected="selected"> </option>
           <option value="Womens">Womens</option>
@@ -112,13 +112,13 @@
         </div>
       </div>
       
-      <!-- <label>Add Tags:</label>
+      <label>Add Tags:</label>
       <div class="form-group tags">
          @foreach($tags as $tag)
          <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
          <label for="{{$tag['name']}}">{{$tag['name']}}</label>
          @endforeach
-      </div> -->
+      </div>
     </div> <!-- column closing -->
 
     <div class="col-md-6">
@@ -139,27 +139,27 @@
       </div>
 
       <div class="form-group" id="forSalePrice" hidden>
-        <label>Retail Price</label>
+        <h4>Retail Price</h4>
         <input type="number" name="retailPrice" class="input form-control" autofocus><br>
       </div>
 
       <div class="form-group" id="forRentPrice" hidden>
-        <label>Rent Price</label> <br>
-        <input type="number" name="rentPrice" class="input form-control" autofocus><br>
+        <h4>Rent Price</h4>
+        <input type="number" name="rentPrice" class="input form-control" autofocus>
 
-        <label>Deposit Amount</label>
+        <h4>Deposit Amount</h4>
         <input type="number" name="depositAmount" class="input form-control"><br>
 
-        <label>Penalty Amount if item is returned late (per day)</label>
+        <h4>Penalty Amount if item is returned late (per day)</h4>
         <input type="number" name="penaltyAmount" class="input form-control"><br>
 
-        <label>Duration of days item is available for rent</label>
+        <h4>Duration of days item is available for rent</h4>
         <input type="number" name="limitOfDays" class="input form-control"><br>
 
-        <label>Amount of fine incase item is lost by user</label>
+        <h4>Amount of fine incase item is lost by user</h4>
         <input type="number" name="fine" class="input form-control"><br>
 
-        <!-- <label>Select Region:</label>
+        <!-- <h4>Select Region:</h4>
         <select name="region" class="form-control" id="region-select">
           <option selected="selected"> </option>
           @foreach($regions as $region)
@@ -167,15 +167,15 @@
           @endforeach
         </select><br> -->
 
-        <!-- <label>Select Province:</label>
+        <!-- <h4>Select Province:</h4>
         <select name="province" class="form-control" id="province-select" disabled>
         </select><br> -->
 
-        <!-- <label>Select City:</label>
+        <!-- <h4>Select City:</h4>
         <select name="locationsAvailable" class="form-control" id="city-selects" disabled>
         </select><br> -->
 
-        <label id="city-id">Select cities item is available for rent:</label><br>
+        <h4 id="city-id">Select cities item is available for rent:</h4><br>
         <div name="cities" id="city-select" style="column-count: 3">
         @foreach($cities as$city)
         <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>

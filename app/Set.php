@@ -22,4 +22,9 @@ class Set extends Model
     {
         return $this->hasOne('App\Rentableproduct', 'id', 'rpID');
     }
+
+    public function inFavorites()
+    {
+        return $this->hasOne('App\Favorite', 'setID', 'id');
+    }
 }

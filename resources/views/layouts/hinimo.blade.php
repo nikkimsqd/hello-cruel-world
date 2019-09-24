@@ -107,7 +107,7 @@
                                 @yield('boutiques')
                             </li>
                             <li><a href="{{url('/biddings')}}">Biddings</a></li>
-                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="{{url('mixnmatch')}}">MixnMatch</a></li>
                         
                         </ul>
                     </div>
