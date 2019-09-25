@@ -12,4 +12,9 @@ class Category extends Model
     {
         return $this->hasMany('App\Categorymeasurement', 'categoryID', 'id');
     }
+
+    public function categoryTag()
+    {
+        return $this->hasMany('App\Categorytag', 'categoryID', 'id');
+    }
 }

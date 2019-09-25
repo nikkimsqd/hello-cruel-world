@@ -16,19 +16,19 @@
           <div class="col-md-6">
             <div class="col-md-6"> 
             
-          <label>Womens</label>
+          <label>Women</label>
           @foreach($womens as $women)
             <li>{{$women['categoryName']}}</li>
           @endforeach
 
         </div>
 
-      <!--   <div class="col-md-6">
-            <label>Mens</label>
+        <div class="col-md-6">
+            <label>Men</label>
             @foreach($mens as $men)
                 <li>{{$men['categoryName']}}</li>
             @endforeach
-        </div> -->
+        </div>
           </div>
 
           <div class="col-md-5">
@@ -38,8 +38,8 @@
                 Gender:
                   <select class="form-control select2" name="gender" id="gender-select" autofocus>
                     <option selected="selected"> </option>
-                    <option value="Womens">Womens</option>
-                    <!-- <option value="Mens">Mens</option> -->
+                    <option value="Womens">Women</option>
+                    <option value="Mens">Men</option>
                   </select>
                   <br>
                   

@@ -14,8 +14,8 @@
                 <h3>{{$eventName}}</h3>
                 <div class="form-group tags">
                   @foreach($events as $event)
-                   <input type="checkbox" name="tags[]" id="{{$event->tag['name']}}" value="{{$event->tag['id']}}" checked>
-                   <label for="{{$event->tag['name']}}">{{$event->tag['name']}}</label>
+                   <input type="checkbox" name="tags[]" id="{{$event->tag['tagName']}}" value="{{$event->tag['id']}}" checked>
+                   <label for="{{$event->tag['name']}}">{{$event->tag['tagName']}}</label>
                   @endforeach
                 </div><br>
 

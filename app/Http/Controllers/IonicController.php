@@ -136,6 +136,7 @@ class IonicController extends Controller
     {
     	$page_title = "Order Details";
     	$order = Order::where('id', $orderID)->first();
+        // dd($order->customer);
     	$order['customer'] = $order->customer;
 		$order['boutique'] = $order->boutique;
         $order['address'] = $order->address;

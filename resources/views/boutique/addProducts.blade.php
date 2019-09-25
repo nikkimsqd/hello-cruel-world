@@ -93,7 +93,7 @@
         <select class="form-control select2" name="gender" id="gender-select" required>
           <option selected="selected"> </option>
           <option value="Womens">Womens</option>
-          <!-- <option value="Mens">Mens</option> -->
+          <option value="Mens">Mens</option>
         </select>
         <br>
         <select class="form-control select2" name="category" id="category-select" disabled required>
@@ -113,11 +113,8 @@
       </div>
       
       <label>Add Tags:</label>
-      <div class="form-group tags">
-         @foreach($tags as $tag)
-         <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-         <label for="{{$tag['name']}}">{{$tag['name']}}</label>
-         @endforeach
+      <div class="form-group tags" id="tags">
+        
       </div>
     </div> <!-- column closing -->
 
@@ -367,12 +364,23 @@
           // $('#measurement-input').append('<input type="text" name="mCategory[]" class="form-control" value="'+measurement.id+'" hidden>');
           $('#measurement-choices').append('<input type="checkbox" id="'+ measurement.id +'" name="'+ categoryID +'['+measurement.mName +']" value="'+measurement.mName+'" class="mb-3 measurements">&nbsp;');
           $('#measurement-choices').append('<label for="'+ measurement.id +'">'+ measurement.mName +'</label><br>');
-
-          
         });
       }
     });
     }
+
+    $.ajax({
+      url:"{{url('getCategoryTags')}}/"+categoryID,
+      success:function(data){
+        data.categoryTags.forEach(function(categoryTag){
+          $('#tags').append(
+            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.tagName +'">'+
+            '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
+        });
+      }
+    });
+
+
   }); 
 
   $('body').on('change', '.measurements', function() {

@@ -370,6 +370,7 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Declinedrent' => __DIR__ . '/../..' . '/app/Declinedrent.php',
         'App\\Declinedtransaction' => __DIR__ . '/../..' . '/app/Declinedtransaction.php',
+        'App\\Event' => __DIR__ . '/../..' . '/app/Event.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Fabric' => __DIR__ . '/../..' . '/app/Fabric.php',
         'App\\Favorite' => __DIR__ . '/../..' . '/app/Favorite.php',

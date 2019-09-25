@@ -10,9 +10,14 @@ class Itemtag extends Model
 
     // itemType : product, set
 
+    // public function tag()
+    // {
+    //     return $this->hasOne('App\Tag', 'id', 'tagID');
+    // }
+
     public function tag()
     {
-        return $this->hasOne('App\Tag', 'id', 'tagID');
+        return $this->hasOne('App\Categorytag', 'id', 'tagID');
     }
 
     public function product()

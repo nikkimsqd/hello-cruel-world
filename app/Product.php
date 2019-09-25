@@ -24,10 +24,10 @@ class Product extends Model
         return $this->hasOne('App\Category', 'id', 'category');
     }
 
-    public function getTags()
-    {
-        return $this->hasOne('App\Tag', 'id', 'tags');
-    }
+    // public function getTags()
+    // {
+    //     return $this->hasOne('App\Itemtag', 'id', 'tags');
+    // }
 
     public function rentDetails()
     {

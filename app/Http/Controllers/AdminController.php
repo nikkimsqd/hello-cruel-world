@@ -27,6 +27,7 @@ use App\Categorymeasurement;
 use App\Sharepercentage;
 use App\Payout;
 use App\Event;
+use App\Categorytag;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
@@ -190,17 +191,49 @@ class AdminController extends Controller
 		$page_title = "Tags";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
-		$tags = Tag::all();
+		$tags = Tag::all(); //to remove
+		$categories = Category::all();
+		$categoryGenders = $categories->groupBy('gender');
+		$categoryTags = Categorytag::all();
+		$categoryTagGender = $categoryTags->groupBy('categoryID');
+
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		// dd($categoryTagGender);
 
-		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount'));
+
+        // foreach($categoryTagGender as $categoryTags){
+        //      	// dd($categoryTags);
+        //      foreach($categoryTags as $categoryTag){
+	       //    foreach($categories as $category){
+	       //    	foreach($categoryGenders as $gender => $value){
+	       //       // dd($gender);
+	       //    	}
+	       //      if($category['id'] == $categoryTag['categoryID']){
+	       //       // dd($category['categoryName']);
+	       //      }else{
+	       //      	// dd('u here');
+	       //      }
+	       //     }
+	            
+	       //    }
+        //      }
+        //      	dd($categoryTags);
+          
+        
+
+		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryGenders', 'categoryTags', 'categoryTagGender'));
 	}
 
 	public function addTag(Request $request)
 	{
-		$tags = Tag::create([
-			'name' => $request->input('tag')
+		// $tags = Tag::create([
+		// 	'name' => $request->input('tag')
+		// ]);
+
+		$categoryTag = Categorytag::create([
+			'categoryID' => $request->input('category'),
+			'tagName' => $request->input('tag')
 		]);
 
 		return redirect('/admin-tags');
@@ -579,12 +612,13 @@ class AdminController extends Controller
 		$admin = User::where('id', $id)->first();
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
-		$tags = Tag::all();
+		// $tags = Tag::all();
+		$tags = Categorytag::all();
 		$events = Event::all();
         $eventNames = $events->groupBy('event');
         // dd($eventNames);
 
-    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'tags', 'events', 'eventNames'));
+    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'tags', 'events', 'eventNames', 'categoryTags'));
     }
 
     public function saveEvent(Request $request)

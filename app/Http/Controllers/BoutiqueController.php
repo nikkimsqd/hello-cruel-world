@@ -36,6 +36,7 @@ use App\Measurementrequest;
 use App\Rtw;
 use App\Paypalaccount;
 use App\Payout;
+use App\Categorytag;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -280,21 +281,33 @@ class BoutiqueController extends Controller
 			$user = Auth()->user()->id;
 			$boutique = Boutique::where('userID', $user)->first();
 			$categories = Category::all();
-			$tags = Tag::all();
+			// $tags = Tag::all();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
 	        $cities = City::all();
+            $categories = Category::all();
+	        $categoryGenders = $categories->groupBy('gender');
 
 			// foreach ($boutiques as $boutique) {
 			// 	$boutique;
 			// }
 
 
-			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions', 'cities'));
+			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions', 'cities', 'categoryTags'));
 		}else {
 			return redirect('/shop');
 		}
+	}
+
+	public function getCategoryTags($categoryID)
+	{
+	        $categoryTags = Categorytag::where('categoryID', $categoryID)->get();
+	        // $categoryTagGender = $categoryTags->groupBy('categoryID');
+
+	        return response()->json([
+	        	'categoryTags' => $categoryTags
+	        ]);
 	}
 
 	public function getProvince($regCode)
@@ -449,6 +462,7 @@ class BoutiqueController extends Controller
 			foreach ($boutiques as $boutique) {
 				$boutique;
 			}
+			// dd($tags[0]->tag);
 
 			return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tags', 'notifications', 
 			'notificationsCount'));
@@ -465,8 +479,8 @@ class BoutiqueController extends Controller
 			$boutique = Boutique::where('userID', $user)->first();
 			$product = Product::where('id', $productID)->first();
 			$categories = Category::all();
-			$tags = Tag::all();
-			$prodtags = Itemtag::where('itemID', $productID)->get();
+			$tags = Categorytag::where('categoryID', $product->getCategory['id'])->get();
+			$itemtags = Itemtag::where('itemID', $productID)->get();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
@@ -482,7 +496,7 @@ class BoutiqueController extends Controller
 
 			// dd($prodtags);
 
-			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
+			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'itemtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
 			}else {
 			return redirect('/shop');
 		}

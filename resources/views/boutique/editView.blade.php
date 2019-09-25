@@ -337,20 +337,20 @@
 				    	</div>
 
 
-				    	@if(count($prodtags) > 0)
+				    	@if(count($itemtags) > 0)
 					    <label>Add Tags:</label>
 					    <div class="form-group tags">
-							@foreach($prodtags as $prodtag)
-							@if($prodtag['itemID'] == $product['id'])
-								<input type="checkbox" name="tags[]" id="{{$prodtag->tag['name']}}" value="{{$prodtag->tag['id']}}" checked>
-								<label for="{{$prodtag->tag['name']}}">{{$prodtag->tag['name']}}</label>
+							@foreach($itemtags as $itemtag)
+							@if($itemtag['itemID'] == $product['id'])
+								<input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}" checked>
+								<label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
 							@endif
 							@endforeach
 
 							@foreach($tags as $tag)
-							@if($tag['id'] != $prodtag->tag['id'])
+							@if($tag['categoryID'] != $itemtag->tag['id'])
 								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
-								<label for="tag{{$tag['id']}}">{{$tag['name']}}</label>
+								<label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
 							@endif
 							@endforeach
 				      	</div>
@@ -359,7 +359,7 @@
 					    <div class="form-group tags">
 							@foreach($tags as $tag)
 								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
-								<label for="tag{{$tag['id']}}">{{$tag['name']}}</label>
+								<label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
 							@endforeach
 				      	</div>
 						@endif
@@ -775,7 +775,18 @@
 	    }
 	  });
 	  }
-	});
+
+ //    $.ajax({
+ //      url:"{{url('getCategoryTags')}}/"+categoryID,
+ //      success:function(data){
+ //        data.categoryTags.forEach(function(categoryTag){
+ //          $('#tags').append(
+ //            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.tagName +'">'+
+ //            '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
+ //        });
+ //      }
+ //    });
+	// });
 
 	$('body').on('change', '.measurements', function() {
 	  var measurement = $(this).val();

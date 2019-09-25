@@ -34,6 +34,7 @@ use App\Measurementrequest;
 use App\Payment;
 use App\Favorite;
 use App\Event;
+use App\Categorytag;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -49,34 +50,194 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
 class CustomerController extends Controller
 {
+
+    public function shopReco()
+    {
+        $userID = Auth()->user()->id;
+
+        $favorites = Favorite::where('userID', $userID)->get();
+        $profiling = Profiling::where('userID', $userID)->first();
+        $profilingDecoded = json_decode($profiling['data']);
+        $productsID = array();
+        $setsID = array();
+
+        foreach($profilingDecoded as $categoryID => $categorytagID){
+            $category = Category::where('id', $categoryID)->first();
+            foreach($categorytagID as $tagID){
+                $categoryTag = Categorytag::where('id', $tagID)->first();
+                $itemtags = Itemtag::where('tagID', $categoryTag['id'])->get();
+
+                if($itemtags != null){
+                    foreach($itemtags as $itemtag){
+                        if($itemtag['itemType'] == 'product'){
+                            if(!in_array($itemtag->product, $products)){
+                                if($itemtag->product['productStatus'] == 'Available'){
+                                    array_push($products, $itemtag->product);
+                                }
+                            }
+                        }else{
+                            if(!in_array($itemtag->set, $products)){
+                                if($itemtag->set['setStatus'] == 'Available'){
+                                    array_push($products, $itemtag->set);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // $products = $productsID->groupBy(index);
+
+            dd($productsID);
+    }
     public function shop() //ipa una n para mo check una sa auth
     {
         if (Auth::check()) { //check if nay naka login nga user
             if(Auth()->user()->roles == "customer") {
                 $page_title = "Shop";
                 $userID = Auth()->user()->id;
-                $products = Product::all();
-                $productsCount = $products->count();
                 $categories = Category::all();
                 $boutiques = Boutique::all();
-                $notAvailables = Product::where('productStatus', 'Not Available')->get();
+                // $notAvailables = Product::where('productStatus', 'Not Available')->get();
                 $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
                 if($cart != null){
                     $cartCount = $cart->items->count();
                 }else{
                     $cartCount = 0;
                 }
-                $favorites = Favorite::where('userID', $userID)->get();
-
-              
-
-                $sets = Set::all();
-
                 $notifications;
                 $notificationsCount;
                 $this->getNotifications($notifications, $notificationsCount);
 
-                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'sets'));
+
+                $profiling = Profiling::where('userID', $userID)->first();
+                $profilingDecoded = json_decode($profiling['data']);
+                $productReference = array();
+                $sortedProducts = array();
+                $productsArray = array();
+                $setsArray = array();
+                $storage = array();
+                $products = array();
+                $categoryTagArray = array(); // store tags of a category
+        
+                //PROFILING----------------------------------------------------------------------------------
+                //getting tags in profiling
+                foreach($profilingDecoded as $categoryID => $categorytagID){
+                    $category = Category::where('id', $categoryID)->first();
+                    foreach($categorytagID as $tagID){
+                        $categoryTag = Categorytag::where('id', $tagID)->first();
+                        $itemtags = Itemtag::where('tagID', $categoryTag['id'])->get();
+
+                        if($itemtags != null){
+                            foreach($itemtags as $itemtag){
+                                if($itemtag['itemType'] == 'product'){
+                                    // if(!in_array($itemtag->product, $storage)){
+                                    $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
+                                    if($itemtag->product['productStatus'] == 'Available'){
+                                        array_push($storage, $itemtag->product['id']);
+                                        $productReference[$itemtag->product['id']] = 'product';
+                                        $productsArray[$itemtag->product['id']] = $itemtag->product;
+                                        array_push($categoryTagArray, $categoryTag['id']);
+                                        // $product->getCategory->id = $categoryTagArray;
+                                    }
+                                    // }
+                                }else{
+                                    // if(!in_array($itemtag->set, $storage)){
+                                    $product = Set::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->first();
+                                    if($itemtag->set['setStatus'] == 'Available'){
+                                        array_push($storage, $itemtag->set['id']);
+                                        $productReference[$itemtag->set['id']] = 'set';
+                                        $setsArray[$itemtag->set['id']] = $itemtag->set;
+                                    }
+                                    // }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $scores = array_count_values($storage);
+                arsort($scores);
+
+                foreach($scores as $id => $score){
+                    if($productReference[$id]  == 'product'){
+                        array_push($products, $productsArray[$id]);
+                    }else{
+                        array_push($products, $setsArray[$id]);
+                    }
+                }
+
+                //ORDERS--------------------------------------------------------------------   --------------
+                $orderHistories = Order::where('userID', $userID)->where('status', 'Completed')->get();
+                foreach($orderHistories as $orderHistory){
+                    if($orderHistory['cartID'] != null){
+                        foreach($orderHistory->cart->items as $item){
+                            if($item['productID'] != null){
+                                $cartItem = Product::where('id', $item->product['id'])->first();
+                                foreach($cartItem->getCategory->categoryTag as $categoryTag){
+                                    array_push($categoryTagArray, $categoryTag['id']);
+                                }
+                            }else{
+                                $cartItem = Set::where('id', $item->set['id'])->first();
+                                foreach($cartItem->items as $setItem){
+                                    foreach($setItem->product->cartItem->getCategory->categoryTag as $categoryTag){
+                                        array_push($categoryTagArray, $categoryTag['id']);
+                                        // dd($categoryTag);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // dd($orderHistories);
+
+
+                //FAVORITES----------------------------------------------------------------------------------
+                $favorites = Favorite::where('userID', $userID)->get();
+                $favTags = array();
+
+                //getting tags in fvorites
+                foreach($favorites as $favorite){
+                    if($favorite['productID'] != null){
+                        $favProduct = Product::where('id', $favorite['productID'])->first();
+                        foreach($favProduct->getCategory->categoryTag as $categoryTag){
+                            array_push($categoryTagArray, $categoryTag['id']);
+                                // $productReference[$favProduct['id']] = 'product';
+                                // $productsArray[$favProduct['id']] = $favProduct;
+                            // $favTags[$favProduct->getCategory->id] = $categoryTagArray;
+                        }
+                    }else{
+                        $favProduct = Set::where('id', $favorite['setID'])->first();
+                        foreach($favProduct->items as $item){
+                            foreach($item->product->getCategory->categoryTag as $categoryTag){
+                                array_push($categoryTagArray, $categoryTag['id']);
+                                // $productReference[$favProduct['id']] = 'set';
+                                // $setsArray[$favProduct['id']] = $favProduct;
+                                // $favTags[$item->product->getCategory->id] = $categoryTagArray;
+                            }
+                        }
+                    }
+                }
+
+                //FOR ADDITIONAL PRODUCTS RECOMMENDATION-----------------
+                $tagsCounted = array_count_values($categoryTagArray); //count similar tags
+                arsort($tagsCounted);
+
+                foreach($tagsCounted as $categoryID => $counter){
+                    $category = Category::where('id', $categoryID)->first();
+                    $otherProducts = Product::where('category', $category['id'])->where('productStatus', 'Available')->get();
+
+                    foreach($otherProducts as $otherProduct){
+                        if(!in_array($otherProduct, $products)){
+                            array_push($products, $otherProduct);
+                        }
+                    }
+                }
+                    // dd($products);
+
+
+                $productsCount = count($products);
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
                 
 
             } else if(Auth()->user()->roles == "boutique") {
@@ -120,36 +281,34 @@ class CustomerController extends Controller
 
     public function getStarted()
     {
-        $page_title = "profiling";
-        return view('hinimo/getstarted', compact('page_title'));
+        $page_title = "Hinimo";
+        $userID = Auth()->user()->id;
+        $user = User::where('id', $userID)->first();
+        if($user['gender'] == "Female"){
+            $categories = Category::where('gender', 'Womens')->get();
+        }else{
+            $categories = Category::where('gender', 'Mens')->get();
+        }
+        $categoryGenders = $categories->groupBy('gender');
+        $categoryTags = Categorytag::all();
+        $categoryTagGender = $categoryTags->groupBy('categoryID');
+
+        // dd($categories);
+
+        return view('hinimo/getstarted', compact('page_title', 'categories', 'categoryGenders', 'categoryTags', 'categoryTagGender'));
     }
 
     public function profiling(Request $request)
     {
         $page_title = "profiling";
         $userID = Auth()->user()->id;
-
-        $tops = $request->input('tops');
-        $sweaters = $request->input('sweaters');
-        $jackets = $request->input('jackets');
-        $pants = $request->input('pants');
-        $dresses = $request->input('dresses');
-
-        $data = array();
-
-        array_push($data, $tops);
-        array_push($data, $sweaters);
-        array_push($data, $jackets);
-        array_push($data, $pants);
-        array_push($data, $dresses);
-        // dd($data);
-
-        $data_encoded = json_encode($data);
+        $categories = Category::all();
+        $data = json_encode($request->input('tag'));
 
         
         $profilings = Profiling::create([
             'userID' => $userID,
-            'data' => $data_encoded
+            'data' => $data
         ]);
 
         return redirect('/user-profiling/done');
@@ -1217,7 +1376,7 @@ class CustomerController extends Controller
 
     public function getCategory($genderCategory)
     {
-        $categories = Category::where('gender', $genderCategory)->get();
+        $categories = Category::where('gender', $genderCategory)->with('categoryTag')->get();
 
         return response()->json(['categories' => $categories]);
     }
@@ -1906,7 +2065,7 @@ class CustomerController extends Controller
         //events
         foreach($events as $event){
             $counter = 0;
-            $tag = Tag::where('id', $event->tag['id'])->first();
+            $tag = Categorytag::where('id', $event->tag['id'])->first();
 
             //tags on items
             $itemtags = Itemtag::where('tagID', $tag['id'])->get();
@@ -1956,6 +2115,8 @@ class CustomerController extends Controller
                 array_push($sortedProducts, $setsArray[$id]);
             }
         }
+
+        // dd($eventArray);
 
 
         return response()->json([

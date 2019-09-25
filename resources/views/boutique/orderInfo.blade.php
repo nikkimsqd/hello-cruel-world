@@ -169,16 +169,21 @@
         @elseif($order['biddingID'] != null)
           <a class="btn btn-default" href="{{url('boutique-bidding/'.$order->bidding['id'])}}"> Back to Bidding Details</a>
         @endif
-        @if($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
+        @if($order['paymentStatus'] == "Fully Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
-        @elseif($order['paymentStatus'] == "Paid" && $order['status'] == "In-Progress" && $order['cartID'] == null)
+
+        @elseif($order['paymentStatus'] == "Fully Paid" && $order['status'] == "In-Progress" && $order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> Set Date for Fittings</a>
+
         @elseif($order['status'] == "For Alterations" && $order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
+
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
           <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
+
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress")
           <input type="submit" value="For Alterations" class="btn btn-primary" disabled>
+          
         @elseif($order['status'] == "On Rent")
           <a href="{{url('rentReturned/'.$order['rentID'])}}" class="btn btn-primary">Item Returned</a>
         @endif

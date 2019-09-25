@@ -14,12 +14,16 @@
                 <h4>Add Event Name</h4>
                 <input type="text" name="event" class="form-control" autofocus><br>
                 
+                <h4>Select gender</h4>
+                <select class="form-control" id="gender-select">
+                  <option selected disabled></option>
+                  <option value="Womens">Womens</option>
+                  <option value="Mens">Mens</option>
+                </select><br>
+
                 <h4>Add Tags</h4>
-                <div class="form-group tags">
-                   @foreach($tags as $tag)
-                   <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-                   <label for="{{$tag['name']}}">{{$tag['name']}}</label>
-                   @endforeach
+                <div class="form-group tags" id="tags">
+                   
                 </div><br>
 
             </div>
@@ -99,6 +103,36 @@
 
 $('.products').addClass("active");  
 $('.events').addClass("active");  
+
+$('#gender-select').on('change', function(){
+  var gender = $(this).val();
+  $('#tags').empty();
+  $.ajax({
+    url:"{{url('getCategory')}}/"+gender,
+    success:function(data){
+      data.categories.forEach(function(category){
+        category.category_tag.forEach(function(categoryTag){
+          $('#tags').append(
+            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.id +'">'+
+            '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
+            console.log(category);
+        });
+      });
+    }
+  });
+
+  // $.ajax({
+  //   url:"{{url('getCategoryTags')}}/"+categoryID,
+  //   success:function(data){
+  //     data.categoryTags.forEach(function(categoryTag){
+  //       $('#tags').append(
+  //         '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.tagName +'">'+
+  //         '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
+  //     });
+  //   }
+  // });
+
+});
 
 
 

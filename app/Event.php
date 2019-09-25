@@ -10,6 +10,6 @@ class Event extends Model
 
     public function tag()
     {
-        return $this->hasOne('App\Tag', 'id', 'tagID');
+        return $this->hasOne('App\Categorytag', 'id', 'tagID');
     }
 }

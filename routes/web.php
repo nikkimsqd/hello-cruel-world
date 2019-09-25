@@ -196,7 +196,10 @@ Route::middleware(['auth'])->group(function(){
 
 
 
+	Route::get('/getCategoryTags/{categoryID}', 'BoutiqueController@getCategoryTags');
+
 //CUSTOMER--------------------------------------------------------------------------------------------
+	Route::get('/shopReco', 'CustomerController@shopReco');
 
 	Route::get('/get-started/welcome', 'CustomerController@welcome');
 	Route::get('/get-started', 'CustomerController@getStarted');

@@ -20,6 +20,7 @@ return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Declinedrent' => $baseDir . '/app/Declinedrent.php',
     'App\\Declinedtransaction' => $baseDir . '/app/Declinedtransaction.php',
+    'App\\Event' => $baseDir . '/app/Event.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Fabric' => $baseDir . '/app/Fabric.php',
     'App\\Favorite' => $baseDir . '/app/Favorite.php',
