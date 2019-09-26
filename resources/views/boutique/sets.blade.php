@@ -34,15 +34,15 @@
           <div class="row">
           <?php $counter = 1; ?>
 
-          @foreach( $set->items as $item)
+            @foreach( $set->items as $item)
             <div class="col-md-6">
-          @foreach( $item->product->productFile as $image)
+              @foreach($item->product->productFile as $image)
 
-              <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 350px; object-fit: cover;">
-          <?php break; ?>
-          @endforeach
+                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 350px; object-fit: cover;">
+                <?php break; ?>
+              @endforeach
             </div>
-          @endforeach
+            @endforeach
           </div>
 
           <div class="row">

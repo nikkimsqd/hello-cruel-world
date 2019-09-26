@@ -19,6 +19,37 @@
             @foreach($categoryGenders as $gender => $value)
               <h3>{{$gender}}</h3>
               <ul>
+
+
+                @foreach($categories as $category)
+                  @if($gender == $category['gender'])
+                    <li><h4>{{$category['categoryName']}}</h4></li>
+
+                    @foreach($categoryTagGender as $categoryTags)
+                      @foreach($categoryTags as $categoryTag)
+                        <!-- <li><h4>{{$categoryTagGender}}</h4></li> -->
+                        <!-- @if($category['id'] == $categoryTag['categoryID']) -->
+                        
+
+                          <!-- @foreach($category->categoryTag as $tag) -->
+                            <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$categoryTag['tagName']}}</h2>
+                          <!-- @endforeach -->
+                        <!-- @endif -->
+                      @endforeach
+                    @endforeach
+
+                  @endif
+                @endforeach
+
+
+            </ul>
+            @endforeach
+
+
+
+            @foreach($categoryGenders as $gender => $value)
+              <h3>{{$gender}}</h3>
+              <ul>
                 @foreach($categoryTagGender as $categoryTags)
                   @foreach($categoryTags as $categoryTag)
 

@@ -1562,6 +1562,8 @@ class BoutiqueController extends Controller
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 
+		// dd($sets[0]->items[0]->product->productFile);
+
 		return view('boutique/sets', compact('sets', 'boutique', 'user', 'setCount', 'page_title', 'notifications', 'notificationsCount'));
     }
 

@@ -356,7 +356,7 @@
 				      	</div>
 				      	@else
 					    <h4>Add Tags:</h4>
-					    <div class="form-group tags">
+					    <div class="form-group tags" id="tags">
 							@foreach($tags as $tag)
 								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
 								<label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
@@ -381,7 +381,7 @@
 
 				      <div class="form-group">
 				        <h4>In-Stock:</h4>
-				        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}">
+				        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}" required>
 				      </div>
 
 					    <div class="form-group">
@@ -758,6 +758,7 @@
 	  var categoryID = $(this).val();
 	  $('#measurement-choices').empty();
 	  $('#measurement-input').empty();
+	  $('#tags').empty();
 	  // console.log(rtw);
 
 	  if(rtw == 'no'){
@@ -776,17 +777,20 @@
 	  });
 	  }
 
- //    $.ajax({
- //      url:"{{url('getCategoryTags')}}/"+categoryID,
- //      success:function(data){
- //        data.categoryTags.forEach(function(categoryTag){
- //          $('#tags').append(
- //            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.tagName +'">'+
- //            '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
- //        });
- //      }
- //    });
-	// });
+    $.ajax({
+      url:"{{url('getCategoryTags')}}/"+categoryID,
+      success:function(data){
+        data.categoryTags.forEach(function(categoryTag){
+	        // categoryTags.forEach(function(categoryTag){
+	        	console.log(categoryTag);
+	          	$('#tags').append(
+	            '<input type="checkbox" name="tags[]" id="tag'+ categoryTag.id +'" value="'+ categoryTag.id +'">'+
+	            '<label for="tag'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
+        	// });
+        });
+      }
+    });
+	});
 
 	$('body').on('change', '.measurements', function() {
 	  var measurement = $(this).val();
