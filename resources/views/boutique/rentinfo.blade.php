@@ -36,7 +36,7 @@
               <h4><b>Rent ID: {{$rent['rentID']}}</b></h4>
               <h4>Customer Name: <b>{{$rent->customer['fname'].' '.$rent->customer['lname']}}</b></h4>
               <h4>Request placed at: <b>{{$rent['created_at']->format('M d, Y')}}</b></h4>
-              <h4>Address of Delivery: <b>{{$rent->address['completeAddress']}}</b></h4>
+              <h4>Address of Delivery: <b>{{$rent->order->address['completeAddress']}}</b></h4>
 
               <hr>
               <h4><b>Rent Details</b></h4>
@@ -224,6 +224,7 @@
         </div>
         
         <div class="box-footer" style="text-align: right;">
+          <a class="btn btn-success" data-toggle="modal" data-target="#qrCode{{$rent->order['id']}}">View QR Code</a>
           <!-- <a class="btn btn-default" href="{{url('rents/'.$rent['rentID'])}}"> Back to Rent Details</a> -->
         @if($rent->order['paymentStatus'] == "Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] != null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
@@ -436,6 +437,30 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- QR CODE -->
+<div class="modal fade" id="qrCode{{$rent->order['id']}}" role="dialog">
+  <div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><b>QR Code</b></h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="text-align: center;">{!! QrCode::size(300)->generate( $rent->order['id'].'_'.$rent->order['userID'].'_'.$rent->order['boutiqueID'].'_'.$rent->order['created_at'] ); !!}</p>
+      </div>
+
+      <div class="modal-footer">
+        <!-- <input type="" class="btn btn-default" data-dismiss="modal" value="Cancel"> -->
+        <a href="" class="btn btn-default" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary" value="Print">
+        <!-- <a href="" class="btn btn-primary">Print</a> -->
+      </div>
+    </div> 
   </div>
 </div>
 

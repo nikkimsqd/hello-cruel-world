@@ -50,27 +50,10 @@
                   @endif
                   @if($rent['status'] == "Pending")
                     <td><span class="label label-warning">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "In-Progress")
+                  @elseif($rent['status'] == "Approved")
                     <td><span class="label label-info">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "For Pickup")
-                    <td><span class="label bg-teal">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "For Delivery")
-                    <td><span class="label bg-olive">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "On Delivery")
-                    <td><span class="label label-navy">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "On Rent")
-                    <td><span class="label bg-maroon">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "Completed")
-                    <td><span class="label label-success">{{$rent['status']}}</span></td>
-
-                  @elseif($rent['status'] == "Declined")
-                    <td><span class="label label-danger">{{$rent['status']}}</span></td>
+                  @else
+                    <td><span class="label label-danger">Declined</span></td>
                   @endif
                   <td><a href="rents/{{$rent['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>

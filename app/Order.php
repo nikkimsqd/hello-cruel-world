@@ -53,5 +53,10 @@ class Order extends Model
     {
         return $this->hasOne('App\Payout', 'id', 'payoutID');
     }
+
+    public function complain()
+    {
+        return $this->hasOne('App\Complain', 'orderID', 'id');
+    }
     
 }

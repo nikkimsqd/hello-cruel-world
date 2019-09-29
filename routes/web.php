@@ -14,13 +14,19 @@ Route::get('/', function () {
     return redirect('/shop');
 });
 
+Route::get('qr-code', function () {
+    return QrCode::size(500)->generate('Welcome');
+});
+
+//IONIC QR ROUTE
+Route::get('/ionic-getqr/{data}', 'IonicController@getqr');
+
 // $this->get('register-boutique', 'Auth\RegisterController@showBoutiqueRegistrationForm')->name('registerseller');
 // $this->post('register-boutique', 'Auth\RegisterController@register');
 
 
 Auth::routes();
-// Route::get('/home', 'HomeController@index');
-Route::get('/home', 'CustomerController@index');
+// Route::get('/home', 'CustomerController@index');
 
 
 //SHOP
@@ -269,7 +275,6 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/user-notifications/{notificationID}', 'CustomerController@viewNotification');
 
 
-
 	//BOUTIQUE PROFILE
 	Route::get('/boutique/{boutiqueID}', 'CustomerController@viewBoutique');
 
@@ -285,17 +290,17 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/cancelMto/{mtoID}', 'CustomerController@cancelMto');
 	Route::post('/submitMeasurementforMto', 'CustomerController@submitMeasurementforMto');
 
-
 	//TRANSACTIONS
 	Route::get('/user-transactions', 'CustomerController@usertransactions');
 	Route::get('/view-order/{orderID}', 'CustomerController@viewOrder');
 	Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');
 	Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
+	Route::post('/fileComplain', 'CustomerController@fileComplain');
+
 
 	//PAYPAL TRANSACTION
 	Route::post('/paypal-transaction-complete', 'CustomerController@paypalTransactionComplete');
 	// Route::get('/get-paypal-transaction/{orderId}', 'CustomerController@getPaypalOrder');
-
 
 	//MIX&MATCH
 	Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');

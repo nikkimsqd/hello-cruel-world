@@ -32,13 +32,17 @@ class IonicController extends Controller
             // Authentication passed...
             $user = User::where('username', $username)->first();
 
-        }else{
-            dd("sayop");
-        }
 
-        return response ()->json([
-            'user' => $user
-        ]);
+            return response ()->json([
+                'user' => $user
+            ]);
+
+        }else{
+
+            return response ()->json([
+                'user' => 'Wrong username/password.'
+            ]);
+        }
     }
 
     public function topickup()
@@ -149,9 +153,12 @@ class IonicController extends Controller
 		]);
     }
 
-    public function pickupOrder($orderID)
+    public function pickupOrder($data)
     {
-    	$order = Order::where('id', $orderID)->first();
+        // $orderData = array();
+        $orderData = explode("_", $data);
+        // dd($orderData);
+    	$order = Order::where('id', $orderData[0])->first();
     	$order->update([
     		'status' => "For Delivery"
     	]);
@@ -235,5 +242,11 @@ class IonicController extends Controller
         return response()->json([
             'orderID' => $notification['data']['orderID']
         ]);
+    }
+
+    public function getqr($data)
+    {
+        var_dump($data);
+
     }
 }

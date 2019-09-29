@@ -160,6 +160,7 @@
         </div>
         
         <div class="box-footer" style="text-align: right;">
+          <a class="btn btn-success" data-toggle="modal" data-target="#qrCode{{$order['id']}}">View QR Code</a>
         @if($order['cartID'] != null)
           <a class="btn btn-default" href="{{url('orders')}}"> Back</a>
         @elseif($order['rentID'] != null)
@@ -220,29 +221,60 @@
 </div>
 
 <div class="modal fade" id="forPickupModal" role="dialog">
-    <div class="modal-dialog ">
-      <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title"><b>Submit MTO for Pickup?</b></h3>
-          </div>
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title"><b>Submit MTO for Pickup?</b></h3>
+      </div>
 
-          <div class="modal-body">
-            <p>Set date for pickup:</p>
-            <form action="{{url('submitOrder')}}" method="post">
-              {{csrf_field()}}
-              <!-- <input type="text" id="alterationDateEnd" class="form-control" value="{{$order['alterationDateEnd']}}" hidden> -->
-              <input type="text" name="deliverySchedule" id="deliverySchedule" class="form-control datepicker" required>
-              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
-          </div>
+      <div class="modal-body">
+        <p>Set date for pickup:</p>
+        <form action="{{url('submitOrder')}}" method="post">
+          {{csrf_field()}}
+          <!-- <input type="text" id="alterationDateEnd" class="form-control" value="{{$order['alterationDateEnd']}}" hidden> -->
+          <input type="text" name="deliverySchedule" id="deliverySchedule" class="form-control datepicker" required>
+          <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+      </div>
 
-          <div class="modal-footer">
-            <!-- <a href="{{url('submitOrder/'.$order['id'])}}" class="btn btn-primary">Confirm</a> -->
-            <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
-          </form>
-          </div>
-      </div> 
-    </div>
+      <div class="modal-footer">
+        <!-- <a href="{{url('submitOrder/'.$order['id'])}}" class="btn btn-primary">Confirm</a> -->
+        <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
+      </form>
+      </div>
+    </div> 
+  </div>
+</div>
+
+<div class="modal fade" id="qrCode{{$order['id']}}" role="dialog">
+  <div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title"><b>QR Code</b></h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="text-align: center;">
+          {!! QrCode::size(300)->generate( 
+         $order['id'].'_'.$order['userID'].'_'.$order['boutiqueID']  
+          ); !!}
+
+        <!--   {!! QrCode::size(300)->generate( 
+          'http://192.168.43.176/hinimo/public/ionic-getqr/'.$order['id'].'/'.$order['id'].'_'.$order['userID'].'_'.$order['boutiqueID']  
+          ); !!} -->
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <!-- <input type="" class="btn btn-default" data-dismiss="modal" value="Cancel"> -->
+        <a href="" class="btn btn-default" data-dismiss="modal">Cancel</a>
+        <!-- <input type="submit" class="btn btn-primary" value="Print"> -->
+        <!-- <a href="" class="btn btn-primary">Print</a> -->
+      </div>
+    </div> 
+  </div>
 </div>
 
 @endsection

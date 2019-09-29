@@ -9,7 +9,7 @@
     <section class="single_product_details_area d-flex align-items-center">
 
         <!-- Single Product Thumb -->
-        <div class="single_product_thumb clearfix">
+        <div class="single_product_thumb clearfix test">
             <div class="product_thumbnail_slides owl-carousel">
                 @foreach($set->items as $item)
                 @foreach($item->product->productFile as $image)

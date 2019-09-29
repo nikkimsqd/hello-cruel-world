@@ -203,7 +203,7 @@
 
             <div class="row align-items-end">
                 <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
+                <!-- <div class="col-12 col-md-6">
                     <div class="single_widget_area">
                         <div class="footer_heading mb-30">
                             <h6>Subscribe</h6>
@@ -215,9 +215,9 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
+              <!--   <div class="col-12 col-md-6">
                     <div class="single_widget_area">
                         <div class="footer_social_area">
                             <a href="#" data-toggle="tooltip" data-placement="top" title="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
@@ -227,7 +227,7 @@
                             <a href="#" data-toggle="tooltip" data-placement="top" title="Youtube"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
 <div class="row mt-5">

@@ -59,7 +59,7 @@
                                     @endif
                                     @endforeach
                                 </td>
-                        		<td style="text-align: center;">{{$order['status']}}</td>
+                        		<td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
                         		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Order</a></td>
                         	</tr>
                             @elseif($order['rentID'] != null)

@@ -35,6 +35,7 @@ use App\Payment;
 use App\Favorite;
 use App\Event;
 use App\Categorytag;
+use App\Complain;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -44,6 +45,8 @@ use App\Notifications\NewOrder;
 use App\Notifications\CustomerPaysOrder;
 use App\Notifications\NewBidding;
 use App\Notifications\CustomerDoesntAcceptOffer;
+use App\Notifications\NotifyOfComplain;
+use App\Notifications\NotifyAdminOfComplain;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -1555,7 +1558,7 @@ class CustomerController extends Controller
         $mtos = Mto::where('userID', $userID)->where('orderID', null)->where('status', 'Active')->get();
         $biddings = Bidding::where('userID', $userID)->where('orderID', '!=', null)->get();
         $declinedMtos = Mto::where('status', '!=', 'Cancelled')->get();
-        // dd($orders);
+        // dd($orders[0]['cartID']);
 
         $transactions = array();
         array_push($transactions, $orders);
@@ -2008,7 +2011,7 @@ class CustomerController extends Controller
 
     public function mixnmatch()
     {
-        $page_title = "Reco";
+        $page_title = "Choose your Event";
         $userID = Auth()->user()->id;
         $categories = Category::all();
         $boutiques = Boutique::all();
@@ -2437,5 +2440,50 @@ class CustomerController extends Controller
         Favorite::where('setID', $setID)->delete();
     }
 
+    public function fileComplain(Request $request)
+    {
+        // dd($request->input());
+        $user = User::where('id', $request->input('userID'))->first();
+        $orderID = $request->input('orderID');
+        $order = Order::where('id', $orderID)->first();
+
+        $complain = Complain::create([
+            'userID' => $request->input('userID'),
+            'orderID' => $orderID,
+            'complain' => $request->input('complain'),
+            'status' => 'Active'
+        ]);
+
+        $uploads = $request->file('file');
+        if($request->hasFile('file')) {
+            foreach($uploads as $upload){
+                $files = new File();
+                // $name = $upload->getClientOriginalName();
+                $destinationPath = public_path('uploads');
+                $random = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
+                $filename = $destinationPath.'\\'. $random;
+                $upload->move($destinationPath, $filename);
+
+                $files->userID = $user['id'];
+                $files->complainID = $complain['id'];
+                $files->filename = "/".$random;
+                $files->save();
+                $filename = "/".$random;
+            }
+        }
+
+        $order->update([
+            'status' => 'On Hold'
+        ]);
+
+        $boutique = Boutique::where('id', $order->boutique['id'])->first();
+        $boutiqueseller = User::where('id', $boutique['userID'])->first();
+        $boutiqueseller->notify(new NotifyOfComplain($orderID, $user));
+
+        $admin = User::where('roles', 'admin')->first();
+        $admin->notify(new NotifyAdminOfComplain($orderID, $boutique));
+
+        return redirect('view-order/'.$orderID);
+    }
 
 }

@@ -90,11 +90,13 @@
                             <div class="notif-area cart-area" style="text-align: right;">
                                 <input type="submit" class="btn essence-btn" disabled value="Item Received">
                             </div>
-                            @elseif($order['status'] == "On Delivery" || $order['status'] == "Delivered")
+                            @elseif($order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <a href="{{url('receiveOrder/'.$order['id'])}}" class="btn essence-btn">Item Received</a>
+                                <a href="" class="btn essence-btn white-btn" data-toggle="modal" data-target="#fileForComplain">File for complains</a> &nbsp;&nbsp;&nbsp;
+                                <a href="" class="btn essence-btn" data-toggle="modal" data-target="#confirmReceive">Item Received</a>
                             </div>
-                            <!-- elseif($order['status'] == "On Rent") -->
+                            @elseif($order['status'] == "Delivered" && $order->complain)
+                            <p>You filed for a complain.</p>
                             @endif
                         </div><br><br> <!-- card closing -->
 
@@ -148,10 +150,60 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="confirmReceive" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <h3 class="modal-title"><b>Rent Details</b></h3> -->
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <h5>Are you sure?</h5>
+                <p>Once you clicked YES, there's no turning back!</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="{{url('receiveOrder/'.$order['id'])}}" class="btn essence-btn">YES</a>
+            </div>
+        </div> 
+    </div>
+</div>
+
+<div class="modal fade" id="fileForComplain" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><b>Submit your complain</b></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <form action="{{url('fileComplain')}}" method="post" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <input type="file" name="file[]" id="imgInp" class="form-control" multiple required><br>
+                    <!-- <img id="imgPreview" src="#" alt="" /><br> -->
+                    <textarea name="complain" class="form-control" rows="4" required></textarea>
+                    <input type="text" name="userID" value="{{$order->customer['id']}}" hidden>
+                    <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" name="btn_submit" value="Submit" class="btn essence-btn">
+                </div>
+            </form>
+        </div> 
+    </div>
+</div>
+
 <style type="text/css">
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
     .mb-10{margin-bottom: 10px;}
     .payment-heading{background-color: aliceblue;}
+    .white-btn{color: #0315ff; background-color: white; border: 1px solid #0315ff;}
+    .white-btn:hover{border-color: #dc0345;}
+    #imgPreview{max-height: 150px;  width: auto;  border: 1px solid #f0f0f0;}
 </style>
 
 <!-- </div> -->
@@ -216,6 +268,28 @@
         }
     }).render('#paypal-button-container');
     } //if closing
+
+
+    //preview uploaded picture
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                console.log(e.target.result);
+                // e.forEach(function(image){
+                    $('#imgPreview').attr('src', e.target.result);
+                // })
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#imgInp").change(function() {
+      readURL(this);
+    });
+
 </script>
 
 @endsection

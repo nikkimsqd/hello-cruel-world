@@ -34,7 +34,7 @@ Route::get('/ionic-delivered', 'IonicController@delivered');
 Route::get('/ionic-completed', 'IonicController@completed');
 
 Route::get('/ionic-viewOrder/{orderID}', 'IonicController@viewOrder');
-Route::get('/ionic-pickupOrder/{orderID}', 'IonicController@pickupOrder');
+Route::get('/ionic-pickupOrder/{data}', 'IonicController@pickupOrder');
 Route::get('/ionic-deliveredOrder/{orderID}', 'IonicController@deliveredOrder');
 
 Route::get('/courier-notifications/{userID}', 'IonicController@notifications');
