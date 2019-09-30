@@ -1645,6 +1645,7 @@ class BoutiqueController extends Controller
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 
 		$set = Set::where('id', $setID)->first();
+		$tags = Itemtag::where('itemID', $setID)->get();
 
 		// $product = Product::where('id', $productID)->first();
 		// $category = Category::where('id', $product['category'])->first();
@@ -1656,7 +1657,7 @@ class BoutiqueController extends Controller
 		}
 
 		return view('boutique/viewSet', compact('boutique', 'user', 'page_title', 'notifications', 
-		'notificationsCount', 'set'));
+		'notificationsCount', 'set', 'tags'));
 	}
 
 	public function editViewSet($setID)
@@ -1674,14 +1675,27 @@ class BoutiqueController extends Controller
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
 	        $cities = City::all();
+			$set = Set::where('id', $setID)->first();
+
+			// $itemtags = Itemtag::where('itemID', $productID)->get();
+			$itemtags = Itemtag::where('itemID', $setID)->get();
 
 			foreach ($categories as $category) {
 				$category;
 			}
 
+
+			foreach($set->items as $item){
+				$tags = Itemtag::where('itemID', $item->product['id'])->get();
+				// dd($item->product['id']);
+			}
+
+			// $tags = Categorytag::where('categoryID', $product->getCategory['id'])->get();
+			// $itemtags = Itemtag::where('itemID', $productID)->get();
+
 			// dd($prodtags);
 
-			return view('boutique/editViewSet', compact('set', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
+			return view('boutique/editViewSet', compact('set', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'itemtags'));
 			}else {
 			return redirect('/shop');
 		}

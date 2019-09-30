@@ -41,8 +41,13 @@
               @elseif($set['price'] != null)
               <h4 class="heading">Retail Price</h4>
               <p>₱{{ number_format($set['price']) }}</p>
-
               @endif
+
+              <h4 class="heading">Tags:</h4>
+              @foreach($tags as $tag)
+              <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['tagName']}}</h2>
+              @endforeach
+              
             </div>
 
             <div class="col-md-6">

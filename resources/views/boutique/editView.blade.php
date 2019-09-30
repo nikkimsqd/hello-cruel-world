@@ -337,7 +337,7 @@
 				    	</div>
 
 
-				    	@if(count($itemtags) > 0)
+				    	@if(count($tags) > 0)
 					    <label>Add Tags:</label>
 					    <div class="form-group tags">
 							@foreach($itemtags as $itemtag)

@@ -46,13 +46,49 @@
 
                 @endif
         
-                <h4>Add Tags:</h4>
+                <!-- <h4>Add Tags:</h4>
                 <div class="form-group tags">
                    @foreach($tags as $tag)
                    <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
                    <label for="{{$tag['name']}}">{{$tag['name']}}</label>
                    @endforeach
-                </div>
+                </div> -->
+
+
+                @if(count($itemtags) > 0)
+                  <label>Add Tags:</label>
+                  <div class="form-group tags">
+                  @foreach($set->items as $items)
+                    @foreach($items as $item)
+                      @foreach($itemtags as $itemtag)
+                        @if($itemtag['itemID'] == $item['id'])
+                          <input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}" checked>
+                          <label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
+                        @endif
+                      @endforeach
+                    @endforeach
+                  @endforeach
+
+                  @foreach($tags as $tag)
+                    @if($tag['categoryID'] != $itemtag->tag['id'])
+                      <input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
+                      <label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
+                    @endif
+                  @endforeach
+                    </div>
+                @else
+                  <h4>Add Tags:</h4>
+                  <div class="form-group tags" id="tags">
+
+                    @foreach($set->items as $items)
+                      @foreach($items as $item)
+                        {{$item['productName']}}aa
+                      @endforeach
+                    @endforeach
+
+                  </div>
+                @endif
+
               </div>
 
               <div class="col-md-6">
