@@ -59,7 +59,7 @@ class NotifyAdminOfComplain extends Notification
     public function toArray($notifiable)
     {
         return [
-            'text' => $this->boutique['boutiqueName'].' was complianed by a customer',
+            'text' => $this->boutique['boutiqueName'].' was complianed by a customer.',
             'orderID' => $this->orderID
         ];
     }
