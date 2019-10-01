@@ -31,6 +31,7 @@
               <hr>
               <h4><b>MTO Details</b></h4>
               <h4>Date of item's use: <b>{{date('M d, Y',strtotime($mto['deadlineOfProduct']))}}</b></h4>
+              <h4>Customer's Notes/Instructions:<br> &nbsp; <b>{{$mto['notes']}}</b></h4>
               <h4>Fabric:
                 @if($mto['fabChoice'] == "provide")
                   <i><b>Customer will provide fabric<b></i>
@@ -43,22 +44,27 @@
               <h4>Quantity: <b>{{$mto['quantity']}} pcs.</b></h4>
               <h4>Number of wearers: 
                 @if($mto['numOfPerson'] == "equals")
-                  <b>{{$mto['quantity']}}</b>
+                  <b>{{$mto['quantity']}} person/s</b>
                 @else
-                  <?php 
-                    $nameOfWearers = json_decode($mto['nameOfWearers']); 
-                    // $namesCounter = count($nameOfWearers);
-                    $counter = 0;
-                  ?>
-                  {{$counter}}<br>
-                  @foreach($nameOfWearers as $nameOfWearer => $value)
-                  <?php $counter +=1; ?>
-                  <b>{{$nameOfWearer}}: {{$value}}pc/s.</b><br>
-                  @endforeach
+                  <b>{{$nameOfWearer}} person/s</b>
                 @endif
               </h4>
 
-              <h4>Customer's Notes/Instructions:<br> &nbsp; <b>{{$mto['notes']}}</b></h4>
+              @if($mto['numOfPerson'] != "equals")
+                <h4>Name of wearer/s: 
+                  <?php 
+                    $nameOfWearers = json_decode($mto['nameOfWearers']); 
+                    $counter = 0;
+                  ?> <br>
+                  <ul>
+                    @foreach($nameOfWearers as $nameOfWearer => $value)
+                    <?php $counter +=1; ?>
+                    <li><b>{{$nameOfWearer}} = {{$value}}pc/s.</b></li>
+                    @endforeach
+                  </ul>
+                </h4>
+              @endif
+
               @if($mto['price'] != null && $mto['orderID'] != null)
                 <h4>Price: <b>₱{{$mto['price']}}</b></h4>
               @endif

@@ -1001,17 +1001,17 @@ class BoutiqueController extends Controller
 		$fabrics = Fabric::where('boutiqueID', $boutique['id'])->get();
         $fabs = $fabrics->groupBy('name');
 
-
-		// $nameOfWearers = json_decode($mto['nameOfWearers']); 
-		// // $namesCounter = count($nameOfWearers);
-		// // dd(gettype($nameOfWearers));
-		// dd(sizeof($nameOfWearers));
+        if($mto['numOfPerson'] != "equals"){
+			$nameOfWearers = json_decode($mto['nameOfWearers']); 
+			foreach($nameOfWearers as $nameOfWearer){
+			}
+		}
 
 
 		$categories = Category::all();
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mto)->get();
 
-        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests'));
+        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests', 'nameOfWearer'));
     }
 
   //   public function halfapproveMto($mtoID)

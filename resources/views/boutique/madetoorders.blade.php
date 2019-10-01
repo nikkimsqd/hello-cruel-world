@@ -29,7 +29,7 @@
                 <tr>
                   <th>MTO ID</th>
                   <th>Customer Name</th>
-                  <th>Date of Use</th>
+                  <th>Deadline of Product</th>
                   <th>Request Placed at:</th>
                   <th>Order Status</th>
                   <th></th>
@@ -41,7 +41,7 @@
                 <tr>
                   <td>{{$mto['id']}}</td>
                   <td>{{$mto->customer->lname.', '.$mto->customer->fname}}</td>
-                  <td>{{date('M d, Y',strtotime($mto['dateOfUse']))}}</td>
+                  <td>{{date('M d, Y',strtotime($mto['deadlineOfProduct']))}}</td>
                   <td>{{$mto['created_at']->format('M d, Y')}}</td>
                   @if($mto['orderID'] != null && $mto['status'] == "Active")
                     <td><a href="orders/{{$mto->order['id']}}" class="btn btn-default btn-sm">View Order</a></td>

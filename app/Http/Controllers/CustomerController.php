@@ -1811,10 +1811,19 @@ class CustomerController extends Controller
         $percentage = $sp['sharePercentage'] / 100;
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
         $payments = Payment::where('orderID', $mto->order['id'])->get();
-        // dd($payments);
+        // dd(json_decode($mto['nameOfWearers']));
+        // $nameOfWearer = null;
+
+        if($mto['numOfPerson'] != "equals"){
+            $nameOfWearers = json_decode($mto['nameOfWearers']); 
+            foreach($nameOfWearers as $nameOfWearer){
+            }
+        }else{
+            $nameOfWearer = $mto['quantity'];
+        }
 
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments'));
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments', 'nameOfWearer'));
     }
 
     public function inputAddress($mtoID, $type)

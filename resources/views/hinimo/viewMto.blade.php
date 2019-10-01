@@ -23,221 +23,173 @@
             <div class="col-md-11">
                 <div id="mto-details" class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
-
-                       <!--  <div class="notif-area cart-area" style="text-align: right;">
-                            <a href="" class="btn essence-btn" data-toggle="modal" data-target="#notificationsModal">Chat with seller here</a>
-                            <br><br><br>
-                        </div> -->
                         <div class="row">
                             <div class="col-md-12">
-                             <!--    if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed") -->
-                             @if($mto->order['status'] == "For Alterations")
-                             <div class="row">
-                                <div class="col-md-12">
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><h5>Your schedule for fitting will be on:</h5></td>
-                                        <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($mto->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($mto->order['alterationDateEnd']))}}</h5></td>
-                                    </tr>
-                                </table>
-                                    <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
+                                <!--    if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery" || $mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered" || $mto->order['status'] == "Completed") -->
+                                @if($mto->order['status'] == "For Alterations")
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><h5>Your schedule for fitting will be on:</h5></td>
+                                            <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($mto->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($mto->order['alterationDateEnd']))}}</h5></td>
+                                        </tr>
+                                    </table>
+                                        <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
+                                    </div>
                                 </div>
-                             </div>
-                             @endif
-                        
-                            <?php
-                            $total = $mto->order['total'];
-                            $minimumPaymentRequired = $total * 0.50;
-                            $measurementID = $mto['measurementID'];
-                            $balance = $mto->order['total'];
-
-                            if(count($payments) > 0){
-                                foreach($mto->order->payments as $payment){
-                                    $minimumPaymentRequired = $payment['balance'];
-                                    $balance = $payment['balance'];
-                                }
-                            }
-                            ?>
-
-                            @if($mto['orderID'] != null)
-                                <div class="order-details-confirmation"> <!-- card opening -->
-                                    <div class="cart-page-heading">
-                                        <h5>Your Order Details</h5>
-                                    </div>
-                                    <?php
-                                    if($mto->measurement != null){
-                                        $measurements = json_decode($mto->measurement->data);
-                                    }
-                                    ?>
-
-                                    <ul class="order-details-form mb-4">
-                                        <li><span>Order ID</span> <span>{{$mto->order['id']}}</span></li>
-                                        <li><span>Address of Delivery</span> <span>{{$mto->order->address['completeAddress']}}</span></li>
-                                        <li><span>Status</span> 
-                                            @if($mto->order['status'] == "For Pickup")
-                                            <span style="color: #0315ff;">To be picked up by courier</span>
-                                            @else
-                                            <span style="color: #0315ff;">{{$mto->order['status']}}</span>
-                                            @endif
-                                        </li>
-
-                                        <li><span></span><span>Payment Info</span><span></span></li>
-                                        <li><span>MTO Item</span> <span>₱{{$mto['price']}}</span></li>
-                                        <!-- <li><span>Subtotal</span> <span>{{$mto->order['subtotal']}}</span></li> -->
-                                        <li><span>Delivery Fee</span> <span>₱{{$mto->order['deliveryfee']}}</span></li>
-                                        <li><span>Total</span> <span style="color: #0315ff;">₱{{$mto->order['total']}}</span></li>
-                                        <li><span>Payment Status</span>
-                                            @if($mto->order['paymentStatus'] == "Not Yet Paid")
-                                            <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}
-                                                @if($mto->order['paymentStatus'] == "Not Yet Paid" && $mto['measurementID'] != null)
-                                                <br><i>(You are first required to pay so the boutique can start processing your item.)</i>
-                                                @elseif($mto->order['paymentStatus'] == "Not Yet Paid" && $mto['measurementID'] == null)
-                                                <br><i>(You can start processing your payment after you submit your measurements.)</i>
-                                                @endif
-                                            </span>
-                                            @else
-                                            <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}</span>
-                                            @endif
-                                        </li>
-                                        @if(count($payments) == 0)
-                                        <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
-                                        @endif
-                                    </ul>
-                                    @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery")
-                                    <div class="notif-area cart-area" style="text-align: right;">
-                                        <input type="submit" class="btn essence-btn" disabled value="Item Received">
-                                    </div>
-                                    @elseif($mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered")
-                                    <div class="notif-area cart-area" style="text-align: right;">
-                                        <a href="{{url('receiveOrder/'.$mto->order['id'])}}" class="btn essence-btn">Item Received</a>
-                                    </div>
-                                    <!-- elseif($mto['status'] == "On Rent") -->
-                                    @endif
-                                </div> <!-- card closing --><br><br>
-
-                            @if(count($payments) > 0)
-                            <?php $counter = 1; ?>
-                            <div class="order-details-confirmation"> <!-- card opening -->
-                                <div class="cart-page-heading">
-                                    <h5>Payment History</h5>
-                                </div>
-                                <ul class="order-details-form mb-4">
-                                    @foreach($mto->order->payments as $payment)
-                                    <li class="payment-heading"><span></span><span><h6>Payment Transaction {{$counter}}</h6></span><span></span></li>
-
-                                    <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
-
-                                    <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
-                                    <li><span>Balance</span> 
-                                        <span>
-                                        @if($payment['balance'] == 0)
-                                        -
-                                        @else
-                                        ₱{{$payment['balance']}}
-                                        @endif
-                                        </span>
-                                    </li>
-
-                                    <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
-
-                                    <?php $counter++; ?>
-                                    @endforeach
-                                </ul>
-                            </div><br><br> <!-- card closing -->
-                            @endif
-
-                                @if($mto->order['paymentStatus'] != "Fully Paid" && $mto['measurementID'] != null)
-                                <h5>Pay here:</h5>
-                                <div class="col-md-3" id="paypal-button-container">
-                                    <input type="text" id="amount" class="form-control mb-10">
-                                    <input type="text" id="mtoOrderID" value="{{$mto->order['id']}}" hidden>
-                                    <input type="text" id="mtoID" value="{{$mto['id']}}" hidden>
-                                    <input type="text" id="total" value="{{$total}}" hidden>
-                                    <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>
-                                    <input type="text" id="measurementID" value="{{$measurementID}}" hidden>
-                                    <input type="text" id="balance" value="{{$balance}}" hidden>
-                                </div><br><br>
                                 @endif
-                            @endif
+                        
+                                <?php
+                                $total = $mto->order['total'];
+                                $minimumPaymentRequired = $total * 0.50;
+                                $measurementID = $mto['measurementID'];
+                                $balance = $mto->order['total'];
 
+                                if(count($payments) > 0){
+                                    foreach($mto->order->payments as $payment){
+                                        $minimumPaymentRequired = $payment['balance'];
+                                        $balance = $payment['balance'];
+                                    }
+                                }
+                                ?>
 
-                            <div class="order-details-confirmation">
-                                <div class="cart-page-heading">
-                                    <h5>Your Made-to-Order</h5>
-                                </div>
+                                @if($mto['orderID'] != null)
+                                    <div class="order-details-confirmation"> <!-- card opening -->
+                                        <div class="cart-page-heading">
+                                            <h5>Your Order Details</h5>
+                                        </div>
+                                        <?php
+                                        if($mto->measurement != null){
+                                            $measurements = json_decode($mto->measurement->data);
+                                        }
+                                        ?>
 
-                                <ul class="order-details-form mb-4">
-                                    @if($mto['status'] == "Cancelled")
-                                        <li><span></span><span style="color: red;">MTO has been cancelled</span><span></span></li>
-                                    @elseif($mto['status'] != "Cancelled" && $mto['status'] != "Active")
-                                        <li style="color: red;"><span>MTO has been declined</span><span>Reason: {{$mto->declineDetails['reason']}}</span></li>
+                                        <ul class="order-details-form mb-4">
+                                            <li><span>Order ID</span> <span>{{$mto->order['id']}}</span></li>
+                                            <li><span>Address of Delivery</span> <span>{{$mto->order->address['completeAddress']}}</span></li>
+                                            <li><span>Status</span> 
+                                                @if($mto->order['status'] == "For Pickup")
+                                                <span style="color: #0315ff;">To be picked up by courier</span>
+                                                @else
+                                                <span style="color: #0315ff;">{{$mto->order['status']}}</span>
+                                                @endif
+                                            </li>
+
+                                            <li><span></span><span>Payment Info</span><span></span></li>
+                                            <li><span>MTO Item</span> <span>₱{{$mto['price']}}</span></li>
+                                            <!-- <li><span>Subtotal</span> <span>{{$mto->order['subtotal']}}</span></li> -->
+                                            <li><span>Delivery Fee</span> <span>₱{{$mto->order['deliveryfee']}}</span></li>
+                                            <li><span>Total</span> <span style="color: #0315ff;">₱{{$mto->order['total']}}</span></li>
+                                            <li><span>Payment Status</span>
+                                                @if($mto->order['paymentStatus'] == "Not Yet Paid")
+                                                <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}
+                                                    @if($mto->order['paymentStatus'] == "Not Yet Paid" && $mto['measurementID'] != null)
+                                                    <br><i>(You are first required to pay so the boutique can start processing your item.)</i>
+                                                    @elseif($mto->order['paymentStatus'] == "Not Yet Paid" && $mto['measurementID'] == null)
+                                                    <br><i>(You can start processing your payment after you submit your measurements.)</i>
+                                                    @endif
+                                                </span>
+                                                @else
+                                                <span style="color: red; text-align: right;">{{$mto->order['paymentStatus']}}</span>
+                                                @endif
+                                            </li>
+                                            @if(count($payments) == 0)
+                                            <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                            @endif
+                                        </ul>
+                                        @if($mto->order['status'] == "For Pickup" || $mto->order['status'] == "For Delivery")
+                                        <div class="notif-area cart-area" style="text-align: right;">
+                                            <input type="submit" class="btn essence-btn" disabled value="Item Received">
+                                        </div>
+                                        @elseif($mto->order['status'] == "On Delivery" || $mto->order['status'] == "Delivered")
+                                        <div class="notif-area cart-area" style="text-align: right;">
+                                            <a href="{{url('receiveOrder/'.$mto->order['id'])}}" class="btn essence-btn">Item Received</a>
+                                        </div>
+                                        <!-- elseif($mto['status'] == "On Rent") -->
+                                        @endif
+                                    </div> <!-- card closing --><br><br>
+
+                                    @if(count($payments) > 0)
+                                    <?php $counter = 1; ?>
+                                    <div class="order-details-confirmation"> <!-- card opening -->
+                                        <div class="cart-page-heading">
+                                            <h5>Payment History</h5>
+                                        </div>
+                                        <ul class="order-details-form mb-4">
+                                            @foreach($mto->order->payments as $payment)
+                                            <li class="payment-heading"><span></span><span><h6>Payment Transaction {{$counter}}</h6></span><span></span></li>
+
+                                            <li><span>Transaction ID</span> <span>{{$payment['id']}}</span></li>
+
+                                            <li><span>Amount Paid</span> <span>₱{{$payment['amount']}}
+                                            <li><span>Balance</span> 
+                                                <span>
+                                                @if($payment['balance'] == 0)
+                                                -
+                                                @else
+                                                ₱{{$payment['balance']}}
+                                                @endif
+                                                </span>
+                                            </li>
+
+                                            <li><span>Paypal Payment ID</span> <span>{{$payment['paypalOrderID']}}</span></li>
+
+                                            <?php $counter++; ?>
+                                            @endforeach
+                                        </ul>
+                                    </div><br><br> <!-- card closing -->
                                     @endif
-                                    <li><span>MTO ID</span> <span>{{$mto['id']}}</span></li>
-                                    <li><span>Boutique Name</span> <span>{{$mto->boutique['boutiqueName']}}</span></li>
-                                    <li><span>Deadline of product</span> <span>{{date('M d, Y',strtotime($mto['deadlineOfProduct']))}}</span></li>
-                                    <li><span>Quantity</span> <span>{{$mto['quantity']}} pcs.</span></li>
-                                    <li><span>Number of wearers</span> <span>{{$mto['numOfPerson']}}</span></li>
+
+                                    @if($mto->order['paymentStatus'] != "Fully Paid" && $mto['measurementID'] != null)
+                                    <h5>Pay here:</h5>
+                                    <div class="col-md-3" id="paypal-button-container">
+                                        <input type="text" id="amount" class="form-control mb-10">
+                                        <input type="text" id="mtoOrderID" value="{{$mto->order['id']}}" hidden>
+                                        <input type="text" id="mtoID" value="{{$mto['id']}}" hidden>
+                                        <input type="text" id="total" value="{{$total}}" hidden>
+                                        <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>
+                                        <input type="text" id="measurementID" value="{{$measurementID}}" hidden>
+                                        <input type="text" id="balance" value="{{$balance}}" hidden>
+                                    </div><br><br>
+                                    @endif
+                                @endif
                                     
 
-                                    <li><span>Instructions/Notes</span> <span>{{$mto['notes']}}</span></li>
-                                    <li><span>Fabric</span> 
-                                        <span>
-                                        @if($mto['fabChoice'] == "provide")
-                                        <i>[You chose to provide boutique the fabric]</i>
-                                        @elseif($mto['fabChoice'] == "askboutique")
-                                            @if($mto['orderID'] != null)
-                                                {{$mto['fabSuggestion']}}
-                                            @else
-                                                <i>[You chose to let boutique provide the fabric]</i>
-                                            @endif
-                                        @endif
-                                    </span>
-                                    </li>
-                                    @if($mto['price'] != null && $mto['orderID'] == null)
-                                        <li><span>Price</span> <span style="color: #0315ff;">Final Price will be shown here</span></li>
-                                    @elseif($mto['price'] != null && $mto['orderID'] != null)
-                                        <li><span>Price</span> <span style="color: #0315ff;">₱{{$mto['price']}}</span></li>
-                                    @else
-                                        <li><span>Price</span> <span style="color: #0315ff;">Boutique has not set a price yet</span></li>
+                                @if($mto['orderID'] == null && $mto['status'] == "Active") <!-- IF WALA PAY ORDER ANG MTO -->
+                                    <!-- if naay chosen fabric & naghatag ug price si boutique -->
+                                    @if($mto['fabChoice'] == "provide" && $mto['price'] != null)
+                                        <h5 class="normal">Boutique's price for item:</h5>
+                                        <div class="row">
+                                            <div class="col-md-5"> 
+                                                <h4 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h4>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <a href="{{url('inputAddress/'.$mto['id'].'/acceptFabricPrice')}}" class="btn essence-btn">Accept Offer</a>
+                                            </div>
+                                        </div><br>
                                     @endif
-                                </ul>
-                            </div><br><br>
-                                
 
-                        @if($mto['orderID'] == null && $mto['status'] == "Active") <!-- IF WALA PAY ORDER ANG MTO -->
-                            <!-- if naay chosen fabric & naghatag ug price si boutique -->
-                            @if($mto['fabChoice'] == "provide" && $mto['price'] != null)
-                                <h5 class="normal">Boutique's price for item:</h5>
-                                <div class="row">
-                                    <div class="col-md-5"> 
-                                        <h4 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h4>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptFabricPrice')}}" class="btn essence-btn">Accept Offer</a>
-                                    </div>
-                                </div><br>
-                            @endif
+                                    <!-- if nangayo si boutique ang pa provide'on ni client -->
+                                    @if($mto['fabSuggestion'] != null && $mto['fabChoice'] == "askboutique")
+                                        <h5 class="normal">Boutique's suggestion of fabric with price:</h5>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <h5 class="normal">Fabric Type: <b>{{ucfirst($mto['fabSuggestion'])}}</b></h5>
+                                                <h4 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h4>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <!-- <br> -->
+                                                <a href="{{url('inputAddress/'.$mto['id'].'/acceptSuggestedFabricPrice')}}" class="btn essence-btn">Accept Offer</a><br><br>
+                                            </div>
+                                        </div><br>
+                                    @endif
 
-                            <!-- if nangayo si boutique ang pa provide'on ni client -->
-                            @if($mto['fabSuggestion'] != null && $mto['fabChoice'] == "askboutique")
-                                <h5 class="normal">Boutique's suggestion of fabric with price:</h5>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <h5 class="normal">Fabric Type: <b>{{ucfirst($mto['fabSuggestion'])}}</b></h5>
-                                        <h4 class="normal">Price: <b>₱{{ucfirst($mto['price'])}}</b></h4>
+                                    <div class="cart-area" style="text-align: right;">
+                                        <a href="{{url('cancelMto/'.$mto['id'])}}" class="btn essence-btn">Cancel MTO</a>
+                                        <br><br>
                                     </div>
-                                    <div class="col-md-3">
-                                        <!-- <br> -->
-                                        <a href="{{url('inputAddress/'.$mto['id'].'/acceptSuggestedFabricPrice')}}" class="btn essence-btn">Accept Offer</a><br><br>
-                                    </div>
-                                </div><br>
-                            @endif
-
-                            <div class="cart-area" style="text-align: right;">
-                                <a href="{{url('cancelMto/'.$mto['id'])}}" class="btn essence-btn">Cancel MTO</a>
-                                <br><br>
-                            </div>
-                        @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
+                                @endif <!-- IF WALA PAY ORDER ANG MTO CLOSING -->
 
 
 
@@ -306,30 +258,67 @@
                             {{csrf_field()}}
                             <h4>Submit Measurements</h4><br>
 
+                            <?php $nameOfWearers = json_decode($mto['nameOfWearers']);
+
+                            // foreach($nameOfWearers as $nameOfWearer => $count){
+                            //     echo $nameOfWearer;
+
+                            // }
+
+                            ?>
+
                             <div class="row"> 
                                 <div class="col-md-8">
                                     @if(count($mrequests) > 0)
-                                    @for($counter = 1; $mto['numOfPerson'] >= $counter; $counter++)
-                                    <h5>Enter name for Person {{$counter}}</h5>
-                                    <input type="text" name="person[{{$counter}}]" class="form-control"><br>
+                                    
+                                        @if($mto['numOfPerson'] == "equals")
 
-                                    <div class="row"> 
-                                        <div class="col-md-8">
-                                            @foreach($mrequests as $mrequest)
-                                                <?php $measurementNames = json_decode($mrequest->measurements); ?>
+                                        @for($counter = 1; $mto['quantity'] >= $counter; $counter++)
+                                        <h5>Enter name and measurement for Person {{$counter}}</h5>
+                                        <input type="text" name="person[{{$counter}}]" class="form-control"><br>
 
-                                                <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
-                                                @foreach($measurementNames as $measurementName)
+                                        <div class="row"> 
+                                            <div class="col-md-8">
+                                                @foreach($mrequests as $mrequest)
+                                                    <?php $measurementNames = json_decode($mrequest->measurements); ?>
 
-                                                    <label>{{$measurementName}}</label>
-                                                    <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+                                                    <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                    @foreach($measurementNames as $measurementName)
 
-                                                @endforeach<br>
-                                            @endforeach
+                                                        <label>{{$measurementName}}</label>
+                                                        <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                    @endforeach<br>
+                                                @endforeach
+                                            </div>
                                         </div>
-                                    </div>
-                                    @endfor
-                                    <input type="submit" name="btn_submit" value="Submit">
+                                        @endfor
+
+                                        @else
+                                        <?php $counter = 1; ?>
+                                        @foreach($nameOfWearers as $nameOfWearer => $count)
+                                        <h5>Enter measurement of {{ucfirst($nameOfWearer)}}</h5>
+                                        <input type="text" name="person[{{$counter}}]" class="form-control" value="{{$nameOfWearer}}" hidden>
+
+                                        <div class="row"> 
+                                            <div class="col-md-8">
+                                                @foreach($mrequests as $mrequest)
+                                                    <?php $measurementNames = json_decode($mrequest->measurements); ?>
+
+                                                    <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                    @foreach($measurementNames as $measurementName)
+
+                                                        <label>{{$measurementName}}</label>
+                                                        <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                    @endforeach<br>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <?php $counter++; ?>
+                                        @endforeach
+                                        @endif
+                                    <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit">
                                     @else
                                     <p style="color: #0315ff;"><i>Please wait for boutique's request. You'll get notified when the boutique has assigned measurements for your item&hellip;</i></p>
 
@@ -343,7 +332,7 @@
                     @else
                         <h4>Measurements Submitted</h4><br>
                     <div class="row">
-                        <div class="col-md-12" style="column-count: 2">
+                        <div class="col-md-12" style="column-count: {{$nameOfWearer}}">
                         @foreach($measurements as $measurement)
                             @foreach($measurement as $person)
                             @if(is_array($person)) <!-- filter if naay array si person -->
@@ -359,7 +348,7 @@
                                     @endforeach
                                 @endif
                                 @endforeach
-                                <hr>
+                                <!-- <hr> -->
                             @else
                                 <label><b>Name:</b> {{strtoupper($person)}}</label><br>
                             @endif
