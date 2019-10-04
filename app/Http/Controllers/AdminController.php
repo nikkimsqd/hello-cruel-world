@@ -28,10 +28,12 @@ use App\Sharepercentage;
 use App\Payout;
 use App\Event;
 use App\Categorytag;
+use App\Courier;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
 use App\Notifications\PayoutReleased;
+use App\Notifications\NotifyAdminForPickup;
 
 
 class AdminController extends Controller
@@ -73,6 +75,9 @@ class AdminController extends Controller
 					$notificationsCount = $admin->unreadNotifications->count();
 
 					return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin'));
+
+				}elseif($notification['type'] == "App\Notifications\NotifyAdminForPickup"){
+					$order = Order::where('id', $notification->data['orderID'])->first();
 				}
 				// $notification->markAsRead();
 			} else {
@@ -480,27 +485,74 @@ class AdminController extends Controller
 
     public function addAccount()
     {
-		$page_title = "Add Account";
+		$page_title = "Add Courier Account";
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
-
+		$couriers = Courier::all();
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		
-		return view('admin/addAccount', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/addAccount', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'couriers'));
     }
 
     public function saveAccount(Request $request)
     {
-    	User::create([
+    	$user = User::create([
+    		'fname' => $request->input('fname'),
+    		'lname' => $request->input('lname'),
     		'username' => $request->input('username'),
     		'email' => $request->input('email'),
-    		'password' => Hash::make($request->input('email')),
-    		'roles' => $request->input('role')
+    		'password' => Hash::make($request->input('password')),
+    		'gender' => $request->input('gender'),
+    		'roles' => 'courier'
+    	]);
+
+    	Courier::create([
+    		'userID' => $user['id'],
+    		'status' => 'Active'
     	]);
 
     	return redirect('admin-addAccount');
     }
+
+    public function viewCourier($courierID)
+    {
+		$page_title = "View Courier Account";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+    	$courier = Courier::where('id', $courierID)->first();
+
+    	return view('admin/viewCourier', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'courier'));
+    }
+
+    public function deactivateCourier($courierID)
+    {
+    	Courier::where('id', $courierID)->update([
+    		'status' => 'Deactivated'
+    	]);
+
+    	return redirect('view-courier/'.$courierID);
+    }
+
+    public function activateCourier($courierID)
+    {
+    	Courier::where('id', $courierID)->update([
+    		'status' => 'Active'
+    	]);
+
+    	return redirect('view-courier/'.$courierID);
+    }
+
+    // public function editPriorityNumber($courierID)
+    // {
+    // 	$courier = Courier::where('id', $courierID)->update([
+    // 		'priorityNumber' => $request->input('priorityNumber')
+    // 	]);
+
+    // 	return redirect('view-courier/'.$courierID);
+    // }
 
     public function payouts()
     {
@@ -644,5 +696,31 @@ class AdminController extends Controller
         $eventName = $eventName;
 
     	return view('admin/viewEvent', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'events', 'eventName'));
+    }
+
+    public function forpickups()
+    {
+		$page_title = "For Pickups";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$orders = Order::where('status', 'For Pickup')->get();
+		// dd($orders);
+
+    	return view('admin/forpickups', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders'));
+    }
+
+    public function getForpickups($orderID)
+    {
+    	$page_title = "Select courier to pickup";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$order = Order::where('id', $orderID)->first();
+		// dd($order);
+
+    	return view('admin/forpickups', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order'));
     }
 }

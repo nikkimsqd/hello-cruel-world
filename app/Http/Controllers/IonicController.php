@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Boutique;
 use App\Order;
+use App\Courier;
 use App\Notifications\NotifyForPickup;
 
 class IonicController extends Controller
@@ -45,18 +46,15 @@ class IonicController extends Controller
         }
     }
 
-    public function topickup()
+    public function topickup($userID)
     {
     	$dateToday = date('Y-m-d');
-    	// dd($dateToday);
-
     	$page_title = "To Pickup";
     	$boutiques = Boutique::all();
-		// $notifications = $user->notifications;
-		// $notificationsCount = $user->unreadNotifications->count();
+        $courierAccount = Courier::where('userID', $userID)->first();
 
 		// $orders = Order::where('status', "For Pickup")->where('deliverySchedule', $dateToday)->get();
-		$orders = Order::where('status', "For Pickup")->get();
+		$orders = Order::where('courierID', $courierAccount['id'])->where('status', 'For Pickup')->where('deliverySchedule', $dateToday)->get();
 
 		foreach($orders as $order){
 			$order['customer'] = $order->customer;
@@ -71,16 +69,11 @@ class IonicController extends Controller
 		]);
     }
 
-    public function todeliver()
+    public function todeliver($userID)
     {
         $page_title = "To Deliver";
-        // $id = Auth()->user()->id;
-        // $user = User::find($id);
-        // $boutiques = Boutique::all();
-        // $notifications = $user->notifications;
-        // $notificationsCount = $user->unreadNotifications->count();
-
-        $orders = Order::where('status', "For Delivery")->get();
+        $courierAccount = Courier::where('userID', $userID)->first();
+        $orders = Order::where('status', "For Delivery")->where('courierID', $courierAccount['id'])->get();
 
 		foreach($orders as $order){
 			$order['customer'] = $order->customer;
@@ -95,11 +88,11 @@ class IonicController extends Controller
 		]);
     }
 
-    public function delivered()
+    public function delivered($userID)
     {
         $page_title = "Delivered";
-
-        $orders = Order::where('status', "Delivered")->get();
+        $courierAccount = Courier::where('userID', $userID)->first();
+        $orders = Order::where('status', "Delivered")->where('courierID', $courierAccount['id'])->get();
 
 		foreach($orders as $order){
 			$order['customer'] = $order->customer;
@@ -113,16 +106,12 @@ class IonicController extends Controller
 		]);
     }
 
-    public function completed()
+    public function completed($userID)
     {
         $page_title = "Completed";
-        // $id = Auth()->user()->id;
-        // $user = User::find($id);
-        // $boutiques = Boutique::all();
-        // $notifications = $user->notifications;
-        // $notificationsCount = $user->unreadNotifications->count();
+        $courierAccount = Courier::where('userID', $userID)->first();
 
-        $orders = Order::where('status', "Completed")->get();
+        $orders = Order::where('status', "Completed")->where('courierID', $courierAccount['id'])->get();
 
 		foreach($orders as $order){
 			$order['customer'] = $order->customer;

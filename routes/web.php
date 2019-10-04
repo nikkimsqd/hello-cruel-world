@@ -51,6 +51,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/admin-orders/{orderID}', 'AdminController@getOrder');
 	Route::get('/admin-archives', 'AdminController@archives');
 	Route::get('/admin-archives/{orderID}', 'AdminController@getArchives');
+	Route::get('/admin-forpickups', 'AdminController@forpickups');
+	Route::get('/admin-forpickups/{orderID}', 'AdminController@getForpickups');
 	// Route::get('/admin-made-to-orders', 'AdminController@madeToOrders');
 	// Route::get('/admin-rents', 'AdminController@rents');
 
@@ -60,6 +62,10 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::get('/admin-addAccount', 'AdminController@addAccount');
 	Route::post('/admin-saveAccount', 'AdminController@saveAccount');
+	Route::get('/view-courier/{courierID}', 'AdminController@viewCourier');
+	// Route::get('/editPriorityNumber/{courierID}', 'AdminController@editPriorityNumber'); //wa nni gamit na
+	Route::get('/deactivate-courier/{courierID}', 'AdminController@deactivateCourier');
+	Route::get('/activate-courier/{courierID}', 'AdminController@activateCourier');
 
 
 	Route::get('/admin-tags', 'AdminController@tags');

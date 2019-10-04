@@ -374,7 +374,7 @@
       success:function(data){
         data.categoryTags.forEach(function(categoryTag){
           $('#tags').append(
-            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.tagName +'">'+
+            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.id +'">'+
             '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
         });
       }

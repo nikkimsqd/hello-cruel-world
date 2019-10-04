@@ -37,6 +37,8 @@ use App\Rtw;
 use App\Paypalaccount;
 use App\Payout;
 use App\Categorytag;
+use App\Courier;
+use App\Ordercourier;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -49,6 +51,7 @@ use App\Notifications\NewBid;
 use App\Notifications\NotifyCourierForPickup;
 use App\Notifications\MeasurementRequests;
 use App\Notifications\RentDeclined;
+use App\Notifications\NotifyAdminForPickup;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -1168,14 +1171,56 @@ class BoutiqueController extends Controller
     {
         $deliverySchedule = date('Y-m-d',strtotime($request->input('deliverySchedule')));
     	$order = Order::where('id', $request->input('orderID'))->first();
+    	$couriers = Courier::all();
+    	$courierCounter = $couriers->count();
+
+    	$orderCourier = Ordercourier::orderBy('created_at', 'desc')->first(); //expected ang last ang makuha
+
+    	if($orderCourier != null){
+			$id = $orderCourier['courierID']; //sud ug variable
+    		$courierID = $id + 1; //last then added 1 para ang next
+
+    		if($courierID <= $courierCounter){ //para dili ma lapas ang pag add sa courierID
+	    		foreach($couriers as $courier){
+	    			if($courier['id'] == $courierID){
+	    				if($courier['status'] == 'Active'){
+	    					$courierID == $courier['id'];
+	    				}else{
+	    					if($courierID < $courierCounter){ //para di ma lapas ang id nga kwaon
+	    						$courierID += 1;
+	    					}else{
+	    						$courierID = 1;
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}else{
+				$courierID = 1;
+	    	}
+
+    		Ordercourier::create([
+    			'courierID' => $courierID
+    		]);
+
+    	}else{ //if wala pay data sa Ordercouriers table
+    		$courier = Courier::where('id', 1)->first();
+    		$courierID = $courier['id'];
+
+    		Ordercourier::create([
+    			'courierID' => $courierID
+    		]);
+    	}
+
 
     	$order->update([
     		'status' => 'For Pickup',
-    		'deliverySchedule' => $deliverySchedule
+    		'deliverySchedule' => $deliverySchedule,
+    		'courierID' => $courierID
     	]);
 
-    	$courier = User::where('roles', 'courier')->first();
-    	$courier->notify(new NotifyCourierForPickup($order));
+    	$courier = Courier::where('id', $courierID)->first();
+    	$courierUser = User::where('id', $courier['userID'])->first();
+    	$courierUser->notify(new NotifyCourierForPickup($order));
 
     	return redirect('/orders/'.$order['id']);
     }

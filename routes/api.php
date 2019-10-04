@@ -28,10 +28,10 @@ Route::get('/authenticate/{username}/{password}', 'IonicController@authenticate'
 
 Route::get('/getForDdeliveries', 'IonicControllerIonicController@shop');
 
-Route::get('/ionic-topickup', 'IonicController@topickup');
-Route::get('/ionic-todeliver', 'IonicController@todeliver');
-Route::get('/ionic-delivered', 'IonicController@delivered');
-Route::get('/ionic-completed', 'IonicController@completed');
+Route::get('/ionic-topickup/{userID}', 'IonicController@topickup');
+Route::get('/ionic-todeliver/{userID}', 'IonicController@todeliver');
+Route::get('/ionic-delivered/{userID}', 'IonicController@delivered');
+Route::get('/ionic-completed/{userID}', 'IonicController@completed');
 
 Route::get('/ionic-viewOrder/{orderID}', 'IonicController@viewOrder');
 Route::get('/ionic-pickupOrder/{data}', 'IonicController@pickupOrder');
