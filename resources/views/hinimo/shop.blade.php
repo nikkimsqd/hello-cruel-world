@@ -144,16 +144,18 @@
                                                 </div>
                                             @endif
                                                 
-                                            @if($product->inFavorites)
-                                                <div class="product-favourite unfavorite-product">
-                                                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
-                                                    <a href="#" class="favme fa fa-heart active"></a>
-                                                </div>
-                                            @else
-                                                <div class="product-favourite ml-4 favorite-product">
-                                                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
-                                                    <a href="#" class="favme fa fa-heart"></a>
-                                                </div>
+                                            @if($userID != null)
+                                                @if($product->inFavorites != null)
+                                                    <div class="product-favourite unfavorite-product">
+                                                        <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                                        <a href="#" class="favme fa fa-heart active"></a>
+                                                    </div>
+                                                @else
+                                                    <div class="product-favourite ml-4 favorite-product">
+                                                        <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                                        <a href="#" class="favme fa fa-heart"></a>
+                                                    </div>
+                                                @endif
                                             @endif
                                             
                                             <?php $counter++; ?>

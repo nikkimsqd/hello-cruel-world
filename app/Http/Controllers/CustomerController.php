@@ -352,6 +352,7 @@ class CustomerController extends Controller
                     }
                 }
 
+                // dd($storage);
                 $scores = array_count_values($storage);
                 arsort($scores);
 
@@ -383,7 +384,7 @@ class CustomerController extends Controller
                         }
                     }
                 }
-                
+
                 $productsCount = count($products);
                 return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
                 
@@ -408,6 +409,8 @@ class CustomerController extends Controller
             $notAvailables = Product::where('productStatus', 'Not Available')->get();
             $notificationsCount = null;
             $sets = Set::all();
+
+            // dd($products[1]->inFavorites);
 
             return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets'));
         }

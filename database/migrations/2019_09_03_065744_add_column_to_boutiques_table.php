@@ -14,7 +14,7 @@ class AddColumnToBoutiquesTable extends Migration
     public function up()
     {
         Schema::table('boutiques', function (Blueprint $table) {
-            $table->string('operatingDays');
+            $table->string('operatingDays')->nullable();
         });
     }
 

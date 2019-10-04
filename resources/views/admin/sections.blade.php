@@ -154,6 +154,7 @@
       </a>
       <ul class="treeview-menu">
         <li class="on-going"><a href="{{url('admin-orders')}}"><i class="fa fa-circle-o"></i> On-going</a></li>
+        <li class="forpickups"><a href="{{url('admin-forpickups')}}"><i class="fa fa-circle-o"></i> For Pickups</a></li>
         <li class="archives"><a href="{{url('admin-archives')}}"><i class="fa fa-circle-o"></i> Archives</a></li>
       </ul>
     </li>
@@ -184,7 +185,7 @@
       </a>
       <ul class="treeview-menu">
         <li class="locations"><a href="{{url('admin-locations')}}"><i class="fa fa-circle-o"></i> Locations</a></li>
-        <li class="accounts"><a href="{{url('admin-addAccount')}}"><i class="fa fa-circle-o"></i> Add Account</a></li>
+        <li class="accounts"><a href="{{url('admin-addAccount')}}"><i class="fa fa-circle-o"></i> Add Courier Account</a></li>
       </ul>
     </li>
 
@@ -207,6 +208,7 @@
 
 <style type="text/css">
   .user-panel{min-height: 45px;}
+  .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a{white-space: unset !important;}
 </style>
 <!-- /.sidebar -->
 

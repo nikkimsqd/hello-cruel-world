@@ -291,6 +291,7 @@
 
 <style type="text/css">
   .user-panel{min-height: 45px;}
+  .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a{white-space: unset !important;}
 </style>
 <!-- /.sidebar -->
 

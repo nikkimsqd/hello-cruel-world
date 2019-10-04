@@ -55,7 +55,7 @@ Hinimo | Register Boutique
                                 <label for="contactNo" class="col-md-4 col-form-label text-md-right">{{ __('Contact Number') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="contactNo" type="number" class="form-control" name="contactNo" maxlength="11" required autofocus>
+                                    <input id="contactNo" type="number" class="form-control" name="contactNo" maxlength="11" required>
 
                                     @if ($errors->has('contactNo'))
                                         <span class="invalid-feedback" role="alert">
@@ -69,7 +69,7 @@ Hinimo | Register Boutique
                                 <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Username') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required autofocus>
+                                    <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required>
 
                                     @if ($errors->has('username'))
                                         <span class="invalid-feedback" role="alert">
@@ -121,7 +121,8 @@ Hinimo | Register Boutique
                                 <label for="boutiqueAddress" class="col-md-4 col-form-label text-md-right">{{ __('Boutique Address') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="boutiqueAddress" type="text" class="form-control" name="boutiqueAddress" required autofocus>
+                                    <input id="boutiqueAddress" type="text" class="form-control" name="boutiqueAddress" required>
+                                    <span><i>Please select your location on the map.</i></span>
 
                                     @if ($errors->has('boutiqueAddress'))
                                         <span class="invalid-feedback" role="alert">
@@ -133,7 +134,6 @@ Hinimo | Register Boutique
                             <div id="map"> </div>
                             <input type="text" name="lat" id="lat" hidden>
                             <input type="text" name="lng" id="lng" hidden>
-
                             <br>
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">
