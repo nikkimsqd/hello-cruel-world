@@ -29,6 +29,9 @@ use App\Payout;
 use App\Event;
 use App\Categorytag;
 use App\Courier;
+use App\Complain;
+use App\Email;
+use App\Chat;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
@@ -61,6 +64,7 @@ class AdminController extends Controller
     	$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$adminNotifications = $admin->notifications;
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
 		foreach($adminNotifications as $notifications) {
 			if($notifications->id == $notificationID) { //match notificationID
@@ -74,7 +78,7 @@ class AdminController extends Controller
 					$notification->markAsRead();
 					$notificationsCount = $admin->unreadNotifications->count();
 
-					return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin'));
+					return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin', 'complainsCount'));
 
 				}elseif($notification['type'] == "App\Notifications\NotifyAdminForPickup"){
 					$order = Order::where('id', $notification->data['orderID'])->first();
@@ -93,14 +97,12 @@ class AdminController extends Controller
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$orders = Order::where('status', '=', 'Completed')->get();
-		// $order = Order::where('id', $orderID)->first();
-
 		$sp = Sharepercentage::where('id', '1')->first();
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		
-		return view('admin/sales', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount', 'sp'));
+		return view('admin/sales', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount', 'sp', 'complainsCount'));
     }
 
     public function editPercentage(Request $request)
@@ -126,12 +128,12 @@ class AdminController extends Controller
 		$boutiqueCount = $boutique->count();
 		$orderCount = $orders->count();
 		$rentCount = $rents->count();
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
 
-		return view('admin/dashboard', compact('admin', 'users', 'orders', 'rents', 'page_title', 'customerCount', 'boutiqueCount', 'orderCount', 'rentCount', 'adminNotifications', 'notificationsCount'));
+		return view('admin/dashboard', compact('admin', 'users', 'orders', 'rents', 'page_title', 'customerCount', 'boutiqueCount', 'orderCount', 'rentCount', 'adminNotifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function orders()
@@ -140,11 +142,11 @@ class AdminController extends Controller
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$orders = Order::where('status', '!=', 'Completed')->get();
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		
-		return view('admin/ongoing-orders', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/ongoing-orders', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function getOrder($orderID)
@@ -153,11 +155,13 @@ class AdminController extends Controller
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$order = Order::where('id', $orderID)->first();
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+		$complaint = Complain::where('orderID', $order['id'])->first();
+		$chats = Chat::where('orderID', $orderID)->get();
 		
-		return view('admin/viewOrder', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/viewOrder', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complaint', 'chats'));
 	}
 
 	public function archives()
@@ -166,11 +170,11 @@ class AdminController extends Controller
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$orders = Order::where('status', 'Completed')->get();
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		
-		return view('admin/archives', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/archives', compact('admin', 'orders', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function getArchives($orderID)
@@ -179,11 +183,11 @@ class AdminController extends Controller
 		$id = Auth()->user()->id;
 		$admin = User::where('id', $id)->first();
 		$order = Order::where('id', $orderID)->first();
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		
-		return view('admin/viewArchive', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/viewArchive', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount'));
 	}
 
     public function addBoutique()
@@ -201,9 +205,9 @@ class AdminController extends Controller
 		$categoryGenders = $categories->groupBy('gender');
 		$categoryTags = Categorytag::all();
 		$categoryTagGender = $categoryTags->groupBy('categoryID');
-
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		// dd($categoryTagGender);
 
 
@@ -227,7 +231,7 @@ class AdminController extends Controller
           
         
 
-		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryGenders', 'categoryTags', 'categoryTagGender'));
+		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryGenders', 'categoryTags', 'categoryTagGender', 'complainsCount'));
 	}
 
 	public function addTag(Request $request)
@@ -259,14 +263,13 @@ class AdminController extends Controller
 		$tags = Tag::all();
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
-
-
 		$categories = Category::all();
 		$womens = Category::where('gender', "Womens")->get();
 		$mens = Category::where('gender', "Mens")->get();
-			
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+		
 
-		return view('admin/categories',compact('admin', 'categories','womens', 'mens', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/categories',compact('admin', 'categories','womens', 'mens', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function saveCategory(Request $request)
@@ -321,10 +324,10 @@ class AdminController extends Controller
 		$admin = User::where('id', $id)->first();
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
-
 		$rents = Rent::all();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
-		return view('admin/rents', compact('admin', 'rents', 'page_title', 'adminNotifications', 'notificationsCount'));
+		return view('admin/rents', compact('admin', 'rents', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function locations()
@@ -339,8 +342,9 @@ class AdminController extends Controller
         $provinces = Province::all();
         $barangays = Barangay::all();
         $cities = City::all();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
-		return view('admin/locations', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'refregions', 'cities', 'barangays', 'regions', 'provinces'));
+		return view('admin/locations', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'refregions', 'cities', 'barangays', 'regions', 'provinces', 'complainsCount'));
 	}
 
 	public function getProvince($regCode)
@@ -452,6 +456,7 @@ class AdminController extends Controller
 		$categories = Category:: all();
 		$measurements = Categorymeasurement::all();
 		$categoryArray = [];
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
 		foreach ($measurements as $measurement) {
 			$category = $measurement->getCategory['categoryName'];
@@ -470,7 +475,7 @@ class AdminController extends Controller
 			
 		}
 		// dd($categoryArray);
-		return view('admin/measurements', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount'	, 'categories', 'categoryArray'));
+		return view('admin/measurements', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount'	, 'categories', 'categoryArray', 'complainsCount'));
     }
 
     public function addMeasurement(Request $request)
@@ -491,8 +496,9 @@ class AdminController extends Controller
 		$couriers = Courier::all();
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		
-		return view('admin/addAccount', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'couriers'));
+		return view('admin/addAccount', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'couriers', 'complainsCount'));
     }
 
     public function saveAccount(Request $request)
@@ -523,8 +529,9 @@ class AdminController extends Controller
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
     	$courier = Courier::where('id', $courierID)->first();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
-    	return view('admin/viewCourier', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'courier'));
+    	return view('admin/viewCourier', compact('admin', 'page_title', 'adminNotifications', 'notificationsCount', 'courier', 'complainsCount'));
     }
 
     public function deactivateCourier($courierID)
@@ -562,6 +569,7 @@ class AdminController extends Controller
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		$orders = Order::where('status', 'Completed')->get();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		// $payouts = Order::where('status', 'Completed')->where('payoutID', '!=', null)->get();
 		// dd($orders[0]['payoutID']);
 
@@ -607,7 +615,7 @@ class AdminController extends Controller
 			});
 		}
 
-		return view('admin/payouts', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders'));
+		return view('admin/payouts', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders', 'complainsCount'));
     }
 
     public function savePayout($orderID, $batchID)
@@ -653,8 +661,9 @@ class AdminController extends Controller
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
     	$order = Order::where('id', $orderID)->first();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
-    	return view('admin/viewPayout', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order'));
+    	return view('admin/viewPayout', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order','complainsCount'));
     }
 
     public function getEvents()
@@ -668,9 +677,10 @@ class AdminController extends Controller
 		$tags = Categorytag::all();
 		$events = Event::all();
         $eventNames = $events->groupBy('event');
+		$complainsCount = count(Complain::where('status', 'Active')->get());
         // dd($eventNames);
 
-    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'tags', 'events', 'eventNames', 'categoryTags'));
+    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'tags', 'events', 'eventNames', 'categoryTags', 'complainsCount'));
     }
 
     public function saveEvent(Request $request)
@@ -694,8 +704,9 @@ class AdminController extends Controller
 		$notificationsCount = $admin->unreadNotifications->count();
     	$events = Event::where('event', $eventName)->get();
         $eventName = $eventName;
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 
-    	return view('admin/viewEvent', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'events', 'eventName'));
+    	return view('admin/viewEvent', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'events', 'eventName', 'complainsCount'));
     }
 
     public function forpickups()
@@ -706,9 +717,10 @@ class AdminController extends Controller
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		$orders = Order::where('status', 'For Pickup')->get();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		// dd($orders);
 
-    	return view('admin/forpickups', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders'));
+    	return view('admin/forpickups', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'orders', 'complainsCount'));
     }
 
     public function getForpickups($orderID)
@@ -719,8 +731,94 @@ class AdminController extends Controller
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		$order = Order::where('id', $orderID)->first();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
 		// dd($order);
 
-    	return view('admin/forpickups', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order'));
+    	return view('admin/forpickups', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'order', 'complainsCount'));
+    }
+
+    public function complaints()
+    {
+		$page_title = "Complaints";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+
+		$complains = Complain::all();
+		$complainsCount = count($complains);
+        
+        return view('admin/complaints', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complains'));
+    }
+
+    public function viewComplaint($complainID)
+    {
+		$page_title = "Complaint";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$complain = Complain::where('id', $complainID)->first();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+
+        return view('admin/viewComplaint', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complain'));
+    }
+
+    public function compose()
+    {
+		$page_title = "Mailbox";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+
+        return view('admin/mailbox-compose', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complain', 'complains'));
+    }
+
+    public function getComplaint($complainID)
+    {
+    	$complaint = Complain::where('id', $complainID)->with('order')->first();
+    	$boutique = Boutique::where('id', $complaint->order['boutiqueID'])->with('owner')->first();
+
+    	return response()->json([
+    		'complaint' => $complaint,
+    		'boutique' => $boutique
+    	]);
+    }
+
+    public function sendCompose(request $request)
+    {
+		$id = Auth()->user()->id;
+		// dd($request->input('recipient'));
+
+    	$email = Email::create([
+    		'senderID' => $id,
+    		'recipientID'=> $request->input('recipientID'),
+    		'subject' => $request->input('subject'),
+    		'message' => $request->input('message'),
+    		'location' => 'inbox',
+    		'status' => 'unread'
+    	]);
+
+        // $uploads = $request->file('file');
+        // if($request->hasFile('file')) {
+        //     foreach($uploads as $upload){
+        //         $files = new File();
+        //         // $name = $upload->getClientOriginalName();
+        //         $destinationPath = public_path('uploads');
+        //         $random = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
+        //         $filename = $destinationPath.'\\'. $random;
+        //         $upload->move($destinationPath, $filename);
+
+        //         $files->userID = $user['id'];
+        //         $files->complainID = $complain['id'];
+        //         $files->filename = "/".$random;
+        //         $files->save();
+        //         $filename = "/".$random;
+        //     }
+        // }
+
+        // return redirect('viewComplaint/'.)
     }
 }

@@ -41,6 +41,9 @@
 
               @elseif($order['status'] == "Completed")
               <span class="label label-success">{{$order['status']}}</span>
+
+              @elseif($order['status'] == "On Hold")
+              <span class="label label-danger">{{$order['status']}}</span>
               @endif
             </h4>
             <h4>Order Type: 
@@ -144,13 +147,112 @@
           <a class="btn btn-default" href="{{url('admin-orders')}}"> Back</a>
         </div>
       </div>
+
+
+      <div class="box box-success direct-chat direct-chat-success" id="chat">
+        <div class="box-header with-border">
+          <h3 class="box-title">Chat with client</h3>
+          <div class="box-tools pull-right">
+            <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span> -->
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+
+          <div class="direct-chat-messages">
+            @foreach($chats as $chat)
+              @if($chat['senderID'] != $order->customer['id'])
+                <div class="direct-chat-msg">
+                  <div class="direct-chat-info clearfix">
+                    <span class="direct-chat-name pull-left">{{$order->customer['fname'].' '.$order->customer['lname']}}</span>
+                    <span class="direct-chat-timestamp pull-left boutique-time">&nbsp;&nbsp; - &nbsp;&nbsp;{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                  </div>
+
+                  <div class="direct-chat-text">
+                    {{$chat['message']}}
+                  </div>
+                  <!-- /.direct-chat-text -->
+                </div>
+
+
+              @else
+                  <div class="direct-chat-msg right">
+                    <div class="direct-chat-info clearfix">
+                      <span class="direct-chat-name pull-right">{{$order->boutique['boutiqueName']}}</span>
+                      <span class="direct-chat-timestamp pull-right client-time">{{ date('d M h:i a',strtotime($chat['created_at'])) }}&nbsp;&nbsp; - &nbsp;&nbsp;</span>
+                    </div>
+
+                    <div class="direct-chat-text">
+                      {{$chat['message']}}
+                    </div>
+                    <!-- /.direct-chat-text -->
+                  </div>
+              @endif
+
+            @endforeach
+
+          </div>
+
+        </div> <!-- /.box-body -->
+
+        <!-- <div class="box-footer">
+          <form action="{{url('bSendChat')}}" method="post">
+            {{ csrf_field() }}
+            <div class="input-group">
+              <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+                  <span class="input-group-btn">
+                    <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
+                  </span>
+            </div>
+          </form>
+        </div> -->
+      </div>
+
+      @if($complaint != null)
+      <div class="box">
+
+        <div class="box-header with-border">
+          <h3 class="box-title">Complaint</h3>
+        </div>
+
+        <div class="box-body">
+          <div class="col-md-12"> 
+
+            <!-- <h4>Complainant Name: <b>{{$complaint->order->customer['fname'].' '.$complaint->order->customer['lname']}}</b></h4> -->
+            <h4>Complain: <b>{{$complaint['complain']}}</b></h4>
+            <h4>Attachments:</h4>
+
+            <div class="row"> 
+              @foreach($complaint->complainFiles as $complainFile)
+              <div class="col-md-2 image-container">
+                <img src="{{ asset('/uploads').$complainFile['filename'] }}" style="width: calc(100% + 40px); height: 250px; object-fit: cover; ">
+              </div>
+              @endforeach
+            </div>
+
+          </div>
+
+          <div class="col-md-12"> 
+          </div>
+
+        </div>
+      </div>
+      @endif
+
     </div>
   </div>
 </section>
 
 <style type="text/css">
 
-.bold{font-weight: bold;}
+  .bold{font-weight: bold;}
+  .right .direct-chat-text{margin-left: 500px; margin-right: 2px}
+/*  .boutique-time{margin-right: 50%;}
+  .client-time{margin-left: 45%;}*/
+  .direct-chat-text{margin: 5px 500px 0 2px;}
 
 </style>
 

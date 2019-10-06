@@ -39,6 +39,51 @@
                         }
                         ?>
 
+                        <div class="order-details-confirmation" id="chat"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5 style="margin-bottom: 30px;">Chat with seller</h5>
+                            </div>
+
+                            <div class="chat-body">
+                                @if(count($chats) > 0)
+                                    @foreach($chats as $chat)
+                                        @if($chat['senderID'] != $userID)
+                                        <span class="sender">{{ $chat->sender->boutique['boutiqueName'] }}</span>
+                                        <span class="chatTime">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                                        <p class="receivedChat">{{$chat['message']}}</p><hr>
+                                        @else
+                                        <p class="chatTimeMe">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</p>
+                                        <p class="sendChat">{{$chat['message']}}</p><hr>
+                                        @endif
+                                    @endforeach
+                                @else
+                                <p class="receivedChat"><i>Ask seller anything here...</i></p>
+                                @endif
+                            </div>
+
+                            <br>
+                            <form action="{{url('cSendChat')}}" method="post">
+                                {{ csrf_field() }}
+                                @if($order['status'] != "Completed")
+                                    <div class="input-group">
+                                        <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+                                        <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+                                        <span class="input-group-btn">
+                                            <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
+                                        </span>
+                                    </div>
+                                @else
+                                    <div class="input-group">
+                                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" disabled>
+                                        <span class="input-group-btn">
+                                            <input type="submit" name="btn_submit" class="btn btn-primary" value="Send" disabled>
+                                        </span>
+                                    </div>
+                                @endif
+                            </form>
+
+                        </div><br><br> <!-- card closing -->
+
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
                                 <h5>Your Order</h5>
@@ -204,6 +249,13 @@
     .white-btn{color: #0315ff; background-color: white; border: 1px solid #0315ff;}
     .white-btn:hover{border-color: #dc0345;}
     #imgPreview{max-height: 150px;  width: auto;  border: 1px solid #f0f0f0;}
+    .receivedChat{margin-bottom: 0 !important; text-align: left; color: black; font-size: 16px !important;}
+    .sendChat{margin-bottom: 0 !important; text-align: right; color: black; font-size: 16px !important; margin-right: 15px;}
+    .sender{color: black; font-size: 12px !important; font-weight: 500;}
+    .chatTime{color: #8e8e8e; font-size: 12px !important; margin-left: 355px; margin-bottom: 0 !important;}
+    .chatTimeMe{color: #8e8e8e; font-size: 12px !important; margin-bottom: 0 !important; text-align: center;}
+    .chat-body{max-height: 300px;  overflow-y: scroll;}
+    hr{margin-top: 7px;  margin-bottom: 7px;}
 </style>
 
 <!-- </div> -->

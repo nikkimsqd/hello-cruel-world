@@ -39,6 +39,10 @@ use App\Payout;
 use App\Categorytag;
 use App\Courier;
 use App\Ordercourier;
+use App\Alteration;
+use App\Complain;
+use App\Email; //???????????????? wagtangon ni
+use App\Chat;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -52,6 +56,7 @@ use App\Notifications\NotifyCourierForPickup;
 use App\Notifications\MeasurementRequests;
 use App\Notifications\RentDeclined;
 use App\Notifications\NotifyAdminForPickup;
+use App\Notifications\NotifyCustomerOfChat;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -68,7 +73,17 @@ class BoutiqueController extends Controller
 	    $notifications = $user->notifications;
 	    $notificationsCount = $user->unreadNotifications->count();
 
-	    return view('boutique/reqToActivateAccount', compact('userID', 'user', 'page_title', 'biddingsCount', 'boutique', 'notificationsCount', 'notifications'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+	    return view('boutique/reqToActivateAccount', compact('userID', 'user', 'page_title', 'biddingsCount', 'boutique', 'notificationsCount', 'notifications', 'complainsCount'));
 	}
 
 	public function reqToVerify(Request $request)
@@ -96,6 +111,16 @@ class BoutiqueController extends Controller
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
 		// dd($notifications);
+
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
 
 		foreach($notifications as $notification) {
 			if($notification->id == $notificationID) {
@@ -198,7 +223,7 @@ class BoutiqueController extends Controller
 
 					$data = "Payout has been released. Check it out now.";
 
-					return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'data'));
+					return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'data', 'complainsCount'));
 					// return redirect('/categories');
 
 				}elseif ($notification->type == 'App\Notifications\RequestPaypalAccount') {
@@ -208,9 +233,18 @@ class BoutiqueController extends Controller
 
 					$data = "You are about to receive your payout. Please add your PayPal account to continue.";
 
-					return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'data'));
+					return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'data', 'complainsCount'));
 					// return redirect('/categories');
 
+				}elseif ($notification->type == 'App\Notifications\NotifyBoutiqueOfChat') {
+					$notif = $notification;
+					$notification->markAsRead();
+					
+					$chat = Chat::where('id', $notification->data['chatID'])->first();
+                    $order = Order::where('id', $chat['orderID'])->first();
+
+
+					return redirect('/orders/'.$order['id'].'#chat');
 				}
 			}
 		}
@@ -227,7 +261,17 @@ class BoutiqueController extends Controller
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
 
-		return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+		return view('boutique/viewNotification', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function dashboard()
@@ -251,10 +295,20 @@ class BoutiqueController extends Controller
 			$notificationsCount = $user->unreadNotifications->count();
 			// dd($rand = substr(md5(microtime()),rand(0,26),5));
 
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
+			}
+			$complainsCount = count($complains);
+
 	        $rentArray = $rents->toArray();
 	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos', 'orderCount', 'productsCount', 'customerCount')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos', 'orderCount', 'productsCount', 'customerCount', 'complainsCount')); 
 		}else {
 			return redirect('/shop');
 		}
@@ -271,7 +325,17 @@ class BoutiqueController extends Controller
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-			return view('boutique/products', compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
+			}
+			$complainsCount = count($complains);
+
+			return view('boutique/products', compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount', 'complainsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -292,12 +356,18 @@ class BoutiqueController extends Controller
             $categories = Category::all();
 	        $categoryGenders = $categories->groupBy('gender');
 
-			// foreach ($boutiques as $boutique) {
-			// 	$boutique;
-			// }
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
+			}
+			$complainsCount = count($complains);
 
 
-			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions', 'cities', 'categoryTags'));
+			return view('boutique/addProducts', compact('categories', 'boutique', 'user', 'tags', 'page_title', 'notifications', 'notificationsCount','regions', 'cities', 'categoryTags', 'complainsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -465,10 +535,20 @@ class BoutiqueController extends Controller
 			foreach ($boutiques as $boutique) {
 				$boutique;
 			}
-			// dd($tags[0]->tag);
+
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
+			}
+			$complainsCount = count($complains);
+			
 
 			return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tags', 'notifications', 
-			'notificationsCount'));
+			'notificationsCount', 'complainsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -489,17 +569,20 @@ class BoutiqueController extends Controller
 	        $regions = Region::all();
 	        $cities = City::all();
 
-			// foreach ($boutiques as $boutique) {
-			// 	$boutique;
-			// }
-			// dd($boutique); wa ni gamit
-			foreach ($categories as $category) {
-				$category;
+
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
 			}
+			$complainsCount = count($complains);
 
-			// dd($prodtags);
+			
 
-			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'itemtags', 'notifications', 'notificationsCount', 'regions', 'cities'));
+			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'itemtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'complainsCount'));
 			}else {
 			return redirect('/shop');
 		}
@@ -724,7 +807,17 @@ class BoutiqueController extends Controller
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-			return view('boutique/rents', compact( 'pendings', 'inprogress', 'ondeliveries', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount'));
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
+			}
+			$complainsCount = count($complains);
+
+			return view('boutique/rents', compact( 'pendings', 'inprogress', 'ondeliveries', 'histories', 'boutique', 'page_title', 'rents', 'notifications', 'notificationsCount', 'complainsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -736,18 +829,24 @@ class BoutiqueController extends Controller
 			$page_title = "Rent Details";
 	    	$id = Auth()->user()->id;
 	    	$boutique = Boutique::where('userID', $id)->first();
-
 			$rent = Rent::where('rentID', $rentID)->first();
         	$measurements = json_decode($rent->measurement->data);
-
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
-
 			$categories = Category::all();
         	$mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $rentID)->get();
+
+			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			$complains = array();
+			foreach($allOrders as $allOrder){
+				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+				if($complainsCounts != null){
+					array_push($complains, $complainsCounts);
+				}
+			}
+			$complainsCount = count($complains);
 		
-			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'measurements', 'categories', 
-				'mrequests'));
+			return view('boutique/rentinfo', compact('rent', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'measurements', 'categories', 'mrequests', 'complainsCount'));
 		}else {
 			return redirect('/shop');
 		}
@@ -907,40 +1006,6 @@ class BoutiqueController extends Controller
 		}
 	}
 
-	public function getembellishments()
-	{
-		if(Auth()->user()->roles == "boutique") {
-			$page_title = "Embellishments";
-	   		$user = Auth()->user()->id;
-			$boutique = Boutique::where('userID', $user)->first();
-			$products = Product::where('gender', 'Mens')->get();
-			$productCount = Product::where('gender', 'Mens')->get()->count();
-			$notifications = Auth()->user()->notifications;
-			$notificationsCount = Auth()->user()->unreadNotifications->count();
-
-			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
-		}else {
-			return redirect('/shop');
-		}
-	}
-
-	public function getcustomizables()
-	{
-		if(Auth()->user()->roles == "boutique") {
-			$page_title = "Customizable Items";
-	   		$user = Auth()->user()->id;
-			$boutique = Boutique::where('userID', $user)->first();
-			$products = Product::where('customizable', 'Yes')->get();
-			$productCount = Product::where('customizable', 'Yes')->get()->count();
-			$notifications = Auth()->user()->notifications;
-			$notificationsCount = Auth()->user()->unreadNotifications->count();
-
-			return view('boutique/products',compact('products', 'boutique', 'user', 'productCount', 'page_title', 'notifications', 'notificationsCount'));
-		}else {
-			return redirect('/shop');
-		}
-	}
-
 	public function categories()
 	{
 		$page_title = "Categories";
@@ -953,7 +1018,17 @@ class BoutiqueController extends Controller
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 
-		return view('boutique/categories', compact('user', 'categories','womens', 'mens', 'page_title', 'boutique', 'notifications', 'notificationsCount'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+		return view('boutique/categories', compact('user', 'categories','womens', 'mens', 'page_title', 'boutique', 'notifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function requestCategory(Request $request)
@@ -988,9 +1063,19 @@ class BoutiqueController extends Controller
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 		$mtos = Mto::where('boutiqueID', $boutique['id'])->where('status', 'Active')->get();
 
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
 		// dd($inprogress);
 
-		return view('boutique/madetoorders',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos'));
+		return view('boutique/madetoorders',compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mtos', 'complainsCount'));
 	}
 
     public function getMadeToOrder($mtoID)
@@ -1010,11 +1095,20 @@ class BoutiqueController extends Controller
 			}
 		}
 
-
 		$categories = Category::all();
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mto)->get();
 
-        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests', 'nameOfWearer'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests', 'nameOfWearer', 'complainsCount'));
     }
 
   //   public function halfapproveMto($mtoID)
@@ -1132,7 +1226,17 @@ class BoutiqueController extends Controller
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 		$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->get();
 
-		return view('boutique/orders', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'orders'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+		return view('boutique/orders', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'orders', 'complainsCount'));
     }
 
     public function getOrder($orderID)
@@ -1144,7 +1248,22 @@ class BoutiqueController extends Controller
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 		$order = Order::where('id', $orderID)->first();
 
-		return view('boutique/orderinfo', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'order'));
+		$complaint = Complain::where('orderID', $order['id'])->first();
+		// $email = Email::where()
+
+		// $allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		// $complains = array();
+		// foreach($allOrders as $allOrder){
+		// 	$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+		// 	if($complainsCounts != null){
+		// 		array_push($complains, $complainsCounts);
+		// 	}
+		// }
+		// $complainsCount = count($complains);
+
+		$chats = Chat::where('orderID', $orderID)->get();
+
+		return view('boutique/orderinfo', compact('page_title', 'id', 'boutique', 'notifications', 'notificationsCount', 'order', 'complaint', 'chats'));
     }
 
     public function forAlterations(Request $request)
@@ -1155,11 +1274,17 @@ class BoutiqueController extends Controller
     	$order = Order::where('id', $request->input('orderID'))->first();
     	// dd($request->input('alterationSchedule'));
 
-    	$order->update([
-    		'status' => 'For Alterations',
-    		'alterationDateStart' => $alterationDateStart,
-    		'alterationDateEnd' => $alterationDateEnd
+    	$alteration = Alteration::create([
+    		'dateStart' => $alterationDateStart,
+    		'dateEnd' => $alterationDateEnd,
+    		'status' => 'Pending'
     	]);
+
+    	$order->update([
+    		'alterationID' => $alteration['id'],
+    		'status' => 'For Alterations'
+    	]);
+    	// dd($alteration);
 
     	$customer = User::where('id', $order->customer['id'])->first();
     	$customer->notify(new NotifyForAlterations($order));
@@ -1167,7 +1292,22 @@ class BoutiqueController extends Controller
     	return redirect('orders/'.$order['id']);
     }
 
-    public function submitOrder(Request $request)
+    public function updateAlteration($alterationID, $data)
+    {
+    	$alteration = Alteration::where('id', $alterationID)->first();
+
+    	if($data == 'Yes'){
+    		$alteration->update([
+	    		'status' => 'Used'
+	    	]);
+    	}else{
+    		$alteration->update([
+	    		'status' => 'Unused'
+	    	]);
+    	}
+    }
+
+    public function submitOrder(Request $request) //for pickup
     {
         $deliverySchedule = date('Y-m-d',strtotime($request->input('deliverySchedule')));
     	$order = Order::where('id', $request->input('orderID'))->first();
@@ -1722,7 +1862,6 @@ class BoutiqueController extends Controller
 	        $cities = City::all();
 			$set = Set::where('id', $setID)->first();
 
-			// $itemtags = Itemtag::where('itemID', $productID)->get();
 			$itemtags = Itemtag::where('itemID', $setID)->get();
 
 			foreach ($categories as $category) {
@@ -1763,7 +1902,17 @@ class BoutiqueController extends Controller
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
 
-		return view('boutique/boutique-profile', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+		return view('boutique/boutique-profile', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'complainsCount'));
 	}
 
 	public function paypalAccount()
@@ -1774,11 +1923,19 @@ class BoutiqueController extends Controller
 		$page_title = 'Profile';
 		$notifications = $user->notifications;
 		$notificationsCount = $user->unreadNotifications->count();
-
 		$paypalAccount = Paypalaccount::where('id', $boutique['paypalAccountID'])->first();
-		// dd($paypalAccount);
 
-		return view('boutique/paypal-account', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'paypalAccount'));
+		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		$complains = array();
+		foreach($allOrders as $allOrder){
+			$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+			if($complainsCounts != null){
+				array_push($complains, $complainsCounts);
+			}
+		}
+		$complainsCount = count($complains);
+
+		return view('boutique/paypal-account', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'paypalAccount', 'complainsCount'));
 
 	}
 
@@ -1809,6 +1966,98 @@ class BoutiqueController extends Controller
 
 		return redirect('/paypal-account');
 	}
+
+  //   public function complaints()
+  //   {
+		// $page_title = "Complaints";
+  //  		$user = Auth()->user()->id;
+		// $boutique = Boutique::where('userID', $user)->first();
+		// $notifications = Auth()->user()->notifications;
+		// $notificationsCount = Auth()->user()->unreadNotifications->count();
+
+		// $allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		// $complains = array();
+		// foreach($allOrders as $allOrder){
+		// 	$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+		// 	if($complainsCounts != null){
+		// 		array_push($complains, $complainsCounts);
+		// 	}
+		// }
+		// $complainsCount = count($complains);
+		// // dd($complains);
+        
+  //       return view('boutique/complaints', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'complainsCount', 'complains'));
+  //   }
+
+  //   public function viewComplaint($complainID)
+  //   {
+		// $page_title = "Complaint";
+  //  		$user = Auth()->user()->id;
+		// $boutique = Boutique::where('userID', $user)->first();
+		// $notifications = Auth()->user()->notifications;
+		// $notificationsCount = Auth()->user()->unreadNotifications->count();
+		// $complain = Complain::where('id', $complainID)->first();
+        
+		// $allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+		// $complains = array();
+		// foreach($allOrders as $allOrder){
+		// 	$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
+		// 	if($complainsCounts != null){
+		// 		array_push($complains, $complainsCounts);
+		// 	}
+		// }
+		// $complainsCount = count($complains);
+
+  //       return view('boutique/viewComplaint', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'complainsCount', 'complain', 'complains'));
+  //   }
+
+    public function mailbox()
+    {
+		$page_title = "Mailbox";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$emails = Email::where('recipientID', $user)->where('location', 'inbox')->get();
+		$inboxCount = count(Email::where('recipientID', $user)->where('location', 'inbox')->where('status', 'unread')->get());
+		$datetime = date('Y-m-d H:i:s');
+		// dd($datetime);
+
+        return view('boutique/mailbox-inbox', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'emails', 'inboxCount', 'datetime'));
+    }
+
+    public function readmail($emailID)
+    {
+		$page_title = "Mailbox";
+   		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$notifications = Auth()->user()->notifications;
+		$notificationsCount = Auth()->user()->unreadNotifications->count();
+		$inboxCount = count(Email::where('recipientID', $user)->where('location', 'inbox')->where('status', 'unread')->get());
+		$datetime = date('Y-m-d H:i:s');
+    	$email = Email::where('id', $emailID)->first();
+
+
+        return view('boutique/mailbox-readmail', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'email', 'inboxCount', 'datetime'));
+    }
+
+    public function bSendChat(Request $request)
+    {
+   		$id = Auth()->user()->id;
+   		$orderID = $request->input('orderID');
+        $order = Order::where('id', $orderID)->first();
+    	$chat = Chat::create([
+    		'orderID' => $orderID,
+    		'senderID' => $id,
+    		'message' => $request->input('message'),
+    		'status' => 'unread'
+    	]);
+
+    	$customer = User::where('id', $order['userID'])->first();
+    	$customer->notify(new NotifyCustomerOfChat($chat));
+
+    	return redirect('orders/'.$orderID.'#chat');
+    }
 
 
 }

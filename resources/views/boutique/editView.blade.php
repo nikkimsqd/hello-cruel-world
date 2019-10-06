@@ -337,8 +337,8 @@
 				    	</div>
 
 
-				    	@if(count($tags) > 0)
-					    <label>Add Tags:</label>
+				    	@if(count($itemtags) > 0)
+					    <label>Edit Tags:</label>
 					    <div class="form-group tags">
 							@foreach($itemtags as $itemtag)
 							@if($itemtag['itemID'] == $product['id'])

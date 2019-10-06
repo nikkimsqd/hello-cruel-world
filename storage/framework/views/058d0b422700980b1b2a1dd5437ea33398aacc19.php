@@ -28,8 +28,6 @@
   <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css')); ?>">
   <!-- bootstrap datepicker -->
   <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')); ?>">
-  <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/iCheck/all.css')); ?>">
   <!-- Bootstrap Color Picker -->
   <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css')); ?>">
   <!-- Bootstrap time Picker -->
@@ -40,6 +38,10 @@
   <link rel="stylesheet" href="<?php echo e(asset('adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css')); ?>">
   <!-- Bootstrap time Picker -->
   <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/timepicker/bootstrap-timepicker.min.css')); ?>">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css')); ?>">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/iCheck/flat/blue.css')); ?>">
 
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -241,6 +243,11 @@
  <!-- Date Picker -->
 <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
+
+<!-- iCheck -->
+<script src="<?php echo e(asset('adminlte/plugins/iCheck/icheck.min.js')); ?>"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="<?php echo e(asset('adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js')); ?>"></script>
 
 <?php echo $__env->yieldContent('scripts'); ?>
 

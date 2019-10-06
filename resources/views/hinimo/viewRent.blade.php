@@ -61,6 +61,51 @@
                         }
                         ?>
 
+                        <div class="order-details-confirmation" id="chat"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$rent->order->boutique['boutiqueName']}}</h5>
+                            </div>
+
+                            <div class="chat-body">
+                                @if(count($chats) > 0)
+                                    @foreach($chats as $chat)
+                                        @if($chat['senderID'] != $userID)
+                                        <span class="sender">{{ $chat->sender->boutique['boutiqueName'] }}</span>
+                                        <span class="chatTime">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                                        <p class="receivedChat">{{$chat['message']}}</p><hr>
+                                        @else
+                                        <p class="chatTimeMe">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</p>
+                                        <p class="sendChat">{{$chat['message']}}</p><hr>
+                                        @endif
+                                    @endforeach
+                                @else
+                                <p class="receivedChat"><i>Ask seller anything here...</i></p>
+                                @endif
+                            </div>
+
+                            <br>
+                            <form action="{{url('cSendChat')}}" method="post">
+                                {{ csrf_field() }}
+                                @if($rent->order['status'] != "Completed")
+                                    <div class="input-group">
+                                        <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+                                        <input type="text" name="orderID" value="{{$rent->order['id']}}" hidden>
+                                        <span class="input-group-btn">
+                                            <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
+                                        </span>
+                                    </div>
+                                @else
+                                    <div class="input-group">
+                                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" disabled>
+                                        <span class="input-group-btn">
+                                            <input type="submit" name="btn_submit" class="btn btn-primary" value="Send" disabled>
+                                        </span>
+                                    </div>
+                                @endif
+                            </form>
+
+                        </div><br><br> <!-- card closing -->
+
                              
                         @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
                         <div class="order-details-confirmation"> <!-- card opening -->
@@ -115,8 +160,9 @@
                             <div class="notif-area cart-area" style="text-align: right;">
                                 <input type="submit" class="btn essence-btn" disabled value="Item Received">
                             </div>
-                            @elseif($rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered")
+                            @elseif($rent->order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
+                                <a href="" class="btn essence-btn white-btn" data-toggle="modal" data-target="#fileForComplain">File for complains</a> &nbsp;&nbsp;&nbsp;
                                 <a href="{{url('receiveRent/'.$rent['rentID'])}}" class="btn essence-btn">Item Received</a>
                             </div>
                             @elseif($rent->order['status'] == "On Rent")
@@ -289,10 +335,65 @@
     </div>
 </div>
 
+
+<!-- MODAL -->
+<div class="modal fade" id="confirmReceive" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <h3 class="modal-title"><b>Rent Details</b></h3> -->
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <h5>Are you sure?</h5>
+                <p>Once you clicked YES, there's no turning back!</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="{{url('receiveOrder/'.$rent->order['id'])}}" class="btn essence-btn">YES</a>
+            </div>
+        </div> 
+    </div>
+</div>
+
+<div class="modal fade" id="fileForComplain" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><b>Submit your complain</b></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <form action="{{url('fileComplain')}}" method="post" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <input type="file" name="file[]" id="imgInp" class="form-control" multiple required><br>
+                    <!-- <img id="imgPreview" src="#" alt="" /><br> -->
+                    <textarea name="complain" class="form-control" rows="4" required></textarea>
+                    <input type="text" name="userID" value="{{$rent->order->customer['id']}}" hidden>
+                    <input type="text" name="orderID" value="{{$rent->order['id']}}" hidden>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" name="btn_submit" value="Submit" class="btn essence-btn">
+                </div>
+            </form>
+        </div> 
+    </div>
+</div>
+
 <style type="text/css">
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
     .mb-10{margin-bottom: 10px;}
     .payment-heading{background-color: aliceblue;}
+    .receivedChat{margin-bottom: 0 !important; text-align: left; color: black; font-size: 16px !important;}
+    .sendChat{margin-bottom: 0 !important; text-align: right; color: black; font-size: 16px !important; margin-right: 15px;}
+    .sender{color: black; font-size: 12px !important; font-weight: 500;}
+    .chatTime{color: #8e8e8e; font-size: 12px !important; margin-left: 355px; margin-bottom: 0 !important;}
+    .chatTimeMe{color: #8e8e8e; font-size: 12px !important; margin-bottom: 0 !important; text-align: center;}
+    .chat-body{max-height: 300px;  overflow-y: scroll;}
+    hr{margin-top: 7px;  margin-bottom: 7px;}
 </style>
 
 <!-- </div> -->

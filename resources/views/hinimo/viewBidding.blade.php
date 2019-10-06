@@ -31,7 +31,7 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><h5>Your schedule for alterations will be on:</h5></td>
-                                        <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($bidding->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($bidding->order['alterationDateEnd']))}}</h5></td>
+                                        <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($bidding->order->alteration['dateStart'])).' - '.date('M d, Y',strtotime($bidding->order->alteration['dateEnd']))}}</h5></td>
                                     </tr>
                                 </table>
                                     <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
@@ -52,6 +52,47 @@
                             }
                         }
                         ?>
+
+                        <div class="order-details-confirmation" id="chat"> <!-- card opening -->
+                            <div class="cart-page-heading">
+                                <h5 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$bidding->order->boutique['boutiqueName']}}</h5>
+                            </div>
+
+                            <div class="chat-body">
+                                @foreach($chats as $chat)
+                                    @if($chat['senderID'] != $userID)
+                                    <span class="sender">{{ $chat->sender->boutique['boutiqueName'] }}</span>
+                                    <span class="chatTime">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                                    <p class="receivedChat">{{$chat['message']}}</p><hr>
+                                    @else
+                                    <p class="chatTimeMe">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</p>
+                                    <p class="sendChat">{{$chat['message']}}</p><hr>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                            <br>
+                            <form action="{{url('cSendChat')}}" method="post">
+                                {{ csrf_field() }}
+                                @if($bidding->order['status'] != "Completed")
+                                    <div class="input-group">
+                                        <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+                                        <input type="text" name="orderID" value="{{$bidding->order['id']}}" hidden>
+                                        <span class="input-group-btn">
+                                            <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
+                                        </span>
+                                    </div>
+                                @else
+                                    <div class="input-group">
+                                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" disabled>
+                                        <span class="input-group-btn">
+                                            <input type="submit" name="btn_submit" class="btn btn-primary" value="Send" disabled>
+                                        </span>
+                                    </div>
+                                @endif
+                            </form>
+
+                        </div><br><br> <!-- card closing -->
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
@@ -94,9 +135,10 @@
                             <div class="notif-area cart-area" style="text-align: right;">
                                 <input type="submit" class="btn essence-btn" disabled value="Item Recieved">
                             </div>
-                            @elseif($bidding->order['status'] == "On Delivery" || $bidding->order['status'] == "Delivered")
+                            @elseif($bidding->order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
-                                <a href="{{url('receiveOrder/'.$bidding->order['id'])}}" class="btn essence-btn">Item Recieved</a>
+                                <a href="" class="btn essence-btn white-btn" data-toggle="modal" data-target="#fileForComplain">File for complains</a> &nbsp;&nbsp;&nbsp;
+                                <a href="" class="btn essence-btn" data-toggle="modal" data-target="#confirmReceive">Item Recieved</a>
                             </div>
                             <!-- elseif($order['status'] == "On Rent") -->
                             @endif
@@ -321,6 +363,52 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirmReceive" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <h3 class="modal-title"><b>Rent Details</b></h3> -->
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <h5>Are you sure?</h5>
+                <p>Once you clicked YES, there's no turning back!</p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="{{url('receiveOrder/'.$bidding->order['id'])}}" class="btn essence-btn">YES</a>
+            </div>
+        </div> 
+    </div>
+</div>
+
+<div class="modal fade" id="fileForComplain" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><b>Submit your complain</b></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <form action="{{url('fileComplain')}}" method="post" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <input type="file" name="file[]" id="imgInp" class="form-control" multiple required><br>
+                    <!-- <img id="imgPreview" src="#" alt="" /><br> -->
+                    <textarea name="complain" class="form-control" rows="4" required></textarea>
+                    <input type="text" name="userID" value="{{$bidding->order->customer['id']}}" hidden>
+                    <input type="text" name="orderID" value="{{$bidding->order['id']}}" hidden>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" name="btn_submit" value="Submit" class="btn essence-btn">
+                </div>
+            </form>
+        </div> 
+    </div>
+</div>
+
 
 
 <!-- </div> -->
@@ -336,6 +424,15 @@
     .note{font-size: 14px !important; margin-bottom: 10px !important; color: red; font-weight: bold !important;}
     .order-details-confirmation .order-details-form li{padding: 20px 5px;}
     /*a:hover{font-size: 18px; color: #ffffff;}*/
+    .white-btn{color: #0315ff; background-color: white; border: 1px solid #0315ff;}
+    .white-btn:hover{border-color: #dc0345;}
+    .receivedChat{margin-bottom: 0 !important; text-align: left; color: black; font-size: 16px !important;}
+    .sendChat{margin-bottom: 0 !important; text-align: right; color: black; font-size: 16px !important; margin-right: 15px;}
+    .sender{color: black; font-size: 12px !important; font-weight: 500;}
+    .chatTime{color: #8e8e8e; font-size: 12px !important; margin-left: 355px; margin-bottom: 0 !important;}
+    .chatTimeMe{color: #8e8e8e; font-size: 12px !important; margin-bottom: 0 !important; text-align: center;}
+    .chat-body{max-height: 300px;  overflow-y: scroll;}
+    hr{margin-top: 7px;  margin-bottom: 7px;}
 </style>
 @endsection
 

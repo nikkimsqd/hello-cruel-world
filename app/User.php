@@ -29,7 +29,7 @@ class User extends Authenticatable
 
     public function boutique()
     {
-        return $this->hasOne('App\Boutique', 'id', 'id'); //? wat is dis. does dis still exist
+        return $this->hasOne('App\Boutique', 'userID', 'id');
     }
 
     public function favorites()

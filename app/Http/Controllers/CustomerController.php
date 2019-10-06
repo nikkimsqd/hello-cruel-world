@@ -36,6 +36,7 @@ use App\Favorite;
 use App\Event;
 use App\Categorytag;
 use App\Complain;
+use App\Chat;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -47,6 +48,7 @@ use App\Notifications\NewBidding;
 use App\Notifications\CustomerDoesntAcceptOffer;
 use App\Notifications\NotifyOfComplain;
 use App\Notifications\NotifyAdminOfComplain;
+use App\Notifications\NotifyBoutiqueOfChat;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -1519,8 +1521,27 @@ class CustomerController extends Controller
                         return redirect('/view-mto/'.$notification->data['transactionID'].'#measurements');
 
                     }
-                }
 
+                }elseif($notification->type == 'App\Notifications\NotifyCustomerOfChat'){
+                    $notification->markAsRead();
+
+                    $chat = Chat::where('id', $notification->data['chatID'])->first();
+                    $order = Order::where('id', $chat['orderID'])->first();
+
+                    if($order['mtoID'] != null){
+                        return redirect('/view-mto/'.$order->mto['id'].'#chat');
+
+                    }elseif($order['cartID'] != null){
+                        return redirect('/view-order/'.$order['id'].'#chat');
+
+                    }elseif($order['rentID'] != null){
+                        return redirect('/view-rent/'.$order->rent['rentID'].'#chat');
+
+                    }elseif($order['biddingID'] != null){
+                        return redirect('/view-bidding-order/'.$order->bidding['id'].'#chat');
+                    }
+
+                }
             }
         }
     }
@@ -1722,7 +1743,7 @@ class CustomerController extends Controller
 
     public function viewBiddingOrder($biddingID)
     {
-        $page_title = "Order Details";
+        $page_title = "Bidding Details";
         $userID = Auth()->user()->id;
         $user = User::find($userID);
         $boutiques = Boutique::all();
@@ -1740,8 +1761,9 @@ class CustomerController extends Controller
 
         $payments = Payment::where('orderID', $bidding->order['id'])->get();
         // dd($mrequests);
+        $chats = Chat::where('orderID', $bidding->order['id'])->get();
 
-        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests', 'payments'));
+        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests', 'payments', 'chats'));
     }
 
     public function viewOrder($orderID)
@@ -1762,10 +1784,11 @@ class CustomerController extends Controller
 
         $order = Order::find($orderID);
         $payments = Payment::where('orderID', $order['id'])->get();
+        $chats = Chat::where('orderID', $order['id'])->get();
         // $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
         // dd($boutiqueseller);
 
-        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order', 'payments'));
+        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order', 'payments', 'chats'));
     }
 
     public function viewRent($rentID)
@@ -1785,11 +1808,12 @@ class CustomerController extends Controller
 
         $rent = Rent::find($rentID);
         $payments = Payment::where('orderID', $rent->order['id'])->get();
+        $chats = Chat::where('orderID', $rent->order['id'])->get();
 
         // $measurements = json_decode($rent->measurement->data);
-        // dd(count($payments));
+        // dd($chats);
 
-        return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent', 'payments'));
+        return view('hinimo/viewRent', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'rent', 'payments', 'chats'));
     }
 
     public function viewMto($mtoID)
@@ -1816,6 +1840,7 @@ class CustomerController extends Controller
         $payments = Payment::where('orderID', $mto->order['id'])->get();
         // dd(json_decode($mto['nameOfWearers']));
         // $nameOfWearer = null;
+        $chats = Chat::where('orderID', $mto->order['id'])->get();
 
         if($mto['numOfPerson'] != "equals"){
             $nameOfWearers = json_decode($mto['nameOfWearers']); 
@@ -1826,7 +1851,7 @@ class CustomerController extends Controller
         }
 
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments', 'nameOfWearer'));
+        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments', 'nameOfWearer', 'chats'));
     }
 
     public function inputAddress($mtoID, $type)
@@ -2624,7 +2649,52 @@ class CustomerController extends Controller
         $admin = User::where('roles', 'admin')->first();
         $admin->notify(new NotifyAdminOfComplain($orderID, $boutique));
 
-        return redirect('view-order/'.$orderID);
+
+        if($order['cartID'] != null){
+            return redirect('view-order/'.$orderID);
+
+        }elseif($order['rentID'] != null){
+            return redirect('view-rent/'.$order['rentID']);
+
+        }elseif($order['mtoID'] != null){
+            return redirect('view-mto/'.$order['mtoID']);
+
+        }elseif($order['biddingID'] != null){
+            return redirect('view-bidding-order/'.$order['biddingID']);
+
+        }
+    }
+
+    public function cSendChat(Request $request)
+    {
+        $id = Auth()->user()->id;
+        $orderID = $request->input('orderID');
+        $order = Order::where('id', $orderID)->first();
+        $chat = Chat::create([
+            'orderID' => $orderID,
+            'senderID' => $id,
+            'message' => $request->input('message'),
+            'status' => 'unread'
+        ]);
+
+        $boutique = Boutique::where('id', $order->boutique['id'])->first();
+        $boutiqueseller = User::where('id', $boutique['userID'])->first();
+        $boutiqueseller->notify(new NotifyBoutiqueOfChat($chat));
+
+        
+        if($order['cartID'] != null){
+            return redirect('view-order/'.$orderID.'#chat');
+
+        }elseif($order['rentID'] != null){
+            return redirect('view-rent/'.$order['rentID'].'#chat');
+
+        }elseif($order['mtoID'] != null){
+            return redirect('view-mto/'.$order['mtoID'].'#chat');
+
+        }elseif($order['biddingID'] != null){
+            return redirect('view-bidding-order/'.$order['biddingID'].'#chat');
+
+        }
     }
 
 }

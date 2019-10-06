@@ -203,6 +203,19 @@
       </ul> -->
     </li>
 
+    <li class="complaints">
+      <a href="{{url('complaints')}}">
+        <i class="fa fa-thumbs-down"></i>
+        <span>Complaints</span>
+        <span class="pull-right-container">
+          @if($complainsCount != 0)
+          <small class="label pull-right bg-red">{{$complainsCount}}</small>
+          @endif
+          <!-- <i class="fa fa-angle-left pull-right"></i> -->
+        </span>
+      </a>
+    </li>
+
   </ul>
 </section>
 

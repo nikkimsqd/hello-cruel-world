@@ -73,6 +73,9 @@
 
                 @elseif($order['status'] == "On Rent")
                 <span class="label label-success">{{$order['status']}}</span>
+
+                @elseif($order['status'] == "On Hold")
+                <span class="label label-danger">{{$order['status']}}</span>
                 @endif
               </td>
               <td class="align-center">{{$order['boutiqueShare']}}</td>

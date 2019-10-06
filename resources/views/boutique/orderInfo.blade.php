@@ -25,7 +25,7 @@
               <span class="label label-warning">{{$order['status']}}</span>
 
               @elseif($order['status'] == "For Alterations")
-              <span class="label label-info">{{$order['status']}}</span>
+              <span class="label label-info">For Fitting</span>
 
               @elseif($order['status'] == "For Pickup")
               <span class="label bg-navy">{{$order['status']}}</span>
@@ -44,6 +44,9 @@
 
               @elseif($order['status'] == "On Rent")
               <span class="label label-info">{{$order['status']}}</span>
+
+              @elseif($order['status'] == "On Hold")
+              <span class="label label-danger">{{$order['status']}}</span>
               @endif
             </h4>
             <h4>Order Type: 
@@ -177,7 +180,7 @@
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> Set Date for Fittings</a>
 
         @elseif($order['status'] == "For Alterations" && $order['cartID'] == null)
-          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
+          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#confirmAlteration"> For Pickup</a>
 
         @elseif($order['paymentStatus'] == "Not Yet Paid" && $order['status'] == "In-Progress" && $order['cartID'] != null)
           <input type="submit" value="For Pickup" class="btn btn-primary" disabled>
@@ -190,6 +193,102 @@
         @endif
         </div>
       </div>
+
+      <div class="box box-success direct-chat direct-chat-success" id="chat">
+        <div class="box-header with-border">
+          <h3 class="box-title">Chat with client</h3>
+          <div class="box-tools pull-right">
+            <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span> -->
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+
+          <div class="direct-chat-messages">
+            @foreach($chats as $chat)
+              @if($chat['senderID'] != $id)
+                <div class="direct-chat-msg">
+                  <div class="direct-chat-info clearfix">
+                    <span class="direct-chat-name pull-left">{{$chat->sender['fname'].' '.$chat->sender['lname']}}</span>
+                    <span class="direct-chat-timestamp pull-left sender-time">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                  </div>
+
+                  <div class="direct-chat-text">
+                    {{$chat['message']}}
+                  </div>
+                  <!-- /.direct-chat-text -->
+                </div>
+
+
+              @else
+                  <div class="direct-chat-msg right">
+                    <div class="direct-chat-info clearfix">
+                      <!-- <span class="direct-chat-name pull-right">{{$chat->sender->boutique['boutiqueName']}}</span> -->
+                      <span class="direct-chat-timestamp pull-right">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                    </div>
+
+                    <div class="direct-chat-text">
+                      {{$chat['message']}}
+                    </div>
+                    <!-- /.direct-chat-text -->
+                  </div>
+              @endif
+
+            @endforeach
+
+          </div>
+
+        </div> <!-- /.box-body -->
+
+        <div class="box-footer">
+          <form action="{{url('bSendChat')}}" method="post">
+            {{ csrf_field() }}
+            <div class="input-group">
+              <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+                  <span class="input-group-btn">
+                    <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
+                  </span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+
+      @if($complaint != null)
+      <div class="box">
+
+        <div class="box-header with-border">
+          <h3 class="box-title">Complaint</h3>
+        </div>
+
+        <div class="box-body">
+          <div class="col-md-12"> 
+
+            <!-- <h4>Complainant Name: <b>{{$complaint->order->customer['fname'].' '.$complaint->order->customer['lname']}}</b></h4> -->
+            <h4>Complain: <b>{{$complaint['complain']}}</b></h4>
+            <h4>Attachments:</h4>
+
+            <div class="row"> 
+              @foreach($complaint->complainFiles as $complainFile)
+              <div class="col-md-2 image-container">
+                <img src="{{ asset('/uploads').$complainFile['filename'] }}" style="width: calc(100% + 40px); height: 250px; object-fit: cover; ">
+              </div>
+              @endforeach
+            </div>
+
+          </div>
+
+          <div class="col-md-12"> 
+          </div>
+
+        </div>
+      </div>
+      @endif
+
     </div>
   </div>
 </section>
@@ -203,21 +302,48 @@
             <h3 class="modal-title"><b>Set fitting schedule</b></h3>
           </div>
 
-          <div class="modal-body">
-            <p>Set date for fitting:</p>
-            <form action="{{url('forAlterations')}}" method="post">
-              {{csrf_field()}}
-              <input type="text" name="alterationDateStart" id="alterationDateStart" class="form-control" placeholder="Set start date" required>
-              <input type="text" name="alterationDateEnd" id="alterationDateEnd" class="form-control" placeholder="Set end date" required>
-              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
-          </div>
+          <form action="{{url('forAlterations')}}" method="post">
+            {{csrf_field()}}
+            <div class="modal-body">
+              <p>Set date for fitting:</p>
+                <input type="text" name="alterationDateStart" id="alterationDateStart" class="form-control" placeholder="Set start date" required>
+                <input type="text" name="alterationDateEnd" id="alterationDateEnd" class="form-control" placeholder="Set end date" required>
+                <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+            </div>
 
-          <div class="modal-footer">
-            <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
+            <div class="modal-footer">
+              <input type="submit" name="btn_submit" class="btn btn-primary" value="Confirm">
+            </div>
           </form>
-          </div>
       </div> 
     </div>
+</div>
+
+<div class="modal fade" id="confirmAlteration" role="dialog">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title"><b>Confirm Alterations</b></h3>
+      </div>
+
+      <!-- <form action="{{url('submitOrder')}}" method="post"> -->
+        <!-- {{csrf_field()}} -->
+        <div class="modal-body">
+          <p>Did client show up at scheduled fittings? </p>
+          <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+        </div>
+
+        <div class="modal-footer">
+          <!-- <a href="" class="btn btn-default" id="noAlterations">No</a>
+          <a href="" class="btn btn-primary" id="yesAlterations">Yes</a> -->
+          <input type="text" id="alterationID" value="{{$order['alterationID']}}">
+          <input type="submit" id="noAlterations" name="btn_submit" class="btn btn-default" value="No">
+          <input type="submit" id="yesAlterations" name="btn_submit" class="btn btn-primary" value="Yes">
+        </div>
+      <!-- </form> -->
+    </div> 
+  </div>
 </div>
 
 <div class="modal fade" id="forPickupModal" role="dialog">
@@ -225,10 +351,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h3 class="modal-title"><b>Submit MTO for Pickup?</b></h3>
+        <h3 class="modal-title"><b>Submit Order for Pickup?</b></h3>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" id="forPickup">
         <p>Set date for pickup:</p>
         <form action="{{url('submitOrder')}}" method="post">
           {{csrf_field()}}
@@ -277,38 +403,74 @@
   </div>
 </div>
 
+<style type="text/css">
+  .right .direct-chat-text{margin-left: 500px; margin-right: 2px}
+  .sender-time{margin-left: 300px;}
+  .direct-chat-text{margin: 5px 500px 0 2px;}
+</style>
+
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
 
-$('.transactions').addClass("active");
-$('.orders').addClass("active");
+  $('.transactions').addClass("active");
+  $('.orders').addClass("active");
 
-// ---------------------------------------------------------------------
-var dateToday = new Date();
-var dateTomorrow = new Date();
-dateTomorrow.setDate(dateToday.getDate());
-// dateTomorrow.setDate(dateToday.getDate()+1);
+  // ---------------------------------------------------------------------
+  var dateToday = new Date();
+  var dateTomorrow = new Date();
+  dateTomorrow.setDate(dateToday.getDate());
+  // dateTomorrow.setDate(dateToday.getDate()+1);
 
-$('#alterationDateStart').datepicker({
-  startDate: dateTomorrow
-});
+  $('#alterationDateStart').datepicker({
+    startDate: dateTomorrow
+  });
 
-var dateStart = $('#alterationDateStart').val();
+  var dateStart = $('#alterationDateStart').val();
 
-$('#alterationDateEnd').datepicker({
-  startDate: dateTomorrow //dapat mag start sa d day after sa startDate
-});
+  $('#alterationDateEnd').datepicker({
+    startDate: dateTomorrow //dapat mag start sa d day after sa startDate
+  });
 
-// ---------------------------------------------------------------------
-// {{$order['alterationDateEnd']}}
-var alterationDateEnd = new Date();
-// alert(alterationDateEnd);
-$('#deliverySchedule').datepicker({
-  startDate: dateTomorrow
-  //set sad ug date limit sa mto nga dapat 1 week before the use ideliver
-});
+  // ---------------------------------------------------------------------
+  // {{$order['alterationDateEnd']}}
+  var alterationDateEnd = new Date();
+  // alert(alterationDateEnd);
+  $('#deliverySchedule').datepicker({
+    startDate: dateTomorrow
+    //set sad ug date limit sa mto nga dapat 1 week before the use ideliver
+  });
+
+  $('#noAlterations').on('click', function(){
+    var value = $(this).val();
+    var alterationID = $('#alterationID').val();
+
+    $.ajax({
+      url: "{{url('updateAlteration')}}"+'/'+alterationID+'/'+value,
+      success:function(data){
+        // $('#forPickup').html(data);
+        $('#forPickupModal').modal('show');
+        $('#confirmAlteration').modal('hide');
+      }
+    });
+
+  });
+
+  $('#yesAlterations').on('click', function(){
+    var value = $(this).val();
+    var alterationID = $('#alterationID').val();
+
+    $.ajax({
+      url: "{{url('updateAlteration')}}"+'/'+alterationID+'/'+value,
+      success:function(data){
+        // $('#forPickup').html(data);
+        $('#forPickupModal').modal('show');
+        $('#confirmAlteration').modal('hide');
+      }
+    });
+
+  });
 
 
 </script>

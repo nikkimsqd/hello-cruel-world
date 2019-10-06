@@ -183,9 +183,12 @@ class IonicController extends Controller
 
     public function countDatas($userID)
     {   
+        $dateToday = date('Y-m-d');
         $user = User::where('id', $userID)->first();
-        $forPickup = Order::where('status', "For Pickup")->count();
-        $forDelivery = Order::where('status', "For Delivery")->count();
+        $courierAccount = Courier::where('userID', $userID)->first();
+        
+        $forPickup = Order::where('status', "For Pickup")->where('courierID', $courierAccount['id'])->where('deliverySchedule', $dateToday)->count();
+        $forDelivery = Order::where('status', "For Delivery")->where('courierID', $courierAccount['id'])->count();
         $notificationsCount = $user->unreadNotifications->count();
 
         return response ()->json([

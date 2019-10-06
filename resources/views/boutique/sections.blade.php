@@ -198,6 +198,15 @@
         </span>
       </a>
     </li>
+
+    <!-- <li class="mailbox">
+      <a href="{{url('boutique-mailbox')}}">
+        <i class="fa fa-envelope"></i>
+        <span>Mailbox</span>
+        <span class="pull-right-container">
+        </span>
+      </a>
+    </li> -->
    
     <li class="biddings">
       <a href="{{url('boutique-view-biddings')}}">

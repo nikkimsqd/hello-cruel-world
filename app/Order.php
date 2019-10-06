@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['userID', 'cartID', 'mtoID', 'biddingID', 'subtotal', 'deliveryfee', 'total', 'boutiqueID', 'deliveryAddress', 'status', 'rentID', 'paymentStatus','paypalOrderID', 'deliverySchedule', 'alterationDateStart', 'alterationDateEnd', 'billingName', 'phoneNumber', 'boutiqueShare', 'adminShare', 'addressID', 'payoutID', 'courierID'];
+    protected $fillable = ['userID', 'cartID', 'mtoID', 'biddingID', 'subtotal', 'deliveryfee', 'total', 'boutiqueID', 'deliveryAddress', 'status', 'rentID', 'paymentStatus','paypalOrderID', 'deliverySchedule', 'billingName', 'phoneNumber', 'boutiqueShare', 'adminShare', 'addressID', 'payoutID', 'courierID', 'alterationID'];
     
 
     public function cart()
@@ -62,6 +62,11 @@ class Order extends Model
     public function courier()
     {
         return $this->hasOne('App\Courier', 'id', 'courierID');
+    }
+
+    public function alteration()
+    {
+        return $this->hasOne('\App\Alteration', 'id', 'alterationID');
     }
     
 }

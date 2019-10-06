@@ -8,7 +8,7 @@ class Complain extends Model
 {
     protected $fillable = ['userID', 'orderID', 'complain', 'status'];
 
-    public function complainFile()
+    public function complainFiles()
     {
         return $this->hasMany('App\File', 'complainID', 'id');
     }

@@ -101,6 +101,19 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('/admin-saveEvent', 'AdminController@saveEvent');
 	Route::get('/admin-viewEvent/{eventName}', 'AdminController@viewEvent');
 
+
+	// COMPLAINTS
+	Route::get('/complaints', 'AdminController@complaints');
+	Route::get('/viewComplaint/{complainID}', 'AdminController@viewComplaint');
+	Route::get('/getComplaint/{complainID}', 'AdminController@getComplaint');
+
+
+	Route::get('/mailbox', 'AdminController@mailbox');
+	Route::get('/compose', 'AdminController@compose');
+	Route::post('/sendCompose', 'AdminController@sendCompose');
+
+
+
 //BOUTIQUE----------------------------------------------------------------------------------------
 	Route::get('/boutique-profile', 'BoutiqueController@boutiqueProfile');
 	Route::get('/reqToActivateAccount', 'BoutiqueController@reqToActivateAccount');
@@ -179,6 +192,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/orders/{orderID}', 'BoutiqueController@getOrder');
 	Route::post('/submitOrder', 'BoutiqueController@submitOrder');
 	Route::post('/forAlterations', 'BoutiqueController@forAlterations');
+	Route::get('/updateAlteration/{alterationID}/{value}', 'BoutiqueController@updateAlteration');
 
 
 	//TRANSACTIONS-BIDDINGS
@@ -201,16 +215,24 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/archive-boutique-biddings', 'BoutiqueController@archiveBiddings');
 
 
-
 	Route::get('/paypal-account', 'BoutiqueController@paypalAccount');
 	Route::post('/updatePaypalAccount', 'BoutiqueController@updatePaypalAccount');
 	Route::post('/addPaypalAccount', 'BoutiqueController@addPaypalAccount');
 
 
-
 	Route::get('/getCategoryTags/{categoryID}', 'BoutiqueController@getCategoryTags');
 
+
+	Route::get('/boutique-mailbox', 'BoutiqueController@mailbox');
+	Route::get('/boutique-readmail/{emailID}', 'BoutiqueController@readmail');
+
+
+	Route::post('/bSendChat', 'BoutiqueController@bSendChat');
+
+
 //CUSTOMER--------------------------------------------------------------------------------------------
+	Route::post('/cSendChat', 'CustomerController@cSendChat');
+
 	Route::get('/shopReco', 'CustomerController@shopReco');
 
 	Route::get('/get-started/welcome', 'CustomerController@welcome');
@@ -302,6 +324,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/view-rent/{rentID}', 'CustomerController@viewRent');
 	Route::get('/view-mto/{mtoID}', 'CustomerController@viewMto');
 	Route::post('/fileComplain', 'CustomerController@fileComplain');
+	// Route::post('/fileComplainforBidding', 'CustomerController@fileComplainforBidding');
+	// Route::post('/fileComplainforBidding', 'CustomerController@fileComplainforBidding');
 
 
 	//PAYPAL TRANSACTION
