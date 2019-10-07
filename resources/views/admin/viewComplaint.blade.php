@@ -37,8 +37,8 @@
 
         <div class="box-footer" style="text-align: right;">
           <a href="{{url('complaints')}}" class="btn btn-default">Back to complaints</a>
-          <input type="submit" class="btn btn-primary" id="contactSeller" value="Contact Seller here">
-          <a href="{{url('complaints')}}" class="btn btn-success">Solved</a>
+          <!-- <input type="submit" class="btn btn-primary" id="contactSeller" value="Contact Seller here"> -->
+          <!-- <a href="{{url('complaints')}}" class="btn btn-success">Solved</a> -->
         </div>
 
         <input id="complainID" value="{{$complain['id']}}" hidden>

@@ -1088,11 +1088,14 @@ class BoutiqueController extends Controller
 		$mto = Mto::where('id', $mtoID)->first();
 		$fabrics = Fabric::where('boutiqueID', $boutique['id'])->get();
         $fabs = $fabrics->groupBy('name');
+        $wearersCounter = 0;
 
         if($mto['numOfPerson'] != "equals"){
 			$nameOfWearers = json_decode($mto['nameOfWearers']); 
-			foreach($nameOfWearers as $nameOfWearer){
+			foreach($nameOfWearers as $nameOfWearer){ 
+        		$wearersCounter++;
 			}
+			// dd($wearersCounter);
 		}
 
 		$categories = Category::all();
@@ -1108,7 +1111,7 @@ class BoutiqueController extends Controller
 		}
 		$complainsCount = count($complains);
 
-        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests', 'nameOfWearer', 'complainsCount'));
+        return view('boutique/madetoorderInfo', compact('boutique', 'page_title', 'notifications', 'notificationsCount', 'mto', 'measurements', 'fabs', 'fabrics', 'categories', 'mrequests', 'nameOfWearer', 'complainsCount', 'wearersCounter'));
     }
 
   //   public function halfapproveMto($mtoID)
@@ -1298,11 +1301,11 @@ class BoutiqueController extends Controller
 
     	if($data == 'Yes'){
     		$alteration->update([
-	    		'status' => 'Used'
+	    		'status' => 'used'
 	    	]);
     	}else{
     		$alteration->update([
-	    		'status' => 'Unused'
+	    		'status' => 'unused'
 	    	]);
     	}
     }
@@ -1508,8 +1511,15 @@ class BoutiqueController extends Controller
     	$bid = Bid::where('biddingID', $biddingID)->where('boutiqueID', $boutique['id'])->first();
     	$bidsCount = Bid::where('biddingID', $biddingID)->count();
     	// dd($bid);
+        $nameOfWearers = json_decode($bidding['nameOfWearers']); 
+        $wearersCounter = 0;
+        foreach($nameOfWearers as $nameOfWearer){
+        	$wearersCounter++;
+        }
+        // dd($counter);
 
-    	return view('boutique/view-bidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications', 'bidsCount'));
+
+    	return view('boutique/view-bidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications', 'bidsCount', 'wearersCounter'));
     }
 
     public function submitBid(Request $request)

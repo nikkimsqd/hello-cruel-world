@@ -96,6 +96,9 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/requestPaypalAccount/{orderID}', 'AdminController@requestPaypalAccount');
 	Route::get('/view-payout/{orderID}', 'AdminController@viewPayout');
 
+	Route::get('/askPayPalEmail/{orderID}', 'AdminController@askPayPalEmail');
+	Route::get('/refundCustomer/{orderID}', 'AdminController@refundCustomer');
+
 
 	Route::get('/admin-events', 'AdminController@getEvents');
 	Route::post('/admin-saveEvent', 'AdminController@saveEvent');
@@ -232,6 +235,8 @@ Route::middleware(['auth'])->group(function(){
 
 //CUSTOMER--------------------------------------------------------------------------------------------
 	Route::post('/cSendChat', 'CustomerController@cSendChat');
+	
+	Route::post('/submitPaypalEmail', 'CustomerController@submitPaypalEmail');
 
 	Route::get('/shopReco', 'CustomerController@shopReco');
 

@@ -25,18 +25,14 @@
                   @if($gender == $category['gender'])
                     <li><h4>{{$category['categoryName']}}</h4></li>
 
-                    @foreach($categoryTagGender as $categoryTags)
                       @foreach($categoryTags as $categoryTag)
+                        @if($categoryTag['categoryID'] == $category['id'])
                         <!-- <li><h4>{{$categoryTagGender}}</h4></li> -->
-                        <!-- @if($category['id'] == $categoryTag['categoryID']) -->
                         
 
-                          <!-- @foreach($category->categoryTag as $tag) -->
-                            <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$categoryTag['tagName']}}</h2>
-                          <!-- @endforeach -->
-                        <!-- @endif -->
+                            <h2 data-tag-id="{{$categoryTag['id']}}" class="tags label label-default">{{$categoryTag['tagName']}}</h2>
+                        @endif
                       @endforeach
-                    @endforeach
 
                   @endif
                 @endforeach
@@ -45,30 +41,6 @@
             </ul>
             @endforeach
 
-
-
-            @foreach($categoryGenders as $gender => $value)
-              <h3>{{$gender}}</h3>
-              <ul>
-                @foreach($categoryTagGender as $categoryTags)
-                  @foreach($categoryTags as $categoryTag)
-
-                    @foreach($categories as $category)
-                      @if($gender == $category['gender'])
-                        @if($category['id'] == $categoryTag['categoryID'])
-                          <li><h4>{{$category['categoryName']}}</h4></li>
-
-                          @foreach($category->categoryTag as $tag)
-                            <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag['tagName']}}</h2>
-                          @endforeach
-                        @endif
-                      @endif
-                    @endforeach
-
-                  @endforeach
-                @endforeach
-            </ul>
-            @endforeach
 
             <br><br>
             <span><i>Click on a tag to delete.</i></span>

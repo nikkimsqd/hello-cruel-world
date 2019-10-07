@@ -56,7 +56,7 @@
 
                                 <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                                     <div class="cart-page-heading">
-                                        <h5 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$mto->order->boutique['boutiqueName']}}</h5>
+                                        <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$mto->order->boutique['boutiqueName']}}</h4>
                                     </div>
 
                                     <div class="chat-body">
@@ -102,7 +102,7 @@
                                 @if($mto['orderID'] != null)
                                     <div class="order-details-confirmation"> <!-- card opening -->
                                         <div class="cart-page-heading">
-                                            <h5>Your Order Details</h5>
+                                            <h4>Your Order Details</h4>
                                         </div>
                                         <?php
                                         if($mto->measurement != null){
@@ -269,7 +269,19 @@
                         <p><b>Deadline of Product:</b> &nbsp; {{ date('M d, Y',strtotime($mto['deadlineOfProduct'])) }}</p>
                         <hr>
                         <p><b>Quantity:</b> &nbsp; {{$mto['quantity']}}pcs.</p>
-                        <p><b>Number of wearers:</b> &nbsp; {{$mto['nameOfWearers']}}</p>
+                        <p><b>Number of wearers:</b> &nbsp; {{$nameOfWearer}} person/s</p>
+
+                        @if($mto['numOfPerson'] != "equals")
+                            <p><b>Name of wearer/s: </b></p>
+                            <?php 
+                                $nameOfWearers = json_decode($mto['nameOfWearers']); 
+                                $counter = 0;
+                            ?>
+                            @foreach($nameOfWearers as $nameOfWearer => $value)
+                            <?php $counter += 1; ?>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;- <b>{{$nameOfWearer}}</b> = {{$value}}pc/s.</p>
+                            @endforeach
+                        @endif
                         <p><b>Fabric:</b> &nbsp; 
                             @if($mto['fabChoice'] == "provide")
                                 <i>[You chose to provide boutique the fabric]</i>
@@ -376,9 +388,17 @@
                             <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
                         </form>
                     @else
-                        <h4>Measurements Submitted</h4><br>
+                    <?php 
+                        $columnCount;
+                        if($nameOfWearer <= 3){
+                            $columnCount = $nameOfWearer;
+                        }else{
+                            $columnCount = 3;
+                        }
+                    ?>
+                    <h4>Measurements Submitted</h4><br>
                     <div class="row">
-                        <div class="col-md-12" style="column-count: {{$nameOfWearer}}">
+                        <div class="col-md-12" style="column-count: {{$columnCount}}">
                         @foreach($measurements as $measurement)
                             @foreach($measurement as $person)
                             @if(is_array($person)) <!-- filter if naay array si person -->
@@ -398,7 +418,7 @@
                             @else
                                 <label><b>Name:</b> {{strtoupper($person)}}</label><br>
                             @endif
-                            @endforeach
+                            @endforeach <hr>
                         @endforeach
                         </div>
                     </div>
@@ -468,7 +488,7 @@
     .mb-10{margin-bottom: 10px;}
     .payment-heading{background-color: aliceblue;}
     .single_product_details_area .single_product_desc .product-price{font-size: 18px ;}
-    p{margin-bottom: 0;}
+    p{margin-bottom: 0; font-size: 15px;}
     .receivedChat{margin-bottom: 0 !important; text-align: left; color: black; font-size: 16px !important;}
     .sendChat{margin-bottom: 0 !important; text-align: right; color: black; font-size: 16px !important; margin-right: 15px;}
     .sender{color: black; font-size: 12px !important; font-weight: 500;}

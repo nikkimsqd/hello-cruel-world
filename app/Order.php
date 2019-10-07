@@ -68,5 +68,10 @@ class Order extends Model
     {
         return $this->hasOne('\App\Alteration', 'id', 'alterationID');
     }
+
+    public function refund()
+    {
+        return $this->hasOne('\App\Refund', 'orderID', 'id');
+    }
     
 }

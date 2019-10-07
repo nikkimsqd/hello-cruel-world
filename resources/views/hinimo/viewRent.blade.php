@@ -29,7 +29,7 @@
                             <div class="col-md-12">
                             <table class="table table-borderless">
                                 <tr>
-                                    <td><h5>Your schedule for alterations will be on:</h5></td>
+                                    <td><h4>Your schedule for alterations will be on:</h4></td>
                                     <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($rent->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($rent->order['alterationDateEnd']))}}</h5></td>
                                 </tr>
                             </table>
@@ -63,7 +63,7 @@
 
                         <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$rent->order->boutique['boutiqueName']}}</h5>
+                                <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$rent->order->boutique['boutiqueName']}}</h4>
                             </div>
 
                             <div class="chat-body">
@@ -110,7 +110,7 @@
                         @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Your Order Details</h5>
+                                <h4>Your Order Details</h4>
                             </div>
 
                             <ul class="order-details-form mb-4">
@@ -175,7 +175,7 @@
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Your Rent Details</h5>
+                                <h4>Your Rent Details</h4>
                             </div>
 
                             <ul class="order-details-form mb-4">
@@ -239,7 +239,7 @@
                         <?php $counter = 1; ?>
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Payment History</h5>
+                                <h4>Payment History</h4>
                             </div>
                             <ul class="order-details-form mb-4">
                                 @foreach($rent->order->payments as $payment)

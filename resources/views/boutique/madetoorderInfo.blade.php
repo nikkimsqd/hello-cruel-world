@@ -46,7 +46,7 @@
                 @if($mto['numOfPerson'] == "equals")
                   <b>{{$mto['quantity']}} person/s</b>
                 @else
-                  <b>{{$nameOfWearer}} person/s</b>
+                  <b>{{$wearersCounter}} person/s</b>
                 @endif
               </h4>
 

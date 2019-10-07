@@ -280,12 +280,27 @@
               @endforeach
             </div>
 
-          </div>
+            @if($order['cartID'] == null)
+              <hr>
+              <h4>
+                Was client present at the day of the scheduled fitting?
+                @if($order->alteration['status'] == 'used')
+                  <b>YES</b>
+                @else
+                  <b>NO</b>
+                @endif
+              </h4>
+            @endif
 
-          <div class="col-md-12"> 
           </div>
-
         </div>
+
+        <div class="box-footer">
+          <div class="box-footer" style="text-align: right;">
+            <a href="" class="btn btn-primary" data-toggle="modal" data-target="#madeToOrderModal">File for Dispute</a>
+          </div>
+        </div>
+
       </div>
       @endif
 
@@ -337,7 +352,7 @@
         <div class="modal-footer">
           <!-- <a href="" class="btn btn-default" id="noAlterations">No</a>
           <a href="" class="btn btn-primary" id="yesAlterations">Yes</a> -->
-          <input type="text" id="alterationID" value="{{$order['alterationID']}}">
+          <input type="text" id="alterationID" value="{{$order['alterationID']}}" hidden>
           <input type="submit" id="noAlterations" name="btn_submit" class="btn btn-default" value="No">
           <input type="submit" id="yesAlterations" name="btn_submit" class="btn btn-primary" value="Yes">
         </div>
@@ -407,6 +422,7 @@
   .right .direct-chat-text{margin-left: 500px; margin-right: 2px}
   .sender-time{margin-left: 300px;}
   .direct-chat-text{margin: 5px 500px 0 2px;}
+  .image-container{overflow: hidden;}
 </style>
 
 @endsection

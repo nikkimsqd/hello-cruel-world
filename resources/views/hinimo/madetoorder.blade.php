@@ -134,7 +134,12 @@ $('.numOfPerson').on('change', function(){
 
 $('#numOfWearers').on('keyup', function(){
     var num = 0;
-    var num =  parseInt($(this).val());
+    num =  parseInt($(this).val());
+
+    if(parseInt($(this).val()) > parseInt($('#quantity').val())){
+        $(this).val(parseInt($('#quantity').val()));
+        num = parseInt($(this).val());
+    }
     // console.log(num);
 
     $('#nameOfWearersDIV').empty();

@@ -301,6 +301,27 @@
     </div>
 </div>
 
+<div class="modal fade" id="submitPayPalEmailModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title"><b>Submit PayPal Emsil</b></h3>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                
+            </div>
+
+            <div class="modal-footer">
+              <!-- <input type="submit" class="btn essence-btn" value="Place Request"> -->
+              <input type="submit" class="btn essence-btn" data-dismiss="modal" value="Close">
+            </div>
+        </div> 
+    </div>
+</div>
+
 </div> <!-- page -->
 
 <style type="text/css">

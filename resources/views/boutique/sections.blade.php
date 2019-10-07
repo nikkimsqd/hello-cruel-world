@@ -248,7 +248,7 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li class="orders"><a href="{{url('orders')}}"><i class="fa fa-circle-o"></i> Orders</a></li>
+        <li class="orders"><a href="{{url('orders')}}"><i class="fa fa-circle-o"></i> Purchase</a></li>
         <li class="rents"><a href="{{url('rents')}}"><i class="fa fa-circle-o"></i> Rents</a></li>
         <li class="mtos"><a href="{{url('made-to-orders')}}"><i class="fa fa-circle-o"></i> Made-to-Orders</a></li>
         <li class="boutique-biddings"><a href="{{url('boutique-biddings')}}"><i class="fa fa-circle-o"></i> Biddings</a></li>

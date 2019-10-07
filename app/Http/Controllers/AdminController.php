@@ -32,11 +32,14 @@ use App\Courier;
 use App\Complain;
 use App\Email;
 use App\Chat;
+use App\Refund;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
 use App\Notifications\PayoutReleased;
 use App\Notifications\NotifyAdminForPickup;
+use App\Notifications\AskCustomerForPayPalEmail;
+use App\Notifications\RefundSuccessful;
 
 
 class AdminController extends Controller
@@ -80,10 +83,22 @@ class AdminController extends Controller
 
 					return view('admin/viewNotification', compact('notif', 'boutique', 'adminNotifications', 'notification', 'notificationsCount', 'page_title', 'admin', 'complainsCount'));
 
-				}elseif($notification['type'] == "App\Notifications\NotifyAdminForPickup"){
+				}elseif($notification['type'] == "App\Notifications\NotifyAdminOfComplain"){
+					$notification->markAsRead();
 					$order = Order::where('id', $notification->data['orderID'])->first();
+
+					return redirect('admin-orders/'.$order['id']);
+					
+				}elseif($notification['type'] == "App\Notifications\PaypalEmailSubmitted"){
+					$notification->markAsRead();
+
+					$refund = Refund::where('id', $notification->data['refundID'])->first();
+					$order = Order::where('id', $refund['orderID'])->first();
+
+					return redirect('admin-orders/'.$order['id'].'#complaint');
+					
 				}
-				// $notification->markAsRead();
+
 			} else {
 				
 			}
@@ -160,6 +175,42 @@ class AdminController extends Controller
 		$complainsCount = count(Complain::where('status', 'Active')->get());
 		$complaint = Complain::where('orderID', $order['id'])->first();
 		$chats = Chat::where('orderID', $orderID)->get();
+
+		// $order->map(function ($order){
+		if($order->refund['paypalEmail'] != null) {
+			$date = date('Y_mdhis');
+			$ordersArray = array();
+
+			$ordersArray['sender_batch_header'] = array(
+				'sender_batch_id' => 'Refunds_'.$date,
+				'email_subject' => 'You have a refund!',
+				'email_message' => 'You have received a refund! Thanks for using our service!'
+			);
+
+			$item = array();
+			$item['recipient_type'] = 'EMAIL';
+			$item['amount']['value'] = $order['total'];
+			$item['amount']['currency'] = 'PHP';
+			$item['note'] = 'Thanks for your patronage!';
+			$item['sender_item_id'] = $order['id'];
+			$item['receiver'] = $order->refund['paypalEmail'];
+
+			$ordersArray['items'] = array(
+				$item
+			);
+
+			$orderJson = json_encode($ordersArray);
+
+			$order['json'] = $orderJson;
+			// return $order;
+
+		}else{
+
+			$order['json'] = "null";
+			// return $order;
+		}
+		// });
+		// dd($order);
 		
 		return view('admin/viewOrder', compact('admin', 'order', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complaint', 'chats'));
 	}
@@ -202,13 +253,13 @@ class AdminController extends Controller
 		$admin = User::where('id', $id)->first();
 		$tags = Tag::all(); //to remove
 		$categories = Category::all();
-		$categoryGenders = $categories->groupBy('gender');
+		// $categoryGenders = $categories->groupBy('gender');
 		$categoryTags = Categorytag::all();
 		$categoryTagGender = $categoryTags->groupBy('categoryID');
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		$complainsCount = count(Complain::where('status', 'Active')->get());
-		// dd($categoryTagGender);
+		// dd($categoryTags);
 
 
         // foreach($categoryTagGender as $categoryTags){
@@ -231,7 +282,7 @@ class AdminController extends Controller
           
         
 
-		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryGenders', 'categoryTags', 'categoryTagGender', 'complainsCount'));
+		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryTagGender', 'complainsCount', 'categoryTags'));
 	}
 
 	public function addTag(Request $request)
@@ -642,6 +693,44 @@ class AdminController extends Controller
 
     }
 
+    public function refundCustomer($orderID)
+    {
+    	$order = Order::where('id', $orderID)->first();
+    	$refund = Refund::where('orderID', $orderID)->first();
+    	$complaint = Complain::where('orderID', $orderID)->first();
+
+    	$refund->update([
+    		'amount' => $order['total']
+    	]);
+
+    	$order->update([
+    		'status' => 'Completed'
+    	]);
+
+    	$complaint->update([
+    		'status' => 'Closed'
+    	]);
+
+    	$customer = User::wherE('id', $order['userID'])->first();
+    	$customer->notify(new RefundSuccessful($refund));
+
+    	return redirect('admin-orders/'.$orderID);
+    }
+
+    public function askPayPalEmail($orderID)
+    {
+    	$order = Order::where('id', $orderID)->first();
+
+    	$refund = Refund::create([
+    		'orderID' => $orderID
+    	]);
+
+    	$customer = User::where('id', $order['userID'])->first();
+    	$customer->notify(new AskCustomerForPayPalEmail($refund));
+
+    	return redirect('admin-orders/'.$orderID);
+    }
+
     public function requestPaypalAccount($orderID)
     {
     	$order = Order::where('id', $orderID)->first();
@@ -746,7 +835,8 @@ class AdminController extends Controller
 		$notificationsCount = $admin->unreadNotifications->count();
 
 		$complains = Complain::all();
-		$complainsCount = count($complains);
+		$activeComplains = Complain::where('status', 'Active')->get();
+		$complainsCount = count($activeComplains);
         
         return view('admin/complaints', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complains'));
     }

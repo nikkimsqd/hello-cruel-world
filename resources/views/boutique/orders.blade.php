@@ -9,7 +9,7 @@
       <div class="box">
 
         <div class="box-header with-border">
-          <h3 class="box-title"><b>ORDERS</b></h3>
+          <h3 class="box-title"><b>PURCHASE</b></h3>
 
           <div class="box-tools">
             <div class="input-group input-group-sm" style="width: 150px;">

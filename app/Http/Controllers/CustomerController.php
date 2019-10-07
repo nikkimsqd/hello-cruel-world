@@ -23,7 +23,6 @@ use App\Order;
 use App\File;
 use App\Mto;
 use App\Measurement;
-// use App\MeasurementRequest;
 use App\Categorymeasurement;
 use App\Cartitem;
 use App\Fabric;
@@ -37,6 +36,8 @@ use App\Event;
 use App\Categorytag;
 use App\Complain;
 use App\Chat;
+use App\Refund;
+use App\Rtw;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -49,6 +50,7 @@ use App\Notifications\CustomerDoesntAcceptOffer;
 use App\Notifications\NotifyOfComplain;
 use App\Notifications\NotifyAdminOfComplain;
 use App\Notifications\NotifyBoutiqueOfChat;
+use App\Notifications\PaypalEmailSubmitted;
 use Sample\PayPalClient;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 
@@ -56,159 +58,7 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 class CustomerController extends Controller
 {
 
-    public function shopReco()
-    {
-        $userID = Auth()->user()->id;
-
-        $profiling = Profiling::where('userID', $userID)->first();
-        $profilingDecoded = json_decode($profiling['data']);
-        $productReference = array(); //to know if a product is a set or no
-        $sortedProducts = array(); //idle
-        $productsArray = array(); //temporary storage for products
-        $setsArray = array(); //temporary storage for sets
-        $storage = array(); //store all products collected
-        $products = array(); //the chosen one
-        $categoryTagArray = array(); // store tags of a category
-        $basedProducts = array(); //products that are in history & likes
-
-        //PROFILING----------------------------------------------------------------------------------
-        //getting tags in profiling
-        foreach($profilingDecoded as $categoryID => $categorytagID){
-            $category = Category::where('id', $categoryID)->first();
-            foreach($categorytagID as $tagID){
-                $categoryTag = Categorytag::where('id', $tagID)->first();
-                $itemtags = Itemtag::where('tagID', $categoryTag['id'])->get();
-
-                if($itemtags != null){
-                    foreach($itemtags as $itemtag){
-                        if($itemtag['itemType'] == 'product'){
-                            $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
-                            if($itemtag->product['productStatus'] == 'Available'){
-                                array_push($storage, $itemtag->product['id']); //pag push sa product
-                                array_push($categoryTagArray, $categoryTag['id']);
-                            }
-                        }else{
-                            $product = Set::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->first();
-                            if($itemtag->set['setStatus'] == 'Available'){
-                                array_push($storage, $itemtag->set['id']);
-                                array_push($categoryTagArray, $categoryTag['id']);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //ORDERS--------------------------------------------------------------------   --------------
-        $orderHistories = Order::where('userID', $userID)->where('status', 'Completed')->get();
-        foreach($orderHistories as $orderHistory){
-            if($orderHistory['cartID'] != null){
-
-                foreach($orderHistory->cart->items as $item){
-                    if($item['productID'] != null){
-                        $cartItem = Product::where('id', $item->product['id'])->first();
-                        $basedProducts[$cartItem['id']] = 'product';
-
-                        foreach($cartItem->getCategory->categoryTag as $categoryTag){
-                            array_push($categoryTagArray, $categoryTag['id']);
-                        }
-                    }else{
-                        $cartItem = Set::where('id', $item->set['id'])->first();
-                        $basedProducts[$cartItem['id']] = 'set';
-
-                        foreach($cartItem->items as $setItem){
-                            foreach($setItem->product->cartItem->getCategory->categoryTag as $categoryTag){
-                                array_push($categoryTagArray, $categoryTag['id']);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //FAVORITES----------------------------------------------------------------------------------
-        $favorites = Favorite::where('userID', $userID)->get();
-        $favTags = array();
-
-        //getting tags in fvorites
-        foreach($favorites as $favorite){
-            if($favorite['productID'] != null){
-                $favProduct = Product::where('id', $favorite['productID'])->first();
-                $basedProducts[$favProduct['id']] = 'product';
-
-                foreach($favProduct->getCategory->categoryTag as $categoryTag){
-                    array_push($categoryTagArray, $categoryTag['id']);
-                }
-            }else{
-                $favProduct = Set::where('id', $favorite['setID'])->first();
-                $basedProducts[$favProduct['id']] = 'set';
-
-                foreach($favProduct->items as $item){
-                    foreach($item->product->getCategory->categoryTag as $categoryTag){
-                        array_push($categoryTagArray, $categoryTag['id']);
-                    }
-                }
-            }
-        }
-
-        //FOR ADDITIONAL PRODUCTS RECOMMENDATION-----------------
-        $tagsCounted = array_count_values($categoryTagArray); //count similar tags
-        arsort($tagsCounted);
-
-        foreach($tagsCounted as $categoryID => $counter){
-            $itemtags = Itemtag::where('tagID', $categoryID)->get();
-
-            foreach($itemtags as $itemtag){
-                if($itemtag['itemType'] == 'product'){
-                    $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
-                    $productReference[$product['id']] = 'product';
-                    $productsArray[$product['id']] = $product;
-                    array_push($storage, $product['id']); //pag push sa product
-                }else{
-                    $set = Set::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->first();
-                    $setsArray[$set['id']] = $set;
-                    $productReference[$set['id']] = 'set';
-                    array_push($storage, $set['id']); //pag push sa product
-                }
-            }
-        }
-
-        $scores = array_count_values($storage);
-        arsort($scores);
-
-        $bProducts = array();
-        foreach($basedProducts as $bpID => $productType){
-            array_push($bProducts, $bpID);
-        }
-
-        foreach($scores as $id => $score){
-            if(!in_array($id, $bProducts)){
-                if($bpID != $id){
-                    if($productReference[$id]  == 'product'){
-                        array_push($products, $productsArray[$id]);
-                    }else{
-                        array_push($products, $setsArray[$id]);
-                    }
-                }
-            }
-        }
-
-        //RECOMMEND PRODUCTS ON SAME2 CATEGORY TOO
-        foreach($tagsCounted as $categoryID => $counter){
-            $category = Category::where('id', $categoryID)->first();
-            $otherProducts = Product::where('category', $category['id'])->where('productStatus', 'Available')->get();
-
-            foreach($otherProducts as $otherProduct){
-                if(in_array($otherProduct, $products)){
-                    array_push($products, $otherProduct);
-                }
-            }
-        }
-        
-        $productsCount = count($products);
-    }
-
-    public function shop() //ipa una n para mo check una sa auth
+    public function shop(Request $request) //ipa una n para mo check una sa auth
     {
         if (Auth::check()) { //check if nay naka login nga user
             if(Auth()->user()->roles == "customer") {
@@ -252,7 +102,7 @@ class CustomerController extends Controller
                                 if($itemtag['itemType'] == 'product'){
                                     $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
                                     if($itemtag->product['productStatus'] == 'Available'){
-                                        array_push($storage, $itemtag->product['id']); //pag push sa product
+                                        array_push($storage, $itemtag->product['id']);      //pag push sa product
                                         array_push($categoryTagArray, $categoryTag['id']);
                                     }
                                 }else{
@@ -268,37 +118,25 @@ class CustomerController extends Controller
                     }
                 }
 
-                // $scores = array_count_values($storage);
-                // dd($storage);
-                // arsort($scores);
-
-                // foreach($scores as $id => $score){
-                //     if($productReference[$id]  == 'product'){
-                //         array_push($products, $productsArray[$id]);
-                //     }else{
-                //         array_push($products, $setsArray[$id]);
-                //     }
-                // }
-
                 //ORDERS--------------------------------------------------------------------   --------------
                 $orderHistories = Order::where('userID', $userID)->where('status', 'Completed')->get();
                 foreach($orderHistories as $orderHistory){
                     if($orderHistory['cartID'] != null){
 
-                        foreach($orderHistory->cart->items as $item){
-                            if($item['productID'] != null){
+                        foreach($orderHistory->cart->items as $item){   //loop cart items
+                            if($item['productID'] != null){     //if cart item is a product
                                 $cartItem = Product::where('id', $item->product['id'])->first();
                                 $basedProducts[$cartItem['id']] = 'product';
 
                                 foreach($cartItem->getCategory->categoryTag as $categoryTag){
                                     array_push($categoryTagArray, $categoryTag['id']);
                                 }
-                            }else{
+                            }else{      //if cart item is a set
                                 $cartItem = Set::where('id', $item->set['id'])->first();
                                 $basedProducts[$cartItem['id']] = 'set';
 
-                                foreach($cartItem->items as $setItem){
-                                    foreach($setItem->product->cartItem->getCategory->categoryTag as $categoryTag){
+                                foreach($cartItem->items as $setItem){ //loop set items
+                                    foreach($setItem->product->getCategory->categoryTag as $categoryTag){
                                         array_push($categoryTagArray, $categoryTag['id']);
                                     }
                                 }
@@ -311,13 +149,13 @@ class CustomerController extends Controller
                 $favorites = Favorite::where('userID', $userID)->get();
                 $favTags = array();
 
-                //getting tags in fvorites
+                //GETTING TAGS IN FAVORITES
                 foreach($favorites as $favorite){
                     if($favorite['productID'] != null){
                         $favProduct = Product::where('id', $favorite['productID'])->first();
-                        $basedProducts[$favProduct['id']] = 'product';
+                        $basedProducts[$favProduct['id']] = 'product';      //get products
 
-                        foreach($favProduct->getCategory->categoryTag as $categoryTag){
+                        foreach($favProduct->getCategory->categoryTag as $categoryTag){     //get tags
                             array_push($categoryTagArray, $categoryTag['id']);
                         }
                     }else{
@@ -332,7 +170,7 @@ class CustomerController extends Controller
                     }
                 }
 
-                //FOR ADDITIONAL PRODUCTS RECOMMENDATION-----------------
+                //RECOMMEND PRODUCTS WITH SIMILAR TAGS-----------------
                 $tagsCounted = array_count_values($categoryTagArray); //count similar tags
                 arsort($tagsCounted);
 
@@ -354,15 +192,15 @@ class CustomerController extends Controller
                     }
                 }
 
-                // dd($storage);
                 $scores = array_count_values($storage);
                 arsort($scores);
 
                 $bProducts = array();
                 foreach($basedProducts as $bpID => $productType){
-                    array_push($bProducts, $bpID);
+                    array_push($bProducts, $bpID);      //get their IDs
                 }
 
+                //know which product is which
                 foreach($scores as $id => $score){
                     if(!in_array($id, $bProducts)){
                         if($bpID != $id){
@@ -388,7 +226,22 @@ class CustomerController extends Controller
                 }
 
                 $productsCount = count($products);
-                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount'));
+
+                //PAGINATION
+                $currentPage = $request->page;
+                $pageItems = 12;
+                if(empty($currentPage)){
+                    $currentPage = 1;
+                }
+
+                $offset = ($currentPage * $pageItems) - $pageItems;
+                $itemsForCurrentPage = array_slice($products, $offset, $pageItems);
+
+                $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+                $paginator->withPath('shop');
+                // dd($paginator->items());
+
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator'));
                 
 
             } else if(Auth()->user()->roles == "boutique") {
@@ -411,11 +264,43 @@ class CustomerController extends Controller
             $notAvailables = Product::where('productStatus', 'Not Available')->get();
             $notificationsCount = null;
             $sets = Set::all();
+            $allProducts = array();
+
+            foreach($products as $product){ array_push($allProducts, $product); }
+            foreach($sets as $set){ array_push($allProducts, $set); }
+
+            shuffle($allProducts);
+            //PAGINATION
+            $currentPage = $request->page;
+            $pageItems = 12;
+            if(empty($currentPage)){
+                $currentPage = 1;
+            }
+
+            $offset = ($currentPage * $pageItems) - $pageItems;
+            $itemsForCurrentPage = array_slice($allProducts, $offset, $pageItems);
+
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+            $paginator->withPath('shop');
 
             // dd($products[1]->inFavorites);
 
-            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets'));
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator'));
         }
+    }
+
+    public function collection_paginate($items, $per_page)
+    {
+        $page   = Request::get('page', 1);
+        $offset = ($page * $per_page) - $per_page;
+
+        return new Illuminate\Pagination\LengthAwarePaginator(
+            $items->forPage($page, $per_page)->values(),
+            $items->count(),
+            $per_page,
+            Illuminate\Pagination\Paginator::resolveCurrentPage(),
+            ['path' => Illuminate\Pagination\Paginator::resolveCurrentPath()]
+        );
     }
 
     public function getNotifications(&$notifications, &$notificationsCount)
@@ -556,6 +441,9 @@ class CustomerController extends Controller
             }
         }
 
+        dd("asjaksakjs");
+        exit();
+
         Cartitem::create([
             'cartID' => $cart['id'],
             'productID' => $productID
@@ -565,10 +453,24 @@ class CustomerController extends Controller
     	return redirect('/shop');
     }
 
-    public function addSettoCart($productID)
+    public function addSettoCart($productID, Request $request)
     {
         $userID = Auth()->user()->id;
         $cart = Cart::where('userID', $userID)->orderBy('created_at', 'DESC')->first();
+
+        $sizes = $request->input('sizes');
+        $sizesArray = [];
+
+        foreach($sizes as $size){
+            $data = explode('-', $size);
+            $prodId = $data[0];
+            $size = $data[1];
+
+            $sizesArray[$prodId] = $size;
+        }
+
+        $sizeJson = json_encode($sizesArray);
+
 
         if($cart == null){
             $cart = Cart::create([
@@ -585,13 +487,16 @@ class CustomerController extends Controller
             }
         }
 
+
+
         Cartitem::create([
             'cartID' => $cart['id'],
-            'setID' => $productID
+            'setID' => $productID,
+            'sizes' => $sizeJson
         ]);
         
 
-        return redirect('/shop');
+        return response()->json([]);
     }
 
     public function removeItem($cartID)
@@ -604,6 +509,9 @@ class CustomerController extends Controller
     public function getCart($productID)
     {
     	$product = Product::find($productID);
+
+        print_r($product);
+        exit();
 
     	return response()->json(['product' => $product, 
     		'owner' => $product->owner,
@@ -656,12 +564,13 @@ class CustomerController extends Controller
             ]);
 
             $cart = Cart::where('id', $request->input('cartID'))->first();
+            $cartitems = Cartitem::where('cartID', $cart['id'])->get();
             $cart = Cart::where('id', $order['cartID'])->first();
             $cart->update([
                 'status' => 'Inactive'
             ]);
 
-            foreach($cart->items as $item){
+            foreach($cart->items as $item){ //update items quantity
                 if($item->product != null){
                     $product = Product::where('id', $item->product['id'])->first();
                     $productQuantity = $product['quantity'] - 1;
@@ -677,6 +586,20 @@ class CustomerController extends Controller
                 }else{
                     $set = Set::where('id', $item->set['id'])->first();
                     $setQuantity = $set['quantity'] - 1;
+
+                    foreach($cartitems as $cartitem){
+                        $sizes = json_decode($cartitem['sizes'], true);
+                    }
+                    foreach($set->items as $item){
+                        $item->product->rtwDetails;
+                        $product = Product::where('id', $item->product['id'])->first();
+                        $productID = $product['id'];
+                        $rtwDetails = Rtw::where('productID', $product['id'])->first();
+                        $rtwDetails->update([
+                            $sizes[$productID] => $rtwDetails[$sizes[$productID]] -1
+                        ]);
+                    }
+
                     $set->update([
                         'quantity' => $setQuantity
                     ]);
@@ -719,25 +642,55 @@ class CustomerController extends Controller
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
 
-        // $orders = array();
-        // foreach($cart->items as $item){
-        //     if(!in_array($item->product->owner, $orders)){
-        //         // dd("naa");
-        //         array_push($orders, $item->product->owner);
-        //     }else{
-        //     }
-        // }
-        // foreach($orders as $order){
-                // dd($order->product->owner);
-            // if(in_array($order->product->owner, $orders)){
-                // dd($order->product->owner['boutiqueName']);
-            // }else{
-                // dd($order->product->owner);
-            // }
-        // }   
-            // dd($orders);
+        // $checker = 
 
-    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage', 'addresses'));
+        $prodArrayCount = [];
+        $setArrayCount = [];
+
+        foreach($cart->items as $item){
+            $productID = null;
+            $setID = null;
+
+            if (!empty($item['productID'])) {
+                $productID = $item['productID'];
+
+                if (array_key_exists($productID, $prodArrayCount)) {
+                    $prodArrayCount[$productID] += 1;
+                } else {
+                    $prodArrayCount[$productID] = 1;
+                }
+            }
+
+            if (!empty($item['setID'])) {
+                $setID = $item['setID'];
+
+                if (array_key_exists($setID, $setArrayCount)) {
+                    $setArrayCount[$setID] += 1;
+                } else {
+                    $setArrayCount[$setID] = 1;
+                }
+            }
+
+        }
+
+        $messages = array();
+        foreach ($setArrayCount as $setID => $count) {
+            $set = Set::where('id', $setID)->first();
+            if($set['quantity'] < $count){
+                array_push($messages, 'You have exceeded in selecting the item: '.ucwords($set['setName']).'. Theres only '.$set['quantity'].' piece/s left in store!');
+            }
+        }
+
+        foreach($prodArrayCount as $productID => $count){
+            $product = Product::where('id', $productID)->first();
+            if($product['quantity'] < $count){
+                array_push($messages, 'You have exceeded in selecting the item '.$product['productName'].'. Theres only '.$product['quantity'].' piece/s left in store!');
+            }
+        }
+        // dd($message);
+
+
+    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage', 'addresses', 'messages'));
     }
 
     public function useraccount()
@@ -888,14 +841,14 @@ class CustomerController extends Controller
 
 
 
-        $daysBefore = 2;
-        $daysAfter = 2;
-        $datesArray = array();  
+        $daysBefore = 2;    //time allowance
+        $daysAfter = 2;     //time allowance
+        $datesArray = array();      //para makuha ang mga dates nga dili pwede ang item
         $rentSchedules = Rent::where('productID', $productID)->get();
 
 
         foreach($rentSchedules as $rentSchedule){
-            array_push($datesArray, $rentSchedule['dateToUse']);
+            array_push($datesArray, $rentSchedule['dateToUse']);    //get dates of use of items
 
             $dateNew = $rentSchedule['dateToUse'];
             for ($i=0; $i < $daysBefore; $i++) { 
@@ -1190,7 +1143,6 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
-
         $bidding = Bidding::where('id', $biddingID)->first();
         $bids = Bid::where('biddingID', $bidding['id'])->get();
         $bidsCount = $bids->count();
@@ -1541,7 +1493,48 @@ class CustomerController extends Controller
                         return redirect('/view-bidding-order/'.$order->bidding['id'].'#chat');
                     }
 
+                }elseif($notification->type == 'App\Notifications\AskCustomerForPayPalEmail'){
+                    $notification->markAsRead();
+
+                    $refund = Refund::where('id', $notification->data['refundID'])->first();
+                    $order = Order::where('id', $refund['orderID'])->first();
+
+                    // echo "<script>$('#submitPayPalEmailModal').modal('show')</script>";
+                    if($order['mtoID'] != null){
+                        return redirect('/view-mto/'.$order->mto['id']);
+
+                    }elseif($order['cartID'] != null){
+                        return redirect('/view-order/'.$order['id']);
+
+                    }elseif($order['rentID'] != null){
+                        return redirect('/view-rent/'.$order->rent['rentID']);
+
+                    }elseif($order['biddingID'] != null){
+                        return redirect('/view-bidding-order/'.$order->bidding['id']);
+                    }
+                    
+                }elseif($notification->type == 'App\Notifications\RefundSuccessful'){
+                    $notification->markAsRead();
+
+                    $refund = Refund::where('id', $notification->data['refundID'])->first();
+                    $order = Order::where('id', $refund['orderID'])->first();
+
+                    // echo "<script>$('#submitPayPalEmailModal').modal('show')</script>";
+                    if($order['mtoID'] != null){
+                        return redirect('/view-mto/'.$order->mto['id']);
+
+                    }elseif($order['cartID'] != null){
+                        return redirect('/view-order/'.$order['id']);
+
+                    }elseif($order['rentID'] != null){
+                        return redirect('/view-rent/'.$order->rent['rentID']);
+
+                    }elseif($order['biddingID'] != null){
+                        return redirect('/view-bidding-order/'.$order->bidding['id']);
+                    }
+                    
                 }
+
             }
         }
     }
@@ -1755,15 +1748,23 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
-
         $bidding = Bidding::find($biddingID);
         $mrequests = Measurementrequest::where('type', 'bidding')->where('typeID', $biddingID)->get();
-
         $payments = Payment::where('orderID', $bidding->order['id'])->get();
-        // dd($mrequests);
         $chats = Chat::where('orderID', $bidding->order['id'])->get();
+        
+        $wearersCounter = 0;
+        if($bidding['numOfPerson'] != "equals"){
+            $nameOfWearers = json_decode($bidding['nameOfWearers']); 
+            foreach($nameOfWearers as $nameOfWearer){ 
+                $wearersCounter++;
+            }
+        }else{
+            $nameOfWearer = $bidding['quantity'];
+        }
+        // dd($wearersCounter);
 
-        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests', 'payments', 'chats'));
+        return view('hinimo/viewBidding', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bidding', 'mrequests', 'payments', 'chats', 'nameOfWearer', 'wearersCounter'));
     }
 
     public function viewOrder($orderID)
@@ -1838,14 +1839,11 @@ class CustomerController extends Controller
         $percentage = $sp['sharePercentage'] / 100;
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
         $payments = Payment::where('orderID', $mto->order['id'])->get();
-        // dd(json_decode($mto['nameOfWearers']));
-        // $nameOfWearer = null;
         $chats = Chat::where('orderID', $mto->order['id'])->get();
 
         if($mto['numOfPerson'] != "equals"){
             $nameOfWearers = json_decode($mto['nameOfWearers']); 
-            foreach($nameOfWearers as $nameOfWearer){
-            }
+            foreach($nameOfWearers as $nameOfWearer){ }
         }else{
             $nameOfWearer = $mto['quantity'];
         }
@@ -2693,6 +2691,37 @@ class CustomerController extends Controller
 
         }elseif($order['biddingID'] != null){
             return redirect('view-bidding-order/'.$order['biddingID'].'#chat');
+
+        }
+    }
+
+    public function submitPaypalEmail(Request $request)
+    {
+        $orderID = $request->input('orderID');
+        $order = Order::where('id', $orderID)->first();
+        $refund = Refund::where('id', $request->input('refundID'))->first();
+        // dd($refund);
+
+        $refund->update([
+            'paypalEmail' => $request->input('paypalEmail')
+        ]);
+        // dd($refund);
+
+        $admin = User::where('roles', 'admin')->first();
+        $admin->notify(new PaypalEmailSubmitted($refund));
+
+
+        if($order['cartID'] != null){
+            return redirect('view-order/'.$orderID);
+
+        }elseif($order['rentID'] != null){
+            return redirect('view-rent/'.$order['rentID']);
+
+        }elseif($order['mtoID'] != null){
+            return redirect('view-mto/'.$order['mtoID']);
+
+        }elseif($order['biddingID'] != null){
+            return redirect('view-bidding-order/'.$order['biddingID']);
 
         }
     }

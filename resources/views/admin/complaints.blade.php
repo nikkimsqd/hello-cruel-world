@@ -35,12 +35,14 @@
                         <th></th>
                       </thead>
                       @foreach($complains as $complain)
+                      @if($complain['status'] == "Active")
                       <tr>
                         <td>{{$complain->order->customer['fname']}}</td>
                         <td>{{$complain['complain']}}</td>
                         <td class="center">{{$complain->order['id']}}</td>
-                        <td><a href="{{url('viewComplaint/'.$complain['id'])}}" class="btn btn-default">View Complain</a></td>
+                        <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
                       </tr>
+                      @endif
                       @endforeach
                     </table>
                     
@@ -54,6 +56,16 @@
                         <th>Order ID</th>
                         <th></th>
                       </thead>
+                      @foreach($complains as $complain)
+                      @if($complain['status'] == "Closed")
+                      <tr>
+                        <td>{{$complain->order->customer['fname']}}</td>
+                        <td>{{$complain['complain']}}</td>
+                        <td class="center">{{$complain->order['id']}}</td>
+                        <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
+                      </tr>
+                      @endif
+                      @endforeach
                     </table>
                       
                   </div>

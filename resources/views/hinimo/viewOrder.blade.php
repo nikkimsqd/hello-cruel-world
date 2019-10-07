@@ -24,6 +24,21 @@
             <div class="col-12 col-md-11">
                 <div class="regular-page-content-wrapper section-padding-80">
                     <div class="regular-page-text">
+
+                        @if($order->refund != null && $order->refund['paypalEmail'] == null)
+                        <h5>Enter your PayPal email</h5>
+                        <form action="{{url('submitPaypalEmail')}}" method="post">
+                            {{csrf_field()}}
+                            <div class="input-group">
+                                <input type="text" name="paypalEmail" placeholder="PayPal Email ..." class="form-control">
+                                <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+                                <input type="text" name="refundID" value="{{$order->refund['id']}}" hidden>
+                                <span class="input-group-btn">
+                                    <input type="submit" name="btn_submit" class="btn btn-primary" value="Submit Email">
+                                </span>
+                            </div><br><br>
+                        </form>
+                        @endif
                         
                         <?php
                         $total = $order['total'];
@@ -41,7 +56,7 @@
 
                         <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5 style="margin-bottom: 30px;">Chat with seller</h5>
+                                <h4 style="margin-bottom: 30px;">Chat with seller</h4>
                             </div>
 
                             <div class="chat-body">
@@ -86,7 +101,7 @@
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Your Order</h5>
+                                <h4>Your Order</h4>
                             </div>
 
                             <ul class="order-details-form mb-4">
@@ -149,7 +164,7 @@
                         <?php $counter = 1; ?>
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Payment History</h5>
+                                <h4>Payment History</h4>
                             </div>
                             <ul class="order-details-form mb-4">
                                 @foreach($order->payments as $payment)

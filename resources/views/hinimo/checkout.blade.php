@@ -25,6 +25,18 @@
 
 <div class="checkout_area section-padding-80">
     <div class="container">
+
+        @if(!empty($messages))
+        <div class="row">
+            @foreach($messages as $message)
+            <!-- <span><i class="fa fa-close removeItem" aria-hidden="true" style="cursor: pointer;" data-cartitemid=""></i></span> -->
+                <div class="col-md-12 warning">
+                    {{$message}}
+                </div>
+            @endforeach
+        </div>
+        @endif
+
         <div class="row">
 
             <div class="col-12 col-md-6">
@@ -118,7 +130,7 @@
                         </div>
 
                         @foreach($cart->items as $item)
-                        @if($item->product != null)
+                        @if($item->product != null)         <!-- if product -->
                             @if($item->product->owner == $boutique)
                             <ul class="order-details-form mb-4">
                                 <li><span>{{$item->product['productName']}}</span> <span>₱{{number_format($item->product['price'])}}</span></li>
@@ -127,10 +139,11 @@
                                     $boutiqueSubtotal += $item->product['price'];
                                 ?>
                             @endif
-                        @else
+                        @else       <!-- if set -->
                             @if($item->set->owner == $boutique)
                             <ul class="order-details-form mb-4">
-                                <li><span>{{$item->set['setName']}}</span> <span>₱{{number_format($item->set['price'])}}</span></li>
+                              <!-- <span cart-item-id="{{$item['id']}}" class="delete product-remove"><i class="fa fa-close" aria-hidden="true"></i></span> -->
+                                <li><span>{{$item->set['setName']}}</span> <span>₱{{number_format($item->set['price'])}}</span><i class="fa fa-close removeItem" aria-hidden="true" style="cursor: pointer;" data-cartitemid="{{$item['id']}}"></i></li>
                                 <?php 
                                     $price = $item->set['price']; 
                                     $boutiqueSubtotal += $item->set['price'];
@@ -174,7 +187,11 @@
 
                         <!-- <a href="#" class="btn essence-btn">Place Order</a> -->
                         <a href="{{url('shop')}}" class="btn essence-btn">Cancel</a>
+                        @if(empty($messages))
                         <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Order">
+                        @else
+                        <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Order" disabled>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -193,6 +210,7 @@
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}
     .nice-select{white-space: unset; min-height: 42px; height: auto;}
     .nice-select .list{z-index: 2000; white-space: nowrap;}
+    .warning{padding: 5px 25px; line-height: 45px; background-color: #ff00004f;color: black; font-style: unset;border-radius: 11px;margin-bottom: 6px;font-size: 16px;}
     #map {
         width: 100%;
         height: 300px;
@@ -287,7 +305,19 @@ $('#selectAddress').on('change', function(){
             }
         });
 
+    $('.removeItem').on('click', function(){
+        var itemID = $(this).data('cartitemid');
 
+        $.ajax({
+              url: "/hinimo/public/removeItem/"+itemID,
+              success:function(data){
+                if(data.item){
+                    // itemDiv.remove();
+                    location.reload();
+                }
+              }
+          });
+    });
 
 </script>
 

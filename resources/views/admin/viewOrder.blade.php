@@ -70,12 +70,21 @@
                 </tr>
                 </thead>
                   @foreach($order->cart->items as $item)
-                  <tr>
-                    <td>1</td>
-                    <td>{{$item->product['productName']}}</td>
-                    <td>{{$item->product['productDesc']}}</td>
-                    <td>{{$item->product['price']}}</td>
-                  </tr>
+                    @if($item->product != null)
+                    <tr>
+                      <td>1</td>
+                      <td>{{$item->product['productName']}}</td>
+                      <td>{{$item->product['productDesc']}}</td>
+                      <td>{{$item->product['price']}}</td>
+                    </tr>
+                    @else
+                    <tr>
+                      <td>1</td>
+                      <td>{{$item->set['setName']}}</td>
+                      <td>{{$item->set['setDesc']}}</td>
+                      <td>{{$item->set['price']}}</td>
+                    </tr>
+                    @endif
                   @endforeach
               </table>
             @elseif($order['rentID'] != null)
@@ -149,12 +158,12 @@
       </div>
 
 
-      <div class="box box-success direct-chat direct-chat-success" id="chat">
+      <div class="box box-success direct-chat direct-chat-success collapsed-box" id="chat">
         <div class="box-header with-border">
-          <h3 class="box-title">Chat with client</h3>
+          <h3 class="box-title">Seller and Customer's chat</h3>
           <div class="box-tools pull-right">
             <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span> -->
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
             </button>
           </div>
         </div>
@@ -215,10 +224,16 @@
       <div class="box">
 
         <div class="box-header with-border">
-          <h3 class="box-title">Complaint</h3>
+          <h3 class="box-title">Complaint &nbsp;
+            @if($order->complain['status'] == "Active")
+              <label class="label label-danger">{{$order->complain['status']}}</label>
+            @else
+              <label class="label label-success">{{$order->complain['status']}}</label>
+            @endif
+          </h3>
         </div>
 
-        <div class="box-body">
+        <div class="box-body" id="complaint">
           <div class="col-md-12"> 
 
             <!-- <h4>Complainant Name: <b>{{$complaint->order->customer['fname'].' '.$complaint->order->customer['lname']}}</b></h4> -->
@@ -234,16 +249,81 @@
             </div>
 
           </div>
-
-          <div class="col-md-12"> 
-          </div>
-
         </div>
+
+        <div class="box-footer">
+          <div class="box-footer" style="text-align: right;">
+            @if($order->complain['status'] == "Active")
+              <a href="" class="btn btn-danger" data-toggle="modal" data-target="#madeToOrderModal">Refuse Refund</a>
+              @if($order->refund != null)
+              <a href="" class="btn btn-primary" data-toggle="modal" data-target="#refundCustomer">Refund Customer</a>
+              @else
+              <a href="" class="btn btn-primary" data-toggle="modal" data-target="#askPayPalEmail">Ask Customer for PayPal email</a>
+              @endif
+            @endif
+          </div>
+        </div>
+
       </div>
       @endif
 
     </div>
   </div>
+
+  <!-- MODAL -->
+
+  <div class="modal fade" id="askPayPalEmail" role="dialog">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title"><b>Ask Customer for PayPal email?</b></h3>
+        </div>
+
+        <!-- <form action="{{url('submitOrder')}}" method="post"> -->
+          <!-- {{csrf_field()}} -->
+          <div class="modal-body">
+            <h4>Click yes to continue.</h4>
+            <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+          </div>
+
+          <div class="modal-footer">
+            <a href="{{url('askPayPalEmail/'.$order['id'])}}" class="btn btn-success">Yes</a>
+          </div>
+        <!-- </form> -->
+      </div> 
+    </div>
+  </div>
+
+  <div class="modal fade" id="refundCustomer" role="dialog">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title"><b>Refund Customer?</b></h3>
+        </div>
+
+        <!-- <form action="{{url('submitOrder')}}" method="post"> -->
+          <!-- {{csrf_field()}} -->
+          <div class="modal-body">
+            <h4>When you click yes, a refund will be sent to customer via PayPal.</h4>
+            <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+          </div>
+
+          <div class="modal-footer">
+            <!-- <a href="{{url('refundCustomer/'.$order['id'])}}" id="send-refund" class="btn btn-success">Yes</a> -->
+            <div id="send-refund" class="btn btn-success send-refund">
+              <p class="mg-bottom">Yes</p>
+              <input id="orderID" value="{{$order['id']}}" hidden>
+              <input id="orderJson" value="{{$order['json']}}" hidden>
+            </div>
+          </div>
+        <!-- </form> -->
+      </div> 
+    </div>
+  </div>
+
+
 </section>
 
 <style type="text/css">
@@ -253,6 +333,7 @@
 /*  .boutique-time{margin-right: 50%;}
   .client-time{margin-left: 45%;}*/
   .direct-chat-text{margin: 5px 500px 0 2px;}
+  .image-container{overflow: hidden;}
 
 </style>
 
@@ -265,6 +346,78 @@
 
 $('.orders').addClass("active");
 $('.on-going').addClass("active");
+
+
+$('.send-refund').on('click', function(){
+  orderID = $(this).find("input").val();
+  orderJson = $(this).find("#orderJson").val();
+  // console.log(orderID);
+
+  if(orderJson != "null"){
+
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://api.sandbox.paypal.com/v1/oauth2/token",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Basic QWFtVHJlV2V6clp1amdiUW12UW9BUXp5alkxVWVtSFphMFd2TUpBcFdBVnNJamUteUNhVnp5UjliX0stWXhEWGh6VFhsbWwxN0plRW5US206RUxpbEFOWGh4aTZ2WDE2QUh4Y1RLb2pWMHNyT0MzZF9nSTAtUFBHSUpoVkowNFJIRGg4UW43RTkxMnMwV29DVDZlcWE0a0x5azdfUWhnT3M=",
+        "Accept": "*/*",
+        "Cache-Control": "no-cache",
+        "Postman-Token": "0013b7c1-7b7e-484a-a8bc-d3be392a5ab3,430b3eba-da78-42ec-b63b-9a3e97e320fe",
+        "cache-control": "no-cache"
+      },
+      "data": {
+        "grant_type": "client_credentials"
+      }
+    }
+
+
+
+    $.ajax(settings).done(function (response) {
+      access_token = response.access_token;
+      // console.log(response.access_token);
+
+      var payout = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://api.sandbox.paypal.com/v1/payments/payouts",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer "+access_token,
+          "cache-control": "no-cache",
+          "Postman-Token": "f2e8f5d5-522b-4e1b-98c7-f812ed96b226"
+        },
+        "processData": false,
+        "data": orderJson
+      }
+
+      $.ajax(payout).done(function (response) {
+        // var batchID = response.batch_header.payout_batch_id;
+
+        window.location.href = "{{url('refundCustomer')}}/"+orderID;
+
+        // window.location.replace("/hinimo/public/savePayout/"+orderID+"/"+batchID);
+
+
+        console.log(response);
+      });
+
+
+      // $.ajax({
+      //   url: "{{url('refundCustomer')}}/"+orderJson,
+      //   // type: "POST",
+      //   // data: {id: productID}
+      // });
+    });
+  }else{
+    alert("Customer has no PayPal email.");
+    // $('#warningModal'+boutiqueOwnerID).modal('show');
+  }
+
+});
 
 </script>
 @endsection

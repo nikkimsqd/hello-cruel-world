@@ -55,7 +55,7 @@
 
                         <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$bidding->order->boutique['boutiqueName']}}</h5>
+                                <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$bidding->order->boutique['boutiqueName']}}</h4>
                             </div>
 
                             <div class="chat-body">
@@ -96,7 +96,7 @@
 
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Your Order</h5>
+                                <h4>Your Order</h4>
                             </div>
 
                             <ul class="order-details-form mb-4">
@@ -127,7 +127,7 @@
                                     </span>
                                 </li>
                                 @if(count($payments) == 0)
-                                <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
+                                <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{round($minimumPaymentRequired)}}</span></li>
                                 @endif
                             </ul>
                             
@@ -149,7 +149,7 @@
                         <?php $counter = 1; ?>
                         <div class="order-details-confirmation"> <!-- card opening -->
                             <div class="cart-page-heading">
-                                <h5>Payment History</h5>
+                                <h4>Payment History</h4>
                             </div>
                             <ul class="order-details-form mb-4">
                                 @foreach($bidding->order->payments as $payment)
@@ -178,7 +178,7 @@
 
                         @if($bidding->order['paymentStatus'] != "Fully Paid" && $bidding['measurementID'] != null)
 
-                        <h5>Pay here:</h5>
+                        <h4>Pay here:</h4>
                         <p class="note"><i>Note: PayPal does not accept payments with decimals.</i></p>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="total" value="{{$total}}" hidden>
@@ -246,67 +246,98 @@
                             {{csrf_field()}}
                             <h4>Submit Measurements</h4><br>
 
-                            <div class="row"> 
-                                <div class="col-md-8">
-                                    @if(count($mrequests) > 0)
-                                    @for($counter = 1; $bidding['quantity'] >= $counter; $counter++)
-                                    <h5>Enter name for Person {{$counter}}</h5>
-                                    <input type="text" name="person[{{$counter}}]" class="form-control"><br>
+                            <?php $nameOfWearers = json_decode($bidding['nameOfWearers']); ?>
 
-                                    <div class="row"> 
-                                        <div class="col-md-8">
-                                            @foreach($mrequests as $mrequest)
-                                                <?php $measurementNames = json_decode($mrequest->measurements); ?>
+                            @if(count($mrequests) > 0)
+                                <div class="row"> 
+                                    <div class="col-md-12">
 
-                                                <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
-                                                @foreach($measurementNames as $measurementName)
+                                        @if($bidding['numOfPerson'] == "equals")
+                                            @for($counter = 1; $bidding['quantity'] >= $counter; $counter++)
+                                            <h4>Enter name and measurement for Person {{$counter}}</h4>
+                                            <input type="text" name="person[{{$counter}}]" class="form-control"><br>
 
-                                                    <label>{{$measurementName}}</label>
-                                                    <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+                                            <div class="row"> 
+                                                <div class="col-md-8">
+                                                    @foreach($mrequests as $mrequest)
+                                                        <?php $measurementNames = json_decode($mrequest->measurements); ?>
 
-                                                @endforeach<br>
+                                                        <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                        @foreach($measurementNames as $measurementName)
+
+                                                            <label>{{$measurementName}}</label>
+                                                            <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                        @endforeach<br>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            @endfor
+                                            <input type="submit" name="btn_submit" value="Submit">
+                                            <p style="color: #0315ff;"><i>Please wait for boutique's request...</i></p>
+
+                                        @else
+                                            <?php $counter = 1; ?>
+                                            @foreach($nameOfWearers as $nameOfWearer => $count)
+                                            <h5>Enter measurement of {{ucfirst($nameOfWearer)}}</h5>
+                                            <input type="text" name="person[{{$counter}}]" class="form-control" value="{{$nameOfWearer}}" hidden>
+
+                                            <div class="row"> 
+                                                <div class="col-md-8">
+                                                    @foreach($mrequests as $mrequest)
+                                                        <?php $measurementNames = json_decode($mrequest->measurements); ?>
+
+                                                        <h6>Measurement for {{$mrequest->category['categoryName']}}</h6>
+                                                        @foreach($measurementNames as $measurementName)
+
+                                                            <label>{{$measurementName}}</label>
+                                                            <input type="text" name="{{$counter}}[{{$mrequest->category['categoryName']}}][{{$measurementName}}]" placeholder="{{$measurementName}}" class="form-control"><br>
+
+                                                        @endforeach<br>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            <?php $counter++; ?>
+                                            <hr>
                                             @endforeach
-                                        </div>
+                                        @endif
                                     </div>
-                                    @endfor
-                                    <input type="submit" name="btn_submit" value="Submit">
-                                    @else
-                                    <p style="color: #0315ff;"><i>Please wait for boutique's request...</i></p>
-
-                                    @endif
                                 </div>
-                            </div>
+                                <input type="submit" name="btn_submit" class="btn essence-btn" value="Submit">
+                            @else
+                                <p style="color: #0315ff;"><i>Please wait for boutique's request. You'll get notified when the boutique has assigned measurements for your item&hellip;</i></p>
+                            @endif
 
 
                             <input type="text" name="biddingID" value="{{$bidding['id']}}" hidden>
                         </form>
                     @else
                         <h4>Measurements Submitted</h4><br>
-                    <div class="row">
-                        <div class="col-md-12" style="column-count: 2">
-                        @foreach($measurements as $measurement)
-                            @foreach($measurement as $person)
-                            @if(is_array($person)) <!-- filter if naay array si person -->
-                                @foreach($person as $personData)
-                                @if(is_object($personData)) <!-- filter if naay object si personData -->
-                                    <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
-                                    @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
-                                        <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
-                                        <label><b>{{strtoupper($measurementName)}}</b></label><br>
-                                        @foreach($dataArray as $dataName => $data)
-                                            <label>{{$dataName}}: &nbsp; {{$data}}"</label><br>
+                        <div class="row">
+                            <div class="col-md-12" style="column-count: 2">
+                            @foreach($measurements as $measurement)
+                                @foreach($measurement as $person)
+                                @if(is_array($person)) <!-- filter if naay array si person -->
+                                    @foreach($person as $personData)
+                                    @if(is_object($personData)) <!-- filter if naay object si personData -->
+                                        <?php $personDataArray = (array) $personData; ?> <!-- convert object to array para ma access -->
+                                        @foreach($personDataArray as $measurementName => $dataObject) <!-- get name and data -->
+                                            <?php $dataArray = (array) $dataObject; ?> <!-- convert to array gihapon kay object pa ang variable -->
+                                            <label><b>{{strtoupper($measurementName)}}</b></label><br>
+                                            @foreach($dataArray as $dataName => $data)
+                                                <label>{{$dataName}}: &nbsp; {{$data}}"</label><br>
+                                            @endforeach
                                         @endforeach
+                                    @endif
                                     @endforeach
+                                    <hr>
+                                @else
+                                    <label><b>Name:</b> {{strtoupper($person)}}</label><br>
                                 @endif
                                 @endforeach
-                                <hr>
-                            @else
-                                <label><b>Name:</b> {{strtoupper($person)}}</label><br>
-                            @endif
                             @endforeach
-                        @endforeach
+                            </div>
                         </div>
-                    </div>
 
                     @endif
                     </div>
@@ -448,7 +479,7 @@
     var minimumPaymentRequired = $('#minimumPaymentRequired').val();
     var measurementID = $('#measurementID').val();
     var balance = $('#balance').val();
-
+    var test = false;
 
     if(measurementID != null){
     paypal.Buttons({
@@ -474,6 +505,8 @@
                       });
                     }
                 }
+            }else{
+                test = true;
             }
         },
         onApprove: function(data, actions) {
@@ -502,10 +535,16 @@
                 location.reload();
             });
           });
+        },
+        onError: function (err) {
+        
+        if(test){
+            alert('noo');
+            test = false;
         }
-        // onError: function (err) {
-        //     alert("An error has occured during the transaction. Please try again.");
-        // }
+
+            // alert("An error has occured during the transaction. Please check the amount entered.");
+        }
     }).render('#paypal-button-container');
     } //if closing
 </script>

@@ -68,9 +68,9 @@
                                             <textarea class="form-control" name="notes" rows="5" placeholder="Place here your instructions for the item. Ex: what is your preferred type of fabric for your item etc." required></textarea>
                                     </div>
 
-                                    <div class="col-md-12 mb-3">
-                                        <label>Enter Quantity</label>
-                                        <input id="quantity" name="quantity" type="number" class="form-control" required>
+                                    <div class="col-md-8 mb-3">
+                                        <label>Quantity</label><br>
+                                        <input id="quantity" name="quantity" type="number" class="form-control" required style="width: 100px; display: inline;"> pcs.
                                     </div>
 
                                     <div class="col-md-12 mb-3">
@@ -110,7 +110,7 @@
                                     </div>
 
                                     <div class="col-md-12 mb-3">
-                                        <label>Your Quotation Price</label>
+                                        <label>Your Quotation Price</label>&nbsp;&nbsp;&nbsp;<span>*Your over-all price*</span>
                                         <input name="quotationPrice" type="number" class="form-control" required>
                                     </div><br>
 
@@ -158,7 +158,7 @@
       color: #fff;
     }
 
-    .datepicker-dropdown{position: absolute; top: 935px; left: 281.5px; z-index: 11; display: block;}
+    .datepicker-dropdown{position: absolute; top: 1045px; left: 281.5px; z-index: 11; display: block;}
 
 </style>
 @endsection
@@ -195,7 +195,11 @@ $('.numOfPerson').on('change', function(){
 $('#numOfWearers').on('keyup', function(){
     var num = 0;
     var num =  parseInt($(this).val());
-    // console.log(num);
+
+    if(parseInt($(this).val()) > parseInt($('#quantity').val())){
+        $(this).val(parseInt($('#quantity').val()));
+        num = parseInt($(this).val());
+    }
 
     $('#nameOfWearersDIV').empty();
     for(var counter=1; counter <= num; counter++){

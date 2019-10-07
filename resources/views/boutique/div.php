@@ -58,26 +58,33 @@
 <!-- MODAL -->
 <a href="" class="btn essence-btn" data-toggle="modal" data-target="#madeToOrderModal">[name here]</a>
 
-<div class="modal fade" id="requestToRentModal{{$product['productID']}}" role="dialog">
-    <div class="modal-dialog modal-lg">
-      <!-- Modal content-->
-      <div class="modal-content">
-          <div class="modal-header">
-            <h3 class="modal-title"><b>Rent Details</b></h3>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
+<div class="modal fade" id="refundCustomer" role="dialog">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title"><b>Confirm Alterations</b></h3>
+      </div>
 
-          <div class="modal-body">
+      <!-- <form action="{{url('submitOrder')}}" method="post"> -->
+        <!-- {{csrf_field()}} -->
+        <div class="modal-body">
+          <p>Did client show up at scheduled fittings? </p>
+          <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+        </div>
 
-          </div>
-
-          <div class="modal-footer">
-            <input type="submit" class="btn essence-btn" value="Place Request">
-            <!-- <input type="" class="btn btn-danger" data-dismiss="modal" value="Cancel"> -->
-          </div>
-      </div> 
-    </div>
+        <div class="modal-footer">
+          <!-- <a href="" class="btn btn-default" id="noAlterations">No</a>
+          <a href="" class="btn btn-primary" id="yesAlterations">Yes</a> -->
+          <input type="text" id="alterationID" value="{{$order['alterationID']}}">
+          <input type="submit" id="noAlterations" name="btn_submit" class="btn btn-default" value="No">
+          <input type="submit" id="yesAlterations" name="btn_submit" class="btn btn-primary" value="Yes">
+        </div>
+      <!-- </form> -->
+    </div> 
+  </div>
 </div>
+
 @endsection
 
 

@@ -19,7 +19,7 @@
 
         <!-- Single Product Description -->
         <div class="single_product_desc clearfix">
-            <span>{{$product->owner->boutiqueName}}</span>
+            <span>{{$product->owner['boutiqueName']}}</span>
             <h2>{{ $product['productName'] }}</h2>
             @if($product['price'] != null && $product['rpID'] != null)
             <p class="product-price">Retail Price: ₱{{ number_format($product['price']) }}</p>
@@ -86,6 +86,7 @@
                 @endif
                 @endif
 
+                @if($user != null)
                 @if($product->inFavorites)
                 <div class="product-favourite ml-4">
                     <input type="text" name="productID" value="{{$product['id']}}" hidden>
@@ -96,6 +97,7 @@
                     <input type="text" name="productID" value="{{$product['id']}}" hidden>
                     <a href="#" class="favme fa fa-heart"></a>
                 </div>
+                @endif
                 @endif
                 </div>
 

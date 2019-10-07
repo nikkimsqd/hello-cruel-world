@@ -112,7 +112,7 @@
 
                             <!-- //INDIVIDUAL PRODUCTS -->
                         <div class="products_list row"> <!-- Products Display -->
-                        	@foreach($products as $product)
+                        	@foreach($paginator->items() as $product)
 
                                 @if($product['productName'])
     	                        <!-- Single Product -->
@@ -142,8 +142,9 @@
                                                 <div class="product-badge new-badge">
                                                     <span>FOR RENT ONLY</span>
                                                 </div>
-                                            @endif
-                                                
+                                            @endif   
+
+
                                             @if($userID != null)
                                                 @if($product->inFavorites != null)
                                                     <div class="product-favourite unfavorite-product">
@@ -157,7 +158,7 @@
                                                     </div>
                                                 @endif
                                             @endif
-                                            
+
                                             <?php $counter++; ?>
                                             @endforeach
                                         </div>
@@ -187,20 +188,30 @@
         	                            </div>
                                     </div>
     	                        </div>
-                                @else
+                                @else       <!-- if product is set -->
                                 <!-- Single Product -->
                                 <div class="col-12 col-sm-6 col-lg-4">
                                     <div class="single-product-wrapper">
+                                        <?php $counter = 1; ?>
                                         <div class="product-img">
-                                            <div class="row">
-                                                @foreach( $product->items as $item)
-                                                <div class="col-md-6">
-                                                    @foreach($item->product->productFile as $image)
+
+
+                                            @foreach( $product->items as $item)
+
+                                                @foreach($item->product->productFile as $image)
+                                                    @if($counter == 1)    
                                                         <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
-                                                    <?php //break; ?>
-                                                    @endforeach
-                                                </div>
+                                                    @elseif($counter == 2)    
+                                                        <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                    @endif
                                                 @endforeach
+                                                <?php $counter++; ?>
+                                            @endforeach
+
+
+                                            <!-- </div> -->
+                                            <div class="product-badge set-badge">
+                                                <span>SET</span>
                                             </div>
 
                                             @if($product['productStatus'] == "Not Available")
@@ -217,17 +228,20 @@
                                             </div>
                                             @endif
 
-                                            @if($product->inFavorites)
-                                            <div class="product-favourite unfavorite-set">
-                                                <input type="text" name="productID" value="{{$product['id']}}" hidden>
-                                                <a href="#" class="favme fa fa-heart active"></a>
-                                            </div>
-                                            @else
-                                            <div class="product-favourite ml-4 favorite-set">
-                                                <input type="text" name="productID" value="{{$product['id']}}" hidden>
-                                                <a href="#" class="favme fa fa-heart"></a>
-                                            </div>
+                                            @if($userID != null)
+                                                @if($product->inFavorites)
+                                                <div class="product-favourite unfavorite-set">
+                                                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                                    <a href="#" class="favme fa fa-heart active"></a>
+                                                </div>
+                                                @else
+                                                <div class="product-favourite ml-4 favorite-set">
+                                                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                                    <a href="#" class="favme fa fa-heart"></a>
+                                                </div>
+                                                @endif
                                             @endif
+
                                         </div>
 
                                         <div class="product-description">
@@ -241,11 +255,24 @@
                                             <p class="product-price">₱{{ number_format($product->rentDetails['price']) }}</p>
                                             @endif
 
-                                            <div class="add-to-cart-btn">
+                                            <!-- <div class="add-to-cart-btn">
                                                 @if($product['setStatus'] == "Available")
                                                 <a href="{{url('set-single-product-details/').'/'.$product['id']}}" class="btn essence-btn">View Product</a>
                                                 @endif
+                                            </div> -->
+
+
+                                            <!-- Hover Content -->
+                                            <div class="hover-content">
+                                                <!-- Add to Cart -->
+                                                <div class="add-to-cart-btn">
+                                                    <!-- <input type="text" name="productID" value="{{$product['id']}}" hidden> -->
+                                                    @if($product['setStatus'] == "Available")
+                                                    <a href="{{url('set-single-product-details/').'/'.$product['id']}}" class="btn essence-btn">View Product</a>
+                                                    @endif
+                                                </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -255,17 +282,16 @@
                         </div>
                     </div>
                     <!-- Pagination -->
-                    <nav aria-label="navigation">
+                    <!-- <nav aria-label="navigation">
                         <ul class="pagination mt-50 mb-70">
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-left"></i></a></li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">21</a></li>
+                            <li class="page-item"><a class="page-link" href="#">{{$paginator->links()}}</a></li>
                             <li class="page-item"><a class="page-link" href="#"><i class="fa fa-angle-right"></i></a></li>
                         </ul>
-                    </nav>
+                    </nav> -->
+                    <div class="row">
+                        {{$paginator->links()}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -277,6 +303,11 @@
 		
 
 </div> <!-- page -->
+
+<style type="text/css">
+    /*.single-product-wrapper .product-img .product-badge*/
+    .single-product-wrapper .product-img .product-badge .set-badge{ left: 0px; right: 20px !important; background-color: #ff3c00 !important;}
+</style>
 
 @endsection
 

@@ -35,14 +35,13 @@
                   <?php 
                     $nameOfWearers = json_decode($bidding['nameOfWearers']); 
                     // $namesCounter = count($nameOfWearers);
-                    $counter = 0;
                   ?>
-                  {{$counter}}<br>
+                  {{$wearersCounter}}<br>
                   @foreach($nameOfWearers as $nameOfWearer => $value)
-                  <?php $counter +=1; ?>
                   <b>{{$nameOfWearer}}: {{$value}}pc/s.</b><br>
                   @endforeach
                 @endif
+
               </h4>
             <h4>Maximum Price Limit: <b>₱{{ $bidding['quotationPrice'] }}</b></h4>
             @if($bidding['fabChoice'] == "askboutique")
