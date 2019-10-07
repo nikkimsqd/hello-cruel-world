@@ -37,9 +37,13 @@
         
         <label>Add Tags:</label>
         <div class="form-group tags">
+           @foreach($categories as $category)
            @foreach($tags as $tag)
-           <input type="checkbox" name="tags[]" id="{{$tag['name']}}" value="{{$tag['id']}}">
-           <label for="{{$tag['name']}}">{{$tag['name']}}</label>
+           @if($category['id'] == $tag['categoryID'])
+           <input type="checkbox" name="tags[]" id="{{$tag['tagName']}}" value="{{$tag['id']}}">
+           <label for="{{$tag['tagName']}}">{{$tag['tagName']}}</label>
+           @endif
+           @endforeach
            @endforeach
         </div>
       </div> <!-- column closing -->

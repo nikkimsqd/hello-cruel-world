@@ -23,28 +23,13 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <h4 class="heading">Set Name</h4>
-                  <p>{{ $set['setName'] }}</p>
+                  <input type="text" name="setName" class="input form-control" value="{{ $set['setName'] }}" required>
                 </div>
 
-                <h4 class="heading">Set Description</h4>
-                <p>{{ $set['setDesc'] }}</p>
-
-                @if($set['price'] != null && $set['rpID'] != null)
-                <h4 class="heading">Retail Price</h4>
-                <p>₱{{ number_format($set['price']) }}</p>
-
-                <h4 class="heading">Rent Price</h4>
-                <p>₱{{ number_format($set->rentDetails['price']) }}</p>
-                
-                @elseif($set['rpID'] != null)
-                <h4 class="heading">Rent Price</h4>
-                <p>₱{{ number_format($set->rentDetails['price']) }}</p>
-
-                @elseif($set['price'] != null)
-                <h4 class="heading">Retail Price</h4>
-                <p>₱{{ number_format($set['price']) }}</p>
-
-                @endif
+                <div class="form-group">
+                  <h4 class="heading">Product Description</h4>
+                  <textarea name="productDesc" rows="3" cols="50" class="input form-control" required>{{ $set['setDesc'] }}</textarea>
+                </div>
         
                 <!-- <h4>Add Tags:</h4>
                 <div class="form-group tags">
@@ -56,25 +41,19 @@
 
 
                 @if(count($itemtags) > 0)
-                  <label>Add Tags:</label>
+                  <label>Edit Tags:</label>
                   <div class="form-group tags">
-                  @foreach($set->items as $items)
-                    @foreach($items as $item)
-                      @foreach($itemtags as $itemtag)
-                        @if($itemtag['itemID'] == $item['id'])
-                          <input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}" checked>
-                          <label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
-                        @endif
-                      @endforeach
-                    @endforeach
-                  @endforeach
-
-                  @foreach($tags as $tag)
-                    @if($tag['categoryID'] != $itemtag->tag['id'])
-                      <input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
-                      <label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
+                    @foreach($tags as $tag)
+                    @if(in_array($tag['id'], $selectedTags))
+                      <input type="checkbox" name="tags[]" id="{{$tag['tagName']}}" value="{{$tag['id']}}" checked="">
+                      <label for="{{$tag['tagName']}}">{{$tag['tagName']}}</label>
+                    @else
+                      <input type="checkbox" name="tags[]" id="{{$tag['tagName']}}" value="{{$tag['id']}}" >
+                      <label for="{{$tag['tagName']}}">{{$tag['tagName']}}</label>
                     @endif
-                  @endforeach
+                    @endforeach
+
+
                     </div>
                 @else
                   <h4>Add Tags:</h4>
@@ -92,22 +71,93 @@
               </div>
 
               <div class="col-md-6">
-                <h4 class="heading">Quantity</h4>
-                <p>{{ $set['quantity'] }}</p>
+                
+                <div class="form-group">
+                  <h4 class="heading">In-Stock:</h4>
+                  <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$set['quantity']}}" required>
+                </div>
 
-                <h4 class="heading">Set Status</h4>
-                <p>{{ $set['setStatus'] }}</p>
+                <div class="form-group">
+                  <h4 class="heading">Product Status</h4>
+                  @if($set['setStatus'] == "Available")
+                    <input type="radio" id="available" name="productStatus" value="Available" checked> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" id="nAvailable" name="productStatus" value="Not Available"> <label for="nAvailable"> Not Available</label>
+                  @else
+                    <input type="radio" id="available" name="productStatus" value="Available"> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" id="nAvailable" name="productStatus" value="Not Available" checked> <label for="nAvailable"> Not Available</label>
+                  @endif
+                </div>
 
-                <h4 class="heading">Item Availability:</h4>
-                @if($set['rpID'] != null && $set['price'] != null)
-                <p>Item is for RENT & for SALE.</p>
-                @elseif($set['rpID'] == null && $set['price'] != null)
-                <p>Item is for SALE only.</p>
-                @elseif($set['rpID'] != null && $set['price'] == null)
-                <p>Item is for RENT only.</p>
-                @else
-                <p>You have not yet set the availability for this item.</p>
+                <div class="form-group">
+                  <h4>Product Availability</h4>
+                  @if($set['rpID'] != null && $set['price'] != null)
+                    <input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
+
+                  @elseif($set['rpID'] != null)
+                    <input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+
+                  @elseif($set['price'] != null)
+                    <input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
+
+                  @else
+                    <input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+                  @endif
+                </div>
+              
+                <?php $var = 'display:none;'; ?>
+                @if($set['price'] != null)
+                <?php $var = ''; ?>
                 @endif
+
+                <div class="form-group" id="forSalePrice" style="{{$var}}">
+                  <label>Retail Price</label>
+                  <input type="number" name="productPrice" class="input form-control" value="{{ $set['price'] }}">
+                </div>
+
+                <?php $var = 'display:none;'; ?>
+                @if($set['rpID'] != null)
+                <?php $var = ''; ?>
+                @endif
+
+                <div class="form-group" id="forRentPrice" style="{{$var}}">
+                  <label>Rent Price</label>
+                  <input type="number" name="rentPrice" value="{{$set->rentDetails['price']}}" class="input form-control"><br>
+
+                  <label>Deposit Amount</label>
+                  <input type="number" name="depositAmount" class="input form-control" value="{{$set->rentDetails['depositAmount']}}"><br>
+
+                  <label>Penalty Amount if item is returned late (per day)</label>
+                  <input type="number" name="penaltyAmount" class="input form-control" value="{{$set->rentDetails['penaltyAmount']}}"><br>
+
+                  <label>Duration of days item is available for rent</label>
+                  <input type="number" name="limitOfDays" class="input form-control" value="{{$set->rentDetails['limitOfDays']}}"><br>
+
+                  <label>Amount of fine incase item is lost by user</label>
+                  <input type="number" name="fine" class="input form-control" value="{{$set->rentDetails['fine']}}"><br>
+
+                  <label>Locations item is available for rent</label><br>
+
+                    <?php $locs = json_decode($set->rentDetails['locationsAvailable']); ?>
+                  <label id="city-id" hidden>Select Cities:</label>
+                  <div name="cities" id="city-select" style="column-count: 3">
+                    @foreach($cities as $city)
+                    <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['id']}}"> {{$city['citymunDesc']}} <br>
+                              @endforeach
+
+                  </div><br>
+
+                  <!-- <label>Select City:</label>
+                  <select name="locationsAvailable" class="form-control" id="city-select"  value="{{$set->rentDetails['price']}}">
+                  </select><br> -->
+                </div>
+
+
+
+
               </div>
             </div>
             
@@ -172,6 +222,21 @@
 
 $('.products').addClass("active");
 $('.allsets').addClass("active");
+
+
+$('#forRent').change(function() {
+
+  if($('#forRent').is(':checked')) {
+    $('#forRentPrice').show();
+    $('#forRentPrice').prop('required', true);
+  } else { 
+    $('#forRentPrice').find('input').prop('required', false); 
+    $('#forRentPrice').hide();
+
+  }
+
+});
+
 
 </script>
 

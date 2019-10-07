@@ -569,6 +569,9 @@ class BoutiqueController extends Controller
 	        $regions = Region::all();
 	        $cities = City::all();
 
+// dd($categories);
+
+	        // dd($product);
 
 			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
 			$complains = array();
@@ -1768,8 +1771,11 @@ class BoutiqueController extends Controller
 		$user = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $user)->first();
 		$products = Product::where('boutiqueID', $boutique['id'])->get();
-		$categories = Category::all();
-		$tags = Tag::all();
+		$categories = Category::where('gender', 'Mens')->get();
+		$tags = Categorytag::all();
+// dd($categories);
+	        // $categoryGenders = $categories->groupBy('gender');
+
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
         $cities = City::all();
@@ -1864,32 +1870,39 @@ class BoutiqueController extends Controller
 			$set = Set::where('id', $setID)->first();
 			$product = Product::where('id', $setID)->first();
 			$categories = Category::all();
-			$tags = Tag::all();
-			$prodtags = Itemtag::where('itemID', $setID)->get();
+			$tags = Categorytag::all();
+			// $prodtags = Itemtag::where('itemID', $setID)->get();
+			$prodtags = Itemtag::all();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
 	        $cities = City::all();
 			$set = Set::where('id', $setID)->first();
 
+// dd($prodtags);
 			$itemtags = Itemtag::where('itemID', $setID)->get();
-
 			foreach ($categories as $category) {
 				$category;
 			}
 
 
 			foreach($set->items as $item){
-				$tags = Itemtag::where('itemID', $item->product['id'])->get();
+				// $tags = Itemtag::where('itemID', $item->product['id'])->get();
 				// dd($item->product['id']);
 			}
 
 			// $tags = Categorytag::where('categoryID', $product->getCategory['id'])->get();
 			// $itemtags = Itemtag::where('itemID', $productID)->get();
 
-			// dd($prodtags);
+			$selectedTags = [];
 
-			return view('boutique/editViewSet', compact('set', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'itemtags'));
+			foreach ($itemtags as $tag) {
+				$selectedTags[] = $tag['tagID'];
+			}
+
+
+
+			return view('boutique/editViewSet', compact('set', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'itemtags', 'selectedTags'));
 			}else {
 			return redirect('/shop');
 		}

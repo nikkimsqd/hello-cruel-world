@@ -268,7 +268,7 @@
 								@elseif($product->getCategory['gender'] === "Mens")
 								<option value="Womens">Womens</option>
 								<option selected value="Mens">Mens</option>
-								<!-- @else
+								<!-- else
 								<option selected disabled></option>
 								<option value="Womens">Womens</option>
 								<option  value="Mens">Mens</option> -->
@@ -344,13 +344,9 @@
 							@if($itemtag['itemID'] == $product['id'])
 								<input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}" checked>
 								<label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
-							@endif
-							@endforeach
-
-							@foreach($tags as $tag)
-							@if($tag['categoryID'] != $itemtag->tag['id'])
-								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
-								<label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
+							@else
+								<input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}">
+								<label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
 							@endif
 							@endforeach
 				      	</div>
@@ -379,90 +375,90 @@
 
 						<div class="col-md-6">
 
-				      <div class="form-group">
-				        <h4>In-Stock:</h4>
-				        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}" required>
-				      </div>
+					      <div class="form-group">
+					        <h4>In-Stock:</h4>
+					        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}" required>
+					      </div>
 
-					    <div class="form-group">
-				      	<h4>Product Availability</h4>
-				      	@if($product['rpID'] != null && $product['price'] != null)
-									<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
+						    <div class="form-group">
+					      	<h4>Product Availability</h4>
+					      	@if($product['rpID'] != null && $product['price'] != null)
+										<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 
-				      	@elseif($product['rpID'] != null)
-						    	<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+					      	@elseif($product['rpID'] != null)
+							    	<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
 
-								@elseif($product['price'] != null)
-									<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
+									@elseif($product['price'] != null)
+										<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 
-								@else
-									<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
-								@endif
-					    </div>
-				      
-				    	<?php $var = 'display:none;'; ?>
-					    @if($product['price'] != null)
-				    	<?php $var = ''; ?>
-					    @endif
+									@else
+										<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+									@endif
+						    </div>
+					      
+					    	<?php $var = 'display:none;'; ?>
+						    @if($product['price'] != null)
+					    	<?php $var = ''; ?>
+						    @endif
 
-					    <div class="form-group" id="forSalePrice" style="{{$var}}">
-					      <label>Retail Price</label>
-						  	<input type="number" name="productPrice" class="input form-control" value="{{ $product['price'] }}">
-					    </div>
+						    <div class="form-group" id="forSalePrice" style="{{$var}}">
+						      <label>Retail Price</label>
+							  	<input type="number" name="productPrice" class="input form-control" value="{{ $product['price'] }}">
+						    </div>
 
-					    <?php $var = 'display:none;'; ?>
-					    @if($product['rpID'] != null)
-				    	<?php $var = ''; ?>
-					    @endif
+						    <?php $var = 'display:none;'; ?>
+						    @if($product['rpID'] != null)
+					    	<?php $var = ''; ?>
+						    @endif
 
-				 	    <div class="form-group" id="forRentPrice" style="{{$var}}">
-				        <label>Rent Price</label>
-				        <input type="number" name="rentPrice" value="{{$product->rentDetails['price']}}" class="input form-control"><br>
+					 	    <div class="form-group" id="forRentPrice" style="{{$var}}">
+						        <label>Rent Price</label>
+						        <input type="number" name="rentPrice" value="{{$product->rentDetails['price']}}" class="input form-control"><br>
 
-				        <label>Deposit Amount</label>
-				        <input type="number" name="depositAmount" class="input form-control" value="{{$product->rentDetails['depositAmount']}}"><br>
+						        <label>Deposit Amount</label>
+						        <input type="number" name="depositAmount" class="input form-control" value="{{$product->rentDetails['depositAmount']}}"><br>
 
-				        <label>Penalty Amount if item is returned late (per day)</label>
-				        <input type="number" name="penaltyAmount" class="input form-control" value="{{$product->rentDetails['penaltyAmount']}}"><br>
+						        <label>Penalty Amount if item is returned late (per day)</label>
+						        <input type="number" name="penaltyAmount" class="input form-control" value="{{$product->rentDetails['penaltyAmount']}}"><br>
 
-				        <label>Duration of days item is available for rent</label>
-				        <input type="number" name="limitOfDays" class="input form-control" value="{{$product->rentDetails['limitOfDays']}}"><br>
+						        <label>Duration of days item is available for rent</label>
+						        <input type="number" name="limitOfDays" class="input form-control" value="{{$product->rentDetails['limitOfDays']}}"><br>
 
-				        <label>Amount of fine incase item is lost by user</label>
-				        <input type="number" name="fine" class="input form-control" value="{{$product->rentDetails['fine']}}"><br>
+						        <label>Amount of fine incase item is lost by user</label>
+						        <input type="number" name="fine" class="input form-control" value="{{$product->rentDetails['fine']}}"><br>
 
-				        <label>Locations item is available for rent</label><br>
+						        <label>Locations item is available for rent</label><br>
 
-                      	<?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
-                      	<!-- PLAN: TO ADD LIST FOR THE AVAILABLE PRODUCTS. DILI LANG SILA ISUD SA MGA SELECTS BELOW -->
-				        <!-- <label>Select Region:</label>
-				        <select name="region" class="form-control" id="region-select">
-				          <option selected="selected"> </option>
-				          @foreach($regions as $region)
-				          	<option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
-				          @endforeach
-				        </select><br> -->
+		                      	<?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
+		                      	<!-- PLAN: TO ADD LIST FOR THE AVAILABLE PRODUCTS. DILI LANG SILA ISUD SA MGA SELECTS BELOW -->
+						        <!-- <label>Select Region:</label>
+						        <select name="region" class="form-control" id="region-select">
+						          <option selected="selected"> </option>
+						          @foreach($regions as $region)
+						          	<option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
+						          @endforeach
+						        </select><br> -->
 
-				        <!-- <label>Select Province:</label>
-				        <select name="province" class="form-control" id="province-select" value="{{$product->rentDetails['price']}}">
-				        </select><br> -->
+						        <!-- <label>Select Province:</label>
+						        <select name="province" class="form-control" id="province-select" value="{{$product->rentDetails['price']}}">
+						        </select><br> -->
 
-				        <label id="city-id" hidden>Select Cities:</label>
-				        <div name="cities" id="city-select" style="column-count: 3">
-				        	@foreach($cities as $city)
-				        	<input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['id']}}"> {{$city['citymunDesc']}} <br>
-                          	@endforeach
+						        <label id="city-id" hidden>Select Cities:</label>
+						        <div name="cities" id="city-select" style="column-count: 3">
+						        	@foreach($cities as $city)
+						        	<input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['id']}}"> {{$city['citymunDesc']}} <br>
+		                          	@endforeach
 
-				        </div><br>
+						        </div><br>
 
-				        <!-- <label>Select City:</label>
-				        <select name="locationsAvailable" class="form-control" id="city-select"  value="{{$product->rentDetails['price']}}">
-				        </select><br> -->
-					    </div>
+						        <!-- <label>Select City:</label>
+						        <select name="locationsAvailable" class="form-control" id="city-select"  value="{{$product->rentDetails['price']}}">
+						        </select><br> -->
+						    </div>
 						</div>
 				  </div> <!-- box-body -->
 
