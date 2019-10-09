@@ -195,10 +195,12 @@ class CustomerController extends Controller
                 $scores = array_count_values($storage);
                 arsort($scores);
 
+            if($basedProducts != null){
                 $bProducts = array();
                 foreach($basedProducts as $bpID => $productType){
                     array_push($bProducts, $bpID);      //get their IDs
                 }
+                // dd($basedProducts);
 
                 //know which product is which
                 foreach($scores as $id => $score){
@@ -212,6 +214,21 @@ class CustomerController extends Controller
                         }
                     }
                 }
+            }else{
+                //know which product is which
+                foreach($scores as $id => $score){
+                    // if(!in_array($id, $bProducts)){
+                        // if($bpID != $id){
+                            if($productReference[$id]  == 'product'){
+                                array_push($products, $productsArray[$id]);
+                            }else{
+                                array_push($products, $setsArray[$id]);
+                            }
+                        // }
+                    // }
+                }
+
+            }
 
                 //RECOMMEND PRODUCTS ON SAME2 CATEGORY TOO
                 foreach($tagsCounted as $categoryID => $counter){
@@ -441,8 +458,8 @@ class CustomerController extends Controller
             }
         }
 
-        dd("asjaksakjs");
-        exit();
+        // dd("asjaksakjs");
+        // exit();
 
         Cartitem::create([
             'cartID' => $cart['id'],
@@ -1789,7 +1806,7 @@ class CustomerController extends Controller
         // $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
         // dd($boutiqueseller);
 
-        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order', 'payments', 'chats'));
+        return view('hinimo/viewOrder', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'order', 'payments', 'chats', 'userID'));
     }
 
     public function viewRent($rentID)

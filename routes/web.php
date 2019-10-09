@@ -40,6 +40,7 @@ Route::get('/set-single-product-details/{setID}', 'CustomerController@setDetails
 
 Route::view('/autocomplete', 'hinimo.autocomplete');
 Route::view('/googleapi', 'hinimo.addressexample');
+Route::view('/mixnmatch-old', 'hinimo.mixnmatch-old');
 
 
 Route::middleware(['auth'])->group(function(){
@@ -118,23 +119,33 @@ Route::middleware(['auth'])->group(function(){
 
 
 //BOUTIQUE----------------------------------------------------------------------------------------
+
+
 	Route::get('/boutique-profile', 'BoutiqueController@boutiqueProfile');
 	Route::get('/reqToActivateAccount', 'BoutiqueController@reqToActivateAccount');
 	Route::post('/reqToVerify', 'BoutiqueController@reqToVerify');
+	Route::get('/get-paypal-transaction/{orderId}', 'BoutiqueController@getPaypalOrder');
 
 	Route::get('/dashboard', 'BoutiqueController@dashboard');
 	Route::get('/categories', 'BoutiqueController@categories');
 	Route::post('/requestCategory', 'BoutiqueController@requestCategory');
-	Route::get('/tags', 'BoutiqueController@tags');
+
+
+	//QUESTIONABLE ROUTES
+	// Route::get('/tags', 'BoutiqueController@tags');
 	Route::get('/fabrics', 'BoutiqueController@fabrics');
 	Route::post('/addFabric', 'BoutiqueController@addFabric');
 	Route::get('/deleteFabric/{fabricID}', 'BoutiqueController@deleteFabric');
 
+
+	//LOCATIONS
 	Route::get('/boutique-getProvince/{regCode}', 'BoutiqueController@getProvince');
 	Route::get('/boutique-getCity/{provCode}', 'BoutiqueController@getCity');
 	Route::get('/boutique-getBrgy/{citymunCode}', 'BoutiqueController@getBrgy');
 
+
 	//crud product
+	Route::get('/products', 'BoutiqueController@showProducts');
 	Route::get('/addproduct', 'BoutiqueController@addProduct');
 	Route::post('/saveproduct', 'BoutiqueController@saveProduct');
 	Route::get('/viewproduct/{productID}', 'BoutiqueController@viewProduct');
@@ -143,11 +154,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/delete/{productID}', 'BoutiqueController@delete');
 	Route::get('/deleteSet/{setID}', 'BoutiqueController@deleteSet');
 
-	Route::get('/editViewSet/{setID}', 'BoutiqueController@editViewSet');
-	Route::post('/editSet', 'BoutiqueController@editSet');
 
 	//view products
-	Route::get('/products', 'BoutiqueController@showProducts');
 	// Route::get('/products/womens', 'BoutiqueController@getwomens');
 	// Route::get('/products/mens', 'BoutiqueController@getmens');
 	// Route::get('/products/embellishments', 'BoutiqueController@getembellishments');
@@ -160,7 +168,11 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/addset', 'BoutiqueController@addset');
 	Route::post('/saveset', 'BoutiqueController@saveset');
 	Route::get('/viewset/{setID}', 'BoutiqueController@viewSet');
+	Route::get('/editViewSet/{setID}', 'BoutiqueController@editViewSet');
+	Route::post('/editSet', 'BoutiqueController@editSet');
 
+	Route::get('/getProductsforSet/{gender}/{categoryID}', 'BoutiqueController@getProductsforSet'); //get productsss
+	Route::get('/getProductforSet/{productID}', 'BoutiqueController@getProductforSet'); //get single product details
 
 
 	//TRANSACTIONS-RENT
@@ -173,8 +185,9 @@ Route::middleware(['auth'])->group(function(){
 	// Route::post('/makeOrderforRent', 'BoutiqueController@makeOrderforRent');
 	Route::get('/rentReturned/{rentID}', 'BoutiqueController@rentReturned');
 
-	Route::get('/get-paypal-transaction/{orderId}', 'BoutiqueController@getPaypalOrder');
 
+
+	//NOTIFICATIONS
 	Route::get('/boutique-notifications', 'BoutiqueController@getnotifications');
 	Route::get('/view-notifications/{notificationID}', 'BoutiqueController@viewNotifications');
 
@@ -226,8 +239,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/getCategoryTags/{categoryID}', 'BoutiqueController@getCategoryTags');
 
 
-	Route::get('/boutique-mailbox', 'BoutiqueController@mailbox');
-	Route::get('/boutique-readmail/{emailID}', 'BoutiqueController@readmail');
+	// Route::get('/boutique-mailbox', 'BoutiqueController@mailbox');
+	// Route::get('/boutique-readmail/{emailID}', 'BoutiqueController@readmail');
 
 
 	Route::post('/bSendChat', 'BoutiqueController@bSendChat');
@@ -247,7 +260,7 @@ Route::middleware(['auth'])->group(function(){
 
 
 	Route::get('/sortBy/{condition}', 'CustomerController@sortBy');
-	Route::get('/getProducts/{condition}', 'CustomerController@getProducts');
+	Route::get('/getProducts/{condition}', 'CustomerController@getProducts'); //wala gamit??
 
 	Route::get('/getMeasurements/{categoryID}', 'CustomerController@getMeasurements');
 

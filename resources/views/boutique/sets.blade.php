@@ -1,6 +1,13 @@
 @extends('layouts.boutique')
 @extends('boutique.sections')
 
+@section('breadcrumb')
+<ol class="breadcrumb">
+  <li><a href="{{url('admin-dashboard')}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+  <li class="active">{{$page_title}}</li>
+</ol>
+@endsection
+
 
 @section('content')
 

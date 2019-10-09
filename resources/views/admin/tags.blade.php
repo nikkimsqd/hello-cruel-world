@@ -27,7 +27,6 @@
 
                       @foreach($categoryTags as $categoryTag)
                         @if($categoryTag['categoryID'] == $category['id'])
-                        <!-- <li><h4>{{$categoryTagGender}}</h4></li> -->
                         
 
                             <h2 data-tag-id="{{$categoryTag['id']}}" class="tags label label-default">{{$categoryTag['tagName']}}</h2>
@@ -43,7 +42,7 @@
 
 
             <br><br>
-            <span><i>Click on a tag to delete.</i></span>
+            <!-- <span><i>Click on a tag to delete.</i></span> -->
           </div>
 
           <div class="col-md-5">

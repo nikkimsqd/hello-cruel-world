@@ -1,5 +1,5 @@
 @section('titletext')
-  Hinimo | {{$boutique['boutiqueName']}}
+  {{$boutique['boutiqueName']}} | {{$page_title}}
 @endsection
 
 @section('page_title')
@@ -266,7 +266,7 @@
       <ul class="treeview-menu">
         <li class="categories"><a href="{{url('categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
         <!-- <li class="tags"><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li> -->
-        <li class="fabrics"><a href="{{url('fabrics')}}"><i class="fa fa-circle-o"></i> Available Fabrics</a></li>
+        <!-- <li class="fabrics"><a href="{{url('fabrics')}}"><i class="fa fa-circle-o"></i> Available Fabrics</a></li> -->
       </ul>
     </li>
 

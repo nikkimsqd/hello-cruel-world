@@ -1,6 +1,13 @@
 @extends('layouts.boutique')
 @extends('boutique.sections')
 
+@section('breadcrumb')
+<ol class="breadcrumb">
+  <li><a href="{{url('admin-dashboard')}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+  <li><a href="{{url('sets')}}">Sets</a></li>
+  <li class="active">{{$page_title}}</li>
+</ol>
+@endsection
 
 @section('content')
 <section class="content">
@@ -18,107 +25,137 @@
 	{{ csrf_field() }}
   <div class="box-body">
     <div class="row">
-    	<div class="col-md-6">
-        
-  	    <div class="form-group">
-  	     <label>Set Name</label>
-  			 <input type="text" name="setName" class="input form-control" placeholder="Enter set name" required>
-  	    </div>
+      <div class="col-md-12">
 
-  	    <div class="form-group">
-  	      <label>Set Description</label>
-  	      <textarea name="setDesc" rows="3" cols="50" class="input form-control" required></textarea>
-  	    </div>
-
-        <div class="form-group">
-          <label>Quantity:</label><br>
-          <input type="number" name="quantity" class="input form-control">
+        <!-- ----------------------------------------------------------------- -->
+        <div class="col-md-12 view-item">
+         <!--  <div class="row">
+            
+          </div> -->
         </div>
-        
-        <label>Add Tags:</label>
-        <div class="form-group tags">
-           @foreach($categories as $category)
-           @foreach($tags as $tag)
-           @if($category['id'] == $tag['categoryID'])
-           <input type="checkbox" name="tags[]" id="{{$tag['tagName']}}" value="{{$tag['id']}}">
-           <label for="{{$tag['tagName']}}">{{$tag['tagName']}}</label>
-           @endif
-           @endforeach
-           @endforeach
-        </div>
-      </div> <!-- column closing -->
+        <hr>
+        <!-- <div class="row"> -->
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-6">
+              <select class="form-control" name="gender" id="gender-select" required>
+                  <option disabled selected="selected">Select gender</option>
+                  <option value="Womens">Womens</option>
+                  <option value="Mens">Mens</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <select class="form-control" name="category" id="category-select" disabled required>
+                <option disabled selected="selected"></option>
+              </select>
+            </div>
+          </div>
+          <br>
+          <div class="row item-choices" style="max-height: 450px; overflow-y: scroll; border: 1px solid #e1e1e1;">
+            <h4>&nbsp;&nbsp; Select Items:</h4>
 
-      <div class="col-md-6">
-        <div class="form-group">
-          <label>Item Availability:</label><br>
-          <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
-          <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
-        </div>
-
-        <div class="form-group" id="forSalePrice" hidden>
-          <label>Retail Price</label>
-          <input type="number" name="retailPrice" class="input form-control" autofocus><br>
-        </div>
-
-        <div class="form-group" id="forRentPrice" hidden>
-          <label>Rent Price</label> <br>
-          <input type="number" name="rentPrice" class="input form-control" autofocus><br>
-
-          <label>Deposit Amount</label>
-          <input type="number" name="depositAmount" class="input form-control"><br>
-
-          <label>Penalty Amount if item is returned late (per day)</label>
-          <input type="number" name="penaltyAmount" class="input form-control"><br>
-
-          <label>Duration of days item is available for rent</label>
-          <input type="number" name="limitOfDays" class="input form-control"><br>
-
-          <label>Amount of fine incase item is lost by user</label>
-          <input type="number" name="fine" class="input form-control"><br>
-
-          <label>Cities item is available for rent</label><br>
-
-
-          <label id="city-id" hidden>Select Cities:</label>
-          <div name="cities" id="city-select" style="column-count: 3">
-          @foreach($cities as$city)
-          <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
-          @endforeach
+            <!-- @foreach($products as $product)
+              <div class="col-md-2">
+                  <?php $counter = 1; ?>
+                  @foreach( $product->productFile as $image)
+                      @if($counter == 1)
+                          <label class="product-top product-top{{$product['id']}}">
+                              <input type="checkbox" name="products[]" class="product" value="{{$product['id']}}">
+                              <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 200px; object-fit: cover;">
+                          </label>
+                      @endif
+                      <?php $counter++; ?>
+                  @endforeach
+              </div>
+            @endforeach -->
           </div>
         </div>
 
-    	</div>
-    </div>
-    <hr>
-    <div class="row">
-      <div class="col-md-12">
-        <h4>Select Items:</h4>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        @foreach($products as $product)
-          <div class="col-md-3">
-              <?php $counter = 1; ?>
-              @foreach( $product->productFile as $image)
-                  @if($counter == 1)
-                      <label class="product-top product-top{{$product['id']}}">
-                          <input type="checkbox" name="products[]" class="product" value="{{$product['id']}}">
-                          <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">
-                      </label>
-                  @endif
-                  <?php $counter++; ?>
+
+        <!-- </div> -->
+        <!-- ----------------------------------------------------------------- -->
+        <br><br><br><br><br><br>
+
+        <div class="row">
+        	<div class="col-md-6">
+            
+      	    <div class="form-group">
+      	     <label>Set Name</label>
+      			 <input type="text" name="setName" class="input form-control" placeholder="Enter set name" required>
+      	    </div>
+
+      	    <div class="form-group">
+      	      <label>Set Description</label>
+      	      <textarea name="setDesc" rows="3" cols="50" class="input form-control" required></textarea>
+      	    </div>
+
+            <div class="form-group">
+              <label>In-Stock:</label><br>
+              <input type="number" name="quantity" class="input form-control">
+            </div>
+            
+            <label>Add Tags:</label>
+            <div class="form-group tags">
+               @foreach($categories as $category)
+               @foreach($tags as $tag)
+               @if($category['id'] == $tag['categoryID'])
+               <input type="checkbox" name="tags[]" id="{{$tag['tagName']}}" value="{{$tag['id']}}">
+               <label for="{{$tag['tagName']}}">{{$tag['tagName']}}</label>
+               @endif
+               @endforeach
+               @endforeach
+            </div>
+          </div> <!-- column closing -->
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Item Availability:</label><br>
+              <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
+              <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
+            </div>
+
+            <div class="form-group" id="forSalePrice" hidden>
+              <label>Retail Price</label>
+              <input type="number" name="retailPrice" class="input form-control" autofocus><br>
+            </div>
+
+            <div class="form-group" id="forRentPrice" hidden>
+              <label>Rent Price</label> <br>
+              <input type="number" name="rentPrice" class="input form-control" autofocus><br>
+
+              <label>Deposit Amount</label>
+              <input type="number" name="depositAmount" class="input form-control"><br>
+
+              <label>Penalty Amount if item is returned late (per day)</label>
+              <input type="number" name="penaltyAmount" class="input form-control"><br>
+
+              <label>Duration of days item is available for rent</label>
+              <input type="number" name="limitOfDays" class="input form-control"><br>
+
+              <label>Amount of fine incase item is lost by user</label>
+              <input type="number" name="fine" class="input form-control"><br>
+
+              <label>Cities item is available for rent</label><br>
+
+
+              <label id="city-id" hidden>Select Cities:</label>
+              <div name="cities" id="city-select" style="column-count: 3">
+              @foreach($cities as$city)
+              <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
               @endforeach
-          </div>
-        @endforeach
+              </div>
+            </div>
+
+        	</div>
+        </div>
+
       </div>
-      
     </div>
   </div><!-- /.box-body -->
 
   <div class="box-footer" style="text-align: right;">
   	<a href="products" class="btn btn-warning"><i class="fa fa-arrow-left"> Back to Products</i></a>
-	<input type="submit" name="btn_add" value="Add Product" class="btn btn-primary">
+	 <input type="submit" name="btn_add" value="Add Product" class="btn btn-primary">
   </div>
 
 </form>
@@ -173,7 +210,13 @@
 
   .product[type=checkbox]:checked + img {
     /*outline: 2px solid #f00;*/
-    border: 2px solid #f00;
+    border: 6px solid #c62525;
+    border-radius: 2px; 
+    opacity: 0.9;
+  }
+
+  .view-item{
+    margin-bottom: 15px;
   }
 
 </style>
@@ -196,16 +239,12 @@ $('#forRent').on('change', function() {
 
 $('#forSale').on('change', function() {
     $('#forSalePrice').attr('hidden',!this.checked)
-  // if(this.checked){
-  //   $('#forSalePrice').append('<label>Retail Price</label> <br> <input type="number" id="forSalePrice" name="productPrice" class="input form-control">');
-  // }else{
-  //   $('#forSalePrice').empty();
-  // }
 });
 
 $('#gender-select').on('change', function(){
-  $('#measurement-input').empty();
   $('#category-select').empty();
+  $('.view-item').empty();
+  $('.item-choices').empty();
 
   var gender = $(this).val();
 
@@ -222,6 +261,91 @@ $('#gender-select').on('change', function(){
     }
   });
 });
+
+$('#category-select').on('change', function(){
+  var gender = $('#gender-select').val();
+  var categoryName = $(this).val();
+  var fileAddress = "<?= asset('/uploads') ?>";
+
+  $('.item-choices').empty();
+
+  $.ajax({
+    url: "{{url('getProductsforSet')}}/"+gender+'/'+categoryName,
+    success:function(data){
+
+      if(data.productsArray != 0){
+        data.productsArray.forEach(function(product){
+          var productID = product.id;
+          var picture = data.productURL[productID][0]; //contains the filename
+
+          // console.log('product');
+          $('.item-choices').append(
+            '<div class="col-md-2">'+ 
+              '<label class="product-top product-top'+product.id+'">' +
+                '<input type="checkbox" name="choices-products[]" class="product " id="item-product" value="'+product.id+'">' +
+                '<img src="'+ fileAddress + picture +'" style="width:100%; height: 200px; object-fit: cover;">' +
+              '</label>'+
+            '</div>'
+          );
+        });
+      }else{
+          $('.item-choices').append('<br><h4>&nbsp;&nbsp;<i>You currently dont have a product that is available for ready-to-wear in the selected category.</i></h4><br>');
+          // console.log('asasa');
+      }
+    }
+  });
+}); 
+
+
+$(".item-choices").on('change', '.product', function(){
+  var productID = $(this).val();
+  var fileAddress = "<?= asset('/uploads') ?>";
+
+  $.ajax({
+    url:"{{url('getProductforSet')}}/"+productID, 
+    dataType: 'json',
+    success:function(data){
+      var picture = data.productURL[productID][0]; //contains the filename
+      var rtwSizes = [];
+
+      if(data.rtwSizes['xs'] != null){
+        rtwSizes.push(data.rtwSizes['xs']);
+      }
+
+      // data.sizes.forEach(function(size){ 
+      //   var sizeValue = data.rtwSizes[size]; 
+      //   console.log(size +': ' + sizeValue);
+
+      // });
+
+      console.log(data.rtwSizes);
+
+      $('.view-item').append(
+          '<div class="row" style="margin-bottom: 10px;">'+
+            '<div class="col-md-5">'+ 
+                '<img src="'+ fileAddress + picture +'" style="width:100%; height: 400px; object-fit: cover;">' +
+
+            '</div>'+
+            '<div class="col-md-5">'+ 
+                '<input type="checkbox" name="products[]" value="'+data.product.id+'" checked hidden>' +
+                '<h4>Product Name: <b>'+data.product.productName+'</b></h4>' +
+                '<h4>Product Description: <b>'+data.product.productDesc+'</b></h4>' +
+                  // $.each(data.rtwSizes, function(key, value){ 
+                  data.sizes.forEach(function(size){ 
+                    var sizeValue = data.rtwSizes[size]; 
+                   // key +': ' + value 
+                   'hehehehehyy'
+                    // console.log(size +': ' + sizeValue);
+                })+
+            '</div>'+
+          '</div> <hr>'
+      );
+
+    }
+  });
+
+});
+
 
 // LOCATIONS-----------------------------------------------------------------------------
 $("#region-select").on('change', function(){

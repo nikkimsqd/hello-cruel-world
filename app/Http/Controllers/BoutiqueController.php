@@ -569,7 +569,6 @@ class BoutiqueController extends Controller
 	        $regions = Region::all();
 	        $cities = City::all();
 
-// dd($categories);
 
 	        // dd($product);
 
@@ -1516,10 +1515,12 @@ class BoutiqueController extends Controller
     	// dd($bid);
         $nameOfWearers = json_decode($bidding['nameOfWearers']); 
         $wearersCounter = 0;
-        foreach($nameOfWearers as $nameOfWearer){
-        	$wearersCounter++;
-        }
-        // dd($counter);
+        if($nameOfWearers != null){
+	        foreach($nameOfWearers as $nameOfWearer){
+	        	$wearersCounter++;
+	        }
+	    }
+        // dd($nameOfWearers);
 
 
     	return view('boutique/view-bidding', compact('user', 'page_title', 'products', 'categories', 'cart', 'cartCount', 'userID', 'biddingsCount', 'boutique', 'bidding', 'bid', 'notificationsCount', 'notifications', 'bidsCount', 'wearersCounter'));
@@ -1770,10 +1771,10 @@ class BoutiqueController extends Controller
 		$page_title = "Add Set";
 		$user = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $user)->first();
-		$products = Product::where('boutiqueID', $boutique['id'])->get();
-		$categories = Category::where('gender', 'Mens')->get();
+		$products = Product::where('boutiqueID', $boutique['id'])->where('rtwID', '!=', null)->get();
+		$categories = Category::all();
 		$tags = Categorytag::all();
-// dd($categories);
+		// dd($categories);
 	        // $categoryGenders = $categories->groupBy('gender');
 
 		$notifications = Auth()->user()->notifications;
@@ -1786,6 +1787,13 @@ class BoutiqueController extends Controller
 
     public function saveset(Request $request)
     {
+  //   	$products = $request->input('products');
+  //   	$array = array();
+  //       foreach($products as $product) {
+	 //    	array_push($array, $product);
+		// }
+    	// dd($array);
+
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 
@@ -1866,54 +1874,171 @@ class BoutiqueController extends Controller
 		if(Auth()->user()->roles == "boutique") {
 			$page_title = "Edit Set";
 			$user = Auth()->user()->id;
-			$boutique = Boutique::where('userID', $user)->first();
-			$set = Set::where('id', $setID)->first();
-			$product = Product::where('id', $setID)->first();
-			$categories = Category::all();
-			$tags = Categorytag::all();
-			// $prodtags = Itemtag::where('itemID', $setID)->get();
-			$prodtags = Itemtag::all();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
+			$boutique = Boutique::where('userID', $user)->first();
+
+			$set = Set::where('id', $setID)->first();
+			$products = Product::where('boutiqueID', $boutique['id'])->where('rtwID', '!=', null)->get(); // option products
+			$categories = Category::all();
+
+			//for rent
 	        $regions = Region::all();
 	        $cities = City::all();
-			$set = Set::where('id', $setID)->first();
 
-// dd($prodtags);
-			$itemtags = Itemtag::where('itemID', $setID)->get();
-			foreach ($categories as $category) {
-				$category;
-			}
+	        $setItems = array(); //storage of existing items on a set
+			$selectedTags = []; //staorage for all tags on an item
+	        $itemsCategoryTags = array(); //storage for all tags on every category
+			$itemtags = Itemtag::where('itemID', $setID)->get(); //get tags assigned on a set
 
-
-			foreach($set->items as $item){
-				// $tags = Itemtag::where('itemID', $item->product['id'])->get();
-				// dd($item->product['id']);
-			}
-
-			// $tags = Categorytag::where('categoryID', $product->getCategory['id'])->get();
-			// $itemtags = Itemtag::where('itemID', $productID)->get();
-
-			$selectedTags = [];
+	        foreach($set->items as $item){
+	        	array_push($setItems, $item['productID']);
+	        	foreach($item->product->getCategory->categoryTag as $categoryTag){
+					// $tags[] = $categoryTag['id'];
+					array_push($itemsCategoryTags, $categoryTag);
+	        	}
+	        }
 
 			foreach ($itemtags as $tag) {
 				$selectedTags[] = $tag['tagID'];
 			}
 
-
-
-			return view('boutique/editViewSet', compact('set', 'categories', 'boutique', 'user', 'page_title', 'tags', 'prodtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'itemtags', 'selectedTags'));
-			}else {
+			return view('boutique/editViewSet', compact('set', 'boutique', 'user', 'page_title', 'tags', 'notifications', 'notificationsCount', 'regions', 'cities', 'itemtags', 'selectedTags', 'itemsCategoryTags', 'products', 'setItems'));
+		}else {
 			return redirect('/shop');
 		}
 	}
 
 	public function editSet(Request $request)
 	{
+		$id = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $id)->first();
+		$setID = $request->input('setID');
+
+		// $itemtags = Itemtag::where('itemID', $setID)->where('itemType', 'set')->get();
+		// dd($itemtags);
+
+		$set = Set::where('id', $setID)->update([
+			'boutiqueID' => $boutique['id'],
+			'setName' => $request->input('setName'),		
+			'setDesc' => $request->input('setDesc'),		
+			'price' => $request->input('retailPrice'),
+			'quantity' => $request->input('quantity'),
+			'setStatus' => "Available"
+		]);
+
+		if($request->input('rentPrice') != null){
+			$locations = json_encode($request->input('locationsAvailable'));
+	    	$rp = Rentableproduct::where('id', $set['rpID'])->update([
+	    		'price' => $request->input('rentPrice'),
+	    		'depositAmount' => $request->input('depositAmount'),
+	    		'penaltyAmount' => $request->input('penaltyAmount'),
+	    		'limitOfDays' => $request->input('limitOfDays'),
+	    		'fine' => $request->input('fine'),
+	    		'locationsAvailable' => $locations
+	    	]);
+
+	    	$set->update([
+	    		'rpID' => $rp['id']
+	    	]);
+    	}
+
+    	$setItems = Setitem::where('setID', $setID)->get();
+    	foreach($setItems as $setItem){
+    		$setItem->delete(); //delete existing set items
+    	}
+
+		$products = $request->input('products'); //add new selected items on set
+        foreach($products as $product) {
+	    	Setitem::create([
+	    		'setID' => $setID,
+	    		'productID' => $product
+	    	]);
+		}
+
+		// FOR TAGS --------------------------------------------------------------------
+		$itemtags = Itemtag::where('itemID', $setID)->where('itemType', 'set')->get();
+		foreach($itemtags as $itemtag){
+    		$itemtag->delete(); //delete existing tags
+    	}
+
+		$tags = $request->input('tags'); //add new selected tags
+		foreach($tags as $tag) {
+			Itemtag::create([
+				'tagID' => $tag,
+				'itemID' => $setID,
+				'itemType' => 'set'
+			]);
+		}
+		//------------------------------------------------------------------------------
+
+		return redirect('/viewset/'.$setID);
+
+	}
+
+	public function getProductsforSet($gender, $categoryID)
+	{
 		$user = Auth()->user()->id;
+		$boutique = Boutique::where('userID', $user)->first();
+		$category = Category::where('gender', $gender)->where('id', $categoryID)->first();
+		$products = Product::where('boutiqueID', $boutique['id'])->where('category', $category['id'])->where('rtwID', '!=', null)->with('productFile')->get();
+		$productsArray = array();
 
-		dd("u here");
+        $productURL = array();
 
+
+		foreach($products as $product){
+            $productURL[$product['id']][] = $product->productFile[0]['filename'];
+			array_push($productsArray, $product); //
+		}
+		// dd($products);
+
+		return response()->json([
+			'productsArray' => $productsArray,
+			'productURL' => $productURL
+		]);
+	}
+
+	public function getProductforSet($productID)
+	{
+        $productURL = array();
+		$product = Product::where('id', $productID)->with('productFile')->with('rtwDetails')->first();
+        $productURL[$productID][] = $product->productFile[0]['filename'];
+        $rtwSizes = array();
+        $sizes = array();
+
+        if($product->rtwDetails['xs'] != null){
+        	$rtwSizes['xs'] = $product->rtwDetails['xs'];
+        	array_push($sizes, 'xs');
+        }
+        if($product->rtwDetails['s'] != null){
+        	$rtwSizes['s'] = $product->rtwDetails['s'];
+        	array_push($sizes, 's');
+        }
+        if($product->rtwDetails['m'] != null){
+        	$rtwSizes['m'] = $product->rtwDetails['m'];
+        	array_push($sizes, 'm');
+        }
+        if($product->rtwDetails['l'] != null){
+        	$rtwSizes['l'] = $product->rtwDetails['l'];
+        	array_push($sizes, 'l');
+        }
+        if($product->rtwDetails['xl'] != null){
+        	$rtwSizes['xl'] = $product->rtwDetails['xl'];
+        	array_push($sizes, 'xl');
+        }
+        if($product->rtwDetails['xxl'] != null){
+        	$rtwSizes['xxl'] = $product->rtwDetails['xxl'];
+        	array_push($sizes, 'xxl');
+        }
+
+        // dd($rtwSizes);
+		return response()->json([
+			'product' => $product,
+			'productURL' => $productURL,
+			'rtwSizes' => $rtwSizes,
+			'sizes' => $sizes
+		]);
 	}
 
 	public function boutiqueProfile()
@@ -1970,7 +2095,11 @@ class BoutiqueController extends Controller
 		$paypalAccount = Paypalaccount::where('id', $boutique['paypalEmail'])->update([
 			'paypalEmail' => $request->input('paypalEmail')
 		]);
+		dd($paypalAccount);
 
+		$boutique = Boutique::where('id', $boutiqueID)->update([
+			'paypalAccountID' => $paypalAccount['id']
+		]);
 	}
 
 	public function addPaypalAccount(Request $request)
@@ -1984,7 +2113,7 @@ class BoutiqueController extends Controller
 		]);
 
 		$boutique->update([
-			'paypalEmail' => $paypalAccount['id']
+			'paypalAccountID' => $paypalAccount['id']
 		]);
 
 		return redirect('/paypal-account');

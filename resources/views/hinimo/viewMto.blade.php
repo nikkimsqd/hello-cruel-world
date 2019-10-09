@@ -56,7 +56,7 @@
 
                                 <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                                     <div class="cart-page-heading">
-                                        <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$mto->order->boutique['boutiqueName']}}</h4>
+                                        <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; </h4>
                                     </div>
 
                                     <div class="chat-body">
@@ -201,7 +201,7 @@
                                     @endif
                                 @endif
                                     
-
+                                <!-- OFFERS -->
                                 @if($mto['orderID'] == null && $mto['status'] == "Active") <!-- IF WALA PAY ORDER ANG MTO -->
                                     <!-- if naay chosen fabric & naghatag ug price si boutique -->
                                     @if($mto['fabChoice'] == "provide" && $mto['price'] != null)
@@ -468,7 +468,7 @@
                     <input type="file" name="file[]" id="imgInp" class="form-control" multiple required><br>
                     <!-- <img id="imgPreview" src="#" alt="" /><br> -->
                     <textarea name="complain" class="form-control" rows="4" required></textarea>
-                    <input type="text" name="userID" value="{{$mto->order->customer['id']}}" hidden>
+                    <input type="text" name="userID" value="{{$mto->customer['id']}}" hidden>
                     <input type="text" name="orderID" value="{{$mto->order['id']}}" hidden>
                 </div>
 

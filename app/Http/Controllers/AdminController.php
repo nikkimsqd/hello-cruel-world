@@ -255,11 +255,11 @@ class AdminController extends Controller
 		$categories = Category::all();
 		// $categoryGenders = $categories->groupBy('gender');
 		$categoryTags = Categorytag::all();
-		$categoryTagGender = $categoryTags->groupBy('categoryID');
+		$categoryGenders = $categories->groupBy('gender');
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		$complainsCount = count(Complain::where('status', 'Active')->get());
-		// dd($categoryTags);
+		// dd($categoryGenders);
 
 
         // foreach($categoryTagGender as $categoryTags){
@@ -282,7 +282,7 @@ class AdminController extends Controller
           
         
 
-		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryTagGender', 'complainsCount', 'categoryTags'));
+		return view('admin/tags', compact('admin', 'tags', 'page_title', 'adminNotifications', 'notificationsCount', 'categories', 'categoryGenders', 'complainsCount', 'categoryTags'));
 	}
 
 	public function addTag(Request $request)

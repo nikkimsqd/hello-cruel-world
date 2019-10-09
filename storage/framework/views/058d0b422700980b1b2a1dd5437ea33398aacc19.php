@@ -124,11 +124,7 @@
         <?php echo $__env->yieldContent('page_title'); ?>
         <small></small>
       </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Forms</a></li>
-        <li class="active"><?php echo $__env->yieldContent('page_title'); ?></li>
-      </ol>
+      <?php echo $__env->yieldContent('breadcrumb'); ?>
     </section>
 
 
