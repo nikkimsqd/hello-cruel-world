@@ -34,14 +34,25 @@
                             <!--  Catagories  -->
                             <div class="catagories-menu">
                                 <ul id="menu-content2" class="menu-content collapse show">
-
+                                    <?php
+                                        if($activeLink == 'womens'){
+                                            $womens = 'show';
+                                            $mens = null;
+                                        }elseif($activeLink == 'mens'){
+                                            $womens = null;
+                                            $mens = 'show';
+                                        }else{
+                                            $womens = null;
+                                            $mens = null;
+                                        }
+                                    ?>
                                     <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#womens">
-                                        <a href="#">Women</a>
-                                        <ul class="sub-menu collapse show" id="womens">
+                                        <a href="{{url('shop/womens')}}">Womens</a>
+                                        <ul class="sub-menu collapse {{$womens}}" id="womens">
                                 		@foreach($categories as $category)
                                 		@if($category['gender'] == "Womens")
-                                            <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('shop/womens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
@@ -50,11 +61,11 @@
 
                                     <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#mens">
-                                        <a href="#">Men</a>
-                                        <ul class="sub-menu collapse" id="mens">
+                                        <a href="{{url('shop/mens')}}">Mens</a>
+                                        <ul class="sub-menu collapse {{$mens}}" id="mens">
                                 		@foreach($categories as $category)
                                 		@if($category['gender'] == "Mens")
-                                            <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('shop/mens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
@@ -127,6 +138,8 @@
             	                            @if($counter == 1)    
                                                 <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @elseif($counter == 2)    
+                                                <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                            @elseif($counter == 3)    
                                                 <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @endif
 
@@ -201,8 +214,10 @@
                                                 @foreach($item->product->productFile as $image)
                                                     @if($counter == 1)    
                                                         <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                    <?php break; ?>
                                                     @elseif($counter == 2)    
                                                         <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                    <?php break; ?>
                                                     @endif
                                                 @endforeach
                                                 <?php $counter++; ?>

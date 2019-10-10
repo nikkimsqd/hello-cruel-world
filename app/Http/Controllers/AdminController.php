@@ -33,6 +33,7 @@ use App\Complain;
 use App\Email;
 use App\Chat;
 use App\Refund;
+use App\Deliveryfee;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
@@ -693,6 +694,22 @@ class AdminController extends Controller
 
     }
 
+    public function refuseRefund($orderID)
+    {
+		$order = Order::where('id', $orderID)->first();
+    	$complaint = Complain::where('orderID', $orderID)->first();
+
+    	$order->update([
+    		'status' => 'Completed'
+    	]);
+
+		$complaint->update([
+			'status' => 'Closed'
+		]);
+
+		return redirect('admin-orders/'.$orderID.'#complaint');
+    }
+
     public function refundCustomer($orderID)
     {
     	$order = Order::where('id', $orderID)->first();
@@ -711,7 +728,7 @@ class AdminController extends Controller
     		'status' => 'Closed'
     	]);
 
-    	$customer = User::wherE('id', $order['userID'])->first();
+    	$customer = User::where('id', $order['userID'])->first();
     	$customer->notify(new RefundSuccessful($refund));
 
     	return redirect('admin-orders/'.$orderID);
@@ -720,6 +737,10 @@ class AdminController extends Controller
     public function askPayPalEmail($orderID)
     {
     	$order = Order::where('id', $orderID)->first();
+
+    	$complaint = Complain::where('orderID', $orderID)->update([
+    		'status' => 'In-Progress'
+    	]);
 
     	$refund = Refund::create([
     		'orderID' => $orderID
@@ -910,5 +931,101 @@ class AdminController extends Controller
         // }
 
         // return redirect('viewComplaint/'.)
+    }
+
+    public function chatswBoutique()
+    {
+		$page_title = 'Chat';
+   		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+		$boutiques = Boutique::all();
+
+
+   		// dd($unreadCount);
+
+    	return view('admin/chatswBoutique', compact('id', 'admin', 'page_title', 'adminNotifications', 'notificationsCount', 'complainsCount', 'boutiques'));
+    }
+
+    public function chatwBoutique($boutiqueID)
+    {
+		$page_title = 'Chat';
+   		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+		$boutiques = Boutique::all();
+
+		$selectedBoutique = Boutique::where('id', $boutiqueID)->first();
+   		$boutiqueUserID = $selectedBoutique->owner['id'];
+   		$convoID = "$id"."$boutiqueUserID";
+   		$chats = Chat::where('convoID', $convoID)->get();
+   		$unread = Chat::where('convoID', $convoID)->where('status', 'unread')->get();
+   		$unreadCount = $unread->count();
+
+   		// dd($unreadCount);
+
+    	return view('admin/chatwBoutique', compact('id', 'admin', 'page_title', 'adminNotifications', 'notificationsCount', 'chats', 'complainsCount', 'selectedBoutique', 'boutiques', 'unreadCount'));
+    }
+
+    public function chatBoutique(Request $request)
+    {
+   		$id = Auth()->user()->id;
+   		$boutiqueID = $request->input('boutiqueID');
+   		$boutique = Boutique::where('id', $boutiqueID)->first();
+   		$boutiqueUserID = $boutique->owner['id'];
+   		$convoID = "$id"."$boutiqueUserID";
+
+		$chat = Chat::create([
+			'receiverID' => $boutiqueUserID,
+			'senderID' => $id,
+			'senderType' => 'admin',
+			'message' => $request->input('message'),
+			'convoID' => $convoID,
+			'status' => 'unread'
+		]);
+
+	    return redirect('chat-w-boutique/'.$boutiqueID);	
+    }
+
+    public function deliveryfee()
+    {
+		$page_title = "Delivery Fee";
+		$id = Auth()->user()->id;
+		$admin = User::where('id', $id)->first();
+		$adminNotifications = $admin->notifications;
+		$notificationsCount = $admin->unreadNotifications->count();
+		$complainsCount = count(Complain::where('status', 'Active')->get());
+
+		$deliveryfee = Deliveryfee::where('id', '1')->first();
+		// dd($deliveryfees);
+
+
+    	return view('admin/deliveryfee', compact('page_title', 'id', 'admin', 'adminNotifications', 'notificationsCount', 'complainsCount', 'deliveryfee'));
+    }
+
+    public function savedeliveryfee(Request $request)
+    {
+    	// dd($request->input('baseFee'));
+
+    	$deliveryfee = Deliveryfee::create([
+    		'baseFee' => $request->input('baseFee'),
+    		'additionalFee' => $request->input('additionalFee')
+    	]);
+
+    	return redirect('admin-deliveryfee');
+    }
+
+    public function updatedeliveryfee(Request $request)
+    {
+    	Deliveryfee::where('id', '1')->update([
+    		'baseFee' => $request->input('baseFee'),
+    		'additionalFee' => $request->input('additionalFee')
+    	]);
+    	
+    	return redirect('admin-deliveryfee');
     }
 }

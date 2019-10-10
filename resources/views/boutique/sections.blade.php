@@ -255,7 +255,7 @@
       </ul>
     </li>
 
-    <li class="treeview etc">
+    <!-- <li class="treeview etc">
       <a href="#">
         <i class="fa fa-gear"></i>
         <span>Tools</span>
@@ -265,10 +265,10 @@
       </a>
       <ul class="treeview-menu">
         <li class="categories"><a href="{{url('categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <!-- <li class="tags"><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li> -->
-        <!-- <li class="fabrics"><a href="{{url('fabrics')}}"><i class="fa fa-circle-o"></i> Available Fabrics</a></li> -->
+        <li class="tags"><a href="{{url('tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <li class="fabrics"><a href="{{url('fabrics')}}"><i class="fa fa-circle-o"></i> Available Fabrics</a></li>
       </ul>
-    </li>
+    </li> -->
 
     <li class="treeview archives">
       <a href="#">
@@ -289,6 +289,15 @@
     <li class="paypal-account">
       <a href="{{url('paypal-account')}}">
         <i class="fa fa-paypal"></i> <span>PayPal Account</span>
+        <span class="pull-right-container">
+          <!-- <small class="label pull-right bg-green">new</small> -->
+        </span>
+      </a>
+    </li>
+   
+    <li class="chat-w-admin">
+      <a href="{{url('chat-w-admin')}}">
+        <i class="fa fa-comments"></i> <span>Chat with Admin</span>
         <span class="pull-right-container">
           <!-- <small class="label pull-right bg-green">new</small> -->
         </span>

@@ -38,6 +38,7 @@ use App\Complain;
 use App\Chat;
 use App\Refund;
 use App\Rtw;
+use App\Deliveryfee;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -62,6 +63,7 @@ class CustomerController extends Controller
     {
         if (Auth::check()) { //check if nay naka login nga user
             if(Auth()->user()->roles == "customer") {
+                $activeLink = "womens";
                 $page_title = "Shop";
                 $userID = Auth()->user()->id;
                 $categories = Category::all();
@@ -195,40 +197,37 @@ class CustomerController extends Controller
                 $scores = array_count_values($storage);
                 arsort($scores);
 
-            if($basedProducts != null){
-                $bProducts = array();
-                foreach($basedProducts as $bpID => $productType){
-                    array_push($bProducts, $bpID);      //get their IDs
-                }
-                // dd($basedProducts);
+                //RECO FROM LIKES, HISTORIES
+                if($basedProducts != null){
+                    $bProducts = array();
+                    foreach($basedProducts as $bpID => $productType){
+                        array_push($bProducts, $bpID);      //get their IDs
+                    }
+                    // dd($basedProducts);
 
-                //know which product is which
-                foreach($scores as $id => $score){
-                    if(!in_array($id, $bProducts)){
-                        if($bpID != $id){
-                            if($productReference[$id]  == 'product'){
-                                array_push($products, $productsArray[$id]);
-                            }else{
-                                array_push($products, $setsArray[$id]);
+                    //know which product is which
+                    foreach($scores as $id => $score){
+                        if(!in_array($id, $bProducts)){
+                            if($bpID != $id){
+                                if($productReference[$id]  == 'product'){
+                                    array_push($products, $productsArray[$id]);
+                                }else{
+                                    array_push($products, $setsArray[$id]);
+                                }
                             }
                         }
                     }
-                }
-            }else{
-                //know which product is which
-                foreach($scores as $id => $score){
-                    // if(!in_array($id, $bProducts)){
-                        // if($bpID != $id){
-                            if($productReference[$id]  == 'product'){
-                                array_push($products, $productsArray[$id]);
-                            }else{
-                                array_push($products, $setsArray[$id]);
-                            }
-                        // }
-                    // }
-                }
+                }else{
+                    //know which product is which
+                    foreach($scores as $id => $score){
+                        if($productReference[$id]  == 'product'){
+                            array_push($products, $productsArray[$id]);
+                        }else{
+                            array_push($products, $setsArray[$id]);
+                        }
+                    }
 
-            }
+                }
 
                 //RECOMMEND PRODUCTS ON SAME2 CATEGORY TOO
                 foreach($tagsCounted as $categoryID => $counter){
@@ -258,7 +257,7 @@ class CustomerController extends Controller
                 $paginator->withPath('shop');
                 // dd($paginator->items());
 
-                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator'));
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink'));
                 
 
             } else if(Auth()->user()->roles == "boutique") {
@@ -269,6 +268,7 @@ class CustomerController extends Controller
                 return redirect('/ionic-dashboard');
             }        
         }else {
+            $activeLink = "womens";
             $page_title = "Shop";
             $userID = null;
             $products = Product::where('productStatus', 'Available')->get();
@@ -302,8 +302,126 @@ class CustomerController extends Controller
 
             // dd($products[1]->inFavorites);
 
-            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator'));
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink'));
         }
+    }
+
+    public function shopViaGender(Request $request, $gender)
+    {
+        $activeLink = "$gender";
+        $page_title = "$gender";
+        $userID = Auth()->user()->id;
+        $categories = Category::all();
+        $boutiques = Boutique::all();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+
+        $filteredCategories = Category::where('gender', $gender)->get();
+        $prods = Product::where('productStatus', 'Available')->get();
+        $sets = Set::where('setStatus', 'Available')->get();
+        $products = array();
+
+        foreach($filteredCategories as $category){
+            foreach($prods as $prod){
+                if($prod['category'] == $category['id']){
+                    array_push($products, $prod);
+                }
+            }
+            foreach($sets as $set){
+                foreach($set->items as $item){
+                    if($item->product['category'] == $category['id']){
+                        if(!in_array($set, $products)){
+                            array_push($products, $set);
+                        }
+                    }
+                }
+            }
+        }
+        // dD($activeLink);
+
+        $productsCount = count($products);
+
+        //PAGINATION
+        $currentPage = $request->page;
+        $pageItems = 12;
+        if(empty($currentPage)){
+            $currentPage = 1;
+        }
+
+        $offset = ($currentPage * $pageItems) - $pageItems;
+        $itemsForCurrentPage = array_slice($products, $offset, $pageItems);
+
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+        $paginator->withPath($gender);
+
+
+        return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink'));
+    }
+
+    public function shopViaCategory(Request $request, $gender, $category)
+    {
+        $activeLink = "$gender";
+        $page_title = "$gender | $category";
+        $userID = Auth()->user()->id;
+        $categories = Category::all();
+        $boutiques = Boutique::all();
+        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+        if($cart != null){
+            $cartCount = $cart->items->count();
+        }else{
+            $cartCount = 0;
+        }
+        $notifications;
+        $notificationsCount;
+        $this->getNotifications($notifications, $notificationsCount);
+
+        $filteredCategories = Category::where('gender', $gender)->where('categoryName', $category)->get();
+        $prods = Product::where('productStatus', 'Available')->get();
+        $sets = Set::where('setStatus', 'Available')->get();
+        $products = array();
+
+        // dd($categories);
+
+        foreach($filteredCategories as $category){
+            foreach($prods as $prod){
+                if($prod['category'] == $category['id']){
+                    array_push($products, $prod);
+                }
+            }
+            foreach($sets as $set){
+                foreach($set->items as $item){
+                    if($item->product['category'] == $category['id']){
+                        if(!in_array($set, $products)){
+                            array_push($products, $set);
+                        }
+                    }
+                }
+            }
+        }
+        $productsCount = count($products);
+
+        //PAGINATION
+        $currentPage = $request->page;
+        $pageItems = 12;
+        if(empty($currentPage)){
+            $currentPage = 1;
+        }
+
+        $offset = ($currentPage * $pageItems) - $pageItems;
+        $itemsForCurrentPage = array_slice($products, $offset, $pageItems);
+
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+        $paginator->withPath($gender);
+
+
+        return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink'));
     }
 
     public function collection_paginate($items, $per_page)
@@ -383,6 +501,7 @@ class CustomerController extends Controller
         // }
 
         if(Auth()->user()->roles == "customer") {
+        $activeLink = "womens";
         $userID = Auth()->user()->id;
     	$categories = Category::all();
     	$products = Product::where('boutiqueID', $boutiqueID)->where('productStatus', 'Available')->get();
@@ -402,7 +521,7 @@ class CustomerController extends Controller
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
 
-    	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount'));
+    	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'activeLink'));
 
         }else if(Auth()->user()->roles == "boutique") {
             return redirect('/dashboard');
@@ -653,6 +772,10 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
+        $deliveryfee = Deliveryfee::where('id', '1')->first();
+        $baseFee = $deliveryfee['baseFee'];
+        $additionalFee = $deliveryfee['additionalFee'];
+
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         $notifications;
@@ -689,6 +812,7 @@ class CustomerController extends Controller
             }
 
         }
+        // dd($item->product);
 
         $messages = array();
         foreach ($setArrayCount as $setID => $count) {
@@ -707,7 +831,7 @@ class CustomerController extends Controller
         // dd($message);
 
 
-    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage', 'addresses', 'messages'));
+    	return view('hinimo/checkout', compact('page_title', 'cart', 'cartCount', 'user', 'boutiques', 'notifications', 'notificationsCount', 'percentage', 'addresses', 'messages', 'baseFee', 'additionalFee'));
     }
 
     public function useraccount()
@@ -789,6 +913,30 @@ class CustomerController extends Controller
         ]);
 
         return redirect('/user-account#addresses');
+    }
+
+    public function deleteAddress($addressID)
+    {
+        $userID = Auth()->user()->id;
+
+        $address = Address::where('id', $addressID)->delete();
+
+        return redirect('user-account');
+    }
+
+    public function editAddress($addressID)
+    {
+        $userID = Auth()->user()->id;
+
+        $address = Address::where('id', $addressID)->update([
+            'contactName' => $request->input('contactName'),
+            'phoneNumber' => $request->input('phoneNumber'),
+            'completeAddress' => $request->input('completeAddress'),
+            'lat' => $request->input('lat'), 
+            'lng' => $request->input('lng'),  
+        ]);
+
+        return redirect('user-account');
     }
 
     public function sortBy($condition)
@@ -1258,12 +1406,16 @@ class CustomerController extends Controller
             $cartCount = 0;
         }
 
+        $deliveryfee = Deliveryfee::where('id', '1')->first();
+        $baseFee = $deliveryfee['baseFee'];
+        $additionalFee = $deliveryfee['additionalFee'];
+
         $bid = Bid::where('id', $bidID)->first();
         $mto = null;
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
 
-        return view('hinimo/inputAddress', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bid', 'mto', 'percentage', 'addresses'));
+        return view('hinimo/inputAddress', compact('page_title', 'userID', 'user', 'boutiques', 'notifications', 'notificationsCount', 'cart', 'cartCount', 'bid', 'mto', 'percentage', 'addresses', 'baseFee', 'additionalFee'));
     }
 
     public function makeOrderforBidding(Request $request)
@@ -1661,7 +1813,7 @@ class CustomerController extends Controller
         $boutiqueseller = User::find($boutique['userID']);
         $boutiqueseller->notify(new NewMTO($mto));
 
-      return redirect('boutique/'.$boutiqueID);
+      return redirect('view-mto/'.$mto['id']);
     }
 
     public function submitMeasurementforMto(Request $request)
@@ -1856,7 +2008,13 @@ class CustomerController extends Controller
         $percentage = $sp['sharePercentage'] / 100;
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
         $payments = Payment::where('orderID', $mto->order['id'])->get();
-        $chats = Chat::where('orderID', $mto->order['id'])->get();
+
+        if($mto->order['id'] == null){
+            $chats = [];
+        }else{
+            $chats = Chat::where('orderID', $mto->order['id'])->get();
+            // dd($mto->order['id']);
+        }
 
         if($mto['numOfPerson'] != "equals"){
             $nameOfWearers = json_decode($mto['nameOfWearers']); 
@@ -1866,7 +2024,7 @@ class CustomerController extends Controller
         }
 
 
-        return view('hinimo/viewMto', compact('cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments', 'nameOfWearer', 'chats'));
+        return view('hinimo/viewMto', compact('userID', 'cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'fabrics', 'percentage', 'mrequests', 'payments', 'nameOfWearer', 'chats'));
     }
 
     public function inputAddress($mtoID, $type)
@@ -1894,10 +2052,14 @@ class CustomerController extends Controller
         // }
         $mtoPrice = $mto['price'];
 
+        $deliveryfee = Deliveryfee::where('id', '1')->first();
+        $baseFee = $deliveryfee['baseFee'];
+        $additionalFee = $deliveryfee['additionalFee'];
+
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         
-        return view('hinimo/inputAddress', compact('user', 'cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage', 'addresses'));
+        return view('hinimo/inputAddress', compact('user', 'cart', 'cartCount', 'boutiques', 'page_title', 'mtos', 'orders', 'rents', 'notifications', 'notificationsCount', 'mto', 'mtoPrice', 'percentage', 'addresses', 'baseFee', 'additionalFee'));
 
     }
 
@@ -2687,7 +2849,9 @@ class CustomerController extends Controller
         $order = Order::where('id', $orderID)->first();
         $chat = Chat::create([
             'orderID' => $orderID,
+            'receiverID' => $order->boutique['id'],
             'senderID' => $id,
+            'senderType' => 'customer',
             'message' => $request->input('message'),
             'status' => 'unread'
         ]);

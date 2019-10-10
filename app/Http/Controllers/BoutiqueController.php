@@ -43,6 +43,7 @@ use App\Alteration;
 use App\Complain;
 use App\Email; //???????????????? wagtangon ni
 use App\Chat;
+use App\Dispute;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -2163,44 +2164,47 @@ class BoutiqueController extends Controller
   //       return view('boutique/viewComplaint', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'complainsCount', 'complain', 'complains'));
   //   }
 
-    public function mailbox()
-    {
-		$page_title = "Mailbox";
-   		$user = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $user)->first();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
-		$emails = Email::where('recipientID', $user)->where('location', 'inbox')->get();
-		$inboxCount = count(Email::where('recipientID', $user)->where('location', 'inbox')->where('status', 'unread')->get());
-		$datetime = date('Y-m-d H:i:s');
-		// dd($datetime);
+  //   public function mailbox()
+  //   {
+		// $page_title = "Mailbox";
+  //  		$user = Auth()->user()->id;
+		// $boutique = Boutique::where('userID', $user)->first();
+		// $notifications = Auth()->user()->notifications;
+		// $notificationsCount = Auth()->user()->unreadNotifications->count();
+		// $emails = Email::where('recipientID', $user)->where('location', 'inbox')->get();
+		// $inboxCount = count(Email::where('recipientID', $user)->where('location', 'inbox')->where('status', 'unread')->get());
+		// $datetime = date('Y-m-d H:i:s');
+		// // dd($datetime);
 
-        return view('boutique/mailbox-inbox', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'emails', 'inboxCount', 'datetime'));
-    }
+  //       return view('boutique/mailbox-inbox', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'emails', 'inboxCount', 'datetime'));
+  //   }
 
-    public function readmail($emailID)
-    {
-		$page_title = "Mailbox";
-   		$user = Auth()->user()->id;
-		$boutique = Boutique::where('userID', $user)->first();
-		$notifications = Auth()->user()->notifications;
-		$notificationsCount = Auth()->user()->unreadNotifications->count();
-		$inboxCount = count(Email::where('recipientID', $user)->where('location', 'inbox')->where('status', 'unread')->get());
-		$datetime = date('Y-m-d H:i:s');
-    	$email = Email::where('id', $emailID)->first();
+  //   public function readmail($emailID)
+  //   {
+		// $page_title = "Mailbox";
+  //  		$user = Auth()->user()->id;
+		// $boutique = Boutique::where('userID', $user)->first();
+		// $notifications = Auth()->user()->notifications;
+		// $notificationsCount = Auth()->user()->unreadNotifications->count();
+		// $inboxCount = count(Email::where('recipientID', $user)->where('location', 'inbox')->where('status', 'unread')->get());
+		// $datetime = date('Y-m-d H:i:s');
+  //   	$email = Email::where('id', $emailID)->first();
 
 
-        return view('boutique/mailbox-readmail', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'email', 'inboxCount', 'datetime'));
-    }
+  //       return view('boutique/mailbox-readmail', compact('page_title', 'user', 'boutique', 'notifications', 'notificationsCount', 'email', 'inboxCount', 'datetime'));
+  //   }
 
     public function bSendChat(Request $request)
     {
    		$id = Auth()->user()->id;
    		$orderID = $request->input('orderID');
         $order = Order::where('id', $orderID)->first();
+        // dd($order->customer['id']);
     	$chat = Chat::create([
     		'orderID' => $orderID,
+    		'receiverID' => $order->customer['id'],
     		'senderID' => $id,
+    		'senderType' => 'boutique',
     		'message' => $request->input('message'),
     		'status' => 'unread'
     	]);
@@ -2209,6 +2213,62 @@ class BoutiqueController extends Controller
     	$customer->notify(new NotifyCustomerOfChat($chat));
 
     	return redirect('orders/'.$orderID.'#chat');
+    }
+
+    public function chatwAdmin()
+    {
+   		$id = Auth()->user()->id;
+		$user = User::find($id);
+		$page_title = 'Chat';
+		$notifications = $user->notifications;
+		$notificationsCount = $user->unreadNotifications->count();
+		$boutiques = Boutique::all();
+    	$boutique = Boutique::where('userID', $id)->first();
+   		$boutiqueUserID = $boutique->owner['id'];
+
+   		$admin = User::where('roles', 'admin')->first();
+   		$convoID = "$admin->id"."$boutiqueUserID";
+   		$chats = Chat::where('convoID', $convoID)->get();
+
+   		// dd($convoID);
+
+    	return view('boutique/chatwAdmin', compact('id', 'boutique', 'page_title', 'notifications', 'notificationsCount', 'chats', 'boutiques'));
+    }
+
+    public function chatAdmin(Request $request)
+    {
+   		$id = Auth()->user()->id;
+   		$boutique = Boutique::where('userID', $id)->first();
+   		$boutiqueUserID = $boutique->owner['id'];
+   		$admin = User::where('roles', 'admin')->first();
+   		$convoID = "$admin->id"."$boutiqueUserID";
+
+    	$chat = Chat::create([
+    		'receiverID' => $admin['id'],
+    		'senderID' => $id,
+    		'senderType' => 'boutique',
+    		'message' => $request->input('message'),
+			'convoID' => $convoID,
+    		'status' => 'unread'
+    	]);
+
+    	return redirect('chat-w-admin');
+    }
+
+    public function fileforDispute(Request $request)
+    {
+   		$id = Auth()->user()->id;
+   		$boutique = Boutique::where('userID', $id)->first();
+   		$orderID = $request->input('orderID');
+
+
+   		$dispute = Dispute::create([
+   			'orderID' => $orderID,
+   			'boutiqueID' => $boutique['id'],
+   			'dispute' => $request->input('dispute')
+   		]);
+
+   		return redirect('orders/'.$orderID);
     }
 
 

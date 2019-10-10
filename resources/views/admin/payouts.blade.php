@@ -22,23 +22,23 @@
                 <th></th>
               </thead>
               @foreach($orders as $order)
-              @if($order['payoutID'] == null)
-              <tr>
-                <td>{{$order['id']}}</td>
-                <td>{{$order->boutique['boutiqueName']}}</td>
-                <td class="align-center">₱{{$order['boutiqueShare']}}</td>
-                <td class="align-center"><a href="" class="btn btn-primary" data-toggle="modal" data-target="#confirmPayout{{$order['id']}}">Send Payout</a></td>
-                <!-- <td class="align-center">
-                  <div id="send-payout" class="btn btn-primary send-payout">
-                    <p class="mg-bottom">Send Payout</p>
-                    <input id="orderID" value="{{$order['id']}}" hidden>
-                    <input id="orderJson" value="{{$order['json']}}" hidden>
-                    <input id="amount" value="{{$order['boutiqueShare']}}" hidden>
-                    <input id="boutiqueOwnerID" value="{{$order->boutique->owner['id']}}" hidden>
-                  </div>
-                </td> -->
-              </tr>
-              @endif
+                @if($order['payoutID'] == null)
+                <tr>
+                  <td>{{$order['id']}}</td>
+                  <td>{{$order->boutique['boutiqueName']}}</td>
+                  <td class="align-center">₱{{$order['boutiqueShare']}}</td>
+                  <td class="align-center"><a href="" class="btn btn-primary" data-toggle="modal" data-target="#confirmPayout{{$order['id']}}">Send Payout</a></td>
+                  <!-- <td class="align-center">
+                    <div id="send-payout" class="btn btn-primary send-payout">
+                      <p class="mg-bottom">Send Payout</p>
+                      <input id="orderID" value="{{$order['id']}}" hidden>
+                      <input id="orderJson" value="{{$order['json']}}" hidden>
+                      <input id="amount" value="{{$order['boutiqueShare']}}" hidden>
+                      <input id="boutiqueOwnerID" value="{{$order->boutique->owner['id']}}" hidden>
+                    </div>
+                  </td> -->
+                </tr>
+                @endif
               @endforeach
             </table>
             
@@ -48,8 +48,8 @@
             <table class="table">
               <thead>
                 <th>Payout ID</th>
-                <th class="align-center">Batch ID</th>
-                <th class="align-center">Order ID</th>
+                <!-- <th class="align-center">Batch ID</th> -->
+                <th>Order ID</th>
                 <th>Boutique Name</th>
                 <th class="align-center">Amount</th>
                 <th></th>
@@ -58,11 +58,11 @@
               @if($order['payoutID'] != null)
               <tr>
                 <td>{{$order['payoutID']}}</td>
-                <td class="align-center">{{$order->payout['batchID']}}</td>
-                <td class="align-center">{{$order['id']}}</td>
+                <!-- <td class="align-center">{{$order->payout['batchID']}}</td> -->
+                <td>{{$order['id']}}</td>
                 <td>{{$order->boutique['boutiqueName']}}</td>
                 <td class="align-center">₱{{$order->payout['amount']}}</td>
-                <td class="align-center"><a href="{{url('view-payout/'.$order['id'])}}" class="btn btn-success">View Order</a></td>
+                <td class="align-center"><a href="{{url('view-payout/'.$order['id'])}}" class="btn btn-primary">View Payout Details</a></td>
                 <!-- <td class="align-center"><a href="{{url('view-payout/'.$order['id'])}}" class="btn btn-success">View</a></td> -->
               </tr>
               @endif

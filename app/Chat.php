@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
-    protected $fillable = ['orderID', 'senderID', 'message', 'status'];
+    protected $fillable = ['orderID', 'receiverID', 'senderID', 'senderType', 'message', 'status', 'convoID'];
 
     public function order()
     {

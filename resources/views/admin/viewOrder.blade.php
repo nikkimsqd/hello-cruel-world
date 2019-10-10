@@ -6,7 +6,7 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <div class="box box-success">
+      <div class="box">
 
         <div class="box-header with-border">
           <h3 class="box-title">Order ID: {{$order['id']}}</h3>
@@ -158,7 +158,7 @@
       </div>
 
 
-      <div class="box box-success direct-chat direct-chat-success collapsed-box" id="chat">
+      <div class="box direct-chat direct-chat-success collapsed-box" id="chat">
         <div class="box-header with-border">
           <h3 class="box-title">Seller and Customer's chat</h3>
           <div class="box-tools pull-right">
@@ -221,7 +221,7 @@
       </div>
 
       @if($complaint != null)
-      <div class="box">
+      <div class="box box-danger" id="complaint">
 
         <div class="box-header with-border">
           <h3 class="box-title">Complaint &nbsp;
@@ -233,7 +233,7 @@
           </h3>
         </div>
 
-        <div class="box-body" id="complaint">
+        <div class="box-body">
           <div class="col-md-12"> 
 
             <!-- <h4>Complainant Name: <b>{{$complaint->order->customer['fname'].' '.$complaint->order->customer['lname']}}</b></h4> -->
@@ -247,22 +247,37 @@
               </div>
               @endforeach
             </div>
+            <br>
+
+            @if($complaint->dispute != null)
+              <h4>Seller's dispute: <b>{{$complaint->dispute['dispute']}}</b></h4>
+            @endif
+
+            @if($complaint['status'] == 'Closed')
+              <i><h4>Actions taken:
+                @if($order->refund != null)
+                  <b>Customer has been refunded</b>
+                @else
+                  none
+                @endif
+              </h4></i>
+            @endif
 
           </div>
         </div>
 
+        @if($order->complain['status'] == "Active")
         <div class="box-footer">
           <div class="box-footer" style="text-align: right;">
-            @if($order->complain['status'] == "Active")
-              <a href="" class="btn btn-danger" data-toggle="modal" data-target="#madeToOrderModal">Refuse Refund</a>
+              <a href="" class="btn btn-danger" data-toggle="modal" data-target="#refuseRefund">Refuse Refund</a>
               @if($order->refund != null)
               <a href="" class="btn btn-primary" data-toggle="modal" data-target="#refundCustomer">Refund Customer</a>
               @else
               <a href="" class="btn btn-primary" data-toggle="modal" data-target="#askPayPalEmail">Ask Customer for PayPal email</a>
               @endif
-            @endif
           </div>
         </div>
+        @endif
 
       </div>
       @endif
@@ -303,8 +318,6 @@
           <h3 class="modal-title"><b>Refund Customer?</b></h3>
         </div>
 
-        <!-- <form action="{{url('submitOrder')}}" method="post"> -->
-          <!-- {{csrf_field()}} -->
           <div class="modal-body">
             <h4>When you click yes, a refund will be sent to customer via PayPal.</h4>
             <input type="text" name="orderID" value="{{$order['id']}}" hidden>
@@ -318,7 +331,26 @@
               <input id="orderJson" value="{{$order['json']}}" hidden>
             </div>
           </div>
-        <!-- </form> -->
+      </div> 
+    </div>
+  </div>
+
+  <div class="modal fade" id="refuseRefund" role="dialog">
+    <div class="modal-dialog ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title"><b>Are you sure to refuse refund?</b></h3>
+        </div>
+
+          <div class="modal-body">
+            <h4>Once you click yes, there's no way you can refund customer again.</h4>
+            <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+          </div>
+
+          <div class="modal-footer">
+            <a href="{{url('refuseRefund/'.$order['id'])}}" id="send-refund" class="btn btn-primary">Yes</a>
+          </div>
       </div> 
     </div>
   </div>

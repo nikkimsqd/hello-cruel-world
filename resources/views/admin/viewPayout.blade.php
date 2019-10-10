@@ -6,7 +6,7 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <div class="box box-success">
+      <div class="box">
 
         <div class="box-header with-border">
           <h3 class="box-title"><b>Payout ID: {{$order->payout['id']}}</b></h3>
@@ -17,6 +17,7 @@
             <h4>Order ID: <b>{{$order['id']}}</b></h4>
             <h4>Boutique Name: <b>{{$order->boutique['boutiqueName']}}</b></h4>
             <h4>Payout Batch ID: <b>{{$order->payout['batchID']}}</b></h4>
+            <h4>Amount: <b>₱{{$order->payout['amount']}}</b></h4>
           </div>
 
           <div class="col-md-5">
@@ -24,8 +25,8 @@
 
         </div>
         <div class="box-footer" style="text-align: right;">
-         <a class="btn btn-warning" href="/hinimo/public/dashboard/"><i class="fa fa-arrow-left"> Back to dasboard</i></a>
-         <a class="btn btn-primary" href="/hinimo/public/addCategories/"><i class="fa fa-plus"> Add a Category</i></a>
+         <a class="btn btn-default" href="{{url('admin-payouts')}}">Back to payouts</a>
+         <a class="btn btn-primary" href="{{url('admin-orders/'.$order['id'])}}">View Order Details</a>
         </div>
       </div>
     </div>

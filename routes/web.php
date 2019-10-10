@@ -32,8 +32,8 @@ Auth::routes();
 //SHOP
 Route::get('/shop', 'CustomerController@shop');
 Route::get('/index', 'CustomerController@index');
-Route::get('/shop/{gender}', 'CustomerController@shopWomens');
-Route::get('/shop/{gender}/{category}', 'CustomerController@shopWomens');
+Route::get('/shop/{gender}', 'CustomerController@shopViaGender');
+Route::get('/shop/{gender}/{category}', 'CustomerController@shopViaCategory');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
 Route::get('/set-single-product-details/{setID}', 'CustomerController@setDetails');
 
@@ -59,6 +59,11 @@ Route::middleware(['auth'])->group(function(){
 
 
 	Route::post('/editPercentage', 'AdminController@editPercentage');
+
+
+	Route::get('/admin-deliveryfee', 'AdminController@deliveryfee');
+	Route::post('/admin-savedeliveryfee', 'AdminController@savedeliveryfee');
+	Route::post('/admin-updatedeliveryfee', 'AdminController@updatedeliveryfee');
 
 
 	Route::get('/admin-addAccount', 'AdminController@addAccount');
@@ -99,6 +104,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::get('/askPayPalEmail/{orderID}', 'AdminController@askPayPalEmail');
 	Route::get('/refundCustomer/{orderID}', 'AdminController@refundCustomer');
+	Route::get('/refuseRefund/{orderID}', 'AdminController@refuseRefund');
 
 
 	Route::get('/admin-events', 'AdminController@getEvents');
@@ -112,9 +118,14 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/getComplaint/{complainID}', 'AdminController@getComplaint');
 
 
-	Route::get('/mailbox', 'AdminController@mailbox');
-	Route::get('/compose', 'AdminController@compose');
-	Route::post('/sendCompose', 'AdminController@sendCompose');
+	Route::get('/chat-w-boutiques', 'AdminController@chatswBoutique');
+	Route::get('/chat-w-boutique/{boutiqueID}', 'AdminController@chatwBoutique');
+	Route::post('/chatBoutique', 'AdminController@chatBoutique');
+
+
+	// Route::get('/mailbox', 'AdminController@mailbox');
+	// Route::get('/compose', 'AdminController@compose');
+	// Route::post('/sendCompose', 'AdminController@sendCompose');
 
 
 
@@ -243,7 +254,16 @@ Route::middleware(['auth'])->group(function(){
 	// Route::get('/boutique-readmail/{emailID}', 'BoutiqueController@readmail');
 
 
+	//SEND CHAT TO CUSTOMERS
 	Route::post('/bSendChat', 'BoutiqueController@bSendChat');
+
+	//SEND CHAT TO ADMIN
+	Route::get('/chat-w-admin', 'BoutiqueController@chatwAdmin');
+	Route::post('/chatAdmin', 'BoutiqueController@chatAdmin');
+
+	//FILE FOR DISPUTE
+	Route::post('/fileforDispute', 'BoutiqueController@fileforDispute');
+
 
 
 //CUSTOMER--------------------------------------------------------------------------------------------
@@ -298,6 +318,8 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('/addAddress', 'CustomerController@addAddress');
 	Route::get('/setAsDefault/{addressID}', 'CustomerController@setAsDefault');
 	// Route::post('/submitAddress', 'CustomerController@submitAddress');
+	Route::get('/deleteAddress/{addressID}', 'CustomerController@deleteAddress');
+	Route::get('/editAddress/{addressID}', 'CustomerController@editAddress');
 
 
 	//BIDDING
@@ -350,7 +372,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::post('/paypal-transaction-complete', 'CustomerController@paypalTransactionComplete');
 	// Route::get('/get-paypal-transaction/{orderId}', 'CustomerController@getPaypalOrder');
 
-	//MIX&MATCH
+	//EVENTS
 	Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
 	Route::get('mixnmatch', 'CustomerController@mixnmatch');
 	Route::get('/getMProduct/{productID}', 'CustomerController@getMProduct');

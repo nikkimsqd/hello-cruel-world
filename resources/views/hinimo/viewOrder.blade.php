@@ -192,7 +192,7 @@
                         @endif
 
                         @if($order['paymentStatus'] != "Fully Paid")
-                        <span>You are required to pay first so boutique can start on working with your item</span>
+                        <span style="color: red;"><i>You are required to pay first so boutique can start processing your item</i></span>
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="amount" class="form-control mb-10">

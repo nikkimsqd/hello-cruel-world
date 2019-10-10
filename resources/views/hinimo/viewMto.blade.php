@@ -54,6 +54,7 @@
                                 }
                                 ?>
 
+                                @if(count($chats) > 0)
                                 <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                                     <div class="cart-page-heading">
                                         <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; </h4>
@@ -98,6 +99,7 @@
                                     </form>
 
                                 </div><br><br> <!-- card closing -->
+                                @endif
 
                                 @if($mto['orderID'] != null)
                                     <div class="order-details-confirmation"> <!-- card opening -->
@@ -300,7 +302,13 @@
                         @if($mto->bid['fabricName'] != null)
                         <p><b>Boutique's Fabric Choice:</b> &nbsp; {{$mto->bid['fabricName']}}</p>
                         @endif
-                        <p class="product-price"><b>Price:</b> &nbsp; ₱{{$mto['price']}}</p>
+                        <p class="product-price"><b>Price:</b> &nbsp; 
+                            @if($mto['price'] != null)
+                                ₱{{$mto['price']}}
+                            @else
+                                </i>[made-to-order has no price yet.]</i>
+                            @endif
+                        </p>
                     </div>
                 </section><br><br><hr>
             </div>

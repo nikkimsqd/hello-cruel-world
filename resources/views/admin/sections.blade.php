@@ -186,6 +186,7 @@
       <ul class="treeview-menu">
         <li class="locations"><a href="{{url('admin-locations')}}"><i class="fa fa-circle-o"></i> Locations</a></li>
         <li class="accounts"><a href="{{url('admin-addAccount')}}"><i class="fa fa-circle-o"></i> Add Courier Account</a></li>
+        <li class="deliveryfee"><a href="{{url('admin-deliveryfee')}}"><i class="fa fa-circle-o"></i> Set Up Delivery fee</a></li>
       </ul>
     </li>
 
@@ -212,6 +213,15 @@
           <small class="label pull-right bg-red">{{$complainsCount}}</small>
           @endif
           <!-- <i class="fa fa-angle-left pull-right"></i> -->
+        </span>
+      </a>
+    </li>
+   
+    <li class="chat-w-boutique">
+      <a href="{{url('chat-w-boutiques')}}">
+        <i class="fa fa-comments"></i> <span>Chat with Boutiques</span>
+        <span class="pull-right-container">
+          <!-- <small class="label pull-right bg-green">new</small> -->
         </span>
       </a>
     </li>

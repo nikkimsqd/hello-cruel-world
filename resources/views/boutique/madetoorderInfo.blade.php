@@ -235,8 +235,9 @@
         <form action="{{url('/recommendFabric')}}" method="post">
         {{csrf_field()}}
 
-          <h4>Fabric Type:</h4> 
-          <input type="text" name="fabSuggestion" class="form-control mb-3" required>
+          <h4>Suggest a fabric:</h4> 
+          <!-- <input type="text" name="fabSuggestion" class="form-control mb-3" required> -->
+          <textarea name="fabSuggestion" class="form-control mb-3" required></textarea><br>
           <!-- <select id="fabric-type" name="fabSuggestion" class="form-control mb-3" required>
             <option disabled selected>Choose fabric type</option>
             @foreach($fabs as $fab => $name)
@@ -245,7 +246,7 @@
           </select> --><br>
           <h4>Price:</h4> 
           <!-- <input type="number" name="fabricSuggestion[price]" class="form-control" placeholder="Price" required> -->
-          <input type="number" name="price" class="form-control" placeholder="Price" required>
+          <input type="number" name="price" class="form-control" placeholder="Over-all Price" required>
           <input type="text" name="mtoID" value="{{$mto['id']}}" hidden>
       </div>
 

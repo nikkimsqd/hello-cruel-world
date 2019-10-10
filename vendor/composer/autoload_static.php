@@ -389,6 +389,8 @@ class ComposerStaticInit68080685b9cdab4465496eb1d4151585
         'App\\Courier' => __DIR__ . '/../..' . '/app/Courier.php',
         'App\\Declinedrent' => __DIR__ . '/../..' . '/app/Declinedrent.php',
         'App\\Declinedtransaction' => __DIR__ . '/../..' . '/app/Declinedtransaction.php',
+        'App\\Deliveryfee' => __DIR__ . '/../..' . '/app/Deliveryfee.php',
+        'App\\Dispute' => __DIR__ . '/../..' . '/app/Dispute.php',
         'App\\Email' => __DIR__ . '/../..' . '/app/Email.php',
         'App\\Event' => __DIR__ . '/../..' . '/app/Event.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',

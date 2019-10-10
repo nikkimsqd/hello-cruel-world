@@ -70,7 +70,7 @@
 
                                 <ul class="order-details-form mb-4">
                                     <li><a href="" data-toggle="modal" data-target="#notificationsModal">View Notifications</a>
-                                        @if(count($notifications) > 0)
+                                        @if($notificationsCount > 0)
                                         <span>{{$notificationsCount}}</span>
                                         @endif
                                     </li>
@@ -104,6 +104,9 @@
                         @foreach($addresses as $address)
                         <hr>
                         <table class="">
+                            <col width="222">
+                            <col width="222">
+                            <col width="222">
                             <tr>
                                 <td width="15%"><label>Name</label></td>
                                 <td width="70%"><b>{{$address['contactName']}}</b><br></td>
@@ -113,7 +116,7 @@
                                         <i class="fa fa-edit"> 
                                         </i>
                                     </a>
-                                    <a href="" class="btn btn-app">
+                                    <a href="{{url('deleteAddress/'.$address['id'])}}" class="btn btn-app">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
                                     <br>
@@ -133,7 +136,6 @@
                                     {{$address['completeAddress']}}<br>
                                 </td>
                             </tr>
-                            
                         </table>
                         <br>
                         @endforeach
@@ -161,9 +163,9 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
 
+        <form action="{{url('editProfile')}}" method="post">
+            {{csrf_field()}}
           <div class="modal-body">
-            <form action="{{url('editProfile')}}" method="post">
-                {{csrf_field()}}
             <label for="first_name">First Name</label>
             <input type="text" class="form-control" name="fname" value="{{$user['fname']}}"><br>
 
@@ -179,18 +181,15 @@
 
           <div class="modal-footer">
             <input type="submit" class="btn essence-btn" value="Update">
-            </form>
           </div>
+        </form>
       </div> 
     </div>
 </div>
 
 
 <div class="modal fade" id="addAddress" role="dialog">
-
-
     <div class="modal-dialog modal-lg">
-    
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -198,9 +197,9 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button> 
         </div>
 
-        <div class="modal-body">
-            <form action="{{url('addAddress')}}" method="post">
-                {{csrf_field()}}
+        <form action="{{url('addAddress')}}" method="post">
+            {{csrf_field()}}
+            <div class="modal-body">
                 <label>Name:</label>
                 <input type="text" name="contactName" class="form-control"><br>
 
@@ -211,19 +210,20 @@
                 <input type="text" id="completeAddress" name="completeAddress" class="form-control">
 
                 <div id="map"></div>  
-                <input type="text" name="lat" id="lat">
-                <input type="text" name="lng" id="lng">
-        </div> <!-- modal-body -->
+                <input type="text" name="lat" id="lat" hidden>
+                <input type="text" name="lng" id="lng" hidden>
+            </div> <!-- modal-body -->
 
-                <div class="modal-footer">
-                  <input type="submit" name="btn_submit" value="Submit" class="btn btn-success">
-                </div>
-            </form>
+            <div class="modal-footer">
+              <input type="submit" name="btn_submit" value="Submit" class="btn essence-btn">
+            </div>
+        </form>
     </div> <!-- modal-content -->
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
 
 @if(count($addresses) > 0)
+@foreach($addresses as $address)
 <div class="modal fade" id="editAddress{{$address['id']}}" role="dialog">
     <div class="modal-dialog modal-lg">
     
@@ -234,9 +234,9 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button> 
         </div>
 
-        <div class="modal-body">
-            <form action="/hinimo/public/addAddress" method="post">
-                {{csrf_field()}}
+        <form action="{{url('editAddress/'.$address['id'])}}" method="post">
+            {{csrf_field()}}
+            <div class="modal-body">
                 <label>Name:</label>
                 <input type="text" name="contactName" class="form-control" value="{{$address['contactName']}}"><br>
 
@@ -247,17 +247,18 @@
                 <input type="text" id="completeAddress" name="completeAddress" class="form-control" value="{{$address['completeAddress']}}">
 
                 <div id="map"></div>  
-                <input type="text" name="lat" id="lat" value="{{$address['lat']}}">
-                <input type="text" name="lng" id="lng" value="{{$address['lng']}}">      
-        </div> <!-- modal-body -->
+                <input type="text" name="lat" id="lat" value="{{$address['lat']}}" hidden>
+                <input type="text" name="lng" id="lng" value="{{$address['lng']}}" hidden>      
+            </div> <!-- modal-body -->
 
-                <div class="modal-footer">
-                  <input type="submit" name="btn_submit" value="Submit" class="btn btn-success">
-                </div>
-            </form>
+            <div class="modal-footer">
+              <input type="submit" name="btn_submit" value="Submit" class="btn essence-btn">
+            </div>
+        </form>
     </div> <!-- modal-content -->
     </div> <!-- modal-dialog -->
 </div> <!-- modal-fade -->
+@endforeach
 @endif
 
 <div class="modal fade" id="notificationsModal" role="dialog">
@@ -330,6 +331,7 @@
     span{color: #0315ff;}
     a{color: #000;}
     label{font-size: 12px; text-transform: uppercase; font-weight: 600;}
+    .form-control{border-radius: 0;}
  #map {
    width: 100%;
    height: 500px;

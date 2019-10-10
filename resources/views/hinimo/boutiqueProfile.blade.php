@@ -50,30 +50,40 @@
 
                             <div class="catagories-menu">
                                 <ul id="menu-content2" class="menu-content collapse show">
-
+                                    <?php
+                                        if($activeLink == 'womens'){
+                                            $womens = 'show';
+                                            $mens = null;
+                                        }else{
+                                            $womens = null;
+                                            $mens = 'show';
+                                        }
+                                    ?>
+                                    <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#womens">
-                                        <a href="#">Womens</a>
-                                        <ul class="sub-menu collapse show" id="womens">
+                                        <a href="{{url('shop/womens')}}">Womens</a>
+                                        <ul class="sub-menu collapse {{$womens}}" id="womens">
                                         @foreach($categories as $category)
                                         @if($category['gender'] == "Womens")
-                                            <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('shop/womens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
                                         </ul>
                                     </li>
-<!-- 
+
+                                    <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#mens">
-                                        <a href="#">Mens</a>
-                                        <ul class="sub-menu collapse" id="mens">
+                                        <a href="{{url('shop/mens')}}">Mens</a>
+                                        <ul class="sub-menu collapse {{$mens}}" id="mens">
                                         @foreach($categories as $category)
                                         @if($category['gender'] == "Mens")
-                                            <li><a href="#">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('shop/mens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
                                         </ul>
-                                    </li> -->
+                                    </li>
                                    
                                 </ul>
                             </div>

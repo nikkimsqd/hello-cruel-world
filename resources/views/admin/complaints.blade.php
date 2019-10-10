@@ -61,7 +61,7 @@
                       <tr>
                         <td>{{$complain->order->customer['fname']}}</td>
                         <td>{{$complain['complain']}}</td>
-                        <td class="center">{{$complain->order['id']}}</td>
+                        <td>{{$complain->order['id']}}</td>
                         <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
                       </tr>
                       @endif

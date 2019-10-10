@@ -1,4 +1,4 @@
-@extends('layouts.hinimo')
+ @extends('layouts.hinimo')
 @extends('hinimo.sections')
 
 
@@ -33,6 +33,10 @@
                                 <option value="addAddress"><b>+ Add Address</b></option>
                             </select><br><br>
 
+                            @foreach($addresses as $address)
+                            <input type="text" id="{{$address['id']}}" data-lat="{{$address['lat']}}" data-lng="{{$address['lng']}}" hidden>
+                            @endforeach
+
                             <div id="addAddressDIV" hidden=""><br><br>
 
                                 <label>Contact Number <span>*</span></label>
@@ -51,7 +55,7 @@
 
                           
                             <a class="clearfix" href="{{url('view-mto/'.$mto['id'].'#mto-details')}}" class="btn essence-btn" style="color: white;">Cancel</a>
-                            <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
+                            <!-- <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a> -->
                         </div>
                         
                         <div class="col-md-12 mb-3 clearfix">
@@ -72,17 +76,25 @@
                             <ul class="order-details-form mb-4">
                                 <li><span>Made-to-order item</span> <span>₱ {{$mtoPrice}}</span></li>
                                 <!-- <li><span>Subtotal</span> <span>{{$mtoPrice}}</span></li> -->
-                                <li><span>Delivery Fee</span> <span>₱ 50</span></li>
-                                <li><span>Total</span> <span style="color: #0315ff;">₱ {{$total}}</span></li>
+                                <li><span>Delivery Fee</span> <span id="deliveryfeeDisplay"></span></li>
+                                <li><span>Total</span> <span style="color: #0315ff;" id="totalDisplay"></span></li>
                             </ul>
                             <div class="col-md-12 mb-3" style="text-align: center;">
-                                    <input name="mtoID" value="{{$mto['id']}}" hidden>
-                                    <input type="text" name="adminShare" value="{{$adminShare}}" hidden>
-                                    <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" hidden>
-                                    <input type="text" name="subtotal" value="{{$mtoPrice}}" hidden>
-                                    <input type="text" name="deliveryfee" value="{{$deliveryfee}}" hidden>
-                                    <input type="text" name="total" value="{{$total}}" hidden><br>
-                                    <input type="submit" class="btn essence-btn" value="Place Order">
+                                <input name="mtoID" value="{{$mto['id']}}" hidden>
+                                <input id="boutiqueLat" value="{{$mto->boutique->address['lat']}}" hidden>
+                                <input id="boutiqueLng" value="{{$mto->boutique->address['lng']}}" hidden>
+                                <input id="percentage" value="{{$percentage}}" hidden>
+                                <input type="text" id="baseFee" value="{{$baseFee}}" hidden>
+                                <input type="text" id="additionalFee" value="{{$additionalFee}}" hidden>
+                                <input type="text" name="adminShare" id="adminShare" value="" hidden>
+                                <input type="text" name="boutiqueShare" id="boutiqueShare" value="" hidden>
+
+                                <input type="text" name="subtotal" id="subtotal" value="{{$mtoPrice}}" hidden>
+                                <input type="text" name="deliveryfee" id="deliveryfee" value="" hidden>
+                                <input type="text" name="total" id="total" value="" hidden>
+                                <a href="{{url('view-mto/'.$mto['id'])}}" class="btn essence-btn">Cancel</a>
+                                <input type="submit" class="btn essence-btn" value="Place Order">
+
                             </div>
                         </div>
                         </form>
@@ -106,6 +118,10 @@
                                 <option value="addAddress"><b>+ Add Address</b></option>
                             </select><br><br>
 
+                            @foreach($addresses as $address)
+                            <input type="text" id="{{$address['id']}}" data-lat="{{$address['lat']}}" data-lng="{{$address['lng']}}" hidden>
+                            @endforeach
+
                             <div id="addAddressDIV" hidden=""><br><br>
                                 <label>Contact Number <span>*</span></label>
                                 <input type="text" name="phoneNumber" class="form-control" maxlength="11"><br>
@@ -114,22 +130,15 @@
                                 <div class="col-12 mb-3" id="map"></div>
                                 <input type="text" name="lat" id="lat" hidden>
                                 <input type="text" name="lng" id="lng" hidden>
-                        
-                                <div class="custom-control custom-checkbox d-block mb-2">
-                                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
-                                    <!-- <label class="custom-control-label" for="customCheck1">Save new address</label> -->
-                                </div>
                             </div>
 
                             <!-- <label>Delivery Address</label>
                             <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" required> -->
-                            <br><br><br><br>
-                            <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a>
-                            <a href="{{url('view-bidding/'.$bid->bidding['id'])}}" class="btn essence-btn">Cancel</a>
+                            <br><br>
+                            <!-- <a id="addressBtn" class="btn essence-btn" style="color: white;">Submit Address</a> -->
+                            <a href="{{url('view-bidding/'.$bid->bidding['id'])}}" id="cancel-btn" class="btn essence-btn">Cancel</a>
                         </div>
-                        
-                        <div class="col-md-12 mb-3">
-                        </div>
+                    
                         <br><br>
 
                         <div class="order-details-confirmation" hidden>
@@ -137,28 +146,27 @@
                                 <!-- <h5>Your Made-to-Order</h5> -->
                             </div>
                             <?php 
-                            $subtotal = $bid['quotationPrice'];
-                            $deliveryfee = 50;
-                            $total = $subtotal + $deliveryfee;
-                            $adminShare = $subtotal * $percentage;
-                            $boutiqueShare = $subtotal - $adminShare;
                             ?>
                             <ul class="order-details-form mb-4">
                                 <li><span>Item Price</span> <span>₱{{$bid['quotationPrice']}}</span></li>
-                                <!-- <li><span>Subtotal</span> <span>{{$subtotal}}</span></li> -->
-                                <li><span>Delivery Fee</span> <span><i>₱{{$deliveryfee}}</i></span></li>
-                                <li><span>Total</span> <span style="color: #0315ff;"><i>₱{{$total}}</i></span></li>
+                                <li><span>Delivery Fee</span> <span id="deliveryfeeDisplay"><i></i></span></li>
+                                <li><span>Total</span> <span style="color: #0315ff;" id="totalDisplay"><i></i></span></li>
                             </ul>
                             <div class="col-md-12 mb-3" style="text-align: center;">
-                                    <input name="bidID" value="{{$bid['id']}}" hidden>
-                                    <!-- <input name="biddingID" value="{{$bid->bidding['id']}}" > -->
-                                    <input type="text" name="adminShare" value="{{$adminShare}}" hidden>
-                                    <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" hidden>
-                                    <input type="text" name="subtotal" value="{{$subtotal}}" hidden>
-                                    <input type="text" name="deliveryfee" value="{{$deliveryfee}}" hidden>
-                                    <input type="text" name="total" value="{{$total}}" hidden>
-                                    <input type="submit" class="btn essence-btn" value="Place Order">
-                                    <a href="sss">
+                                <input id="boutiqueLat" value="{{$bid->owner->address['lat']}}" hidden>
+                                <input id="boutiqueLng" value="{{$bid->owner->address['lng']}}" hidden>
+                                <input id="percentage" value="{{$percentage}}" hidden>
+                                <input type="text" id="baseFee" value="{{$baseFee}}" hidden>
+                                <input type="text" id="additionalFee" value="{{$additionalFee}}" hidden>
+                                <input name="bidID" value="{{$bid['id']}}" hidden>
+                                <!-- <input name="biddingID" value="{{$bid->bidding['id']}}" > -->
+                                <input type="text" name="adminShare" id="adminShare" value="" hidden>
+                                <input type="text" name="boutiqueShare" id="boutiqueShare" value="" hidden>
+                                <input type="text" name="subtotal" id="subtotal" value="{{$bid['quotationPrice']}}" hidden>
+                                <input type="text" name="deliveryfee" id="deliveryfee" value="" hidden>
+                                <input type="text" name="total" id="total" value="" hidden>
+                                <a href="{{url('view-bidding/'.$bid->bidding['id'])}}" class="btn essence-btn">Cancel</a>
+                                <input type="submit" class="btn essence-btn" value="Place Order">
                             </div>
                         </div>
                         </form>
@@ -285,7 +293,46 @@ $('#selectAddress').on('change', function(){
                   $("#deliveryAddress").val(r.name);
                   $("#lat").val(r.center.lat);
                   $("#lng").val(r.center.lng);
-                }
+
+                $('#cancel-btn').attr('hidden', 'hidden');
+                $('.order-details-confirmation').removeAttr('hidden');
+
+                var customerLat = r.center.lat;
+                var customerLng = r.center.lng;
+                var ipaddress = 'localhost:5000';
+                var percentage = $("#percentage").val();
+                var total = 0;
+
+                var boutiqueLat =  $("#boutiqueLat").val();
+                var boutiqueLng =  $("#boutiqueLng").val();
+                var adminShare = 0;
+                var subtotal = $("#subtotal").val();
+
+
+                $.ajax({
+                    url:'http://'+ipaddress+'/route/v1/driving/'+customerLng+','+customerLat+';'+boutiqueLng+','+boutiqueLat+'?overview=false&alternatives=false&steps=true&hints=;',
+                    type: "GET",
+                    success:function(data){
+                        var boutiqueDistance = parseFloat(data.routes[0].distance) / 1000;
+                        var baseFee = parseInt($("#baseFee").val());
+                        var additionalFee = parseInt($("#additionalFee").val());
+                        var deliveryfee = baseFee + (boutiqueDistance.toFixed(1) * additionalFee);
+                        console.log(deliveryfee);
+                        total = parseInt(subtotal) + parseInt(deliveryfee);
+                        adminShare = parseInt(subtotal) * parseFloat(percentage);
+                        boutiqueShare = parseInt(subtotal) - parseInt(adminShare);
+
+                        $("#adminShare").val(adminShare);
+                        $("#boutiqueShare").val(boutiqueShare);
+                        $("#deliveryfee").val(parseInt(deliveryfee));
+                        $("#total").val(total);
+                        $("#deliveryfeeDisplay").text('₱'+parseInt(deliveryfee));
+                        $("#totalDisplay").text('₱'+total);
+                    },
+                    async: false
+                });
+
+                } //if closing
               });
                   marker.setLatLng(e.latlng);
 
@@ -301,6 +348,45 @@ $('#selectAddress').on('change', function(){
 
     }else{
         $('#addAddressDIV').attr('hidden', "hidden");
+        $('.order-details-confirmation').removeAttr('hidden');
+        $('#cancel-btn').attr('hidden', 'hidden');
+
+        var addressID = $(this).val();
+        var customerLat = $("#"+addressID).data('lat');
+        var customerLng = $("#"+addressID).data('lng');
+        var ipaddress = 'localhost:5000';
+        var percentage = $("#percentage").val();
+        var total = 0;
+
+        var boutiqueLat =  $("#boutiqueLat").val();
+        var boutiqueLng =  $("#boutiqueLng").val();
+        var adminShare = 0;
+        var subtotal = $("#subtotal").val();
+
+
+        $.ajax({
+            url:'http://'+ipaddress+'/route/v1/driving/'+customerLng+','+customerLat+';'+boutiqueLng+','+boutiqueLat+'?overview=false&alternatives=false&steps=true&hints=;',
+            type: "GET",
+            success:function(data){
+                var boutiqueDistance = parseFloat(data.routes[0].distance) / 1000;
+                var baseFee = parseInt($("#baseFee").val());
+                var additionalFee = parseInt($("#additionalFee").val());
+                var deliveryfee = baseFee + (boutiqueDistance.toFixed(1) * additionalFee);
+                console.log(deliveryfee);
+                total = parseInt(subtotal) + parseInt(deliveryfee);
+                adminShare = parseInt(subtotal) * parseFloat(percentage);
+                boutiqueShare = parseInt(subtotal) - parseInt(adminShare);
+
+                $("#adminShare").val(adminShare);
+                $("#boutiqueShare").val(boutiqueShare);
+                $("#deliveryfee").val(parseInt(deliveryfee));
+                $("#total").val(total);
+                $("#deliveryfeeDisplay").text('₱'+parseInt(deliveryfee));
+                $("#totalDisplay").text('₱'+total);
+
+            },
+            async: false
+        });
     }
 
 

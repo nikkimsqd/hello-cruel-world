@@ -25,7 +25,7 @@
                         <form method="post" action="{{url('/saveMadeToOrder')}}" enctype="multipart/form-data">
                             {{ csrf_field() }}
 
-                            <h2 class="form-group row">Submit your request for your made-to-order here</h2>
+                            <h4 class="row">Submit your request for your made-to-order here</h4>
                             <p>After you send your made-to-order details, the boutique will set a price for your made-to-order and you'll get to decide if you will continue your request for made-to-order with the said price or not.</p>
 
                             <div class="col-md-8 mb-3">
@@ -91,7 +91,8 @@
 
 <style type="text/css">
 
-    .datepicker-dropdown{top: 388px !important; left: 281.5px; z-index: 11; display: block;}
+    .datepicker-dropdown{top: 311px !important; left: 281.5px; z-index: 11; display: block;}
+    .regular-page-content-wrapper .regular-page-text p{font-size: 16px; margin-bottom: 20px;}
 
     label{
         font-size: 13px;
@@ -149,25 +150,25 @@ $('#numOfWearers').on('keyup', function(){
     }
 });
 
-$('.fabChoice').on('change', function(){
-    var quantity =  parseInt($('#quantity').val());
-    var num =  parseInt($('#numOfWearers').val());
-    var counter = 1;
-    // var pcsOfWearersArray = [];
-    var pcsOfWearers = 0;
+// $('.fabChoice').on('change', function(){
+//     var quantity =  parseInt($('#quantity').val());
+//     var num =  parseInt($('#numOfWearers').val());
+//     var counter = 1;
+//     // var pcsOfWearersArray = [];
+//     var pcsOfWearers = 0;
 
-    for(var counter=1; counter <= num; counter++){
-        var pcsOfWearersInput = parseInt($('#nameOfWearersDIV').find('#pcsOfWearers'+counter).val());
-        pcsOfWearers += pcsOfWearersInput;
-    }
+//     for(var counter=1; counter <= num; counter++){
+//         var pcsOfWearersInput = parseInt($('#nameOfWearersDIV').find('#pcsOfWearers'+counter).val());
+//         pcsOfWearers += pcsOfWearersInput;
+//     }
 
-    if(pcsOfWearers > quantity){
-        alert('Oops! You exceeded!');
-    }else if(pcsOfWearers < quantity){
-        alert('Oops! You lack!');
-    }
+//     if(pcsOfWearers > quantity){
+//         alert('Oops! You exceeded!');
+//     }else if(pcsOfWearers < quantity){
+//         alert('Oops! You lack!');
+//     }
 
-});
+// });
 
 $('.fabric-radio').on('change', function() {
     if($(this).val() == "choose"){

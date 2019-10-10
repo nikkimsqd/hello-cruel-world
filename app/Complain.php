@@ -17,4 +17,9 @@ class Complain extends Model
     {
         return $this->hasOne('App\Order', 'id', 'orderID');
     }
+
+    public function dispute()
+    {
+        return $this->hasOne('App\Dispute', 'orderID', 'orderID');
+    }
 }

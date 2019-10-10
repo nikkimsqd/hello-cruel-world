@@ -25,6 +25,8 @@ return array(
     'App\\Courier' => $baseDir . '/app/Courier.php',
     'App\\Declinedrent' => $baseDir . '/app/Declinedrent.php',
     'App\\Declinedtransaction' => $baseDir . '/app/Declinedtransaction.php',
+    'App\\Deliveryfee' => $baseDir . '/app/Deliveryfee.php',
+    'App\\Dispute' => $baseDir . '/app/Dispute.php',
     'App\\Email' => $baseDir . '/app/Email.php',
     'App\\Event' => $baseDir . '/app/Event.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',

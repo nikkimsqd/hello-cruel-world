@@ -6,7 +6,7 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <div class="box box-success">
+      <div class="box">
 
         <div class="box-header with-border">
           <h3 class="box-title">Order ID: {{$order['id']}}</h3>
@@ -160,6 +160,13 @@
             </table>
           </div>
 
+          @if($order['courierID'] != null)
+          <div class="col-md-12">
+            <hr>
+            <h4>Courier's Name: <b>{{$order->courier->user['fname'].' '.$order->courier->user['lname']}}</b></h4>
+          </div>8
+          @endif
+
         </div>
         
         <div class="box-footer" style="text-align: right;">
@@ -194,7 +201,7 @@
         </div>
       </div>
 
-      <div class="box box-success direct-chat direct-chat-success" id="chat">
+      <div class="box direct-chat direct-chat-success" id="chat">
         <div class="box-header with-border">
           <h3 class="box-title">Chat with client</h3>
           <div class="box-tools pull-right">
@@ -259,7 +266,7 @@
 
 
       @if($complaint != null)
-      <div class="box">
+      <div class="box box-danger">
 
         <div class="box-header with-border">
           <h3 class="box-title">Complaint</h3>
@@ -279,6 +286,7 @@
               </div>
               @endforeach
             </div>
+            <br>
 
             @if($order['cartID'] == null)
               <hr>
@@ -290,16 +298,37 @@
                   <b>NO</b>
                 @endif
               </h4>
+              <hr>
+            @endif
+
+            @if($complaint->dispute != null)
+              <h4>Your dispute: <b>{{$complaint->dispute['dispute']}}</b></h4>
+            @endif
+
+            @if($complaint['status'] == 'Closed')
+              <i><h4>Actions taken:
+                @if($order->refund != null)
+                  <b>Customer has been refunded</b>
+                @else
+                  none
+                @endif
+              </h4></i>
             @endif
 
           </div>
         </div>
 
+        @if($order->complain['status'] == "Active")
         <div class="box-footer">
           <div class="box-footer" style="text-align: right;">
-            <a href="" class="btn btn-primary" data-toggle="modal" data-target="#madeToOrderModal">File for Dispute</a>
+            @if($complaint->dispute == null)
+              <a href="" class="btn btn-primary" data-toggle="modal" data-target="#fileForDisputeModal">File for Dispute</a>
+            @else
+              <a href="" class="btn btn-success" data-toggle="modal" data-target="#viewDisputeModal">View filed Dispute</a>
+            @endif
           </div>
         </div>
+        @endif
 
       </div>
       @endif
@@ -309,6 +338,50 @@
 </section>
 
 <!-- MODAL -->
+<div class="modal fade" id="viewDisputeModal" role="dialog">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title"><b>Filed Dispute</b></h3>
+      </div>
+
+        {{csrf_field()}}
+        <div class="modal-body">
+          <h4>{{$complaint->dispute['dispute']}}</h4>
+        </div>
+
+        <div class="modal-footer">
+          <a href="" class="btn btn-default" data-dismiss="modal">Cancel</a>
+        </div>
+    </div> 
+  </div>
+</div>
+
+<div class="modal fade" id="fileForDisputeModal" role="dialog">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title"><b>File for Dispute</b></h3>
+      </div>
+
+      <form action="{{url('fileforDispute')}}" method="post">
+        {{csrf_field()}}
+        <div class="modal-body">
+          <p>Enter below your dispute regarding the complaint.</p>
+          <textarea name="dispute" class="form-control" rows="4"></textarea>
+          <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+        </div>
+
+        <div class="modal-footer">
+          <input type="submit" name="btn_submit" class="btn btn-primary" value="Submit">
+        </div>
+      </form>
+    </div> 
+  </div>
+</div>
+
 <div class="modal fade" id="forAlterationsModal" role="dialog">
     <div class="modal-dialog ">
       <div class="modal-content">

@@ -110,8 +110,9 @@
                                     </div>
 
                                     <div class="col-md-12 mb-3">
-                                        <label>Your Quotation Price</label>&nbsp;&nbsp;&nbsp;<span>*Your over-all price*</span>
+                                        <label>Your Quotation Price</label>&nbsp;&nbsp;&nbsp;<!-- <span>*Your over-all price*</span> -->
                                         <input name="quotationPrice" type="number" class="form-control" required>
+                                        <span><i>*If you have a quantity of more than 1, then your <u>quotation price</u> will be the price of all the pieces, not by each*</i></span>
                                     </div><br>
 
 
@@ -132,6 +133,7 @@
 
 <style type="text/css">
 
+    .form-control{border-radius: 0;}
     label{
         font-size: 13px;
         text-transform: uppercase;

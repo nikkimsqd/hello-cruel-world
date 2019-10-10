@@ -122,8 +122,9 @@
             <form action="{{url('submitBid')}}" method="post">
             {{csrf_field()}}
             @if($bidding['fabChoice'] == "askboutique")
-              <label>Submit a fabric name</label>
-              <input type="text" name="fabricName" class="form-control" required><br>
+              <label>Suggest a fabric name</label>
+              <textarea name="fabricName" class="form-control" required></textarea><br>
+              <!-- <input type="text" name="fabricName" class="form-control" required><br> -->
               <label>Submit your quotation price</label>
               <input type="number" name="quotationPrice" min="1" max="{{$bidding['quotationPrice']}}" class="form-control" required><br>
             @else
