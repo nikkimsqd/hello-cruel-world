@@ -38,23 +38,19 @@
                   <h4 class="heading">Product Description</h4>
                   <textarea name="setDesc" rows="3" cols="50" class="input form-control" required>{{ $set['setDesc'] }}</textarea>
                 </div>
-        
+            
+                <label>Add Tags:</label>
+                <div class="input-group">
+                  <input type="text" id="input-tag" placeholder="Add Tag ..." class="form-control">
+                    <span class="input-group-btn">
+                      <a class="btn btn-primary" id="add-tag">Add</a>
+                    </span>
+                </div><br>
 
-
-                @if(count($itemtags) > 0) <!-- ilhanan if naay tags si set -->
-                  <h4 class="heading">Edit Tags:</h4>
-                @else
-                  <h4 class="heading">Add Tags:</h4>
-                @endif
-                <div class="form-group tags">
-                  @foreach($itemsCategoryTags as $itemsCategoryTag)
-                  @if(in_array($itemsCategoryTag['id'], $selectedTags))
-                    <input type="checkbox" name="tags[]" id="{{$itemsCategoryTag['tagName']}}" value="{{$itemsCategoryTag['id']}}" checked="">
-                    <label for="{{$itemsCategoryTag['tagName']}}">{{$itemsCategoryTag['tagName']}}</label>
-                  @else
-                    <input type="checkbox" name="tags[]" id="{{$itemsCategoryTag['tagName']}}" value="{{$itemsCategoryTag['id']}}" >
-                    <label for="{{$itemsCategoryTag['tagName']}}">{{$itemsCategoryTag['tagName']}}</label>
-                  @endif
+                <div class="form-group tags" id="inputted-tags">
+                  @foreach($tagsArray as $tag)
+                    <input type="text" name="tags[]" class="selected-tags" id="{{$tag}}" value="{{$tag}}" hidden>
+                    <label for="{{$tag}}">{{$tag}}</label>
                   @endforeach
                 </div>
               </div>
@@ -128,17 +124,6 @@
 
                   <label>Amount of fine incase item is lost by user</label>
                   <input type="number" name="fine" class="input form-control" value="{{$set->rentDetails['fine']}}"><br>
-
-                  <label>Locations item is available for rent</label><br>
-
-                    <?php $locs = json_decode($set->rentDetails['locationsAvailable']); ?>
-                  <label id="city-id" hidden>Select Cities:</label>
-                  <div name="cities" id="city-select" style="column-count: 3">
-                    @foreach($cities as $city)
-                    <input type="checkbox" class="locations" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['id']}}"> {{$city['citymunDesc']}} <br>
-                              @endforeach
-
-                  </div><br>
                 </div>
 
               </div>
@@ -147,11 +132,14 @@
             <hr>
             <!-- VIEW ITEMS ON SET -->
             @foreach( $set->items as $item)
+              <?php  
+                $rtwSizes = json_decode($item->product->rtwDetails['sizes']);
+              ?>
               <div class="row">
                 <div class="col-md-3">
                   
                   @foreach( $item->product->productFile as $image)
-                    <img src="{{ asset('/uploads').$image['filename'] }}" class="set-image">
+                    <img src="{{ asset('/uploads').$image['filepath'] }}" class="set-image">
                   @endforeach
 
                 </div>
@@ -159,24 +147,11 @@
                   <h4>Product Name: <b>{{$item->product['productName']}}</b></h4>
                   <h4>Product Description: <b>{{$item->product['productDesc']}}</b></h4>
                   <h4>Available Sizes: <br>
-                    @if($item->product->rtwDetails['xs'] != null)
-                      <h4>— <b>XS:</b> {{$item->product->rtwDetails['xs']}} pcs.</h4>
-                    @endif
-                    @if($item->product->rtwDetails['s'] != null)
-                      <h4>— <b>S:</b> {{$item->product->rtwDetails['s']}} pcs.</h4>
-                    @endif
-                    @if($item->product->rtwDetails['m'] != null)
-                      <h4>— <b>M:</b> {{$item->product->rtwDetails['m']}} pcs.</h4>
-                    @endif
-                    @if($item->product->rtwDetails['l'] != null)
-                      <h4>— <b>L:</b> {{$item->product->rtwDetails['l']}} pcs.</h4>
-                    @endif
-                    @if($item->product->rtwDetails['xl'] != null)
-                      <h4>— <b>XL:</b> {{$item->product->rtwDetails['xl']}} pcs.</h4>
-                    @endif
-                    @if($item->product->rtwDetails['xxl'] != null)
-                      <h4>— <b>XXL:</b> {{$item->product->rtwDetails['xxl']}} pcs.</h4>
-                    @endif
+                    <ul>
+                      @foreach($rtwSizes as $rtwSize => $value)
+                        <li><h4><b>{{ucfirst($rtwSize)}}:</b> {{$value}} pcs.</h4></li>
+                      @endforeach
+                    </ul>
                   </h4>
                   
                 </div>
@@ -196,12 +171,12 @@
                             @if(in_array($product['id'], $setItems))
                               <label class="product-top product-top{{$product['id']}}">
                                 <input type="checkbox" name="products[]" class="product" value="{{$product['id']}}" checked>
-                                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">
+                                <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:100%; height: 100%; object-fit: cover;">
                               </label>
                             @else
                               <label class="product-top product-top{{$product['id']}}">
                                 <input type="checkbox" name="products[]" class="product" value="{{$product['id']}}">
-                                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 100%; object-fit: cover;">
+                                <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:100%; height: 100%; object-fit: cover;">
                               </label>
                             @endif
                           @endif
@@ -315,6 +290,26 @@ $('#forSale').on('change', function() {
 
     $("#retailPrice").attr('required', this.checked);
   // }
+});
+
+
+$('#add-tag').on('click', function(){
+  var tag = $('#input-tag').val();
+
+  $('#inputted-tags').append(
+    '<input type="text" name="tags[]" class="selected-tags" id="'+ tag +'" value="'+ tag +'" hidden>'+
+    '<label for="'+ tag +'">'+ tag +'</label> ');
+
+  $('#input-tag').val('');
+  $('#input-tag').prop('autofocus', true);
+
+});
+
+$('body').on('click', '.selected-tags', function(){
+  var tag = $(this).val();
+  console.log(tag);
+  $('#'+tag).remove();
+  $('label[for='+tag+']').remove();
 });
 
 

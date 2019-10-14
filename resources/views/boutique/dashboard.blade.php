@@ -163,7 +163,7 @@
   </div>
         
   <!-- --------------------RENT---------------- -->
-  <div class="row">
+ <!--  <div class="row">
     <div class="col-md-12">
       <div class="box ">
         <div class="box-header">
@@ -179,7 +179,6 @@
             </div>
           </div>
         </div>
-        <!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
             <tr>
@@ -190,28 +189,23 @@
               <th>Status</th>
               <th></th>
             </tr>
-            @if(count($rents) > 0)
-            @foreach($rents as $rent)
+            @//if(count($rents) > 0)
+            @//foreach($rents as $rent)
             <tr>
-              <td>{{$rent['rentID']}}</td>
-              <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
-              <td>{{$rent['created_at']->format('M d, Y')}}</td>
-              <td>{{$rent->order['paymentStatus']}}</td>
-              <td><span class="label label-warning">Pending</span></td>
             </tr>
-            @endforeach
-            @else
+            @//endforeach
+            @//else
             <tr>
               <td colspan="5" style="color: blue"><i>You have no rent orders...</i></td>
             </tr>
-            @endif
+            @//endif
           </table>
         </div>
       </div>
     </div>
-  </div> <!-- table row -->
+  </div>  -->
 
-  <div class="row" id="mtos">
+<!--   <div class="row" id="mtos">
     <div class="col-md-12">
       <div class="box">
 
@@ -243,54 +237,13 @@
                   <th></th>
                 </tr>
                 </thead>
-                @if(count($mtos) > 0)
-                @foreach($mtos as $mto)
-                <tr>
-                  <td>{{$mto->order['id']}}</td>
-                  <td>{{$mto->customer->owner['fname'].' '.$mto->customer->owner['lname']}}</td>
-                  <td>{{$mto->order['created_at']->format('M d, Y')}}</td>
-                  @if($mto->order['paymentStatus'] == "Not Yet Paid")
-                    <td style="color: red">{{$mto->order['paymentStatus']}}</td>
-                  @else
-                    <td style="color: #0315ff;">{{$mto->order['paymentStatus']}}</td>
-                  @endif
-                  @if($mto->order['status'] == "Pending")
-                  <td><span class="label label-warning">{{$mto->order['status']}}</span></td>
-
-                  @elseif($mto->order['status'] == "In-Progress")
-                  <td><span class="label label-info">{{$mto->order['status']}}</span></td>
-
-                  @elseif($mto->order['status'] == "For Pickup")
-                  <td><span class="label bg-navy">{{$mto->order['status']}}</span></td>
-
-                  @elseif($mto->order['status'] == "For Delivery")
-                  <td><span class="label bg-olive">{{$mto->order['status']}}</span></td>
-
-                  @elseif($mto->order['status'] == "On Delivery")
-                  <td><span class="label label-maroon">{{$mto->order['status']}}</span></td>
-
-                  @elseif($mto->order['status'] == "Delivered")
-                  <td><span class="label label-success">{{$mto->order['status']}}</span></td>
-
-                  @elseif($mto->order['status'] == "Completed")
-                  <td><span class="label label-success">{{$mto->order['status']}}</span></td>
-
-                  @endif
-                  <td><a href="orders/{{$mto->order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
-                </tr>
-                @endforeach
-                @else
-                <tr>
-                  <td colspan="5" style="color: blue"><i>You have no made-to-orders...</i></td>
-                </tr>
-                @endif
               </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </section>
 
 @endsection

@@ -10,11 +10,16 @@
 
         <!-- Single Product Thumb -->
         <div class="single_product_thumb clearfix">
+            <?php $counter = count($product->productFile); ?>
+            @if($counter > 1)
             <div class="product_thumbnail_slides owl-carousel">
-                @foreach($product->productFile as $image)
-                <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
-                @endforeach
+                    @foreach($product->productFile as $image)
+                    <img src="{{ asset('/uploads').$image['filepath'] }}" alt="">
+                    @endforeach
             </div>
+            @else
+                <img src="{{ asset('/uploads').$product->productFile[0]['filepath'] }}" alt="">
+            @endif
         </div>
 
         <!-- Single Product Description -->
@@ -87,7 +92,7 @@
                 @endif
 
                 @if($user != null)
-                @if($product->inFavorites)
+                @if($product->inFavorites['userID'] == $user['id'])
                 <div class="product-favourite ml-4">
                     <input type="text" name="productID" value="{{$product['id']}}" hidden>
                     <a href="#" class="favme fa fa-heart active"></a>

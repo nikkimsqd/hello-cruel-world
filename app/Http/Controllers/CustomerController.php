@@ -39,6 +39,7 @@ use App\Chat;
 use App\Refund;
 use App\Rtw;
 use App\Deliveryfee;
+use App\View;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -68,180 +69,164 @@ class CustomerController extends Controller
                 $userID = Auth()->user()->id;
                 $categories = Category::all();
                 $boutiques = Boutique::all();
-                // $notAvailables = Product::where('productStatus', 'Not Available')->get();
                 $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
-                if($cart != null){
-                    $cartCount = $cart->items->count();
-                }else{
-                    $cartCount = 0;
-                }
+                if($cart != null){ $cartCount = $cart->items->count(); }
+                else{ $cartCount = 0; }
                 $notifications;
                 $notificationsCount;
                 $this->getNotifications($notifications, $notificationsCount);
 
+                $allProducts = array();
+                $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->get();
+                $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
 
+                // dD($products);
+
+                if(!empty($request->input('category'))){
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['id'] != $request->input('category')){
+                            $products->forget($key);
+                        }
+                    }
+                }
+
+                if(!empty($request->input('category'))){
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key);
+                        }
+                    }
+                }
+
+                // dd($sets);
+
+                $subCategories = array();
                 $profiling = Profiling::where('userID', $userID)->first();
-                $profilingDecoded = json_decode($profiling['data']);
-                $productReference = array(); //to know if a product is a set or no
-                $sortedProducts = array(); //idle
-                $productsArray = array(); //temporary storage for products
-                $setsArray = array(); //temporary storage for sets
-                $storage = array(); //store all products collected
-                $products = array(); //the chosen one
-                $categoryTagArray = array(); // store tags of a category
-                $basedProducts = array(); //products that are in history & likes
-        
-                //PROFILING----------------------------------------------------------------------------------
-                //getting tags in profiling
-                foreach($profilingDecoded as $categoryID => $categorytagID){
-                    $category = Category::where('id', $categoryID)->first();
-                    foreach($categorytagID as $tagID){
-                        $categoryTag = Categorytag::where('id', $tagID)->first();
-                        $itemtags = Itemtag::where('tagID', $categoryTag['id'])->get();
-
-                        if($itemtags != null){
-                            foreach($itemtags as $itemtag){
-                                if($itemtag['itemType'] == 'product'){
-                                    $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
-                                    if($itemtag->product['productStatus'] == 'Available'){
-                                        array_push($storage, $itemtag->product['id']);      //pag push sa product
-                                        array_push($categoryTagArray, $categoryTag['id']);
-                                    }
-                                }else{
-                                    $product = Set::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->first();
-                                    if($itemtag->set['setStatus'] == 'Available'){
-                                        array_push($storage, $itemtag->set['id']);
-                                        array_push($categoryTagArray, $categoryTag['id']);
-                                    }
-                                    // }
-                                }
-                            }
-                        }
+                $profilingDatas = json_decode($profiling['data']);
+                foreach($profilingDatas as $profilingData){
+                    foreach($profilingData as $subcategory){
+                        array_push($subCategories, $subcategory);
                     }
                 }
 
-                //ORDERS--------------------------------------------------------------------   --------------
-                $orderHistories = Order::where('userID', $userID)->where('status', 'Completed')->get();
-                foreach($orderHistories as $orderHistory){
-                    if($orderHistory['cartID'] != null){
+                foreach($products as $product){
+                    $points = 0;
 
-                        foreach($orderHistory->cart->items as $item){   //loop cart items
-                            if($item['productID'] != null){     //if cart item is a product
-                                $cartItem = Product::where('id', $item->product['id'])->first();
-                                $basedProducts[$cartItem['id']] = 'product';
-
-                                foreach($cartItem->getCategory->categoryTag as $categoryTag){
-                                    array_push($categoryTagArray, $categoryTag['id']);
-                                }
-                            }else{      //if cart item is a set
-                                $cartItem = Set::where('id', $item->set['id'])->first();
-                                $basedProducts[$cartItem['id']] = 'set';
-
-                                foreach($cartItem->items as $setItem){ //loop set items
-                                    foreach($setItem->product->getCategory->categoryTag as $categoryTag){
-                                        array_push($categoryTagArray, $categoryTag['id']);
-                                    }
-                                }
-                            }
-                        }
+                    if(in_array($product['category'], $subCategories)){
+                        $points += 2;
                     }
-                }
 
-                //FAVORITES----------------------------------------------------------------------------------
-                $favorites = Favorite::where('userID', $userID)->get();
-                $favTags = array();
-
-                //GETTING TAGS IN FAVORITES
-                foreach($favorites as $favorite){
-                    if($favorite['productID'] != null){
-                        $favProduct = Product::where('id', $favorite['productID'])->first();
-                        $basedProducts[$favProduct['id']] = 'product';      //get products
-
-                        foreach($favProduct->getCategory->categoryTag as $categoryTag){     //get tags
-                            array_push($categoryTagArray, $categoryTag['id']);
-                        }
-                    }else{
-                        $favProduct = Set::where('id', $favorite['setID'])->first();
-                        $basedProducts[$favProduct['id']] = 'set';
-
-                        foreach($favProduct->items as $item){
-                            foreach($item->product->getCategory->categoryTag as $categoryTag){
-                                array_push($categoryTagArray, $categoryTag['id']);
-                            }
-                        }
+                    $views = View::where('userID', $userID)->where('itemID', $product['id'])->first();
+                    if(!empty($views)){
+                        $viewPoints = $views['count'] * 1;
+                        $points += $viewPoints;
                     }
-                }
 
-                //RECOMMEND PRODUCTS WITH SIMILAR TAGS-----------------
-                $tagsCounted = array_count_values($categoryTagArray); //count similar tags
-                arsort($tagsCounted);
+                    $favorites = Favorite::where('userID', $userID)->get();
+                    $favoriteCounter= 0;
+                    foreach($favorites as $favorite){
+                        $itemID = explode("_", $favorite['itemID']);
+                        $itemType = $itemID[0];
 
-                foreach($tagsCounted as $categoryID => $counter){
-                    $itemtags = Itemtag::where('tagID', $categoryID)->get();
+                        if($itemType == "PROD"){
+                            $prod = Product::where('id', $favorite['itemID'])->first();
 
-                    foreach($itemtags as $itemtag){
-                        if($itemtag['itemType'] == 'product'){
-                            $product = Product::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->with('productFile')->first();
-                            $productReference[$product['id']] = 'product';
-                            $productsArray[$product['id']] = $product;
-                            array_push($storage, $product['id']); //pag push sa product
+                            if($product['category'] == $prod['category']){
+                                $favoriteCounter +=1;
+                            }
                         }else{
-                            $set = Set::where('id', $itemtag['itemID'])->with('owner')->with('rentDetails')->first();
-                            $setsArray[$set['id']] = $set;
-                            $productReference[$set['id']] = 'set';
-                            array_push($storage, $set['id']); //pag push sa product
-                        }
-                    }
-                }
+                            $setset = Set::where('id', $favorite['itemID'])->first();
+                            foreach($setset->items as $item){
+                                $setprod = $product::where('id', $item->product['id'])->first();
 
-                $scores = array_count_values($storage);
-                arsort($scores);
-
-                //RECO FROM LIKES, HISTORIES
-                if($basedProducts != null){
-                    $bProducts = array();
-                    foreach($basedProducts as $bpID => $productType){
-                        array_push($bProducts, $bpID);      //get their IDs
-                    }
-                    // dd($basedProducts);
-
-                    //know which product is which
-                    foreach($scores as $id => $score){
-                        if(!in_array($id, $bProducts)){
-                            if($bpID != $id){
-                                if($productReference[$id]  == 'product'){
-                                    array_push($products, $productsArray[$id]);
-                                }else{
-                                    array_push($products, $setsArray[$id]);
+                                if($setprod['category'] == $product['category']){
+                                    $favoriteCounter += 1;
                                 }
                             }
                         }
                     }
-                }else{
-                    //know which product is which
-                    foreach($scores as $id => $score){
-                        if($productReference[$id]  == 'product'){
-                            array_push($products, $productsArray[$id]);
-                        }else{
-                            array_push($products, $setsArray[$id]);
-                        }
-                    }
 
+                    // $lastOrders = ;
+                    //loop orders
+                    //loop product
+                    //
+
+                    $points += $favoriteCounter * 2.5;
+
+                    $product['points'] = $points;
                 }
 
-                //RECOMMEND PRODUCTS ON SAME2 CATEGORY TOO
-                foreach($tagsCounted as $categoryID => $counter){
-                    $category = Category::where('id', $categoryID)->first();
-                    $otherProducts = Product::where('category', $category['id'])->where('productStatus', 'Available')->get();
+                $products = $products->sortBy(function($product){
+                    return -$product->points;
+                });
 
-                    foreach($otherProducts as $otherProduct){
-                        if(in_array($otherProduct, $products)){
-                            array_push($products, $otherProduct);
+
+                foreach($sets as $set){
+                    $points = 0;
+
+                    foreach($set->items as $item){
+                        $setprod = Product::where('id', $item->product['id'])->with('productFile')->first();
+                        $item['productFile'] = $item->product->productFile;
+
+                        //BASE SA PROFILING
+                        if(in_array($item->product['category'], $subCategories)){
+                            $points += 2;
                         }
+
+                        //BASE SA VIEWS
+                        $views = View::where('itemID', $item->product['id'])->where('userID', $userID)->first();
+                        if(!empty($views)){
+                            $viewPoints = $views['count'] * 1;
+                            $points += $viewPoints;
+                        }
+
+                        //BASE SA FAVORITES
+                        $favorites = Favorite::where('userID', $userID)->get();
+                        $favoriteCounter = 0;
+                        foreach($favorites as $favorite){
+                            $itemID = explode("_", $favorite['itemID']);
+                            $itemType = $itemID[0];
+
+                            if($itemType == "PROD"){
+                                $prod = Product::where('id', $favorite['itemID'])->first();
+
+                                if($product['category'] == $prod['category']){
+                                    $favoriteCounter +=1;
+                                }
+                            }else{
+                                $setset = Set::where('id', $favorite['itemID'])->first();
+                                foreach($set->items as $item){
+                                    $setprod = Product::where('id', $item->product['id'])->first();
+
+                                    if($setprod['category'] == $product['category']){
+                                        $favoriteCounter += 1;
+                                    }
+                                }
+                            }
+                        }
+                        $points += $favoriteCounter * 2.5;
+
                     }
+                    $set['in_favorites'] = $favorites;
+                    $set['points'] = $points;
                 }
 
-                $productsCount = count($products);
+                // $sets = Set::where('setStatus', 'Available')->with('inFavorites')->with('owner')->with('rentDetails')->get();
+                $sets = $sets->sortBy(function($set){
+                    return -$set->points;
+                });
+
+                $allProducts = array_merge($products->toArray(), $sets->toArray());
+                $pPoints = array_column($allProducts, 'points');
+                array_multisort($pPoints, SORT_DESC, $allProducts);
+
+                $productsCount = count($allProducts);
 
                 //PAGINATION
                 $currentPage = $request->page;
@@ -251,11 +236,13 @@ class CustomerController extends Controller
                 }
 
                 $offset = ($currentPage * $pageItems) - $pageItems;
-                $itemsForCurrentPage = array_slice($products, $offset, $pageItems);
+                $itemsForCurrentPage = array_slice($allProducts, $offset, $pageItems);
 
                 $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
                 $paginator->withPath('shop');
-                // dd($paginator->items());
+
+                // dd($paginator);
+
 
                 return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink'));
                 
@@ -271,7 +258,7 @@ class CustomerController extends Controller
             $activeLink = "womens";
             $page_title = "Shop";
             $userID = null;
-            $products = Product::where('productStatus', 'Available')->get();
+            $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->get();
             $productsCount = $products->count();
             $categories = Category::all();
             // $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
@@ -280,7 +267,7 @@ class CustomerController extends Controller
             $boutiques = Boutique::all();
             $notAvailables = Product::where('productStatus', 'Not Available')->get();
             $notificationsCount = null;
-            $sets = Set::all();
+            $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
             $allProducts = array();
 
             foreach($products as $product){ array_push($allProducts, $product); }
@@ -300,7 +287,7 @@ class CustomerController extends Controller
             $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
             $paginator->withPath('shop');
 
-            // dd($products[1]->inFavorites);
+            dd($paginator);
 
             return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink'));
         }
@@ -308,20 +295,30 @@ class CustomerController extends Controller
 
     public function shopViaGender(Request $request, $gender)
     {
+        if (Auth::check()) { //check if nay naka login nga user
+            $userID = Auth()->user()->id;
+            $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+            if($cart != null){
+                $cartCount = $cart->items->count();
+            }else{
+                $cartCount = 0;
+            }
+            $notifications;
+            $notificationsCount;
+            $this->getNotifications($notifications, $notificationsCount);
+
+        }else{
+            $userID = null;
+            $cart = null;
+            $cartCount = null;
+            $notificationsCount = null;
+            $notifications = null;
+
+        }
         $activeLink = "$gender";
         $page_title = "$gender";
-        $userID = Auth()->user()->id;
         $categories = Category::all();
         $boutiques = Boutique::all();
-        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
-        if($cart != null){
-            $cartCount = $cart->items->count();
-        }else{
-            $cartCount = 0;
-        }
-        $notifications;
-        $notificationsCount;
-        $this->getNotifications($notifications, $notificationsCount);
 
         $filteredCategories = Category::where('gender', $gender)->get();
         $prods = Product::where('productStatus', 'Available')->get();
@@ -330,13 +327,13 @@ class CustomerController extends Controller
 
         foreach($filteredCategories as $category){
             foreach($prods as $prod){
-                if($prod['category'] == $category['id']){
+                if($prod->getSubCategory->getCategory['id'] == $category['id']){
                     array_push($products, $prod);
                 }
             }
             foreach($sets as $set){
                 foreach($set->items as $item){
-                    if($item->product['category'] == $category['id']){
+                    if($item->product->getSubCategory->getCategory['id'] == $category['id']){
                         if(!in_array($set, $products)){
                             array_push($products, $set);
                         }
@@ -344,7 +341,14 @@ class CustomerController extends Controller
                 }
             }
         }
-        // dD($activeLink);
+
+            //PAGINATION
+            $currentPage = $request->page;
+            $pageItems = 12;
+            if(empty($currentPage)){
+                $currentPage = 1;
+            }
+        // dd($products);
 
         $productsCount = count($products);
 
@@ -367,20 +371,30 @@ class CustomerController extends Controller
 
     public function shopViaCategory(Request $request, $gender, $category)
     {
+        if (Auth::check()) { //check if nay naka login nga user
+            $userID = Auth()->user()->id;
+            $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+            if($cart != null){
+                $cartCount = $cart->items->count();
+            }else{
+                $cartCount = 0;
+            }
+            $notifications;
+            $notificationsCount;
+            $this->getNotifications($notifications, $notificationsCount);
+
+        }else{
+            $userID = null;
+            $cart = null;
+            $cartCount = null;
+            $notificationsCount = null;
+            $notifications = null;
+
+        }
         $activeLink = "$gender";
-        $page_title = "$gender | $category";
-        $userID = Auth()->user()->id;
+        $page_title = ucfirst($gender)." - $category";
         $categories = Category::all();
         $boutiques = Boutique::all();
-        $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
-        if($cart != null){
-            $cartCount = $cart->items->count();
-        }else{
-            $cartCount = 0;
-        }
-        $notifications;
-        $notificationsCount;
-        $this->getNotifications($notifications, $notificationsCount);
 
         $filteredCategories = Category::where('gender', $gender)->where('categoryName', $category)->get();
         $prods = Product::where('productStatus', 'Available')->get();
@@ -391,13 +405,13 @@ class CustomerController extends Controller
 
         foreach($filteredCategories as $category){
             foreach($prods as $prod){
-                if($prod['category'] == $category['id']){
+                if($prod->getSubCategory->getCategory['id'] == $category['id']){
                     array_push($products, $prod);
                 }
             }
             foreach($sets as $set){
                 foreach($set->items as $item){
-                    if($item->product['category'] == $category['id']){
+                    if($item->product->getSubCategory->getCategory['id'] == $category['id']){
                         if(!in_array($set, $products)){
                             array_push($products, $set);
                         }
@@ -462,13 +476,9 @@ class CustomerController extends Controller
         }else{
             $categories = Category::where('gender', 'Mens')->get();
         }
-        $categoryGenders = $categories->groupBy('gender');
-        $categoryTags = Categorytag::all();
-        $categoryTagGender = $categoryTags->groupBy('categoryID');
 
-        // dd($categories);
 
-        return view('hinimo/getstarted', compact('page_title', 'categories', 'categoryGenders', 'categoryTags', 'categoryTagGender'));
+        return view('hinimo/getstarted', compact('page_title', 'categories'));
     }
 
     public function profiling(Request $request)
@@ -476,9 +486,9 @@ class CustomerController extends Controller
         $page_title = "profiling";
         $userID = Auth()->user()->id;
         $categories = Category::all();
-        $data = json_encode($request->input('tag'));
+        $data = json_encode($request->input('subcategory'));
 
-        
+        // dd($data);
         $profilings = Profiling::create([
             'userID' => $userID,
             'data' => $data
@@ -533,8 +543,25 @@ class CustomerController extends Controller
     public function productDetails($productID)
     {
         $user = Auth()->user();
+
+        if(!empty($user)){
+            $id = Auth()->user()->id;
+
+            $views = View::where('userID', $id)->where('itemID', $productID)->first();
+            if(empty($views)){
+                $views = View::create([
+                    'userID' => $id,
+                    'itemID' => $productID,
+                    'count' => 1
+                ]);
+            }else{
+                $views->update([
+                    'count' => $views['count'] + 1
+                ]);
+            }
+        }
+
     	$product = Product::where('id', $productID)->first();
-        $addresses = Address::where('userID', $user['id'])->get();
         $boutiques = Boutique::all();
         $page_title = "Shop";
         $notifications;
@@ -550,20 +577,40 @@ class CustomerController extends Controller
         $cities = City::all();
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
-        // dd($product->rentDetails['locationsAvailable']);
+        // dd(count($product->productFile));
         
         // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage'));
+    	return view('hinimo/single-product-details', compact('product', 'cart', 'cartCount', 'user', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage'));
     }
 
     public function addtoCart($productID)
     {
+        //CREATE ID FOR PRODUCT --------------------------------------------------------
+        $cart = Cart::orderBy('created_at', 'DESC')->first();
+        if(empty($cart)){
+            $cartID = 'CART_001';
+        }else{
+            $oldID = explode("_", $cart['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $cartID = 'CART_00'.$idInt;
+            }elseif($idInt <= 99){
+                $cartID = 'CART_0'.$idInt;
+            }else{
+                $cartID = 'CART_'.$idInt;
+            }
+        }
+        // dd($cartID);
+        //------------------------------------------------------------------------------
+
    		$userID = Auth()->user()->id;
         $cart = Cart::where('userID', $userID)->orderBy('created_at', 'DESC')->first();
 
         if($cart == null){
             $cart = Cart::create([
+                'id' => $cartID,
                 'userID' => $userID,
                 'status' => "Active"
             ]);
@@ -571,6 +618,7 @@ class CustomerController extends Controller
         }else{
             if($cart['status'] == "Inactive"){
                 $cart = Cart::create([
+                    'id' => $cartID,
                     'userID' => $userID,
                     'status' => "Active"
                 ]);
@@ -660,7 +708,6 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
         $deliveryAddress = $request->input('deliveryAddress');
         $addressID = $request->input('selectAddress');
-            // dd($addressID);
 
         if($deliveryAddress != null && $addressID == "addAddress"){
             $address = Address::create([
@@ -677,21 +724,36 @@ class CustomerController extends Controller
 
         }
 
-        $billingName = ucwords($request->input('fullname')); //remove ni
         $boutiqueCount = $request->input('boutiqueCount');
         for ($i=1; $i <= $boutiqueCount; $i++) { 
 
+            //CREATE ID FOR ORDER --------------------------------------------------------
+            $order = Order::orderBy('created_at', 'DESC')->first();
+            if(empty($order)){
+                $orderID = 'ORDER_001';
+            }else{
+                $oldID = explode("_", $order['id']);
+                $idInt = (int) $oldID[1];
+                $idInt++;
+                if($idInt <= 9){
+                    $orderID = 'ORDER_00'.$idInt;
+                }elseif($idInt <= 99){
+                    $orderID = 'ORDER_0'.$idInt;
+                }else{
+                    $orderID = 'ORDER_'.$idInt;
+                }
+            }
+            //------------------------------------------------------------------------------
+
             $orders = $request->input("order$i");
             $order = Order::create([
+                'id' => $orderID,
                 'userID' => $request->input('userID'),
-                'cartID' => $request->input('cartID'),
+                'transactionID' => $request->input('cartID'),
                 'subtotal' => $orders['subtotal'],
                 'deliveryfee' => $orders['deliveryfee'],
                 'total' => $orders['total'],
                 'boutiqueID' => $orders['boutiqueID'],
-                'deliveryAddress' => $addressID, //remove ni
-                'billingName' => $billingName, //remove ni
-                'phoneNumber' => $addressID, //remove ni
                 'boutiqueShare' => $orders['boutiqueShare'],
                 'adminShare' => $orders['adminShare'],
                 'status' => 'Pending',
@@ -701,7 +763,7 @@ class CustomerController extends Controller
 
             $cart = Cart::where('id', $request->input('cartID'))->first();
             $cartitems = Cartitem::where('cartID', $cart['id'])->get();
-            $cart = Cart::where('id', $order['cartID'])->first();
+            $cart = Cart::where('id', $order['transactionID'])->first();
             $cart->update([
                 'status' => 'Inactive'
             ]);
@@ -1030,7 +1092,7 @@ class CustomerController extends Controller
             }
         }
 
-        // dd($datesArray);
+        // dd($product->getSubCategory->getCategory);
         
         // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
@@ -1074,27 +1136,65 @@ class CustomerController extends Controller
             //leave empty lang para mo exit na sa condition
         }
 
+        //CREATE ID FOR RENT --------------------------------------------------------
+        $rent = Rent::orderBy('created_at', 'DESC')->first();
+        if(empty($rent)){
+            $rentID = 'RENT_001';
+        }else{
+            $oldID = explode("_", $rent['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $rentID = 'RENT_00'.$idInt;
+            }elseif($idInt <= 99){
+                $rentID = 'RENT_0'.$idInt;
+            }else{
+                $rentID = 'RENT_'.$idInt;
+            }
+        }
+        // dd($rentID);
+        //------------------------------------------------------------------------------
+
         $rent = Rent::create([
+            'id' => $rentID,
             'boutiqueID' => $request->input('boutiqueID'),
             'customerID' => $id, 
             'status' => "Pending", 
-            'productID' => $request->input('productID'), 
+            'itemID' => $request->input('productID'), 
             'dateToUse' => $dateuse, 
             'dateToBeReturned' => $dateToBeReturned, 
-            'additionalNotes' => $request->input('additionalNotes'),
+            'notes' => $request->input('additionalNotes'),
             'addressID' => $addressID
         ]);
 
         $measurement = Measurement::create([
             'userID' => $id,
             'type' => 'rent',
-            'typeID' => $rent['rentID'],
+            'typeID' => $rent['id'],
             'data' => $mName
         ]);
 
+        //CREATE ID FOR ORDER --------------------------------------------------------
+        $order = Order::orderBy('created_at', 'DESC')->first();
+        if(empty($order)){
+            $orderID = 'ORDER_001';
+        }else{
+            $oldID = explode("_", $order['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $orderID = 'ORDER_00'.$idInt;
+            }elseif($idInt <= 99){
+                $orderID = 'ORDER_0'.$idInt;
+            }else{
+                $orderID = 'ORDER_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
         $order = Order::create([
+            'id' => $orderID,
             'userID' => $id,
-            'rentID' => $rent['rentID'],
+            'rentID' => $rent['id'],
             'boutiqueID' => $request->input('boutiqueID'),
             'subtotal' => $request->input('subtotal'),
             'deliveryfee' => $request->input('deliveryfee'),
@@ -1123,12 +1223,12 @@ class CustomerController extends Controller
         
         $boutiqueseller->notify(new RentRequest($rent));
 
-        return redirect('/view-rent/'.$rent['rentID']);
+        return redirect('/view-rent/'.$rent['id']);
     }
 
     public function receiveRent($rentID)
     {
-        $rent = Rent::where('rentID', $rentID)->first();
+        $rent = Rent::where('id', $rentID)->first();
         $rent->update([
             'status' => "On Rent"
         ]);
@@ -1136,7 +1236,7 @@ class CustomerController extends Controller
             'status' => "On Rent"
         ]);
 
-        return redirect('/view-rent/'.$rent['rentID']);
+        return redirect('/view-rent/'.$rent['id']);
     }
 
     public function showBiddings()
@@ -1235,7 +1335,26 @@ class CustomerController extends Controller
         //---------------------------------------------------------------------------------
             // dd($wearers);
 
+        //CREATE ID FOR ORDER --------------------------------------------------------
+        $bidding = Bidding::orderBy('created_at', 'DESC')->first();
+        if(empty($bidding)){
+            $biddingID = 'BIDD_001';
+        }else{
+            $oldID = explode("_", $bidding['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $biddingID = 'BIDD_00'.$idInt;
+            }elseif($idInt <= 99){
+                $biddingID = 'BIDD_0'.$idInt;
+            }else{
+                $biddingID = 'BIDD_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
+
         $bidding = Bidding::create([
+            'id' => $biddingID,
             'userID' => $userID,
             'quotationPrice' => $request->input('quotationPrice'), 
             'endDate' => $request->input('endDate'), 
@@ -1259,7 +1378,26 @@ class CustomerController extends Controller
         //     'measurementID' => $measurement['id']
         // ]);
 
+        //CREATE ID FOR GALLERY --------------------------------------------------------
+        $glry = Gallery::orderBy('created_at', 'DESC')->first();
+        if(empty($glry)){
+            $galleryID = 'GLRY_001';
+        }else{
+            $oldID = explode("_", $glry['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $galleryID = 'GLRY_00'.$idInt;
+            }elseif($idInt <= 99){
+                $galleryID = 'GLRY_0'.$idInt;
+            }else{
+                $galleryID = 'GLRY_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
+
         $gallery = Gallery::create([
+            'id' => $galleryID,
             'userID' => $userID
         ]);
 
@@ -1274,11 +1412,18 @@ class CustomerController extends Controller
             $upload->move($destinationPath, $filename);
 
             $files->userID = $userID;
-            $files->biddingID = $bidding['id'];
-            $files->galleryID = $gallery['id'];
-            $files->filename = "/".$name;
+            $files->typeID = $bidding['id'];
+            $files->filepath = "/".$name;
             $files->save();
-            $filename = "/".$name;
+            // $filename = "/".$name;
+
+
+            $files = new File();
+
+            $files->userID = $userID;
+            $files->typeID = $gallery['id'];
+            $files->filepath = "/".$name;
+            $files->save();
         // }
       }
 
@@ -1449,7 +1594,26 @@ class CustomerController extends Controller
             'status' => "Closed"
         ]);
 
+        //CREATE ID FOR ORDER --------------------------------------------------------
+        $order = Order::orderBy('created_at', 'DESC')->first();
+        if(empty($order)){
+            $orderID = 'ORDER_001';
+        }else{
+            $oldID = explode("_", $order['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $orderID = 'ORDER_00'.$idInt;
+            }elseif($idInt <= 99){
+                $orderID = 'ORDER_0'.$idInt;
+            }else{
+                $orderID = 'ORDER_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
+
         $order = Order::create([
+            'id', $orderID,
             'userID' => $userID,
             'biddingID' => $bidding['id'],
             'boutiqueID' => $bid->owner['id'],
@@ -1775,7 +1939,28 @@ class CustomerController extends Controller
         //---------------------------------------------------------------------------------
             // dd($wearers);
 
+
+        //CREATE ID FOR MTO --------------------------------------------------------
+        $mto = Mto::orderBy('created_at', 'DESC')->first();
+        if(empty($mto)){
+            $mtoID = 'MTO_001';
+        }else{
+            $oldID = explode("_", $mto['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $mtoID = 'MTO_00'.$idInt;
+            }elseif($idInt <= 99){
+                $mtoID = 'MTO_0'.$idInt;
+            }else{
+                $mtoID = 'MTO_'.$idInt;
+            }
+        }
+        // dd($mtoID);
+        //------------------------------------------------------------------------------
+
         $mto = Mto::create([
+            'id' => $mtoID,
             'userID' => $userID,
             'boutiqueID' => $boutiqueID,
             'deadlineOfProduct' => $deadlineOfProduct,
@@ -1788,25 +1973,49 @@ class CustomerController extends Controller
             'status' => "Active"
             ]);
 
+        //CREATE ID FOR GALLERY --------------------------------------------------------
+        $glry = Gallery::orderBy('created_at', 'DESC')->first();
+        if(empty($glry)){
+            $galleryID = 'GLRY_001';
+        }else{
+            $oldID = explode("_", $glry['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $galleryID = 'GLRY_00'.$idInt;
+            }elseif($idInt <= 99){
+                $galleryID = 'GLRY_0'.$idInt;
+            }else{
+                $galleryID = 'GLRY_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
         $gallery = Gallery::create([
+            'id' => $galleryID,
             'userID' => $userID
         ]);
 
         $upload = $request->file('file');
         if($request->hasFile('file')) {
             $files = new File();
-            // $name = $upload->getClientOriginalName();
             $destinationPath = public_path('uploads');
             $name = substr(sha1(mt_rand().microtime()), mt_rand(0,35),7).$upload->getClientOriginalName();
             $filename = $destinationPath.'\\'. $name;
             $upload->move($destinationPath, $filename);
 
             $files->userID = $userID;
-            $files->mtoID = $mto['id'];
-            $files->galleryID = $gallery['id'];
-            $files->filename = "/".$name;
+            $files->typeID = $mto['id'];
+            // $files->galleryID = $gallery['id'];
+            $files->filepath = "/".$name;
             $files->save();
-            $filename = "/".$name;
+
+            //for gallery
+            $files = new File();
+
+            $files->userID = $userID;
+            $files->typeID = $gallery['id'];
+            $files->filepath = "/".$name;
+            $files->save();
         }
 
         $boutique = Boutique::where('id', $boutiqueID)->first();
@@ -2086,7 +2295,26 @@ class CustomerController extends Controller
             //leave empty lang para mo exit na sa condition
         }
 
+        //CREATE ID FOR ORDER --------------------------------------------------------
+        $order = Order::orderBy('created_at', 'DESC')->first();
+        if(empty($order)){
+            $orderID = 'ORDER_001';
+        }else{
+            $oldID = explode("_", $order['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $orderID = 'ORDER_00'.$idInt;
+            }elseif($idInt <= 99){
+                $orderID = 'ORDER_0'.$idInt;
+            }else{
+                $orderID = 'ORDER_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
+
         $order = Order::create([
+            'id', $orderID,
             'userID' => $userID,
             'mtoID' => $mtoID,
             'boutiqueID' => $mto->boutique['id'],
@@ -2201,8 +2429,8 @@ class CustomerController extends Controller
 
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => $status,
-                'paypalOrderID' => $request->paypalOrderID
+                'paymentStatus' => $status
+                // 'paypalOrderID' => $request->paypalOrderID
             ]);
 
             $boutiqueseller = User::where('id', $rent->boutique->owner['id'])->first();
@@ -2240,8 +2468,8 @@ class CustomerController extends Controller
 
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => $status,
-                'paypalOrderID' => $request->paypalOrderID
+                'paymentStatus' => $status
+                // 'paypalOrderID' => $request->paypalOrderID
             ]);
 
             $boutiqueseller = User::where('id', $mto->boutique->owner['id'])->first();
@@ -2279,8 +2507,8 @@ class CustomerController extends Controller
 
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => $status,
-                'paypalOrderID' => $request->paypalOrderID
+                'paymentStatus' => $status
+                // 'paypalOrderID' => $request->paypalOrderID
             ]);
 
             $boutiqueseller = User::where('id', $order->boutique->owner['id'])->first();
@@ -2319,8 +2547,8 @@ class CustomerController extends Controller
             
             $order->update([
                 'status' => 'In-Progress',
-                'paymentStatus' => $status,
-                'paypalOrderID' => $request->paypalOrderID
+                'paymentStatus' => $status
+                // 'paypalOrderID' => $request->paypalOrderID
             ]);
             
             print_r($payment);
@@ -2749,7 +2977,7 @@ class CustomerController extends Controller
 
         $favorites = Favorite::create([
             'userID' => $userID,
-            'productID' => $productID
+            'itemID' => $productID
         ]);
 
         return response()->json([
@@ -2759,7 +2987,8 @@ class CustomerController extends Controller
 
     public function unFavoriteProduct($productID)
     {
-        Favorite::where('productID', $productID)->delete();
+        $userID = Auth()->user()->id;
+        Favorite::where('userID', $userID)->where('itemID', $productID)->delete();
     }
 
     public function addSetToFavorites($setID)
@@ -2770,7 +2999,7 @@ class CustomerController extends Controller
 
         $favorites = Favorite::create([
             'userID' => $userID,
-            'setID' => $setID
+            'itemID' => $setID
         ]);
 
         return response()->json([
@@ -2780,7 +3009,8 @@ class CustomerController extends Controller
 
     public function unFavoriteSet($setID)
     {
-        Favorite::where('setID', $setID)->delete();
+        $userID = Auth()->user()->id;
+        Favorite::where('userID', $userID)->where('itemID', $setID)->delete();
     }
 
     public function fileComplain(Request $request)

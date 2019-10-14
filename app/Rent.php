@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rent extends Model
 {
-	protected $primaryKey = 'rentID';
+	protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $dates = ['approved_at'];
 
-    protected $fillable = ['boutiqueID', 'customerID', 'status', 'productID', 'dateToUse', 'locationToBeUsed', 'addressID', 'additionalNotes', 'dateToBeReturned', 'approved_at', 'completed_at', 'orderID', 'subtotal', 'deliveryFee', 'total', 'measurementID', 'paymentStatus', 'paypalOrderID', 'amountDeposit', 'amountPenalty', 'setID'];
+    protected $fillable = ['id', 'boutiqueID', 'customerID', 'status', 'itemID', 'dateToUse', 'addressID', 'notes', 'dateToBeReturned', 'approved_at', 'completed_at', 'orderID'    , 'measurementID'];
 
 
     public function customer()
@@ -24,7 +26,7 @@ class Rent extends Model
 
     public function product()
     {
-        return $this->hasOne('App\Product', 'id', 'productID');
+        return $this->hasOne('App\Product', 'id', 'itemID');
     }
 
     public function address()
@@ -49,7 +51,7 @@ class Rent extends Model
 
     public function set()
     {
-        return $this->hasOne('App\Set', 'id', 'setID');
+        return $this->hasOne('App\Set', 'id', 'itemID');
     }
 
     public function declineDetails()

@@ -31,7 +31,7 @@
                         <div class="row justify-content-center">
                             <?php $measurements = json_decode($product['measurements']) ?>
                             <div class="col-md-11">
-                            @foreach($product->getCategory->getMeasurements as $measurements)
+                            @foreach($product->getSubCategory->getCategory->getMeasurements as $measurements)
                             <label>{{$measurements['mName']}}:</label>
                                 <input type="text" name="measurement[{{$measurements['mName']}}]" class="form-control" required><br> 
                             @endforeach
@@ -94,20 +94,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-md-5 col-form-label ">Item is only allowed to be rented on these locations:</label>
-                            <div class="col-md-6">
-                                <?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
-                                @foreach($locs as $loc)
-                                    @foreach($cities as $city)
-                                    @if($city['citymunCode'] == $loc)
-                                    <label class="col-form-label">{{$city['citymunDesc']}},</label>
-                                    @endif
-                                    @endforeach 
-                                @endforeach
-                            </div>
-                        </div>
-
                         <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
                         <input type="text" id="productID" name="productID" value="{{$product['id']}}" hidden>
 
@@ -123,7 +109,7 @@
                         <div class="row">
                             <label class="col-md-5 col-form-label">Cashban:</label>
                             <div class="col-md-6">
-                                <label class="col-form-label">₱ {{$product->rentDetails['depositAmount']}}</label>
+                                <label class="col-form-label">₱ {{$product->rentDetails['cashban']}}</label>
                             </div>
                         </div>
 
@@ -135,7 +121,7 @@
                             </div>
                         </div>
 
-                        <?php $total = $product->rentDetails['price'] + $product->rentDetails['depositAmount'] + 50; ?> <!-- replace 50 with delveryfee -->
+                        <?php $total = $product->rentDetails['price'] + $product->rentDetails['cashban'] + 50; ?> <!-- replace 50 with delveryfee -->
                         <div class="form-group row">
                             <label class="col-md-5 col-form-label">Total Payment:</label>
                             <div class="col-md-6">

@@ -26,19 +26,37 @@
                 <div class="regular-page-text">
                     <!-- <h3 class="mb-2">Thank you. Now you can proceed on shopping. Enjoy!</h3> -->
 
-                    <div class="row">
+                    <div class="products_list row">
                     @foreach($favorites as $favorite)
                         <div class="col-md-3">
                             <div class="single-product-wrapper">
-                                @if($favorite->product)
+                                <?php
+                                    $itemID = explode("_", $favorite['itemID']);
+                                    $itemType = $itemID[0]; 
+                                ?>
+                                @if($itemType == "PROD")
                                     <?php $counter = 1; ?>
                                     <div class="product-img">
                                         @foreach($favorite->product->productFile as $image)
                                             @if($counter == 1)    
-                                            <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                            <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @elseif($counter == 2)    
-                                            <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                            <img class="hover-img" src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @endif
+
+                                            @if($favorite->product['productStatus'] == "Not Available")
+                                                <div class="product-badge offer-badge">
+                                                    <span>NOT AVAILABLE</span>
+                                                </div>
+                                            @elseif($favorite->product['rpID'] != null && $favorite->product['price'] != null)
+                                                <div class="product-badge new-badge">
+                                                    <span>RENTABLE</span>
+                                                </div>
+                                            @elseif($favorite->product['rpID'] != null && $favorite->product['price'] == null)
+                                                <div class="product-badge new-badge">
+                                                    <span>FOR RENT ONLY</span>
+                                                </div>
+                                            @endif   
                                             
                                             @if($favorite->product->inFavorites)
                                                 <div class="product-favourite unfavorite-product">
@@ -54,20 +72,67 @@
                                             <?php $counter++; ?>
                                         @endforeach
                                     </div>
-                                @elseif($favorite->set)
-                                    <div class="product-img">
-                                        <div class="row">
-                                    @foreach($favorite->set->items as $item)
-                                            <div class="col-md-6">
-                                    @foreach($item->product->productFile as $image)
-                                    
-                                        <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
-                                    
-                                    <?php break; ?>
-                                    @endforeach
+
+                                    <!-- Product Description -->
+                                    <div class="product-description">
+                                        <span>{{ $favorite->product->owner['boutiqueName'] }}</span>
+                                        <a href="#">
+                                            <h6>{{ $favorite->product['productName'] }}</h6>
+                                        </a>
+                                        @if($favorite->product['price'] != null)
+                                        <p class="product-price">₱{{ number_format($favorite->product['price']) }}</p>
+                                        @else
+                                        <p class="product-price">₱{{ number_format($favorite->product->rentDetails['price']) }}</p>
+                                        @endif
+
+                                        <!-- Hover Content -->
+                                        <div class="hover-content">
+                                            <!-- Add to Cart -->
+                                            <div class="add-to-cart-btn">
+                                                <!-- <input type="text" name="productID" value="{{$favorite['id']}}" hidden> -->
+                                                @if($favorite->product['productStatus'] == "Available")
+                                                <a href="{{url('single-product-details/').'/'.$favorite->product['id']}}" class="btn essence-btn">View Product</a>
+                                                @endif
                                             </div>
-                                    @endforeach
                                         </div>
+                                    </div>
+                                @elseif($favorite->set)
+                                        <?php $counter = 1; ?>
+                                    <div class="product-img">
+                                        <!-- <div class="row"> -->
+                                    @foreach($favorite->set->items as $item)
+                                            <!-- <div class="col-md-6"> -->
+                                    @foreach($item->product->productFile as $image)
+                                        @if($counter == 1)    
+                                            <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                        <?php break; ?>
+                                        @elseif($counter == 2)    
+                                            <img class="hover-img" src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                        <?php break; ?>
+                                        @endif
+                                    @endforeach
+                                            <?php $counter++; ?>
+                                            <!-- </div> -->
+                                    @endforeach
+                                        <!-- </div> -->
+
+                                    <div class="product-badge set-badge">
+                                        <span>SET</span>
+                                    </div>
+
+                                    @if($favorite->set['productStatus'] == "Not Available")
+                                    <div class="product-badge offer-badge">
+                                        <span>NOT AVAILABLE</span>
+                                    </div>
+                                    @elseif($favorite->set['rpID'] != null && $favorite->set['price'] != null)
+                                    <div class="product-badge new-badge">
+                                        <span>RENTABLE</span>
+                                    </div>
+                                    @elseif($favorite->set['rpID'] != null && $favorite->set['price'] == null)
+                                    <div class="product-badge new-badge">
+                                        <span>FOR RENT ONLY</span>
+                                    </div>
+                                    @endif
 
                                     @if($favorite->set->inFavorites)
                                         <div class="product-favourite unfavorite-set">
@@ -80,6 +145,37 @@
                                             <a href="#" class="favme fa fa-heart"></a>
                                         </div>
                                     @endif
+                                    </div>
+
+                                    <div class="product-description">
+                                        <span>{{ $favorite->set->owner['boutiqueName'] }}</span>
+                                        <a href="#">
+                                            <h6>{{ $favorite->set['setName'] }}</h6>
+                                        </a>
+                                        @if($favorite->set['price'] != null)
+                                        <p class="product-price">₱{{ number_format($favorite->set['price']) }}</p>
+                                        @else
+                                        <p class="product-price">₱{{ number_format($favorite->set->rentDetails['price']) }}</p>
+                                        @endif
+
+                                        <!-- <div class="add-to-cart-btn">
+                                            @if($favorite['setStatus'] == "Available")
+                                            <a href="{{url('set-single-product-details/').'/'.$favorite->set['id']}}" class="btn essence-btn">View Product</a>
+                                            @endif
+                                        </div> -->
+
+
+                                        <!-- Hover Content -->
+                                        <div class="hover-content">
+                                            <!-- Add to Cart -->
+                                            <div class="add-to-cart-btn">
+                                                <!-- <input type="text" name="productID" value="{{$favorite['id']}}" hidden> -->
+                                                @if($favorite->set['setStatus'] == "Available")
+                                                <a href="{{url('set-single-product-details/').'/'.$favorite->set['id']}}" class="btn essence-btn">View Product</a>
+                                                @endif
+                                            </div>
+                                        </div>
+
                                     </div>
                                 @endif
                             </div>

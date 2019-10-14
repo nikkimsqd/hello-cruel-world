@@ -253,7 +253,7 @@
                     <!-- Single Product Thumb -->
                     <div class="single_product_thumb clearfix">
                         <!-- <div class="product_thumbnail_slides owl-carousel"> -->
-                            <img src="{{ asset('/uploads').$mto->productFile['filename'] }}" alt="">
+                            <img src="{{ asset('/uploads').$mto->productFile['filepath'] }}" alt="">
                         <!-- </div> -->
                     </div>
 

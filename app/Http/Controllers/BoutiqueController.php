@@ -44,6 +44,7 @@ use App\Complain;
 use App\Email; //???????????????? wagtangon ni
 use App\Chat;
 use App\Dispute;
+use App\Subcategory;
 use App\Notifications\RentRequest;
 use App\Notifications\NewCategoryRequest;
 use App\Notifications\ContactCustomer;
@@ -283,33 +284,24 @@ class BoutiqueController extends Controller
 			$user = User::find($id);
 	    	$boutique = Boutique::where('userID', $id)->first();
 
-	    	$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->get();
-			$rents = Rent::where('boutiqueID', $boutique['id'])->get();
-			$mtos = Mto::where('boutiqueID', $boutique['id'])->where('orderID', '!=', null)->get();
+	    	$orders = Order::where('boutiqueID', $boutique['id'])->get();
+			// $rents = Rent::where('boutiqueID', $boutique['id'])->get();
+			// $mtos = Mto::where('boutiqueID', $boutique['id'])->where('orderID', '!=', null)->get();
 
 			$orderCount = $orders->count();
 			$productsCount = Product::where('boutiqueID', $boutique['id'])->count();
-			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
+			// $allOrders = Order::where('boutiqueID', $boutique['id'])->get();
 			$customerCount = Order::where('boutiqueID', $boutique['id'])->count();
 
 			$notifications = $user->notifications;
 			$notificationsCount = $user->unreadNotifications->count();
 			// dd($rand = substr(md5(microtime()),rand(0,26),5));
 
-			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
-			$complains = array();
-			foreach($allOrders as $allOrder){
-				$complainsCounts = Complain::where('orderID', $allOrder['id'])->where('status', 'Active')->first();
-				if($complainsCounts != null){
-					array_push($complains, $complainsCounts);
-				}
-			}
-			$complainsCount = count($complains);
 
-	        $rentArray = $rents->toArray();
-	        array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
+	        // $rentArray = $rents->toArray();
+	        // array_multisort(array_column($rentArray, "created_at"), SORT_DESC, $rentArray);
 
-			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos', 'orderCount', 'productsCount', 'customerCount', 'complainsCount')); 
+			return view('boutique/dashboard',compact('user', 'boutique', 'rents' ,'customer', 'page_title', 'notifications', 'notificationsCount', 'orders', 'mtos', 'orderCount', 'productsCount', 'customerCount')); 
 		}else {
 			return redirect('/shop');
 		}
@@ -414,14 +406,33 @@ class BoutiqueController extends Controller
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$category = $request->input('category');
+
+		//CREATE ID FOR PRODUCT --------------------------------------------------------
+		$product = Product::orderBy('created_at', 'DESC')->first();
+		if(empty($product)){
+			$productID = 'PROD_001';
+		}else{
+        	$prodID = explode("_", $product['id']);
+        	$idInt = (int) $prodID[1];
+        	$idInt++;
+        	if($idInt <= 9){
+        		$productID = 'PROD_00'.$idInt;
+        	}elseif($idInt <= 99){
+        		$productID = 'PROD_0'.$idInt;
+        	}else{
+        		$productID = 'PROD_'.$idInt;
+        	}
+		}
+		//------------------------------------------------------------------------------
 	    	
 		//TO ADD ITEM ON DATABASE ------------------------------------------------------
     	$product = Product::create([
+    		'id' => $productID,
     		'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
     		'price' => $request->input('retailPrice'),
-    		'category' => $request->input('category'),
+    		'category' => $request->input('subcategory'),
     		'productStatus' => "Available",
     		'quantity' => $request->input('quantity')
     		]);
@@ -430,14 +441,12 @@ class BoutiqueController extends Controller
 
 		//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
     	if($request->input('rentPrice') != null){
-			$locations = json_encode($request->input('locationsAvailable'));
 	    	$rp = Rentableproduct::create([
 	    		'price' => $request->input('rentPrice'),
-	    		'depositAmount' => $request->input('depositAmount'),
+	    		'cashban' => $request->input('cashban'),
 	    		'penaltyAmount' => $request->input('penaltyAmount'),
 	    		'limitOfDays' => $request->input('limitOfDays'),
-	    		'fine' => $request->input('fine'),
-	    		'locationsAvailable' => $locations
+	    		'fine' => $request->input('fine')
 	    	]);
 
 	    	$product->update([
@@ -449,14 +458,17 @@ class BoutiqueController extends Controller
 
 		//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
     	if($request->input('itemType') == 'yes'){
+			$sizes = $request->input('sizes');
+			foreach($sizes as $key => $value){
+				if(empty($value)){
+					unset($sizes[$key]);
+				}
+			}
+    		$sizesJson = json_encode($sizes);
+
     		$rtw = Rtw::create([
     			'productID' => $product['id'],
-    			'xs' => $request->input('XSquantity'),
-    			's' => $request->input('Squantity'),
-    			'm' => $request->input('Mquantity'),
-    			'l' => $request->input('Lquantity'),
-    			'xl' => $request->input('XLquantity'),
-    			'xxl' => $request->input('XLquantity')
+    			'sizes' => $sizesJson
     		]);
 
     		$product->update([
@@ -489,13 +501,12 @@ class BoutiqueController extends Controller
 
 		// FOR TAGS --------------------------------------------------------------------
 		$tags = $request->input('tags');
-		foreach($tags as $tag) {
-			Itemtag::create([
-				'tagID' => $tag,
-				'itemID' => $product['id'],
-				'itemType' => 'product'
-			]);
-		}
+		$tagjson = json_encode($tags);
+
+		Tag::create([
+			'itemID' => $product['id'],
+			'tags' => $tagjson
+		]);
 		//------------------------------------------------------------------------------
 
 		// FOR FILE UPLOAD -------------------------------------------------------------
@@ -510,8 +521,8 @@ class BoutiqueController extends Controller
 	        $upload->move($destinationPath, $filename);
 
 	       	$files->userID = $id;
-	       	$files->productID = $product['id'];
-	        $files->filename = "/".$random;
+	       	$files->typeID = $product['id'];
+	        $files->filepath = "/".$random;
 	      	$files->save();
 	      	$filename = "/".$random;
     	}
@@ -529,7 +540,7 @@ class BoutiqueController extends Controller
 			$boutiques = Boutique::where('userID', $user)->get();
 			$product = Product::where('id', $productID)->first();
 			$category = Category::where('id', $product['category'])->first();
-			$tags = Itemtag::where('itemID', $productID)->get();
+			$tags = Tag::where('itemID', $productID)->first();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 
@@ -546,10 +557,11 @@ class BoutiqueController extends Controller
 				}
 			}
 			$complainsCount = count($complains);
-			
+			$tagsArray = json_decode($tags['tags']);
+			$rtwSizes = json_decode($product->rtwDetails['sizes']);
 
-			return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tags', 'notifications', 
-			'notificationsCount', 'complainsCount'));
+			return view('boutique/viewProduct', compact('product', 'category', 'boutique', 'user', 'page_title', 'tagsArray', 'notifications', 
+			'notificationsCount', 'complainsCount', 'rtwSizes'));
 		}else {
 			return redirect('/shop');
 		}
@@ -563,15 +575,17 @@ class BoutiqueController extends Controller
 			$boutique = Boutique::where('userID', $user)->first();
 			$product = Product::where('id', $productID)->first();
 			$categories = Category::all();
-			$tags = Categorytag::where('categoryID', $product->getCategory['id'])->get();
+			$subcategories = Subcategory::all();
+			// $tags = Categorytag::where('categoryID', $product->getCategory['id'])->get();
 			$itemtags = Itemtag::where('itemID', $productID)->get();
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
 	        $regions = Region::all();
 	        $cities = City::all();
+	        $tags = Tag::where('itemID', $productID)->first();
+	        $tags = json_decode($tags['tags']);
+	        // dd($tags);
 
-
-	        // dd($product);
 
 			$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
 			$complains = array();
@@ -582,10 +596,11 @@ class BoutiqueController extends Controller
 				}
 			}
 			$complainsCount = count($complains);
+			$rtwSizes = json_decode($product->rtwDetails['sizes']);
 
 			
 
-			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'itemtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'complainsCount'));
+			return view('boutique/editView', compact('product', 'categories', 'boutique', 'user', 'page_title', 'tags', 'itemtags', 'notifications', 'notificationsCount', 'regions', 'cities', 'complainsCount', 'rtwSizes', 'subcategories'));
 			}else {
 			return redirect('/shop');
 		}
@@ -593,57 +608,42 @@ class BoutiqueController extends Controller
 
 	public function editProduct($productID, Request $request)
 	{
-		// dd($request->input('forRent'));
-		// dd($request->input('forSale'));
+		// dd($request->input());
 		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$product = Product::where('id', $productID)->first();
 		$category = $request->input('category');
+	
 		// dd($category);
 
-		//para automatic sa pagkuha sa quantity (only on rtw's)
-		$xs = $request->input('XSquantity');
-		$s = $request->input('Squantity');
-		$m = $request->input('Mquantity');
-		$l = $request->input('Lquantity');
-		$xl = $request->input('XLquantity');
-		$xxl = $request->input('XLquantity');
-		$totalQuantity = $xs + $s + $m + $l + $xxl + $xxl;
-		// dd($totalQuantity);
-
 		$product->update([
-    		// 'boutiqueID' => $boutique['id'],
     		'productName' => $request->input('productName'),
     		'productDesc' => $request->input('productDesc'),
-    		'category' => $request->input('category'),
+    		'category' => $request->input('subcategory'),
     		'productStatus' => $request->input('productStatus'),
 			'quantity' => $request->input('quantity')
     		]);
 
-	//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
+		//TO ADD RENT DETAILS IF ITEM IS AVAILABLE FOR RENT ----------------------------
 		if($request->input('forRent') != null){
 			$rp = Rentableproduct::where('id', $product['rpID'])->first();
 
 			if($rp != null){
-			$locations = json_encode($request->input('locationsAvailable'));
 				$rp->update([
 		    		'price' => $request->input('rentPrice'),
 		    		'depositAmount' => $request->input('depositAmount'),
 		    		'penaltyAmount' => $request->input('penaltyAmount'),
 		    		'limitOfDays' => $request->input('limitOfDays'),
 		    		'fine' => $request->input('fine'),
-		    		'locationsAvailable' => $locations
 		    	]);
 
 			}elseif($rp == null){
-			$locations = json_encode($request->input('locationsAvailable'));
 				$rp = Rentableproduct::create([
 		    		'price' => $request->input('rentPrice'),
 		    		'depositAmount' => $request->input('depositAmount'),
 		    		'penaltyAmount' => $request->input('penaltyAmount'),
 		    		'limitOfDays' => $request->input('limitOfDays'),
 		    		'fine' => $request->input('fine'),
-		    		'locationsAvailable' => $locations
 		    	]);
 
 		    	$product->update([
@@ -665,21 +665,24 @@ class BoutiqueController extends Controller
 	    		'price' => null
 	    	]);
 		}
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
-	//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
+		//TO KNOW IF  ITEM IS FOR RTW OR NOT -------------------------------------------
 		if($request->input('itemType') == 'yes'){
 			$rtw = Rtw::where('id', $product['rtwID'])->first();
 
+			$sizes = $request->input('sizes');
+			foreach($sizes as $key => $value){
+				if(empty($value)){
+					unset($sizes[$key]);
+				}
+			}
+
+    		$sizesJson = json_encode($sizes);
+
 			if($rtw != null){
 				$rtw->update([
-					'productID' => $product['id'],
-					'xs' => $request->input('XSquantity'),
-					's' => $request->input('Squantity'),
-					'm' => $request->input('Mquantity'),
-					'l' => $request->input('Lquantity'),
-					'xl' => $request->input('XLquantity'),
-					'xxl' => $request->input('XLquantity')
+    				'sizes' => $sizesJson
 				]);
 
 				$product->update([
@@ -687,15 +690,10 @@ class BoutiqueController extends Controller
 					'measurementNames' => null
 				]);
 			}else{
-				$rtw = Rtw::create([
+	    		$rtw = Rtw::create([
 					'productID' => $product['id'],
-					'xs' => $request->input('XSquantity'),
-					's' => $request->input('Squantity'),
-					'm' => $request->input('Mquantity'),
-					'l' => $request->input('Lquantity'),
-					'xl' => $request->input('XLquantity'),
-					'xxl' => $request->input('XLquantity')
-				]);
+	    			'sizes' => $sizesJson
+	    		]);
 
 				$product->update([
 					'rtwID' => $rtw['id'],
@@ -709,6 +707,7 @@ class BoutiqueController extends Controller
 	    	$measurementNames = $request->input("$category");
 			$measurementNamesArray = array();
 
+			// dd($category);
 			foreach($measurementNames as $measurementName => $measurement){
 				array_push($measurementNamesArray, $measurementName);
 			}
@@ -726,25 +725,22 @@ class BoutiqueController extends Controller
 				'rtwID' => null
 			]);
 		}
-	//------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------
 
 	
-	// FOR TAGS --------------------------------------------------------------------
-		Itemtag::where('itemID', $product['id'])->delete();
+		// FOR TAGS --------------------------------------------------------------------
 		$tags = $request->input('tags');
-			foreach($tags as $tag) {
-			Itemtag::create([
-				'tagID' => $tag,
-				'itemID' => $product['id'],
-				'itemType' => 'product'
-			]);
-		}
-	//------------------------------------------------------------------------------
+		$tagjson = json_encode($tags);
 
-	// FOR FILE UPLOAD -------------------------------------------------------------
+		Tag::where('itemID', $productID)->update([
+			'tags' => $tagjson
+		]);
+		//------------------------------------------------------------------------------
+
+		// FOR FILE UPLOAD -------------------------------------------------------------
     	$uploads = $request->file('file');
     	if($request->hasFile('file')) {
-    	File::where('productID', $productID)->delete();
+    	File::where('typeID', $productID)->delete();
     	
     	foreach($uploads as $upload){
     		$files = new File();
@@ -754,13 +750,13 @@ class BoutiqueController extends Controller
 	        $upload->move($destinationPath, $filename);
 
 	       	$files->userID = $id;
-	       	$files->productID = $productID;
-	        $files->filename = "/".$random;
+	       	$files->typeID = $productID;
+	        $files->filepath = "/".$random;
 	      	$files->save();
 	      	$filename = "/".$random;
     	}
-      }
-	//------------------------------------------------------------------------------
+      	}
+		//------------------------------------------------------------------------------
 
       return redirect('viewproduct/'.$productID);
 
@@ -1774,7 +1770,7 @@ class BoutiqueController extends Controller
 		$boutique = Boutique::where('userID', $user)->first();
 		$products = Product::where('boutiqueID', $boutique['id'])->where('rtwID', '!=', null)->get();
 		$categories = Category::all();
-		$tags = Categorytag::all();
+		// $tags = Categorytag::all();
 		// dd($categories);
 	        // $categoryGenders = $categories->groupBy('gender');
 
@@ -1788,17 +1784,29 @@ class BoutiqueController extends Controller
 
     public function saveset(Request $request)
     {
-  //   	$products = $request->input('products');
-  //   	$array = array();
-  //       foreach($products as $product) {
-	 //    	array_push($array, $product);
-		// }
-    	// dd($array);
+		//CREATE ID FOR SET --------------------------------------------------------
+		$set = Set::orderBy('created_at', 'DESC')->first();
+		if(empty($set)){
+			$setID = 'SET_001';
+		}else{
+        	$oldID = explode("_", $set['id']);
+        	$idInt = (int) $oldID[1];
+        	$idInt++;
+        	if($idInt <= 9){
+        		$setID = 'SET_00'.$idInt;
+        	}elseif($idInt <= 99){
+        		$setID = 'SET_0'.$idInt;
+        	}else{
+        		$setID = 'SET_'.$idInt;
+        	}
+		}
+		//------------------------------------------------------------------------------
 
     	$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 
 		$set = Set::create([
+			'id' => $setID,
 			'boutiqueID' => $boutique['id'],
 			'setName' => $request->input('setName'),		
 			'setDesc' => $request->input('setDesc'),		
@@ -1808,14 +1816,14 @@ class BoutiqueController extends Controller
 		]);
 
 		if($request->input('rentPrice') != null){
-			$locations = json_encode($request->input('locationsAvailable'));
+			// $locations = json_encode($request->input('locationsAvailable'));
 	    	$rp = Rentableproduct::create([
 	    		'price' => $request->input('rentPrice'),
-	    		'depositAmount' => $request->input('depositAmount'),
+	    		'cashban' => $request->input('cashban'),
 	    		'penaltyAmount' => $request->input('penaltyAmount'),
 	    		'limitOfDays' => $request->input('limitOfDays'),
-	    		'fine' => $request->input('fine'),
-	    		'locationsAvailable' => $locations
+	    		'fine' => $request->input('fine')
+	    		// 'locationsAvailable' => $locations
 	    	]);
 
 	    	$set->update([
@@ -1834,13 +1842,12 @@ class BoutiqueController extends Controller
 
 		// FOR TAGS --------------------------------------------------------------------
 		$tags = $request->input('tags');
-		foreach($tags as $tag) {
-			Itemtag::create([
-				'tagID' => $tag,
-				'itemID' => $set['id'],
-				'itemType' => 'set'
-			]);
-		}
+		$tagjson = json_encode($tags);
+
+		Tag::create([
+			'itemID' => $set['id'],
+			'tags' => $tagjson
+		]);
 		//------------------------------------------------------------------------------
 
 		return redirect('/sets');
@@ -1855,7 +1862,8 @@ class BoutiqueController extends Controller
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
 
 		$set = Set::where('id', $setID)->first();
-		$tags = Itemtag::where('itemID', $setID)->get();
+		$tags = Tag::where('itemID', $setID)->first();
+		$tagsArray = json_decode($tags['tags']);
 
 		// $product = Product::where('id', $productID)->first();
 		// $category = Category::where('id', $product['category'])->first();
@@ -1867,7 +1875,7 @@ class BoutiqueController extends Controller
 		}
 
 		return view('boutique/viewSet', compact('boutique', 'user', 'page_title', 'notifications', 
-		'notificationsCount', 'set', 'tags'));
+		'notificationsCount', 'set', 'tagsArray'));
 	}
 
 	public function editViewSet($setID)
@@ -1883,28 +1891,16 @@ class BoutiqueController extends Controller
 			$products = Product::where('boutiqueID', $boutique['id'])->where('rtwID', '!=', null)->get(); // option products
 			$categories = Category::all();
 
-			//for rent
-	        $regions = Region::all();
-	        $cities = City::all();
-
 	        $setItems = array(); //storage of existing items on a set
-			$selectedTags = []; //staorage for all tags on an item
-	        $itemsCategoryTags = array(); //storage for all tags on every category
-			$itemtags = Itemtag::where('itemID', $setID)->get(); //get tags assigned on a set
 
-	        foreach($set->items as $item){
+			$tags = Tag::where('itemID', $setID)->first();
+          	$tagsArray = json_decode($tags['tags']);
+			foreach($set->items as $item){
 	        	array_push($setItems, $item['productID']);
-	        	foreach($item->product->getCategory->categoryTag as $categoryTag){
-					// $tags[] = $categoryTag['id'];
-					array_push($itemsCategoryTags, $categoryTag);
-	        	}
 	        }
 
-			foreach ($itemtags as $tag) {
-				$selectedTags[] = $tag['tagID'];
-			}
 
-			return view('boutique/editViewSet', compact('set', 'boutique', 'user', 'page_title', 'tags', 'notifications', 'notificationsCount', 'regions', 'cities', 'itemtags', 'selectedTags', 'itemsCategoryTags', 'products', 'setItems'));
+			return view('boutique/editViewSet', compact('set', 'boutique', 'user', 'page_title', 'tagsArray', 'notifications', 'notificationsCount', 'products', 'setItems'));
 		}else {
 			return redirect('/shop');
 		}
@@ -1977,19 +1973,20 @@ class BoutiqueController extends Controller
 
 	}
 
-	public function getProductsforSet($gender, $categoryID)
+	public function getProductsforSet($categoryID, $subcategoryID)
 	{
 		$user = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $user)->first();
-		$category = Category::where('gender', $gender)->where('id', $categoryID)->first();
-		$products = Product::where('boutiqueID', $boutique['id'])->where('category', $category['id'])->where('rtwID', '!=', null)->with('productFile')->get();
+		// $category = Category::where('id', $categoryID)->first();
+		$subcategory = Subcategory::where('id', $subcategoryID)->first();
+		$products = Product::where('boutiqueID', $boutique['id'])->where('category', $subcategory['id'])->where('rtwID', '!=', null)->with('productFile')->get();
 		$productsArray = array();
 
         $productURL = array();
 
 
 		foreach($products as $product){
-            $productURL[$product['id']][] = $product->productFile[0]['filename'];
+            $productURL[$product['id']][] = $product->productFile[0]['filepath'];
 			array_push($productsArray, $product); //
 		}
 		// dd($products);
@@ -2004,36 +2001,14 @@ class BoutiqueController extends Controller
 	{
         $productURL = array();
 		$product = Product::where('id', $productID)->with('productFile')->with('rtwDetails')->first();
-        $productURL[$productID][] = $product->productFile[0]['filename'];
-        $rtwSizes = array();
+        $productURL[$productID][] = $product->productFile[0]['filepath'];
+        $rtwSizes = $product->rtwDetails['sizes'];
         $sizes = array();
 
-        if($product->rtwDetails['xs'] != null){
-        	$rtwSizes['xs'] = $product->rtwDetails['xs'];
-        	array_push($sizes, 'xs');
-        }
-        if($product->rtwDetails['s'] != null){
-        	$rtwSizes['s'] = $product->rtwDetails['s'];
-        	array_push($sizes, 's');
-        }
-        if($product->rtwDetails['m'] != null){
-        	$rtwSizes['m'] = $product->rtwDetails['m'];
-        	array_push($sizes, 'm');
-        }
-        if($product->rtwDetails['l'] != null){
-        	$rtwSizes['l'] = $product->rtwDetails['l'];
-        	array_push($sizes, 'l');
-        }
-        if($product->rtwDetails['xl'] != null){
-        	$rtwSizes['xl'] = $product->rtwDetails['xl'];
-        	array_push($sizes, 'xl');
-        }
-        if($product->rtwDetails['xxl'] != null){
-        	$rtwSizes['xxl'] = $product->rtwDetails['xxl'];
-        	array_push($sizes, 'xxl');
-        }
+        	$sizes = json_decode($rtwSizes);
+        	// array_push($sizes, 'xs');
 
-        // dd($rtwSizes);
+        // dd($sizes);
 		return response()->json([
 			'product' => $product,
 			'productURL' => $productURL,
@@ -2269,6 +2244,15 @@ class BoutiqueController extends Controller
    		]);
 
    		return redirect('orders/'.$orderID);
+    }
+
+    public function getSubcategory($categoryID)
+    {
+    	$subcategories = Subcategory::where('categoryID', $categoryID)->get();
+
+    	return response()->json([
+    		'subcategories' => $subcategories
+    	]);
     }
 
 

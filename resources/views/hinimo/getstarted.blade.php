@@ -30,18 +30,17 @@
                         {{csrf_field()}}
 
                         @foreach($categories as $category)
-                        @if($category->categoryTag)
+                        @if(count($category->getSubCategory) > 0)
                         <p class="mb-2">Choose the {{$category['categoryName']}} you like to wear</p>
                         <div class="row">
                             <div class="col-md-5">
-                                @foreach($categoryTags as $categoryTag)
-                                @if($categoryTag['categoryID'] == $category['id'])
+                                @foreach($category->getSubCategory as $subcategory)
                                 <div class="custom-control custom-checkbox d-block mb-2">
-                                    <input type="checkbox" name="tag[{{$category['id']}}][]" value="{{$categoryTag['id']}}" class="custom-control-input" id="{{$categoryTag['id']}}">
-                                    <label class="custom-control-label" for="{{$categoryTag['id']}}">{{ucfirst($categoryTag['tagName'])}}</label>
+                                    <input type="checkbox" name="subcategory[{{$subcategory['id']}}][]" value="{{$subcategory['id']}}" class="custom-control-input" id="{{$subcategory['id']}}">
+                                    <label class="custom-control-label" for="{{$subcategory['id']}}">{{ucfirst($subcategory['subcatName'])}}</label>
                                 </div>
-                                @endif
                                 @endforeach
+                            <?php //var_dump($category->getSubCategory); ?>
                             </div>
 
                            <!--  <div class="col-md-5">

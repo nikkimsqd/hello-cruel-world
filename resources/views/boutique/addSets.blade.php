@@ -37,15 +37,20 @@
         <!-- <div class="row"> -->
         <div class="col-md-12">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
               <select class="form-control" name="gender" id="gender-select" required>
                   <option disabled selected="selected">Select gender</option>
                   <option value="Womens">Womens</option>
                   <option value="Mens">Mens</option>
               </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
               <select class="form-control" name="category" id="category-select" disabled required>
+                <option disabled selected="selected"></option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select class="form-control select2" name="subcategory" id="subcategory-select" disabled required>
                 <option disabled selected="selected"></option>
               </select>
             </div>
@@ -95,23 +100,24 @@
             </div>
             
             <label>Add Tags:</label>
-            <div class="form-group tags">
-               @foreach($categories as $category)
-               @foreach($tags as $tag)
-               @if($category['id'] == $tag['categoryID'])
-               <input type="checkbox" name="tags[]" id="{{$tag['tagName']}}" value="{{$tag['id']}}">
-               <label for="{{$tag['tagName']}}">{{$tag['tagName']}}</label>
-               @endif
-               @endforeach
-               @endforeach
+            <div class="input-group">
+              <input type="text" id="input-tag" placeholder="Add Tag ..." class="form-control">
+                <span class="input-group-btn">
+                  <a class="btn btn-primary" id="add-tag">Add</a>
+                </span>
+            </div><br>
+
+            <div class="form-group tags" id="inputted-tags">
             </div>
           </div> <!-- column closing -->
 
           <div class="col-md-6">
             <div class="form-group">
               <label>Item Availability:</label><br>
-              <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true"> For Rent &nbsp;&nbsp;&nbsp;
-              <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
+              <input type="checkbox" id="forRent" name="forRent" class="minimal-red" value="true">
+              <label for="forRent">For Rent </label> &nbsp;&nbsp;&nbsp;
+              <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> 
+              <label for="forSale">For Sale</label>
             </div>
 
             <div class="form-group" id="forSalePrice" hidden>
@@ -135,15 +141,13 @@
               <label>Amount of fine incase item is lost by user</label>
               <input type="number" name="fine" class="input form-control"><br>
 
-              <label>Cities item is available for rent</label><br>
-
-
+              <!-- <label>Cities item is available for rent</label><br>
               <label id="city-id" hidden>Select Cities:</label>
               <div name="cities" id="city-select" style="column-count: 3">
-              @foreach($cities as$city)
-              <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
-              @endforeach
-              </div>
+                @foreach($cities as$city)
+                <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
+                @endforeach
+              </div> -->
             </div>
 
         	</div>
@@ -245,6 +249,8 @@ $('#gender-select').on('change', function(){
   $('#category-select').empty();
   $('.view-item').empty();
   $('.item-choices').empty();
+  $('.tags').empty();
+  $('#subcategory-select').empty();
 
   var gender = $(this).val();
 
@@ -264,13 +270,37 @@ $('#gender-select').on('change', function(){
 
 $('#category-select').on('change', function(){
   var gender = $('#gender-select').val();
-  var categoryName = $(this).val();
+  var categoryID = $(this).val();
+  // var fileAddress = "<?= asset('/uploads') ?>";
+
+  $('.item-choices').empty();
+  $('#subcategory-select').empty();
+  $('#subcategory-select').prop('disabled',false);
+
+  $.ajax({
+    url:"{{url('getSubcategory/')}}/"+categoryID,
+    success:function(data){
+      $('#subcategory-select').append('<option selected disabled value=""></option>');
+      data.subcategories.forEach(function(subcategory){
+        $('#subcategory-select').append('<option value="'+subcategory.id+'">'+subcategory.subcatName+'</option>');
+      });
+    }
+  });
+
+
+}); 
+
+$('#subcategory-select').on('change', function(){
+  var gender = $('#gender-select').val();
+  var categoryID = $('#category-select').val();
+  var subcategoryID = $(this).val();
   var fileAddress = "<?= asset('/uploads') ?>";
 
+  console.log(subcategoryID);
   $('.item-choices').empty();
 
   $.ajax({
-    url: "{{url('getProductsforSet')}}/"+gender+'/'+categoryName,
+    url: "{{url('getProductsforSet')}}/"+categoryID+'/'+subcategoryID,
     success:function(data){
 
       if(data.productsArray != 0){
@@ -294,7 +324,7 @@ $('#category-select').on('change', function(){
       }
     }
   });
-}); 
+});
 
 
 $(".item-choices").on('change', '.product', function(){
@@ -306,19 +336,8 @@ $(".item-choices").on('change', '.product', function(){
     dataType: 'json',
     success:function(data){
       var picture = data.productURL[productID][0]; //contains the filename
-      var rtwSizes = [];
 
-      if(data.rtwSizes['xs'] != null){
-        rtwSizes.push(data.rtwSizes['xs']);
-      }
-
-      // data.sizes.forEach(function(size){ 
-      //   var sizeValue = data.rtwSizes[size]; 
-      //   console.log(size +': ' + sizeValue);
-
-      // });
-
-      console.log(data.rtwSizes);
+      console.log(data.sizes);
 
       $('.view-item').append(
           '<div class="row" style="margin-bottom: 10px;">'+
@@ -330,13 +349,7 @@ $(".item-choices").on('change', '.product', function(){
                 '<input type="checkbox" name="products[]" value="'+data.product.id+'" checked hidden>' +
                 '<h4>Product Name: <b>'+data.product.productName+'</b></h4>' +
                 '<h4>Product Description: <b>'+data.product.productDesc+'</b></h4>' +
-                  // $.each(data.rtwSizes, function(key, value){ 
-                  data.sizes.forEach(function(size){ 
-                    var sizeValue = data.rtwSizes[size]; 
-                   // key +': ' + value 
-                   'hehehehehyy'
-                    // console.log(size +': ' + sizeValue);
-                })+
+                  data.sizes +
             '</div>'+
           '</div> <hr>'
       );
@@ -344,6 +357,26 @@ $(".item-choices").on('change', '.product', function(){
     }
   });
 
+});
+
+
+$('#add-tag').on('click', function(){
+  var tag = $('#input-tag').val();
+
+  $('#inputted-tags').append(
+    '<input type="text" name="tags[]" class="selected-tags" id="'+ tag +'" value="'+ tag +'" hidden>'+
+    '<label for="'+ tag +'">'+ tag +'</label> ');
+
+  $('#input-tag').val('');
+  $('#input-tag').prop('autofocus', true);
+
+});
+
+$('body').on('click', '.selected-tags', function(){
+  var tag = $(this).val();
+  console.log(tag);
+  $('#'+tag).remove();
+  $('label[for='+tag+']').remove();
 });
 
 

@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bidding extends Model
 {
-    protected $fillable = ['userID', 'quotationPrice', 'endDate', 'deadlineOfProduct', 'measurementID', 'category', 'notes', 'orderID', 'status', 'bidID', 'quantity', 'fabChoice', 'numOfPerson', 'nameOfWearers'];
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $fillable = ['id', 'userID', 'quotationPrice', 'endDate', 'deadlineOfProduct', 'measurementID', 'category', 'notes', 'orderID', 'status', 'bidID', 'quantity', 'fabChoice', 'numOfPerson', 'nameOfWearers'];
 
     public function owner()
     {
@@ -15,12 +19,12 @@ class Bidding extends Model
 
     public function productFile()
     {
-        return $this->hasMany('App\File', 'biddingID', 'id');
+        return $this->hasMany('App\File', 'typeID', 'id');
     }
 
     public function order()
     {
-        return $this->hasOne('App\Order', 'biddingID', 'id');
+        return $this->hasOne('App\Order', 'transactionID', 'id');
     }
 
     public function measurement()

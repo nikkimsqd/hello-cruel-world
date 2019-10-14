@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    protected $fillable = ['userID', 'status'];
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $fillable = ['id', 'userID', 'status'];
 
     public function owner()
     {

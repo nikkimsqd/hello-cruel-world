@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function(){
 
 	Route::get('/admin-categories', 'AdminController@categories');
 	Route::post('/saveCategory', 'AdminController@saveCategory');
+	Route::post('/saveSubCategory', 'AdminController@saveSubCategory');
 	Route::post('/declineCategory', 'AdminController@declineCategory');
 
 
@@ -182,7 +183,7 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/editViewSet/{setID}', 'BoutiqueController@editViewSet');
 	Route::post('/editSet', 'BoutiqueController@editSet');
 
-	Route::get('/getProductsforSet/{gender}/{categoryID}', 'BoutiqueController@getProductsforSet'); //get productsss
+	Route::get('/getProductsforSet/{categoryID}/{subcategoryID}', 'BoutiqueController@getProductsforSet'); //get productsss
 	Route::get('/getProductforSet/{productID}', 'BoutiqueController@getProductforSet'); //get single product details
 
 
@@ -264,6 +265,9 @@ Route::middleware(['auth'])->group(function(){
 	//FILE FOR DISPUTE
 	Route::post('/fileforDispute', 'BoutiqueController@fileforDispute');
 
+
+
+	Route::get('/getSubcategory/{categoryID}', 'BoutiqueController@getSubcategory');
 
 
 //CUSTOMER--------------------------------------------------------------------------------------------
@@ -373,8 +377,8 @@ Route::middleware(['auth'])->group(function(){
 	// Route::get('/get-paypal-transaction/{orderId}', 'CustomerController@getPaypalOrder');
 
 	//EVENTS
-	Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
-	Route::get('mixnmatch', 'CustomerController@mixnmatch');
+	// Route::get('/{boutiqueID}/mixnmatch', 'CustomerController@mixnmatch');
+	Route::get('events', 'CustomerController@mixnmatch');
 	Route::get('/getMProduct/{productID}', 'CustomerController@getMProduct');
 	Route::post('/submitMixnmatch', 'CustomerController@submitMixnmatch');
 	Route::get('/addmnmtoCart/{top}/{bottom}', 'CustomerController@addmnmtoCart');

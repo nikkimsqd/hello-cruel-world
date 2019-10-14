@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    protected $fillable = ['userID'];
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $fillable = ['id', 'userID'];
 
     public function productFile()
     {

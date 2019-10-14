@@ -52,8 +52,8 @@
               @endif
 
               <h4 class="heading">Tags:</h4>
-              @foreach($tags as $tag)
-              <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['tagName']}}</h2>
+              @foreach($tagsArray as $tag)
+              <h2 id="{{$tag}}" class="tags label label-default">{{$tag}}</h2>
               @endforeach
               
             </div>
@@ -85,7 +85,7 @@
               <h4>Product Name: {{$item->product['productName']}}</h4>
               
               @foreach( $item->product->productFile as $image)
-                  <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 400px; object-fit: cover;">
+                  <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:100%; height: 400px; object-fit: cover;">
               <?php break; ?>
               @endforeach
 

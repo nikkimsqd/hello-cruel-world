@@ -24,7 +24,7 @@
               </div>
 
               <h4 class="heading">Product Category</h4>
-              <h4>{{ $product->getCategory['categoryName']}}<h4>
+              <h4>{{ $product->getSubCategory->getCategory['categoryName'].' - '.$product->getSubCategory['subcatName']}}<h4>
 
               <h4 class="heading">In Stock</h4>
               <h4>{{$product['quantity']}} pcs.</h4>
@@ -47,30 +47,15 @@
               @elseif($product['rtwID'] != null)
                 <h4 class="heading">Available Sizes</h4>
                 <ul>
-                  @if($product->rtwDetails['xs'] != null)
-                    <li><h4><b>XS:</b> {{$product->rtwDetails['xs']}} pcs.</h4></li>
-                  @endif
-                  @if($product->rtwDetails['s'] != null)
-                    <li><h4><b>S:</b> {{$product->rtwDetails['s']}} pcs.</h4></li>
-                  @endif
-                  @if($product->rtwDetails['m'] != null)
-                    <li><h4><b>M:</b> {{$product->rtwDetails['m']}} pcs.</h4></li>
-                  @endif
-                  @if($product->rtwDetails['l'] != null)
-                    <li><h4><b>L:</b> {{$product->rtwDetails['l']}} pcs.</h4></li>
-                  @endif
-                  @if($product->rtwDetails['xl'] != null)
-                    <li><h4><b>XL:</b> {{$product->rtwDetails['xl']}} pcs.</h4></li>
-                  @endif
-                  @if($product->rtwDetails['xxl'] != null)
-                    <li><h4><b>XXL:</b> {{$product->rtwDetails['xxl']}} pcs.</h4></li>
-                  @endif
+                  @foreach($rtwSizes as $rtwSize => $value)
+                    <li><h4><b>{{strtoupper($rtwSize)}}:</b> {{$value}} pcs.</h4></li>
+                  @endforeach
                 </ul>
               @endif
               
               <h4 class="heading">Tags:</h4>
-              @foreach($tags as $tag)
-              <h2 data-tag-id="{{$tag['id']}}" class="tags label label-default">{{$tag->tag['tagName']}}</h2>
+              @foreach($tagsArray as $tag)
+              <h2 data-tag-id="{{$tag}}" class="tags label label-default">{{$tag}}</h2>
               @endforeach
 
             </div>
@@ -113,7 +98,7 @@
               <?php $counter = 1; ?>
                 @foreach( $product->productFile as $image)
                  @if($counter == 1)
-                  <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: auto; object-fit: cover;margin: 10px;">
+                  <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:100%; height: auto; object-fit: cover;margin: 10px;">
                 @else
                 @endif
                 <?php $counter++; ?>

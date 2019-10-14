@@ -36,7 +36,7 @@
           @foreach( $product->productFile as $image)
 
           @if($counter == 1)  
-            <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 350px; object-fit: cover;">
+            <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:100%; height: 350px; object-fit: cover;">
           @else
           @endif
           <?php $counter++; ?>

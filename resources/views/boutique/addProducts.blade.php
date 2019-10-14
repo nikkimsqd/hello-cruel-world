@@ -36,71 +36,72 @@
 
       <div class="form-group">
         <h4>Is this a ready-to-wear item?:</h4>
-        <input type="radio" id="yes" name="itemType" class="minimal-red rtw-choice" value="yes">
+        <input type="radio" id="yes" name="itemType" class="minimal-red rtw-choice" value="yes" required>
         <label for="yes">Yes</label>&nbsp;&nbsp;&nbsp;
-        <input type="radio" id="no" name="itemType" class="minimal-red rtw-choice" value="no">
+        <input type="radio" id="no" name="itemType" class="minimal-red rtw-choice" value="no" required>
         <label for="no">No</label>&nbsp;&nbsp;&nbsp;
       </div>
       
       <div class="form-group rtwSizes" hidden>
         <h4 class="excluded">Choose available sizes:</h4>
-        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
+        <input type="checkbox" id="XS" value="XS" class="sizes">
         <label for="XS">XS</label>
-        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
+        <input type="checkbox" id="S" value="S" class="sizes">
         <label for="S">S</label>
-        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
+        <input type="checkbox" id="M" value="M" class="sizes">
         <label for="M">M</label>
-        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
+        <input type="checkbox" id="L" value="L" class="sizes">
         <label for="L">L</label>
-        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
+        <input type="checkbox" id="XL" value="XL" class="sizes">
         <label for="XL">XL</label>
-        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
+        <input type="checkbox" id="XXL" value="XXL" class="sizes">
         <label for="XXL">XXL</label>
       </div>
       
       <div class="form-group" id="XSquantity" hidden>
         <label>Enter quantity for XS:</label>
-        <input type="number" name="XSquantity" class="input form-control">
+        <input type="number" id="XSquantity" name="sizes[xs]" class="input form-control">
       </div>
       
       <div class="form-group" id="Squantity" hidden>
         <label>Enter quantity for S:</label>
-        <input type="number" name="Squantity" class="input form-control">
+        <input type="number" id="Squantity" name="sizes[s]" class="input form-control">
       </div>
       
       <div class="form-group" id="Mquantity" hidden>
         <label>Enter quantity for M:</label>
-        <input type="number" name="Mquantity" class="input form-control">
+        <input type="number" name="sizes[m]" class="input form-control">
       </div>
       
       <div class="form-group" id="Lquantity" hidden>
         <label>Enter quantity for L:</label>
-        <input type="number" name="Lquantity" class="input form-control">
+        <input type="number" name="sizes[l]" class="input form-control">
       </div>
       
       <div class="form-group" id="XLquantity" hidden>
         <label>Enter quantity for XL:</label>
-        <input type="number" name="XLquantity" class="input form-control">
+        <input type="number" name="sizes[xl]" class="input form-control">
       </div>
       
       <div class="form-group" id="XXLquantity" hidden>
         <label>Enter quantity for XXL:</label>
-        <input type="number" name="XXLquantity" class="input form-control">
+        <input type="number" name="sizes[xxl]" class="input form-control">
       </div>
 
       <div class="form-group">
         <h4>Product Category</h4>
         <select class="form-control select2" name="gender" id="gender-select" required>
-          <option selected="selected"> </option>
+          <option disabled selected="selected"> </option>
           <option value="Womens">Womens</option>
           <option value="Mens">Mens</option>
         </select>
         <br>
         <select class="form-control select2" name="category" id="category-select" disabled required>
           <option disabled selected="selected"></option>
-          <!-- @foreach($categories as $category)
-          <option value="{{ $category['id'] }}">{{ $category['categoryName'] }}</option>
-          @endforeach -->
+        </select>
+        <br>
+        <select class="form-control select2" name="subcategory" id="subcategory-select" disabled required>
+          <option disabled selected="selected"></option>
         </select>
 
         <br>
@@ -113,8 +114,14 @@
       </div>
       
       <label>Add Tags:</label>
-      <div class="form-group tags" id="tags">
-        
+      <div class="input-group">
+        <input type="text" id="input-tag" placeholder="Add Tag ..." class="form-control">
+          <span class="input-group-btn">
+            <a class="btn btn-primary" id="add-tag">Add</a>
+          </span>
+      </div><br>
+
+      <div class="form-group tags" id="inputted-tags">
       </div>
     </div> <!-- column closing -->
 
@@ -145,7 +152,7 @@
         <input type="number" name="rentPrice" class="input form-control" autofocus>
 
         <h4>Deposit Amount</h4>
-        <input type="number" name="depositAmount" class="input form-control"><br>
+        <input type="number" name="cashban" class="input form-control"><br>
 
         <h4>Penalty Amount if item is returned late (per day)</h4>
         <input type="number" name="penaltyAmount" class="input form-control"><br>
@@ -156,28 +163,6 @@
         <h4>Amount of fine incase item is lost by user</h4>
         <input type="number" name="fine" class="input form-control"><br>
 
-        <!-- <h4>Select Region:</h4>
-        <select name="region" class="form-control" id="region-select">
-          <option selected="selected"> </option>
-          @foreach($regions as $region)
-          <option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
-          @endforeach
-        </select><br> -->
-
-        <!-- <h4>Select Province:</h4>
-        <select name="province" class="form-control" id="province-select" disabled>
-        </select><br> -->
-
-        <!-- <h4>Select City:</h4>
-        <select name="locationsAvailable" class="form-control" id="city-selects" disabled>
-        </select><br> -->
-
-        <h4 id="city-id">Select cities item is available for rent:</h4><br>
-        <div name="cities" id="city-select" style="column-count: 3">
-        @foreach($cities as$city)
-        <input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['citymunDesc']}}"> {{$city['citymunDesc']}}<br>
-        @endforeach
-        </div>
       </div>
 
   	</div>
@@ -271,6 +256,10 @@
     $('#forRentPrice').attr('hidden',!this.checked)
   });
 
+  // $('#XSquantity').on('keyup', function(){
+  //   console.log($(this).val());
+  // });
+
   $('#forSale').on('change', function() { 
       $('#forSalePrice').attr('hidden',!this.checked)
     // if(this.checked){
@@ -332,6 +321,7 @@
   $('#gender-select').on('change', function(){
     $('#measurement-input').empty();
     $('#category-select').empty();
+    $('#subcategory-select').empty();
 
     var gender = $(this).val();
 
@@ -353,7 +343,20 @@
     var categoryID = $(this).val();
     $('#measurement-choices').empty();
     $('#measurement-input').empty();
-    // console.log(rtw);
+    $('#subcategory-select').empty();
+    $('#subcategory-select').prop('disabled',false);
+
+    $.ajax({
+      url:"{{url('getSubcategory/')}}/"+categoryID,
+      success:function(data){
+        $('#subcategory-select').append('<option selected disabled value=""></option>');
+        data.subcategories.forEach(function(subcategory){
+          $('#subcategory-select').append('<option value="'+subcategory.id+'">'+subcategory.subcatName+'</option>');
+        });
+      }
+    });
+
+
 
     if(rtw == 'no'){
     $.ajax({
@@ -369,18 +372,16 @@
     });
     }
 
-    $.ajax({
-      url:"{{url('getCategoryTags')}}/"+categoryID,
-      success:function(data){
-        data.categoryTags.forEach(function(categoryTag){
-          $('#tags').append(
-            '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.id +'">'+
-            '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
-        });
-      }
-    });
-
-
+    // $.ajax({
+    //   url:"{{url('getCategoryTags')}}/"+categoryID,
+    //   success:function(data){
+    //     data.categoryTags.forEach(function(categoryTag){
+    //       $('#tags').append(
+    //         '<input type="checkbox" name="tags[]" id="'+ categoryTag.id +'" value="'+ categoryTag.id +'">'+
+    //         '<label for="'+ categoryTag.id +'">'+ categoryTag.tagName +'</label> ');
+    //     });
+    //   }
+    // });
   }); 
 
   $('body').on('change', '.measurements', function() {
@@ -390,104 +391,27 @@
     // $('#forRentPrice').attr('hidden',!this.checked)
   });
 
-  // LOCATIONS-----------------------------------------------------------------------------
-  // $("#region-select").on('change', function(){
-  //   $('#province-select').empty();
-  //   $('#city-select').empty();
-  //   $('#brgy-select').empty();
-  //   var regCode = $(this).val();
 
-  //   $('#city-select').prop('disabled',true);
-  //   $('#province-select').prop('disabled',false);
-              
+  $('#add-tag').on('click', function(){
+    var tag = $('#input-tag').val();
 
-  //   $.ajax({
-  //     url: "/hinimo/public/boutique-getProvince/"+regCode,
-  //     success:function(data){
+    $('#inputted-tags').append(
+      '<input type="text" name="tags[]" class="selected-tags" id="'+ tag +'" value="'+ tag +'" hidden>'+
+      '<label for="'+ tag +'">'+ tag +'</label> ');
 
-  //       $('#province-select').append('<option selected disabled value=""></option>');
-  //         data.provinces.forEach(function(province){
-  //           $('#province-select').append(
-  //               '<option value="'+province.provCode+'">'+province.provDesc+'</option>'
-  //               );
-  //         });
-  //     }
-  //   });
-  // });
+    $('#input-tag').val('');
+    $('#input-tag').prop('autofocus', true);
+
+  });
+
+  $('body').on('change', '.selected-tags', function(){
+    var tag = $(this).val();
+    console.log(tag);
+    $('#'+tag).remove();
+    $('label[for='+tag+']').remove();
+  });
 
 
-  // $('#province-select').on('change', function(){
-  //   $('#city-select').empty();
-  //   $('#brgy-select').empty();
-  //   var provCode = $(this).val();
-    
-  //   // $('#city-select').prop('disabled',false);;
-
-  //   $.ajax({
-  //     url: "/hinimo/public/boutique-getCity/"+provCode,
-  //     success:function(data){
-  //       $('#city-select').append('<option selected disabled value=""></option>');
-  //         data.cities.forEach(function(city){
-
-  //         if(city === null){
-  //         console.log(provCode);
-  //         }else{
-  //           $('#city-select').prop('disabled',false);
-  //           $('#city-select').apendp(
-  //           '<option value="'+city.citymunCode+'">'+city.citymunDesc+'</option>'
-  //           );
-  //         }
-  //       });
-  //     }
-  //   }); //ajaxclosing
-  // });
-
-
-  // USED FUNCTION
-  // $('#province-select').on('change', function(){
-  //   $('#city-select').empty();
-  //   // $('#brgy-select').empty();
-  //   var provCode = $(this).val();
-    
-  //   // $('#city-select').prop('disabled',false);;
-
-  //   $.ajax({
-  //     url: "/hinimo/public/boutique-getCity/"+provCode,
-  //     success:function(data){
-
-  //       $('#city-id').prop('hidden',false);
-
-  //         data.cities.forEach(function(city){
-  //         console.log(city);
-  //          $('#city-select').append(
-  //         '<input type="checkbox" name="locationsAvailable[]" value="'+city.citymunCode+'" id="'+city.citymunDesc+'"> '+city.citymunDesc+'<br>'
-  //         );
-  //       });
-  //     }
-  //   }); //ajaxclosing
-  // });
-
-
-  // $('#city-select').on('change', function(){
-  //   // console.log("adadad");
-
-  //   $('#brgy-select').empty();
-
-  //   var citymunCode = $(this).val();
-
-  //   $.ajax({
-  //      url: "/hinimo/public/boutique-getBrgy/"+citymunCode,
-  //     success:function(data){
-  //       $('#barangay-id').prop('hidden',false);
-
-  //       data.brgys.forEach(function(brgy){
-  //         $('#brgy-select').append(
-  //         '<input type="checkbox" name="locationsAvailable[]" value="'+brgy.brgyCode+'" id="'+brgy.brgyDesc+'"> '+brgy.brgyDesc+'<br>'
-  //         );
-  //       });
-  //     }
-  //   });
-  // });
 
 </script>
 @endsection

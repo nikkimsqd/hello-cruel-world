@@ -12,7 +12,7 @@
     <div class="single_product_thumb clearfix">
         <!-- <div class="product_thumbnail_slides owl-carousel"> -->
             @foreach($bidding->productFile as $image)
-            <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+            <img src="{{ asset('/uploads').$image['filepath'] }}" alt="">
             @endforeach
         <!-- </div> -->
     </div>

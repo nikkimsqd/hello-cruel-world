@@ -61,6 +61,7 @@
                         }
                         ?>
 
+                        @if($rent->order != null)
                         <div class="order-details-confirmation" id="chat"> <!-- card opening -->
                             <div class="cart-page-heading">
                                 <h4 style="margin-bottom: 30px;">Chat with seller:&nbsp; {{$rent->order->boutique['boutiqueName']}}</h4>
@@ -105,6 +106,7 @@
                             </form>
 
                         </div><br><br> <!-- card closing -->
+                        @endif
 
                              
                         @if($rent->order['status'] == "For Pickup" || $rent->order['status'] == "For Delivery" || $rent->order['status'] == "On Delivery" || $rent->order['status'] == "Delivered" || $rent->order['status'] == "Completed"|| $rent->order['status'] == "On Rent")
@@ -142,9 +144,9 @@
                                 <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
                                 <li><span>Deposit Amount</span> 
                                     @if($rent->product != null)
-                                    <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
+                                    <span>₱{{$rent->product->rentDetails['cashban']}}</span>
                                     @else
-                                    <span>₱{{$rent->set->rentDetails['depositAmount']}}</span>
+                                    <span>₱{{$rent->set->rentDetails['cashban']}}</span>
                                     @endif
                                 </li>
                                 <li><span>Delivery Fee</span> <span>₱{{$rent->order['deliveryfee']}}</span></li>
@@ -193,9 +195,9 @@
                                 <li><span>Date to be returned</span> <span>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</span></li>
                                 <li><span>Cashban</span> 
                                     @if($rent->product != null)
-                                    <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
+                                    <span>₱{{$rent->product->rentDetails['cashban']}}</span>
                                     @else
-                                    <span>₱{{$rent->set->rentDetails['depositAmount']}}</span>
+                                    <span>₱{{$rent->set->rentDetails['cashban']}}</span>
                                     @endif
                                 </li>
                                 <li><span>Penalty Amount</span> 
@@ -212,9 +214,9 @@
                                     <li><span>Subtotal</span> <span>₱{{$rent->order['subtotal']}}</span></li>
                                     <li><span>Deposit Amount</span> 
                                         @if($rent->product != null)
-                                        <span>₱{{$rent->product->rentDetails['depositAmount']}}</span>
+                                        <span>₱{{$rent->product->rentDetails['cashban']}}</span>
                                         @else
-                                        <span>₱{{$rent->set->rentDetails['depositAmount']}}</span>
+                                        <span>₱{{$rent->set->rentDetails['cashban']}}</span>
                                         @endif
                                     </li>
                                     <li><span>Delivery Fee</span> <span>₱{{$rent->order['deliveryfee']}}</span></li>
@@ -357,6 +359,7 @@
     </div>
 </div>
 
+@if($rent->order != null)
 <div class="modal fade" id="fileForComplain" role="dialog">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -382,6 +385,7 @@
         </div> 
     </div>
 </div>
+@endif
 
 <style type="text/css">
     .order-details-confirmation .order-details-form li{padding: 20px 10px;}

@@ -23,12 +23,12 @@
 
 @section('search')
 <!-- Search Area -->
-    <div class="search-area">
+  <!--   <div class="search-area">
         <form action="#" method="post">
             <input type="search" name="search" id="headerSearch" placeholder="Type for search">
             <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
         </form>
-    </div>
+    </div> -->
 @endsection
 
 @section('favorites')
@@ -110,7 +110,7 @@
                     <a href="#" class="product-image">
                         @if($item->product != null)
                             @foreach($item->product->productFile as $file)
-                            <img src="{{ asset('/uploads').$file['filename'] }}" class="cart-thumb" alt="">
+                            <img src="{{ asset('/uploads').$file['filepath'] }}" class="cart-thumb" alt="">
                             <?php break; ?>
                             @endforeach
 
@@ -127,7 +127,7 @@
                         @else
                             @foreach($item->set->items as $setItem)
                             @foreach($setItem->product->productFile as $image)
-                            <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+                            <img src="{{ asset('/uploads').$image['filepath'] }}" alt="">
                             <?php break; ?>
                             @endforeach
                             @endforeach

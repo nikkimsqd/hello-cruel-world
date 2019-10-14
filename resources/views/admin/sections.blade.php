@@ -169,7 +169,7 @@
       </a>
       <ul class="treeview-menu">
         <li class="categories"><a href="{{url('admin-categories')}}"><i class="fa fa-circle-o"></i> Categories</a></li>
-        <li class="tags"><a href="{{url('admin-tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li>
+        <!-- <li class="tags"><a href="{{url('admin-tags')}}"><i class="fa fa-circle-o"></i> Tags</a></li> -->
         <li class="measurements"><a href="{{url('admin-measurements')}}"><i class="fa fa-circle-o"></i> Measurements</a></li>
         <li class="events"><a href="{{url('admin-events')}}"><i class="fa fa-circle-o"></i> Events</a></li>
       </ul>
@@ -184,7 +184,7 @@
         </span>
       </a>
       <ul class="treeview-menu">
-        <li class="locations"><a href="{{url('admin-locations')}}"><i class="fa fa-circle-o"></i> Locations</a></li>
+        <!-- <li class="locations"><a href="{{url('admin-locations')}}"><i class="fa fa-circle-o"></i> Locations</a></li> -->
         <li class="accounts"><a href="{{url('admin-addAccount')}}"><i class="fa fa-circle-o"></i> Add Courier Account</a></li>
         <li class="deliveryfee"><a href="{{url('admin-deliveryfee')}}"><i class="fa fa-circle-o"></i> Set Up Delivery fee</a></li>
       </ul>

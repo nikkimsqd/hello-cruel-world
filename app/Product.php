@@ -6,12 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-	// protected $primaryKey = 'productID';
-    protected $fillable = ['boutiqueID', 'productName', 'productDesc', 'price', 'category', 'productStatus', 'rpID', 'quantity', 'setID', 'measurements', 'measurementNames', 'rtwID'];
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+	public $incrementing = false;
+
+    protected $fillable = ['id', 'boutiqueID', 'productName', 'productDesc', 'price', 'category', 'productStatus', 'rpID', 'quantity', 'setID', 'measurements', 'measurementNames', 'rtwID'];
 
     public function productFile()
     {
-        return $this->hasMany('App\File', 'productID', 'id');
+        return $this->hasMany('App\File', 'typeID', 'id');
     }
 
     public function owner()
@@ -19,9 +22,14 @@ class Product extends Model
         return $this->hasOne('App\Boutique', 'id', 'boutiqueID');
     }
 
-    public function getCategory()
+    // public function getCategory()
+    // {
+    //     return $this->hasOne('App\Category', 'id', 'category');
+    // }
+
+    public function getSubCategory()
     {
-        return $this->hasOne('App\Category', 'id', 'category');
+        return $this->hasOne('App\Subcategory', 'id', 'category');
     }
 
     // public function getTags()
@@ -41,6 +49,6 @@ class Product extends Model
 
     public function inFavorites()
     {
-        return $this->hasOne('App\Favorite', 'productID', 'id');
+        return $this->hasOne('App\Favorite', 'itemID', 'id');
     }
 }

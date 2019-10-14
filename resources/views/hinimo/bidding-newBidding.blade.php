@@ -222,11 +222,11 @@ $('.fabChoice').on('change', function(){
         pcsOfWearers += pcsOfWearersInput;
     }
 
-    if(pcsOfWearers > quantity){
-        alert('Oops! You exceeded!');
-    }else if(pcsOfWearers < quantity){
-        alert('Oops! You lack!');
-    }
+    // if(pcsOfWearers > quantity){
+    //     alert('Oops! You exceeded!');
+    // }else if(pcsOfWearers < quantity){
+    //     alert('Oops! You lack!');
+    // }
 
 });
 

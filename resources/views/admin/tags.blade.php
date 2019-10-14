@@ -97,18 +97,18 @@
 $('.products').addClass("active");
 $('.tags').addClass("active"); 
 
-$('.tags').on('click', function(){
-  var tagID = $(this).attr('data-tag-id');
-  // alert(tagID);
+// $('.tags').on('click', function(){
+//   var tagID = $(this).attr('data-tag-id');
+//   // alert(tagID);
 
-  $.ajax({
-      url: "/hinimo/public/deleteTag/"+tagID,
-      success:function(data){
-        location.reload();
-      }
-  });
+//   $.ajax({
+//       url: "/hinimo/public/deleteTag/"+tagID,
+//       success:function(data){
+//         location.reload();
+//       }
+//   });
 
-});
+// });
 
 
 $('#gender-select').on('change', function(){

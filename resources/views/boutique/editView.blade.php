@@ -40,7 +40,7 @@
 					      	@else
 					      		<input type="radio" id="available" name="productStatus" value="Available"> <label for="available"> Available</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										<input type="radio" id="nAvailable" name="productStatus" value="Not Available" checked> <label for="nAvailable"> Not Available</label>
-								@endif
+							@endif
 						    </div>
 
 							<div class="form-group">
@@ -59,345 +59,357 @@
 							</div>
 	      
 							@if($product['rtwID'] != null)
-				      		<div class="form-group rtwSizes">
-								<?php
-									$checked = [];
+				      			<div class="form-group rtwSizes">
+									<?php
+										$checked = [];
 
-									if($product->rtwDetails['xs'] != null){
-										array_push($checked, 'xs');
-									}
-									if($product->rtwDetails['s'] != null){
-										array_push($checked, 's');
-									}
-									if($product->rtwDetails['m'] != null){
-										array_push($checked, 'm');
-									}
-									if($product->rtwDetails['l'] != null){
-										array_push($checked, 'l');
-									}
-									if($product->rtwDetails['xl'] != null){
-										array_push($checked, 'xl');
-									}
-									if($product->rtwDetails['xxl'] != null){
-										array_push($checked, 'xxl');
-									}
+				                  		foreach($rtwSizes as $rtwSize => $value){
+											array_push($checked, $rtwSize);
+										}
 
-									foreach($checked as $check){
-										echo($check);
-									}
-									echo " Mao ni naa sa db";
-								?>
-					        	<h4>Choose available sizes:</h4>
-								@if(in_array('xs', $checked))
-					        	<input type="checkbox" name="sizes" id="XS" value="XS" class="sizes" checked>
-					        	<label for="XS">XS</label>
-					        	@else
-						        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
-						        <label for="XS">XS</label>
-					        	@endif
+										// foreach($checked as $check){
+											// var_dump($rtwSizes);
+										// }
+										// echo " Mao ni naa sa db";
+									?>
+						        	<h4>Choose available sizes:</h4>
+									@if(in_array('xs', $checked))
+						        	<input type="checkbox" name="sizes" id="XS" value="XS" class="sizes" checked>
+						        	<label for="XS">XS</label>
+						        	@else
+							        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
+							        <label for="XS">XS</label>
+						        	@endif
 
-								@if(in_array('s', $checked))
-						        <input type="checkbox" name="sizes" id="S" value="S" class="sizes" checked>
-						        <label for="S">S</label>
-					        	@else
-						        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
-						        <label for="S">S</label>
-					        	@endif
+									@if(in_array('s', $checked))
+							        <input type="checkbox" name="sizes" id="S" value="S" class="sizes" checked>
+							        <label for="S">S</label>
+						        	@else
+							        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
+							        <label for="S">S</label>
+						        	@endif
 
-								@if(in_array('m', $checked))
-						        <input type="checkbox" name="sizes" id="M" value="M" class="sizes" checked>
-						        <label for="M">M</label>
-					        	@else
-						        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
-						        <label for="M">M</label>
-					        	@endif
+									@if(in_array('m', $checked))
+							        <input type="checkbox" name="sizes" id="M" value="M" class="sizes" checked>
+							        <label for="M">M</label>
+						        	@else
+							        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
+							        <label for="M">M</label>
+						        	@endif
 
-								@if(in_array('l', $checked))
-						        <input type="checkbox" name="sizes" id="L" value="L" class="sizes" checked>
-						        <label for="L">L</label>
-					        	@else
-						        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
-						        <label for="L">L</label>
-					        	@endif
+									@if(in_array('l', $checked))
+							        <input type="checkbox" name="sizes" id="L" value="L" class="sizes" checked>
+							        <label for="L">L</label>
+						        	@else
+							        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
+							        <label for="L">L</label>
+						        	@endif
 
-								@if(in_array('xl', $checked))
-						        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes" checked>
-						        <label for="XL">XL</label>
-					        	@else
-						        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
-						        <label for="XL">XL</label>
-					        	@endif
+									@if(in_array('xl', $checked))
+							        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes" checked>
+							        <label for="XL">XL</label>
+						        	@else
+							        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
+							        <label for="XL">XL</label>
+						        	@endif
 
-								@if(in_array('xxl', $checked))
-						        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes" checked>
-						        <label for="XXL">XXL</label>
-					        	@else
-						        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
-						        <label for="XXL">XXL</label>
-					        	@endif
-					      	</div>
+									@if(in_array('xxl', $checked))
+							        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes" checked>
+							        <label for="XXL">XXL</label>
+						        	@else
+							        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
+							        <label for="XXL">XXL</label>
+						        	@endif
+						      	</div>
 				      
-				      		<!-- INPUT FIELDS -->
-							@if(in_array('xs', $checked))
-						    <div class="form-group" id="XSquantity">
-						        <label>Enter quantity for XS:</label>
-						        <input id="XS" type="number" name="XSquantity" class="input form-control" value="{{$product->rtwDetails['xs']}}">
-						    </div>
-					        @else
-					      	<div class="form-group" id="XSquantity" hidden>
-						        <label>Enter quantity for XS:</label>
-						        <input type="number" name="XSquantity" class="input form-control">
-					      	</div>
-					        @endif
+				      			<!-- INPUT FIELDS -->
+		                  		@foreach($rtwSizes as $rtwSize => $value)
+
+									@if(in_array($rtwSize, $checked))
+								    <div class="form-group" id="{{strtoupper($rtwSize)}}quantity">
+								        <label>Enter quantity for {{$rtwSize}}:</label>
+								        <input id="{{strtoupper($rtwSize)}}" type="number" name="sizes[{{$rtwSize}}]" class="input form-control" value="{{$value}}">
+								    </div>
+							        @else
+							      	<div class="form-group" id="{{strtoupper($rtwSize)}}quantity" hidden>
+								        <label>Enter quantity for {{$rtwSize}}:</label>
+								        <input type="number" name="sizes[{{$rtwSize}}]" class="input form-control">
+							      	</div>
+							        @endif
+								@endforeach
+
+								<!-- @if(in_array('xs', $checked))
+							    <div class="form-group" id="XSquantity">
+							        <label>Enter quantity for XS:</label>
+							        <input id="XS" type="number" name="sizes[xs]" class="input form-control" value="{{$value}}">
+							    </div>
+						        @else -->
+						      	<div class="form-group" id="XSquantity" hidden>
+							        <label>Enter quantity for XS:</label>
+							        <input type="number" name="sizes[xs]" class="input form-control">
+						      	</div>
+						        <!-- @endif -->
 				      
-							@if(in_array('s', $checked))
-					      	<div class="form-group" id="Squantity">
-						        <label>Enter quantity for S:</label>
-						        <input type="number" name="Squantity" class="input form-control" value="{{$product->rtwDetails['s']}}">
-					      	</div>
-					        @else
-					        <div class="form-group" id="Squantity" hidden>
-						        <label>Enter quantity for S:</label>
-						        <input type="number" name="Squantity" class="input form-control">
-						      </div>
-					        @endif
-				      
-							@if(in_array('m', $checked))
-						    <div class="form-group" id="Mquantity">
-						        <label>Enter quantity for M:</label>
-						        <input type="number" name="Mquantity" class="input form-control" value="{{$product->rtwDetails['m']}}">
-					      	</div>
-					        @else
-					        <div class="form-group" id="Mquantity" hidden>
-						        <label>Enter quantity for M:</label>
-						        <input type="number" name="Mquantity" class="input form-control">
-					      	</div>
-					        @endif
-				      
-							@if(in_array('l', $checked))
-					      	<div class="form-group" id="Lquantity" >
-						        <label>Enter quantity for L:</label>
-						        <input type="number" name="Lquantity" class="input form-control" value="{{$product->rtwDetails['l']}}">
-					      	</div>
-					        @else
-					        <div class="form-group" id="Lquantity" hidden>
-						        <label>Enter quantity for L:</label>
-						        <input type="number" name="Lquantity" class="input form-control">
-					      	</div>
-				        	@endif
-				      
-							@if(in_array('xl', $checked))
-					      	<div class="form-group" id="XLquantity">
-						        <label>Enter quantity for XL:</label>
-						        <input type="number" name="XLquantity" class="input form-control" value="{{$product->rtwDetails['xl']}}">
-					      	</div>
-					        @else
-					        <div class="form-group" id="XLquantity" hidden>
-						        <label>Enter quantity for XL:</label>
-						        <input type="number" name="XLquantity" class="input form-control">
-					      	</div>
-					        @endif
-				      
-							@if(in_array('xxl', $checked))
-					      	<div class="form-group" id="XXLquantity">
-						        <label>Enter quantity for XXL:</label>
-						        <input type="number" name="XXLquantity" class="input form-control" value="{{$product->rtwDetails['xxl']}}">
-					      	</div>
-					        @else
-					        <div class="form-group" id="XXLquantity" hidden>
-						        <label>Enter quantity for XXL:</label>
-						        <input type="number" name="XXLquantity" class="input form-control">
-					      	</div>
-					        @endif
-					        @else
-      
-				      	<div class="form-group rtwSizes" hidden>
-					        <label class="excluded">Choose available sizes:</label>
-					        <input type="checkbox" name="sizes" id="XS" value="XS" class="sizes">
-					        <label for="XS">XS</label>
-					        <input type="checkbox" name="sizes" id="S" value="S" class="sizes">
-					        <label for="S">S</label>
-					        <input type="checkbox" name="sizes" id="M" value="M" class="sizes">
-					        <label for="M">M</label>
-					        <input type="checkbox" name="sizes" id="L" value="L" class="sizes">
-					        <label for="L">L</label>
-					        <input type="checkbox" name="sizes" id="XL" value="XL" class="sizes">
-					        <label for="XL">XL</label>
-					        <input type="checkbox" name="sizes" id="XXL" value="XXL" class="sizes">
-					        <label for="XXL">XXL</label>
-				      	</div>
-      
-				      	<div class="form-group" id="XSquantity" hidden>
-					        <label>Enter quantity for XS:</label>
-					        <input type="number" name="XSquantity" class="input form-control">
-				      	</div>
+								<!-- @if(in_array('s', $checked))
+						      	<div class="form-group" id="Squantity">
+							        <label>Enter quantity for S:</label>
+							        <input type="number" name="sizes[s]" class="input form-control" value="{{$value}}">
+						      	</div>
+						        @else -->
+						        <div class="form-group" id="Squantity" hidden>
+							        <label>Enter quantity for S:</label>
+							        <input type="number" name="sizes[s]" class="input form-control">
+							      </div>
+						        <!-- @endif -->
 					      
-				      	<div class="form-group" id="Squantity" hidden>
-					        <label>Enter quantity for S:</label>
-					        <input type="number" name="Squantity" class="input form-control">
-				      	</div>
+								<!-- @if(in_array('m', $checked))
+							    <div class="form-group" id="Mquantity">
+							        <label>Enter quantity for M:</label>
+							        <input type="number" name="sizes[m]" class="input form-control" value="{{$value}}">
+						      	</div>
+						        @else -->
+						        <div class="form-group" id="Mquantity" hidden>
+							        <label>Enter quantity for M:</label>
+							        <input type="number" name="sizes[m]" class="input form-control">
+						      	</div>
+						        <!-- @endif -->
 					      
-				      	<div class="form-group" id="Mquantity" hidden>
-					        <label>Enter quantity for M:</label>
-					        <input type="number" name="Mquantity" class="input form-control">
-				      	</div>
+								<!-- @if(in_array('l', $checked))
+						      	<div class="form-group" id="Lquantity" >
+							        <label>Enter quantity for L:</label>
+							        <input type="number" name="sizes[l]" class="input form-control" value="{{$value}}">
+						      	</div>
+						        @else -->
+						        <div class="form-group" id="Lquantity" hidden>
+							        <label>Enter quantity for L:</label>
+							        <input type="number" name="sizes[l]" class="input form-control">
+						      	</div>
+					        	<!-- @endif -->
 					      
-				      	<div class="form-group" id="Lquantity" hidden>
-					        <label>Enter quantity for L:</label>
-					        <input type="number" name="Lquantity" class="input form-control">
-				      	</div>
+								<!-- @if(in_array('xl', $checked))
+						      	<div class="form-group" id="XLquantity">
+							        <label>Enter quantity for XL:</label>
+							        <input type="number" name="sizes[xl]" class="input form-control" value="{{$value}}">
+						      	</div>
+						        @else -->
+						        <div class="form-group" id="XLquantity" hidden>
+							        <label>Enter quantity for XL:</label>
+							        <input type="number" name="sizes[xl]" class="input form-control">
+						      	</div>
+						        <!-- @endif -->
 					      
-				      	<div class="form-group" id="XLquantity" hidden>
-					        <label>Enter quantity for XL:</label>
-					        <input type="number" name="XLquantity" class="input form-control">
-				      	</div>
-					      
-				      	<div class="form-group" id="XXLquantity" hidden>
-					        <label>Enter quantity for XXL:</label>
-					        <input type="number" name="XXLquantity" class="input form-control">
-				      	</div>
-				      	@endif <!-- end sa if(in_array('xs', checked)) -->
+								<!-- @if(in_array('xxl', $checked))
+						      	<div class="form-group" id="XXLquantity">
+							        <label>Enter quantity for XXL:</label>
+							        <input type="number" name="sizes[xxl]" class="input form-control" value="{{$value}}">
+						      	</div>
+						        @else -->
+						        <div class="form-group" id="XXLquantity" hidden>
+							        <label>Enter quantity for XXL:</label>
+							        <input type="number" name="sizes[xxl]" class="input form-control">
+						      	</div>
+						        <!-- @endif -->
 
-					    <div class="form-group">
-					      	<h4>Product Category</h4>
-					      	<select class="form-control select2" name="gender" id="gender-select">
-								@if($product->getCategory['gender'] === "Womens")
-								<option selected value="Womens">Womens</option>
-								<option value="Mens">Mens</option>
+					        @else <!-- //if dili gikan rtw ang item -->
+						      	<div class="form-group rtwSizes" hidden>
+							        <label class="excluded">Choose available sizes:</label>
+							        <input type="checkbox" id="XS" value="XS" class="sizes">
+							        <label for="XS">XS</label>
+							        <input type="checkbox" id="S" value="S" class="sizes">
+							        <label for="S">S</label>
+							        <input type="checkbox" id="M" value="M" class="sizes">
+							        <label for="M">M</label>
+							        <input type="checkbox" id="L" value="L" class="sizes">
+							        <label for="L">L</label>
+							        <input type="checkbox" id="XL" value="XL" class="sizes">
+							        <label for="XL">XL</label>
+							        <input type="checkbox" id="XXL" value="XXL" class="sizes">
+							        <label for="XXL">XXL</label>
+						      	</div>
+		      
+						      	<div class="form-group" id="XSquantity" hidden>
+							        <label>Enter quantity for XS:</label>
+							        <input type="number" name="sizes[xs]" class="input form-control">
+						      	</div>
+							      
+						      	<div class="form-group" id="Squantity" hidden>
+							        <label>Enter quantity for S:</label>
+							        <input type="number" name="sizes[s]" class="input form-control">
+						      	</div>
+							      
+						      	<div class="form-group" id="Mquantity" hidden>
+							        <label>Enter quantity for M:</label>
+							        <input type="number" name="sizes[m]" class="input form-control">
+						      	</div>
+							      
+						      	<div class="form-group" id="Lquantity" hidden>
+							        <label>Enter quantity for L:</label>
+							        <input type="number" name="sizes[l]" class="input form-control">
+						      	</div>
+							      
+						      	<div class="form-group" id="XLquantity" hidden>
+							        <label>Enter quantity for XL:</label>
+							        <input type="number" name="sizes[xl]" class="input form-control">
+						      	</div>
+							      
+						      	<div class="form-group" id="XXLquantity" hidden>
+							        <label>Enter quantity for XXL:</label>
+							        <input type="number" name="sizes[xxl]" class="input form-control">
+						      	</div>
+					      	@endif <!-- end sa if(in_array('xs', checked)) -->
 
-								@elseif($product->getCategory['gender'] === "Mens")
-								<option value="Womens">Womens</option>
-								<option selected value="Mens">Mens</option>
-								<!-- else
-								<option selected disabled></option>
-								<option value="Womens">Womens</option>
-								<option  value="Mens">Mens</option> -->
-								@endif
-						  	</select><br>
+						    <div class="form-group">
+						      	<h4>Product Category</h4>
+						      	<select class="form-control select2" name="gender" id="gender-select">
+									@if($product->getsubCategory->getCategory['gender'] === "Womens")
+									<option selected value="Womens">Womens</option>
+									<option value="Mens">Mens</option>
 
-						  	@if($product['category'] != null)
-					        <select class="form-control select2" name="category" id="category-select" required>
-					        	@foreach($categories as $category)
-					        	@if($category['id'] == $product['category'])
-					          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
-				          		@else
-					          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-					          	@endif
-					          	@endforeach
-					        </select><br>
-					        @endif
+									@elseif($product->getsubCategory->getCategory['gender'] === "Mens")
+									<option value="Womens">Womens</option>
+									<option selected value="Mens">Mens</option>
+									<!-- else
+									<option selected disabled></option>
+									<option value="Womens">Womens</option>
+									<option  value="Mens">Mens</option> -->
+									@endif
+							  	</select><br>
 
-					        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
-					        	@if($product['measurementNames'] != null)
-					        	<?php
-					        		$measurementNames = json_decode($product['measurementNames']);
-					        		$selectedMeasurements = [];
-					        	?>
-					        	@foreach($measurementNames as $measurementName)
-											<?php array_push($selectedMeasurements, $measurementName); ?>
-										@endforeach
+							  	@if($product['category'] != null)
+						        <select class="form-control select2" name="category" id="category-select" required>
+						        	@foreach($categories as $category)
+						        	@if($product->getsubCategory->getCategory['gender'] == $category['gender'])
+							        	@if($category['id'] == $product['category'])
+							          	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
+						          		@else
+							          	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
+							          	@endif
+						          	@endif
+						          	@endforeach
+						        </select><br>
+						        @endif
 
-					        	@foreach($product->getCategory->getMeasurements as $getMeasurements)
-											@if(in_array($getMeasurements['mName'], $selectedMeasurements))
-						        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
-											<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
-											@else
-						        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
-											<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+							  	@if($product['category'] != null)
+						        <select class="form-control select2" name="subcategory" id="subcategory-select" required>
+						        	@foreach($subcategories as $subcategory)
+							        	@if($product->getsubCategory->getCategory['id'] == $subcategory['categoryID'])
+								        	@if($subcategory['id'] == $product['category'])
+								          		<option value="{{$subcategory['id']}}" selected>{{$subcategory['subcatName']}}</option>
+							          		@else
+								          		<option value="{{$subcategory['id']}}">{{$subcategory['subcatName']}}</option>
+								          	@endif
+							          	@endif
+						          	@endforeach
+						        </select>
+						        @endif
+
+						        <div class="col-md-12 mb-10" id="measurement-choices" style="column-count: 2">
+						        	@if($product['measurementNames'] != null)
+						        	<?php
+						        		$measurementNames = json_decode($product['measurementNames']);
+						        		$selectedMeasurements = [];
+						        	?>
+						        	@foreach($measurementNames as $measurementName)
+												<?php array_push($selectedMeasurements, $measurementName); ?>
+											@endforeach
+
+						        	@foreach($product->getSubCategory->getCategory->getMeasurements as $getMeasurements)
+												@if(in_array($getMeasurements['mName'], $selectedMeasurements))
+							        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements" checked>&nbsp;
+												<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+												@else
+							        	<input type="checkbox" id="{{$getMeasurements['id']}}" name="{{$product->getCategory['id']}}[{{$getMeasurements['mName']}}]" value="{{$getMeasurements['mName']}}" class="mb-10 measurements">&nbsp;
+												<label for="{{$getMeasurements['id']}}">{{$getMeasurements['mName']}}</label><br>
+												@endif
+											@endforeach
 											@endif
-										@endforeach
-										@endif
-					        </div>
+						        </div>
 
-					        <br><br>
-					        <div class="col-md-12" id="measurement-input">
-					        	@if($product['measurements'] != null)
-					        	<?php $measurements = json_decode($product['measurements']); ?>
-					        	@foreach($measurements as $measurement => $value)
-											<label for="">{{$measurement}}</label><br> &nbsp; 
-											<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
-										@endforeach
-										@endif
-					        </div>
- 
-							  <!--<select class="form-control select2" name="category">
-
-							  @foreach($categories as $category)
-							  @if($category['gender'] == $product->getCategory['gender'])
-								  @if($category['categoryName'] == $product->getCategory['categoryName'])
-								  	<option value="{{$category['id']}}" selected>{{$category['categoryName']}}</option>
-								  @endif
-								  @if($category['categoryName'] != $product->getCategory['categoryName'])
-								  	<option value="{{$category['id']}}">{{$category['categoryName']}}</option>
-								  @endif
-							  @endif
-							  @endforeach
-
-							  </select> -->
-				    	</div>
+						       
+						        <div class="col-md-12" id="measurement-input">
+						        	@if($product['measurements'] != null)
+						        	<?php $measurements = json_decode($product['measurements']); ?>
+						        	@foreach($measurements as $measurement => $value)
+										<label for="">{{$measurement}}</label><br> &nbsp; 
+										<input type="text" name="measurementData[{{$measurement}}]" class="mb-10" placeholder="" value="{{$value}}">&nbsp; <br>
+									@endforeach
+									@endif
+						        </div>
+					    	</div>
 
 
-				    	@if(count($itemtags) > 0)
-					    <label>Edit Tags:</label>
-					    <div class="form-group tags">
-							@foreach($itemtags as $itemtag)
-							@if($itemtag['itemID'] == $product['id'])
-								<input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}" checked>
-								<label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
-							@else
-								<input type="checkbox" name="tags[]" id="{{$itemtag->tag['tagName']}}" value="{{$itemtag->tag['id']}}">
-								<label for="{{$itemtag->tag['tagName']}}">{{$itemtag->tag['tagName']}}</label>
+					    	@if(count($itemtags) > 0)
+						    <h4>Edit Tags:</h4>
+					      	<div class="input-group">
+						        <input type="text" id="input-tag" placeholder="Add Tag ..." class="form-control">
+						          <span class="input-group-btn">
+						            <a class="btn btn-primary" id="add-tag">Add</a>
+						          </span>
+					      	</div><br>
+
+						    <div class="form-group tags" id="inputted-tags">
+								@foreach($tags as $tag)
+									<input type="text" name="tags[]" id="{{$tag}}" value="{{$tag}}" class="selected-tags" hidden>
+									<label for="{{$tag}}">{{$tag}}</label>
+								@endforeach
+					      	</div>
+								<br><span><i>Click on a tag to remove</i></span>
+					      	@else
+						    <h4>Add Tags:</h4>
+					      	<div class="input-group">
+						        <input type="text" id="input-tag" placeholder="Add Tag ..." class="form-control">
+						          <span class="input-group-btn">
+						            <a class="btn btn-primary" id="add-tag">Add</a>
+						          </span>
+					      	</div><br>
+
+						    <div class="form-group tags" id="inputted-tags">
+								@foreach($tags as $tag)
+									<input type="text" name="tags[]" id="{{$tag}}" value="{{$tag}}" class="selected-tags" hidden>
+									<label for="{{$tag}}">{{$tag}}</label>
+								@endforeach
+					      	</div>
+								<br><br><span><i>Click on a tag to remove</i></span>
 							@endif
-							@endforeach
-				      	</div>
-				      	@else
-					    <h4>Add Tags:</h4>
-					    <div class="form-group tags" id="tags">
-							@foreach($tags as $tag)
-								<input type="checkbox" name="tags[]" id="tag{{$tag['id']}}" value="{{$tag['id']}}">
-								<label for="tag{{$tag['id']}}">{{$tag['tagName']}}</label>
-							@endforeach
-				      	</div>
-						@endif
 
-						</div>
-<!-- 
-						<div class="col-md-6">
-							<?php $counter = 1; ?>
-					    @foreach( $product->productFile as $image)
-		            @if($counter == 1)
-	                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: auto; object-fit: cover;margin: 10px;">
-		            @else
-		            @endif
-		            <?php $counter++; ?>
-		            @endforeach
-						</div> -->
+							</div>
+
+							<!-- <div class="col-md-6">
+								<?php $counter = 1; ?>
+						    	@foreach( $product->productFile as $image)
+					            @if($counter == 1)
+				                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: auto; object-fit: cover;margin: 10px;">
+					            @else
+					            @endif
+					            <?php $counter++; ?>
+					            @endforeach
+							</div> -->
 
 						<div class="col-md-6">
 
-					      <div class="form-group">
+					      <div class="form-group in-stock" hidden>
 					        <h4>In-Stock:</h4>
-					        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}" required>
+					        <input type="number" name="quantity" id="quantity" class="input form-control" value="{{$product['quantity']}}">
 					      </div>
 
 						    <div class="form-group">
 					      	<h4>Product Availability</h4>
 					      	@if($product['rpID'] != null && $product['price'] != null)
-										<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
+								<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent"> For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 
 					      	@elseif($product['rpID'] != null)
-							    	<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+						    	<input type="checkbox" id="forRent" name="forRent" value="true" checked> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
 
-									@elseif($product['price'] != null)
-										<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
+							@elseif($product['price'] != null)
+								<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" id="forSale" name="forSale" value="true" checked> <label for="forSale">For Sale</label>
 
-									@else
-										<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
-									@endif
+							@else
+								<input type="checkbox" id="forRent" name="forRent" value="true"> <label for="forRent">For Rent</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" id="forSale" name="forSale" value="true"> <label for="forSale">For Sale</label>
+							@endif
 						    </div>
 					      
 					    	<?php $var = 'display:none;'; ?>
@@ -430,34 +442,6 @@
 
 						        <label>Amount of fine incase item is lost by user</label>
 						        <input type="number" name="fine" class="input form-control" value="{{$product->rentDetails['fine']}}"><br>
-
-						        <label>Locations item is available for rent</label><br>
-
-		                      	<?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
-		                      	<!-- PLAN: TO ADD LIST FOR THE AVAILABLE PRODUCTS. DILI LANG SILA ISUD SA MGA SELECTS BELOW -->
-						        <!-- <label>Select Region:</label>
-						        <select name="region" class="form-control" id="region-select">
-						          <option selected="selected"> </option>
-						          @foreach($regions as $region)
-						          	<option value="{{$region['regCode']}}">{{$region['regDesc']}}</option>
-						          @endforeach
-						        </select><br> -->
-
-						        <!-- <label>Select Province:</label>
-						        <select name="province" class="form-control" id="province-select" value="{{$product->rentDetails['price']}}">
-						        </select><br> -->
-
-						        <label id="city-id" hidden>Select Cities:</label>
-						        <div name="cities" id="city-select" style="column-count: 3">
-						        	@foreach($cities as $city)
-						        	<input type="checkbox" name="locationsAvailable[]" value="{{$city['citymunCode']}}" id="{{$city['id']}}"> {{$city['citymunDesc']}} <br>
-		                          	@endforeach
-
-						        </div><br>
-
-						        <!-- <label>Select City:</label>
-						        <select name="locationsAvailable" class="form-control" id="city-select"  value="{{$product->rentDetails['price']}}">
-						        </select><br> -->
 						    </div>
 						</div>
 				  </div> <!-- box-body -->
@@ -543,7 +527,7 @@
 
       if($('#forRent').is(':checked')) {
       	$('#forRentPrice').show();
-      	$('#forRentPrice').prop('required', true);
+      	$('#forRentPrice').find('input').prop('required', true);
       } else { 
       	$('#forRentPrice').find('input').prop('required', false);	
       	$('#forRentPrice').hide();
@@ -556,7 +540,7 @@
 
     if($('#forSale').is(':checked')) {
     	$('#forSalePrice').show();
-    	$('#forSalePrice').prop('required', true);
+    	$('#forSalePrice').find('input').prop('required', true);
     } else {
     	$('#forSalePrice').find('input').prop('required', false);
     	$('#forSalePrice').hide();
@@ -620,6 +604,8 @@
 
 	  if(value == 'yes'){
 	    $('.rtwSizes').attr('hidden', !this.checked);
+	  	$('.in-stock').attr('hidden', this.checked);
+    	$('#quantity').prop('required', false);
 	    // rtw = 'yes';
 
 			if($("#XS").prop("checked") == true){
@@ -670,6 +656,8 @@
 	    $('#measurement-input').empty(); //para ma wala ang existing if ever naa
 
 	  }else{
+	  	$('.in-stock').attr('hidden', !this.checked);
+    	$('#quantity').prop('required', true);
 	    $('.rtwSizes').attr('hidden', this.checked);
 	    // $(".sizes").prop("checked", false);
 	    $('#XSquantity').attr('hidden', this.checked);
@@ -681,6 +669,80 @@
 	    // rtw = 'no';
 	  }
 	});
+
+	$('#XSquantity').on('keyup', 'input', function(){
+		var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+		var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+		var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+		var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+		var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+		var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+		var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+		$('#quantity').val(quantity);
+		console.log($('#quantity').val());
+	});
+	$('#Squantity').on('keyup', 'input', function(){
+		var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+		var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+		var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+		var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+		var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+		var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+		var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+		$('#quantity').val(quantity);
+		console.log($('#quantity').val());
+	});
+	$('#Mquantity').on('keyup', 'input', function(){
+		var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+		var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+		var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+		var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+		var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+		var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+		var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+		$('#quantity').val(quantity);
+		console.log($('#quantity').val());
+	});
+	$('#Lquantity').on('keyup', 'input', function(){
+		var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+		var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+		var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+		var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+		var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+		var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+		var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+		$('#quantity').val(quantity);
+		console.log($('#quantity').val());
+	});
+	$('#XLquantity').on('keyup', 'input', function(){
+		var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+		var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+		var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+		var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+		var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+		var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+		var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+		$('#quantity').val(quantity);
+		console.log($('#quantity').val());
+	});
+	$('#XXLquantity').on('keyup', 'input', function(){
+		var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+		var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+		var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+		var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+		var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+		var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+		var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+		$('#quantity').val(quantity);
+		console.log($('#quantity').val());
+	});
+
 
 	$('.sizes').on('change', function() {
 	  var value = $(this).val();
@@ -732,6 +794,7 @@
 	  $('#measurement-choices').empty();
 	  $('#measurement-input').empty();
 	  $('#category-select').empty();
+	  $('#subcategory-select').empty();
 
 	  var gender = $(this).val();
 
@@ -755,7 +818,19 @@
 	  $('#measurement-choices').empty();
 	  $('#measurement-input').empty();
 	  $('#tags').empty();
+	  $('#subcategory-select').empty();
 	  // console.log(rtw);
+
+	    $.ajax({
+	      url:"{{url('getSubcategory/')}}/"+categoryID,
+	      success:function(data){
+	        $('#subcategory-select').append('<option selected disabled value=""></option>');
+	        data.subcategories.forEach(function(subcategory){
+	          $('#subcategory-select').append('<option value="'+subcategory.id+'">'+subcategory.subcatName+'</option>');
+	        });
+	      }
+	    });
+
 
 	  if(rtw == 'no'){
 	  $.ajax({
@@ -795,6 +870,27 @@
 	  $('#measurement-input').append('<input type="text" name="measurementData['+measurement +']" class="mb-10" placeholder="'+measurement+'">&nbsp; <br>');
 	  // $('#forRentPrice').attr('hidden',!this.checked)
 	}); 
+
+
+	$('#add-tag').on('click', function(){
+		var tag = $('#input-tag').val();
+
+		$('#inputted-tags').append(
+			'<input type="text" name="tags[]" class="selected-tags" id="'+ tag +'" value="'+ tag +'" hidden>'+
+			'<label for="'+ tag +'">'+ tag +'</label> ');
+
+		$('#input-tag').val('');
+		$('#input-tag').focus();
+
+	});
+
+	$('body').on('click', '.selected-tags', function(){
+		var tag = $(this).val();
+		console.log(tag);
+		$('#'+tag).remove();
+		$('label[for='+tag+']').remove();
+	});
+
 
 </script>
 @endsection

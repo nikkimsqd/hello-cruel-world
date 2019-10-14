@@ -64,7 +64,7 @@
                 @foreach($product->productFile as $image)
                   <div class="product-img">
                     @if($counter == 1)    
-                      <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                      <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                     @else
                     @endif
 
@@ -103,7 +103,11 @@
                   <a href="#">
                       <h6>{{ $product['productName'] }}</h6>
                   </a>
+                  @if($product['price'] != null)
                   <p class="product-price">₱{{ number_format($product['price']) }}</p>
+                  @else
+                  <p class="product-price">₱{{ number_format($product->rentDetails['price']) }}</p>
+                  @endif
 
                   <div class="hover-content">
                     <div class="add-to-cart-btn">

@@ -34,6 +34,7 @@ use App\Email;
 use App\Chat;
 use App\Refund;
 use App\Deliveryfee;
+use App\Subcategory;
 use App\Notifications\AdminAcceptsCategoryRequest;
 use App\Notifications\AdminDeclinesCategoryRequest;
 use App\Notifications\RequestPaypalAccount;
@@ -334,20 +335,33 @@ class AdminController extends Controller
 			'gender' => $request->input('gender')
 		]);
 
-		$categoryRequest = $request->input('categoryRequest');
-		$notificationID = $request->input('notificationID');
-		if($categoryRequest != null) {
-			$catReq = Categoryrequest::where('id', $categoryRequest)->first();
-			$catReq->update([
-				'status' => "Approved"
-			]);
+		//SA CATEGORY REQUEST NI-----------------------------------
+		// $categoryRequest = $request->input('categoryRequest');
+		// $notificationID = $request->input('notificationID');
+		// if($categoryRequest != null) {
+		// 	$catReq = Categoryrequest::where('id', $categoryRequest)->first();
+		// 	$catReq->update([
+		// 		'status' => "Approved"
+		// 	]);
 
-			$boutique = User::where('id', $catReq->boutique->owner['id'])->first();
-			$boutique->notify(new AdminAcceptsCategoryRequest($catReq));
-			// dd($boutique);
+		// 	$boutique = User::where('id', $catReq->boutique->owner['id'])->first();
+		// 	$boutique->notify(new AdminAcceptsCategoryRequest($catReq));
+		// 	// dd($boutique);
 
-			return redirect('categories-notifications/'.$notificationID);
-		}
+		// 	return redirect('categories-notifications/'.$notificationID);
+		// }
+
+		return redirect('/admin-categories');
+	}
+
+	public function saveSubCategory(Request $request)
+	{
+    	$id = Auth()->user()->id;
+
+		$subcategory = Subcategory::create([
+			'categoryID' => $request->input('category'),
+			'subcatName' => ucwords($request->input('subcatName'))
+		]);
 
 		return redirect('/admin-categories');
 	}

@@ -45,7 +45,7 @@
             <div class="col-md-6">
               @foreach($item->product->productFile as $image)
 
-                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:100%; height: 350px; object-fit: cover;">
+                <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:100%; height: 350px; object-fit: cover;">
                 <?php break; ?>
               @endforeach
             </div>

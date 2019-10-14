@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Favorite extends Model
 {
-    protected $fillable = ['productID', 'setID', 'userID'];
+    protected $fillable = ['itemID', 'userID'];
 
     public function product()
     {
-        return $this->hasOne('App\Product', 'id', 'productID');
+        return $this->hasOne('App\Product', 'id', 'itemID');
     }
 
     public function set()
     {
-        return $this->hasOne('App\Set', 'id', 'setID');
+        return $this->hasOne('App\Set', 'id', 'itemID');
     }
 }

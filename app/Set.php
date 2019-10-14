@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Set extends Model
 {
-    protected $fillable = ['boutiqueID', 'setName', 'setDesc', 'price', 'setStatus', 'rpID', 'quantity'];
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $fillable = ['id', 'boutiqueID', 'setName', 'setDesc', 'price', 'setStatus', 'rpID', 'quantity'];
 
     public function owner()
     {
@@ -25,6 +29,6 @@ class Set extends Model
 
     public function inFavorites()
     {
-        return $this->hasOne('App\Favorite', 'setID', 'id');
+        return $this->hasOne('App\Favorite', 'itemID', 'id');
     }
 }

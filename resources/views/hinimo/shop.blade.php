@@ -52,7 +52,7 @@
                                         <ul class="sub-menu collapse {{$womens}}" id="womens">
                                 		@foreach($categories as $category)
                                 		@if($category['gender'] == "Womens")
-                                            <li><a href="{{url('shop/womens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('/shop?category='.$category['id'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
@@ -65,7 +65,7 @@
                                         <ul class="sub-menu collapse {{$mens}}" id="mens">
                                 		@foreach($categories as $category)
                                 		@if($category['gender'] == "Mens")
-                                            <li><a href="{{url('shop/mens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('/shop?category='.$category['id'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
@@ -125,7 +125,7 @@
                         <div class="products_list row"> <!-- Products Display -->
                         	@foreach($paginator->items() as $product)
 
-                                @if($product['productName'])
+                                @if(!empty($product['productName']))
     	                        <!-- Single Product -->
                                 <div class="col-12 col-sm-6 col-lg-4">
         	                        <div class="single-product-wrapper">
@@ -133,14 +133,14 @@
                                         <?php $counter = 1; ?>
                                     
                                         <div class="product-img">
-                                            @foreach($product->productFile as $image)
+                                            @foreach($product['product_file'] as $image)
                                             
             	                            @if($counter == 1)    
-                                                <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @elseif($counter == 2)    
-                                                <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                <img class="hover-img" src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @elseif($counter == 3)    
-                                                <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                <img class="hover-img" src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                             @endif
 
                                             @if($product['productStatus'] == "Not Available")
@@ -159,7 +159,7 @@
 
 
                                             @if($userID != null)
-                                                @if($product->inFavorites != null)
+                                                @if($product['in_favorites']['userID'] == $userID)
                                                     <div class="product-favourite unfavorite-product">
                                                         <input type="text" name="productID" value="{{$product['id']}}" hidden>
                                                         <a href="#" class="favme fa fa-heart active"></a>
@@ -170,6 +170,11 @@
                                                         <a href="#" class="favme fa fa-heart"></a>
                                                     </div>
                                                 @endif
+                                            @else
+                                                <div class="product-favourite ml-4 favorite-set">
+                                                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                                    <a href="#" class="favme fa fa-heart"></a>
+                                                </div>
                                             @endif
 
                                             <?php $counter++; ?>
@@ -178,14 +183,14 @@
 
         	                            <!-- Product Description -->
         	                            <div class="product-description">
-        	                                <span>{{ $product->owner['boutiqueName'] }}</span>
+        	                                <span>{{ $product['owner']['boutiqueName'] }}</span>
         	                                <a href="#">
         	                                    <h6>{{ $product['productName'] }}</h6>
         	                                </a>
                                             @if($product['price'] != null)
         	                                <p class="product-price">₱{{ number_format($product['price']) }}</p>
                                             @else
-                                            <p class="product-price">₱{{ number_format($product->rentDetails['price']) }}</p>
+                                            <p class="product-price">₱{{ number_format($product['rent_details']['price']) }}</p>
                                             @endif
 
         	                                <!-- Hover Content -->
@@ -209,14 +214,14 @@
                                         <div class="product-img">
 
 
-                                            @foreach( $product->items as $item)
+                                            @foreach( $product['items'] as $item)
 
-                                                @foreach($item->product->productFile as $image)
+                                                @foreach($item['productFile'] as $image)
                                                     @if($counter == 1)    
-                                                        <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                        <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                                     <?php break; ?>
                                                     @elseif($counter == 2)    
-                                                        <img class="hover-img" src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                                        <img class="hover-img" src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                                     <?php break; ?>
                                                     @endif
                                                 @endforeach
@@ -229,7 +234,7 @@
                                                 <span>SET</span>
                                             </div>
 
-                                            @if($product['productStatus'] == "Not Available")
+                                            @if($product['setStatus'] == "Not Available")
                                             <div class="product-badge offer-badge">
                                                 <span>NOT AVAILABLE</span>
                                             </div>
@@ -244,7 +249,8 @@
                                             @endif
 
                                             @if($userID != null)
-                                                @if($product->inFavorites)
+                                            @foreach($product['in_favorites'] as $favorite)
+                                                @if($product['id'] == $favorite['itemID'])
                                                 <div class="product-favourite unfavorite-set">
                                                     <input type="text" name="productID" value="{{$product['id']}}" hidden>
                                                     <a href="#" class="favme fa fa-heart active"></a>
@@ -255,19 +261,25 @@
                                                     <a href="#" class="favme fa fa-heart"></a>
                                                 </div>
                                                 @endif
+                                            @endforeach
+                                            @else
+                                                <div class="product-favourite ml-4 favorite-set">
+                                                    <input type="text" name="productID" value="{{$product['id']}}" hidden>
+                                                    <a href="#" class="favme fa fa-heart"></a>
+                                                </div>
                                             @endif
 
                                         </div>
 
                                         <div class="product-description">
-                                            <span>{{ $product->owner['boutiqueName'] }}</span>
+                                            <span>{{ $product['owner']['boutiqueName'] }}</span>
                                             <a href="#">
                                                 <h6>{{ $product['setName'] }}</h6>
                                             </a>
                                             @if($product['price'] != null)
                                             <p class="product-price">₱{{ number_format($product['price']) }}</p>
                                             @else
-                                            <p class="product-price">₱{{ number_format($product->rentDetails['price']) }}</p>
+                                            <p class="product-price">₱{{ number_format($product['rentDetails']['price']) }}</p>
                                             @endif
 
                                             <!-- <div class="add-to-cart-btn">

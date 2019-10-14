@@ -13,8 +13,19 @@ class Category extends Model
         return $this->hasMany('App\Categorymeasurement', 'categoryID', 'id');
     }
 
+ 	public function category()
+ 	{
+        return $this->hasMany('App\Subcategory', 'categoryID', 'id');
+ 	}
+
+ 	//erase nani
     public function categoryTag()
     {
         return $this->hasMany('App\Categorytag', 'categoryID', 'id');
+    }
+
+    public function getSubCategory()
+    {
+        return $this->hasMany('App\Subcategory', 'categoryID', 'id');
     }
 }

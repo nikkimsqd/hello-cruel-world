@@ -13,7 +13,7 @@
             <div class="product_thumbnail_slides owl-carousel">
                 @foreach($set->items as $item)
                 @foreach($item->product->productFile as $image)
-                <img src="{{ asset('/uploads').$image['filename'] }}" alt="">
+                <img src="{{ asset('/uploads').$image['filepath'] }}" alt="">
                 <?php break; ?>
                 @endforeach
                 @endforeach
@@ -52,26 +52,14 @@
 
                 @elseif($item->product['rtwID'] != null)
 
+                    <?php  
+                        $rtwSizes = json_decode($item->product->rtwDetails['sizes']);
+                    ?>
                     <div class="select-box d-flex mb-30">
                         <select name="select" id="{{$item->product['id']}}" class="mr-5 productSize{{$counter}}">
-                            @if($item->product->rtwDetails['xs'] != null)
-                                <option value="xs">Size: XS</option>
-                            @endif
-                            @if($item->product->rtwDetails['s'] != null)
-                                <option value="s">Size: S</option>
-                            @endif
-                            @if($item->product->rtwDetails['m'] != null)
-                                <option value="m">Size: M</option>
-                            @endif
-                            @if($item->product->rtwDetails['l'] != null)
-                                <option value="l">Size: L</option>
-                            @endif
-                            @if($item->product->rtwDetails['xl'] != null)
-                                <option value="xl">Size: XL</option>
-                            @endif
-                            @if($item->product->rtwDetails['xxl'] != null)
-                                <option value="xxl">Size: XXL</option>
-                            @endif
+                            @foreach($rtwSizes as $rtwSize => $value)
+                                <option value="xs">{{ucfirst($rtwSize)}}</option>
+                            @endforeach
                         </select>
                     </div>
 

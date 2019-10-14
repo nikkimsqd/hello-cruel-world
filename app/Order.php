@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['userID', 'cartID', 'mtoID', 'biddingID', 'subtotal', 'deliveryfee', 'total', 'boutiqueID', 'deliveryAddress', 'status', 'rentID', 'paymentStatus','paypalOrderID', 'deliverySchedule', 'billingName', 'phoneNumber', 'boutiqueShare', 'adminShare', 'addressID', 'payoutID', 'courierID', 'alterationID'];
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $fillable = ['id', 'userID', 'transactionID', 'subtotal', 'deliveryfee', 'total', 'boutiqueID', 'status', 'paymentStatus', 'deliverySchedule', 'boutiqueShare', 'adminShare', 'addressID', 'payoutID', 'courierID', 'alterationID'];
     
 
     public function cart()
     {
-        return $this->hasOne('App\Cart', 'id', 'cartID');
+        return $this->hasOne('App\Cart', 'id', 'transactionID');
     }
 
     public function boutique()
@@ -26,12 +30,12 @@ class Order extends Model
 
     public function rent()
     {
-        return $this->hasOne('App\Rent', 'rentID', 'rentID');
+        return $this->hasOne('App\Rent', 'id', 'transactionID');
     }
 
     public function mto()
     {
-        return $this->hasOne('App\Mto', 'id', 'mtoID');
+        return $this->hasOne('App\Mto', 'id', 'transactionID');
     }
 
     public function customer()
@@ -41,7 +45,7 @@ class Order extends Model
 
     public function bidding()
     {
-        return $this->hasOne('App\Bidding', 'id', 'biddingID');
+        return $this->hasOne('App\Bidding', 'id', 'transactionID');
     }
 
     public function payments()

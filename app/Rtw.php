@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rtw extends Model
 {
-    protected $fillable = ['productID', 'xs', 's', 'm', 'l', 'xl', 'xxl'];
+    protected $fillable = ['productID', 'sizes'];
     
 }
