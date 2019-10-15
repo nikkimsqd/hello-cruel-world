@@ -131,6 +131,7 @@ class CustomerController extends Controller
                 //----------------------------------------------------------------------------------
 
 
+                //PROFILING-----------------------------------------------------------------------------------
                 $subCategories = array();
                 $profiling = Profiling::where('userID', $userID)->first();
                 $profilingDatas = json_decode($profiling['data']);
@@ -139,7 +140,10 @@ class CustomerController extends Controller
                         array_push($subCategories, $subcategory);
                     }
                 }
+                //--------------------------------------------------------------------------------------------
 
+
+                //LOOP ALL PRODUCTS RETRIEVED-----------------------------------------------------------------
                 foreach($products as $product){
                     $points = 0;
 
@@ -147,12 +151,15 @@ class CustomerController extends Controller
                         $points += 2;
                     }
 
+                    //VIEWSS-----------------------------------------------------------------------------------
                     $views = View::where('userID', $userID)->where('itemID', $product['id'])->first();
                     if(!empty($views)){
                         $viewPoints = $views['count'] * 1;
                         $points += $viewPoints;
                     }
+                    //-----------------------------------------------------------------------------------------
 
+                    //FAVORITES--------------------------------------------------------------------------------
                     $favorites = Favorite::where('userID', $userID)->get();
                     $favoriteCounter= 0;
                     foreach($favorites as $favorite){
@@ -160,7 +167,7 @@ class CustomerController extends Controller
                         $itemType = $itemID[0];
 
                         if($itemType == "PROD"){
-                            $prod = Product::where('id', $favorite['itemID'])->first();
+                            $prod = Product::where('id', $favorite['itemID'])->first(); //get product matched
 
                             if($product['category'] == $prod['category']){
                                 $favoriteCounter +=1;
@@ -168,28 +175,101 @@ class CustomerController extends Controller
                         }else{
                             $setset = Set::where('id', $favorite['itemID'])->first();
                             foreach($setset->items as $item){
-                                $setprod = $product::where('id', $item->product['id'])->first();
+                                $setprod = Product::where('id', $item->product['id'])->first();
 
                                 if($setprod['category'] == $product['category']){
                                     $favoriteCounter += 1;
                                 }
                             }
                         }
+                        $favCounter = $favoriteCounter * 2;  //score fav              
+                        $points += $favCounter;
+                        // dd($points);
                     }
+                    //----------------------------------------------------------------------------------------
 
-                    // $lastOrders = ;
-                    //loop orders
-                    //loop product
-                    //
+                    $orderhistories = Order::where('userID', $userID)->limit(5)->get();
+                    // dd($orderhistories);
+                    $orderCounter = 0;
+                    foreach($orderhistories as $orderhistory){
+                        $transactionID = explode("_", $orderhistory['transactionID']);
+                        $type = $transactionID[0];
 
+                        if($type == 'CART'){
+                            $transactionType = 'PURCHASE';
+                        }else if($type == 'MTO'){
+                            $transactionType = 'MADE-TO-ORDER';
+                        }else if($type == 'BIDD'){
+                            $transactionType = 'BIDDING';
+                        }else if($type == 'RENT'){
+                            $transactionType = 'RENT';
+                        }
+
+
+                        if($type == 'CART'){
+                            foreach($orderhistory->cart->items as $cartItem){
+                                // $itemID = explode("_", $cartItem['itemID']);
+                                // $itemType = $itemID[0];
+
+                                //if product ang naa sa cart
+                                if($cartItem->product != null){
+                                    $prod = Product::where('id', $cartItem['productID'])->first(); //get product matched
+
+                                    if($product['category'] == $prod['category']){
+                                        $orderCounter +=1;
+                                        // dd($orderCounter);
+                                    }
+                                }else{
+                                    $setset = Set::where('id', $cartItem['setID'])->first();
+                                    foreach($setset->items as $item){
+                                        $setprod = $product::where('id', $item->product['id'])->first();
+
+                                        if($setprod['category'] == $product['category']){
+                                            $orderCounter +=1;
+                                        }
+                                    }
+                                }
+                            }
+                        }else if($type == 'RENT'){
+                            $itemID = explode("_", $orderhistory['transactionID']);
+                            $itemType = $itemID[0];
+
+                            if($type == 'PROD'){
+                                $prod = Product::where('id', $orderhistory['transactionID'])->first(); //get product matched
+
+                                if($prod['category'] == $product['category']){
+                                    $orderCounter +=1;
+                                }
+                            }else{
+                                $setset = Set::where('id', $orderhistory['transactionID'])->first();
+                                foreach($setset->items as $item){
+                                    $setprod = Product::where('id', $item->product['id'])->first();
+
+                                    if($setprod['category'] == $product['category']){
+                                        $orderCounter += 1;
+                                    }
+                                }
+
+                            }
+                        }
+
+                            $historyCounter = $orderCounter * 3;  //score fav              
+                            $points += $historyCounter;
+                    } //order history closing
+
+                    //SCORING---------------------------------------------------------------------------------
                     $points += $favoriteCounter * 2.5;
 
                     $product['points'] = $points;
                 }
+                //---------------------------------------------------------------------------------------------
 
+
+                //SORT PRODUCTS----------------------------------------
                 $products = $products->sortBy(function($product){
                     return -$product->points;
                 });
+                //-----------------------------------------------------
 
 
                 foreach($sets as $set){
