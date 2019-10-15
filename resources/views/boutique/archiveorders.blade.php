@@ -37,19 +37,35 @@
                 </tr>
                 </thead>
                 @foreach($orders as $order)
-                @if(!empty($order['status']))
-                <tr>
-                  <td>{{$order['id']}}</td>
-                  <td>{{$order->cart->owner->fname.' '.$order->cart->owner->lname}}</td>
-                  <td>{{$order['created_at']->format('M d, Y')}}</td>
-                  <td><span class="label label-success">{{$order['status']}}</span></td>
-                  <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
-                </tr>
-                @else
-                <tr>
-                  <td colspan="5"><i>You have no rent requests...</i></td>
-                </tr>
-                @endif
+                  <?php 
+                    $transactionID = explode("_", $order['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'CART'){
+                      $transactionType = 'PURCHASE';
+                    }else if($type == 'MTO'){
+                      $transactionType = 'MADE-TO-ORDER';
+                    }else if($type == 'BIDD'){
+                      $transactionType = 'BIDDING';
+                    }else if($type == 'RENT'){
+                      $transactionType = 'RENT';
+                    }
+                  ?>
+                  @if($type == 'CART')
+                    @if(!empty($order['status']))
+                    <tr>
+                      <td>{{$order['id']}}</td>
+                      <td>{{$order->cart->owner->fname.' '.$order->cart->owner->lname}}</td>
+                      <td>{{$order['created_at']->format('M d, Y')}}</td>
+                      <td><span class="label label-success">{{$order['status']}}</span></td>
+                      <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                    </tr>
+                    @else
+                    <tr>
+                      <td colspan="5"><i>You have no rent requests...</i></td>
+                    </tr>
+                    @endif
+                  @endif
                 @endforeach
               </table>
             </div>

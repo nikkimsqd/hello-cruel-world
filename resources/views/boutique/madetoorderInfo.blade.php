@@ -113,7 +113,7 @@
             </div>
             <div class="col-md-6 col-12 col-lg-5"> <!-- col-md-6 ra ang orig-->
 
-              <img src="{{ asset('/uploads/').$mto->productFile['filename'] }}" style="width:80%; height: auto; object-fit: cover;margin: 10px; text-align: right;">
+              <img src="{{ asset('/uploads/').$mto->productFile['filepath'] }}" style="width:80%; height: auto; object-fit: cover;margin: 10px; text-align: right;">
             </div>
           </div>
         </div>

@@ -48,7 +48,7 @@
                   @elseif($rent['status'] == "Declined")
                     <td><span class="label label-danger">{{$rent['status']}}</span></td>
                   @endif
-                  <td><a href="rents/{{$rent['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
+                  <td><a href="rents/{{$rent['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>
                 @else
                 <tr>

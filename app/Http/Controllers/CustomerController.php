@@ -80,31 +80,56 @@ class CustomerController extends Controller
                 $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->get();
                 $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
 
-                // dD($products);
 
-                if(!empty($request->input('category'))){
-                    foreach($products as $key => $product){
-                        if($product->getSubCategory->getCategory['id'] != $request->input('category')){
-                            $products->forget($key);
-                        }
-                    }
-                }
-
-                if(!empty($request->input('category'))){
-                    foreach($sets as $key => $set){
-                        $variable = 0;
-                        foreach($set->items as $item){
-                            if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){
-                                $variable += 1;
+                //FILTERING-------------------------------------------------------------------------
+                    //PRODUCTS
+                    if(!empty($request->input('category'))){
+                        foreach($products as $key => $product){
+                            if($product->getSubCategory->getCategory['id'] != $request->input('category')){
+                                $products->forget($key);
+                            }else{
+                                $page_title = $product->getSubCategory->getCategory['gender'].' - '.$product->getSubCategory->getCategory['categoryName'];
+                                $activeLink = strtolower($product->getSubCategory->getCategory['gender']);
                             }
                         }
-                        if($variable == 0){
-                            $sets->forget($key);
+                    }else if(!empty($request->input('gender'))){ //para filter via gender
+                        $page_title = $request->input('gender');
+                        $activeLink = strtolower($request->input('gender'));
+                        foreach($products as $key => $product){
+                            if($product->getSubCategory->getCategory['gender'] != ucfirst($request->input('gender'))){ //pangitaon ang dili pariha
+                                $products->forget($key);
+                            }
                         }
                     }
-                }
 
-                // dd($sets);
+                    //SETS
+                    if(!empty($request->input('category'))){
+                        foreach($sets as $key => $set){
+                            $variable = 0;
+                            foreach($set->items as $item){
+                                if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){
+                                    $variable += 1;
+                                }
+                            }
+                            if($variable == 0){
+                                $sets->forget($key);
+                            }
+                        }
+                    }else if(!empty($request->input('gender'))){ //para filter via gender
+                        foreach($sets as $key => $set){
+                            $variable = 0;
+                            foreach($set->items as $item){
+                                if($item->product->getSubCategory->getCategory['gender'] == ucfirst($request->input('gender'))){ //pangitaon ang ni pariha nga category
+                                    $variable += 1;
+                                }
+                            }
+                            if($variable == 0){
+                                $sets->forget($key); //tang'tangon ang way apil
+                            }
+                        }
+                    }
+                //----------------------------------------------------------------------------------
+
 
                 $subCategories = array();
                 $profiling = Profiling::where('userID', $userID)->first();
@@ -259,21 +284,77 @@ class CustomerController extends Controller
             $page_title = "Shop";
             $userID = null;
             $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->get();
-            $productsCount = $products->count();
             $categories = Category::all();
-            // $cartCount = Cart::where('userID', "")->where('status', "Pending")->count();
             $cart = null;
             $cartCount = null;
             $boutiques = Boutique::all();
             $notAvailables = Product::where('productStatus', 'Not Available')->get();
             $notificationsCount = null;
-            $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
+            $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->with('items')->get();
             $allProducts = array();
 
-            foreach($products as $product){ array_push($allProducts, $product); }
-            foreach($sets as $set){ array_push($allProducts, $set); }
 
-            shuffle($allProducts);
+            //FILTERING-------------------------------------------------------------------------
+                //PRODUCTS
+                if(!empty($request->input('category'))){
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['id'] != $request->input('category')){
+                            $products->forget($key);
+                        }else{
+                            $page_title = $product->getSubCategory->getCategory['gender'].' - '.$product->getSubCategory->getCategory['categoryName'];
+                            $activeLink = strtolower($product->getSubCategory->getCategory['gender']);
+                        }
+                    }
+                }else if(!empty($request->input('gender'))){ //para filter via gender
+                    $page_title = $request->input('gender');
+                    $activeLink = strtolower($request->input('gender'));
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['gender'] != ucfirst($request->input('gender'))){ //pangitaon ang dili pariha
+                            $products->forget($key);
+                        }
+                    }
+                }
+
+                //SETS
+                if(!empty($request->input('category'))){
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key);
+                        }
+                    }
+                }else if(!empty($request->input('gender'))){ //para filter via gender
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['gender'] == ucfirst($request->input('gender'))){ //pangitaon ang ni pariha nga category
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key); //tang'tangon ang way apil
+                        }
+                    }
+                }
+            //----------------------------------------------------------------------------------
+
+
+            foreach($sets as $set){ 
+                foreach($set->items as $item){
+                    $item['productFile'] = $item->product->productFile;
+                }
+            }
+
+            $allProducts = array_merge($products->toArray(), $sets->toArray()); //merge products &sets
+            $createdAt = array_column($allProducts, 'created_at');
+            array_multisort($createdAt, SORT_DESC, $allProducts); //sort all products & sets via created_at
+            $productsCount = count($allProducts);
+
             //PAGINATION
             $currentPage = $request->page;
             $pageItems = 12;
@@ -287,7 +368,7 @@ class CustomerController extends Controller
             $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
             $paginator->withPath('shop');
 
-            dd($paginator);
+            // dd($allProducts);
 
             return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink'));
         }
@@ -504,7 +585,7 @@ class CustomerController extends Controller
         return view('hinimo/profiling-done', compact('boutiques'));
     }
 
-    public function viewBoutique($boutiqueID)
+    public function viewBoutique($boutiqueID, Request $request)
     {
         // if (Auth::check()) {
         // $userID = Auth()->user()->id;
@@ -515,7 +596,7 @@ class CustomerController extends Controller
         $userID = Auth()->user()->id;
     	$categories = Category::all();
     	$products = Product::where('boutiqueID', $boutiqueID)->where('productStatus', 'Available')->get();
-        $productsCount = $products->count();
+        $sets = Set::where('boutiqueID', $boutiqueID)->where('setStatus', 'Available')->get();
         $boutiques = Boutique::all();
         $boutique = Boutique::where('id', $boutiqueID)->first();
         $page_title = $boutique['boutiqueName'];
@@ -526,10 +607,92 @@ class CustomerController extends Controller
         }else{
             $cartCount = 0;
         }
-
         $notifications;
         $notificationsCount;
         $this->getNotifications($notifications, $notificationsCount);
+        $allProducts = array();
+
+
+        if(!empty($request->input('category'))){ //para filter via category
+            foreach($products as $key => $product){
+                if($product->getSubCategory->getCategory['id'] != $request->input('category')){ //pangitaon ang dili pariha
+                    $products->forget($key);
+                    // $activeLink = strtolower($product->getSubCategory->getCategory['gender']);
+                
+                }else{
+                    $page_title = $boutique['boutiqueName'].' | '.$product->getSubCategory->getCategory['categoryName'];
+                    $activeLink = strtolower($product->getSubCategory->getCategory['gender']);
+                    array_push($allProducts, $product);
+                }
+            }
+        }else if(!empty($request->input('gender'))){ //para filter via gender
+            $activeLink = strtolower($request->input('gender'));
+            foreach($products as $key => $product){
+                if($product->getSubCategory->getCategory['gender'] != ucfirst($request->input('gender'))){ //pangitaon ang dili pariha
+                    $products->forget($key);
+                }else if($product->getSubCategory->getCategory['gender'] == ucfirst($request->input('gender'))){ //ipush to array ang ni match nga gender
+                    array_push($allProducts, $product);
+                }
+            }
+        }else{
+            foreach($products as $product){
+                array_push($allProducts, $product);
+            }
+        }
+
+        //FOR SETS
+        if(!empty($request->input('category'))){
+            foreach($sets as $key => $set){
+                $variable = 0;
+                foreach($set->items as $item){
+                    if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){ //pangitaon ang ni pariha nga category
+                        $variable += 1;
+                    }
+                }
+                if($variable == 0){
+                    $sets->forget($key); //tang'tangon ang way apil
+                }else{
+                    array_push($allProducts, $set);
+                }
+            }
+        }else if(!empty($request->input('gender'))){ //para filter via gender
+            foreach($sets as $key => $set){
+                $variable = 0;
+                foreach($set->items as $item){
+                    if($item->product->getSubCategory->getCategory['gender'] == ucfirst($request->input('gender'))){ //pangitaon ang ni pariha nga category
+                        $variable += 1;
+                    }
+                }
+                if($variable == 0){
+                    $sets->forget($key); //tang'tangon ang way apil
+                }else{
+                    array_push($allProducts, $set);
+                }
+            }
+        }else{
+            foreach($sets as $set){
+                array_push($allProducts, $set);
+            }
+        }
+
+        // dd($activeLink);
+
+        $productsCount = count($allProducts);
+
+
+        //PAGINATION
+        $currentPage = $request->page;
+        $pageItems = 12;
+        if(empty($currentPage)){
+            $currentPage = 1;
+        }
+
+        $offset = ($currentPage * $pageItems) - $pageItems;
+        $itemsForCurrentPage = array_slice($allProducts, $offset, $pageItems);
+
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+        $paginator->withPath('boutique/'.$boutiqueID);
+
 
     	return view('hinimo/boutiqueProfile', compact('categories', 'products', 'productsCount', 'cart', 'cartCount', 'userID', 'boutiques', 'boutique', 'notAvailables', 'page_title', 'notifications', 'notificationsCount', 'activeLink'));
 
@@ -1071,7 +1234,7 @@ class CustomerController extends Controller
         $daysBefore = 2;    //time allowance
         $daysAfter = 2;     //time allowance
         $datesArray = array();      //para makuha ang mga dates nga dili pwede ang item
-        $rentSchedules = Rent::where('productID', $productID)->get();
+        $rentSchedules = Rent::where('itemID', $productID)->get();
 
 
         foreach($rentSchedules as $rentSchedule){
@@ -1092,11 +1255,15 @@ class CustomerController extends Controller
             }
         }
 
+        $deliveryfee = Deliveryfee::where('id', '1')->first();
+        $baseFee = $deliveryfee['baseFee'];
+        $additionalFee = $deliveryfee['additionalFee'];
+
         // dd($product->getSubCategory->getCategory);
         
         // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-        return view('hinimo/requestToRent', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses', 'datesArray'));
+        return view('hinimo/requestToRent', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses', 'datesArray', 'baseFee', 'additionalFee'));
     }
 
     // public function getRentDates($productID)
@@ -1199,11 +1366,8 @@ class CustomerController extends Controller
             'subtotal' => $request->input('subtotal'),
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
-            'deliveryAddress' => $addressID,
             'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
-            'billingName' => $request->input('billingName'), 
-            'phoneNumber' => $addressID,
             'boutiqueShare' => $request->input('boutiqueShare'),
             'adminShare' => $request->input('adminShare'),
             'addressID' => $addressID
@@ -1739,6 +1903,11 @@ class CustomerController extends Controller
 
                     return redirect('/view-rent/'.$notification->data['rentID'].'#rent-details');
 
+                }elseif($notification->type == 'App\Notifications\RentDeclined'){
+                    $notification->markAsRead();
+
+                    return redirect('/view-rent/'.$notification->data['rentID'].'#rent-details');
+
                 }elseif($notification->type == 'App\Notifications\MtoUpdateForCustomer'){
                     $notification->markAsRead();
 
@@ -1757,19 +1926,21 @@ class CustomerController extends Controller
 
                 }elseif($notification->type == 'App\Notifications\NotifyForAlterations'){
                     $notification->markAsRead();
-
                     $order = Order::where('id', $notification->data['orderID'])->first();
 
-                    if($order['mtoID'] != null){
+                    $transactionID = explode("_", $order['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'MTO'){
                         return redirect('/view-mto/'.$order->mto['id']);
 
-                    }elseif($order['cartID'] != null){
+                    }elseif($type == 'CART'){
                         return redirect('/view-order/'.$order['id']);
 
-                    }elseif($order['rentID'] != null){
+                    }elseif($type == 'RENT'){
                         return redirect('/view-rent/'.$order->rent['rentID']);
 
-                    }elseif($order['biddingID'] != null){
+                    }elseif($type == 'BIDD'){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
                     }
 
@@ -1780,19 +1951,21 @@ class CustomerController extends Controller
 
                 }elseif($notification->type == 'App\Notifications\NotifyForPickup'){
                     $notification->markAsRead();
-
                     $order = Order::where('id', $notification->data['orderID'])->first();
 
-                    if($order['mtoID'] != null){
+                    $transactionID = explode("_", $order['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'MTO'){
                         return redirect('/view-mto/'.$order->mto['id']);
 
-                    }elseif($order['cartID'] != null){
+                    }elseif($type == 'CART'){
                         return redirect('/view-order/'.$order['id']);
 
-                    }elseif($order['rentID'] != null){
+                    }elseif($type == 'RENT'){
                         return redirect('/view-rent/'.$order->rent['rentID']);
 
-                    }elseif($order['biddingID'] != null){
+                    }elseif($type == 'BIDD'){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
                     }
 
@@ -1813,16 +1986,19 @@ class CustomerController extends Controller
                     $chat = Chat::where('id', $notification->data['chatID'])->first();
                     $order = Order::where('id', $chat['orderID'])->first();
 
-                    if($order['mtoID'] != null){
+                    $transactionID = explode("_", $order['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'MTO'){
                         return redirect('/view-mto/'.$order->mto['id'].'#chat');
 
-                    }elseif($order['cartID'] != null){
+                    }elseif($type == 'CART'){
                         return redirect('/view-order/'.$order['id'].'#chat');
 
-                    }elseif($order['rentID'] != null){
+                    }elseif($type == 'RENT'){
                         return redirect('/view-rent/'.$order->rent['rentID'].'#chat');
 
-                    }elseif($order['biddingID'] != null){
+                    }elseif($type == 'BIDD'){
                         return redirect('/view-bidding-order/'.$order->bidding['id'].'#chat');
                     }
 
@@ -2094,22 +2270,16 @@ class CustomerController extends Controller
         }
 
         $orders = Order::where('userID', $userID)->get();
-        $rents = Rent::where('customerID', $userID)->get();
         $mtos = Mto::where('userID', $userID)->where('orderID', null)->where('status', 'Active')->get();
         // $biddings = Bidding::where('userID', $userID)->where('orderID', '!=', null)->get();
         // $declinedMtos = Mto::where('status', '!=', 'Cancelled')->get();
-        // dd($orders[0]['cartID']);
+        // dd($orders);
 
-        $transactions = array();
-        array_push($transactions, $orders);
-        array_push($transactions, $rents);
-        array_push($transactions, $mtos);
-        // dd($transactions);
 
         // $productsArray = $products->toArray();
         // array_multisort(array_column($transactions, "created_at"), SORT_DESC, $transactions);
 
-        return view('hinimo/transactions', compact('cart', 'cartCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'mtos', 'orders', 'rents'));
+        return view('hinimo/transactions', compact('cart', 'cartCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'mtos', 'orders'));
     }
 
     public function viewBiddingOrder($biddingID)
@@ -2212,7 +2382,7 @@ class CustomerController extends Controller
 
         $mto = Mto::find($mtoID);
         // $measurement = json_decode($mto->measurement->data);
-        $fabrics = Fabric::where('boutiqueID', $mto->boutique['id'])->get();
+        // $fabrics = Fabric::where('boutiqueID', $mto->boutique['id'])->get();
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         $mrequests = Measurementrequest::where('type', 'mto')->where('typeID', $mtoID)->get();
@@ -2839,10 +3009,14 @@ class CustomerController extends Controller
         $sp = Sharepercentage::where('id', '1')->first();
         $percentage = $sp['sharePercentage'] / 100;
         // dd($product);
+
+        $deliveryfee = Deliveryfee::where('id', '1')->first();
+        $baseFee = $deliveryfee['baseFee'];
+        $additionalFee = $deliveryfee['additionalFee'];
         
         // $totalPrice = $product['rentPrice'] + $product['deliveryFee'];
 
-        return view('hinimo/requestToRentSet', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses'));
+        return view('hinimo/requestToRentSet', compact('product', 'cart', 'cartCount', 'user', 'addresses', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'cities', 'percentage', 'addresses', 'baseFee', 'additionalFee'));
     }
 
     public function requestToRentSet(Request $request)
@@ -2874,8 +3048,27 @@ class CustomerController extends Controller
         }elseif($deliveryAddress != null && $addressID != "addAddress"){
             //leave empty lang para mo exit na sa condition
         }
+        
+        //CREATE ID FOR RENT --------------------------------------------------------
+        $rent = Rent::orderBy('created_at', 'DESC')->first();
+        if(empty($rent)){
+            $rentID = 'RENT_001';
+        }else{
+            $oldID = explode("_", $rent['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $rentID = 'RENT_00'.$idInt;
+            }elseif($idInt <= 99){
+                $rentID = 'RENT_0'.$idInt;
+            }else{
+                $rentID = 'RENT_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
 
         $rent = Rent::create([
+            'id' => $rentID,
             'boutiqueID' => $request->input('boutiqueID'),
             'customerID' => $id, 
             'status' => "Pending", 
@@ -2887,43 +3080,46 @@ class CustomerController extends Controller
 
         $data = array();
         $cmArray = array();
-        // $categoryName = $mrequest->category['categoryName'];
         $measurements = $request->input('measurement');
-
-        // array_push($cmArray, $categoryName);
         array_push($cmArray, $measurements);
-
         array_push($data, $cmArray);
 
         $dataJson = json_encode($data);
-        // DD($dataJson);
-
-        // $measurement = Measurement::create([
-        //     'userID' => $userID,
-        //     'type' => 'bidding',
-        //     'typeID' => $biddingID,
-        //     'data' => $dataJson
-        // ]);
 
         $measurement = Measurement::create([
             'userID' => $id,
             'type' => 'rent',
-            'typeID' => $rent['rentID'],
+            'typeID' => $rent['id'],
             'data' => $dataJson
         ]);
-
+        
+        //CREATE ID FOR ORDER --------------------------------------------------------
+        $order = Order::orderBy('created_at', 'DESC')->first();
+        if(empty($order)){
+            $orderID = 'ORDER_001';
+        }else{
+            $oldID = explode("_", $order['id']);
+            $idInt = (int) $oldID[1];
+            $idInt++;
+            if($idInt <= 9){
+                $orderID = 'ORDER_00'.$idInt;
+            }elseif($idInt <= 99){
+                $orderID = 'ORDER_0'.$idInt;
+            }else{
+                $orderID = 'ORDER_'.$idInt;
+            }
+        }
+        //------------------------------------------------------------------------------
         $order = Order::create([
+            'id' => $orderID,
             'userID' => $id,
-            'rentID' => $rent['rentID'],
+            'transactionID' => $rent['id'],
             'boutiqueID' => $request->input('boutiqueID'),
             'subtotal' => $request->input('subtotal'),
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
-            'deliveryAddress' => $addressID,
             'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
-            'billingName' => $request->input('billingName'), 
-            'phoneNumber' => $addressID,
             'boutiqueShare' => $request->input('boutiqueShare'),
             'adminShare' => $request->input('adminShare'),
             'addressID' => $addressID
@@ -2934,16 +3130,12 @@ class CustomerController extends Controller
             'measurementID' => $measurement['id']
         ]);
 
-        // Product::where('id', $rent['productID'])->update([
-        //     'productStatus' => "Not Available"
-        // ]);
-
         $boutique = Boutique::where('id', $rent['boutiqueID'])->first();
         $boutiqueseller = User::find($boutique['userID']);
         
         $boutiqueseller->notify(new RentRequest($rent));
 
-        return redirect('/view-rent/'.$rent['rentID']);
+        return redirect('/view-rent/'.$rent['id']);
     }
 
     public function favorites()

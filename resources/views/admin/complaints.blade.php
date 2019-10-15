@@ -10,7 +10,7 @@
       <div class="box">
 
         <div class="box-header with-border">
-          <h3 class="box-title"><b>PAYPAL ACCOUNT</b></h3>
+          <h3 class="box-title"><b>COMPLAINTS</b></h3>
         </div>
 
         <div class="box-body">
@@ -34,16 +34,18 @@
                         <th class="center">Order ID</th>
                         <th></th>
                       </thead>
-                      @foreach($complains as $complain)
-                      @if($complain['status'] == "Active")
-                      <tr>
-                        <td>{{$complain->order->customer['fname']}}</td>
-                        <td>{{$complain['complain']}}</td>
-                        <td class="center">{{$complain->order['id']}}</td>
-                        <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
-                      </tr>
+                      @if(!empty($complains))
+                        @foreach($complains as $complain)
+                        @if($complain['status'] == "Active")
+                        <tr>
+                          <td>{{$complain->order->customer['fname']}}</td>
+                          <td>{{$complain['complain']}}</td>
+                          <td class="center">{{$complain->order['id']}}</td>
+                          <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
+                        </tr>
+                        @endif
+                        @endforeach
                       @endif
-                      @endforeach
                     </table>
                     
                   </div>
@@ -56,16 +58,18 @@
                         <th>Order ID</th>
                         <th></th>
                       </thead>
-                      @foreach($complains as $complain)
-                      @if($complain['status'] == "Closed")
-                      <tr>
-                        <td>{{$complain->order->customer['fname']}}</td>
-                        <td>{{$complain['complain']}}</td>
-                        <td>{{$complain->order['id']}}</td>
-                        <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
-                      </tr>
+                      @if(!empty($complains))
+                        @foreach($complains as $complain)
+                        @if($complain['status'] == "Closed")
+                        <tr>
+                          <td>{{$complain->order->customer['fname']}}</td>
+                          <td>{{$complain['complain']}}</td>
+                          <td>{{$complain->order['id']}}</td>
+                          <td><a href="{{url('admin-orders/'.$complain->order['id'].'#complaint')}}" class="btn btn-default">View Complain</a></td>
+                        </tr>
+                        @endif
+                        @endforeach
                       @endif
-                      @endforeach
                     </table>
                       
                   </div>

@@ -40,11 +40,11 @@
                 @foreach($rents as $rent)
                 @if(!empty($rent['status']))
                 <tr>
-                  <td>{{$rent['rentID']}}</td>
+                  <td>{{$rent['id']}}</td>
                   <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
                   <td>{{$rent['created_at']->format('M d, Y')}}</td>
                   @if($rent->order['paymentStatus'] == "Not Yet Paid")
-                    <td style="color: red">{{$rent['paymentStatus']}}</td>
+                    <td style="color: red">{{$rent->order['paymentStatus']}}</td>
                   @else
                     <td style="color: #0315ff;">{{$rent->order['paymentStatus']}}</td>
                   @endif
@@ -55,7 +55,7 @@
                   @else
                     <td><span class="label label-danger">Declined</span></td>
                   @endif
-                  <td><a href="rents/{{$rent['rentID']}}" class="btn btn-default btn-sm">View Order</a></td>
+                  <td><a href="rents/{{$rent['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>
                 @else
                 <tr>

@@ -404,7 +404,7 @@
 
   });
 
-  $('body').on('change', '.selected-tags', function(){
+  $('body').on('click', '.selected-tags', function(){
     var tag = $(this).val();
     console.log(tag);
     $('#'+tag).remove();

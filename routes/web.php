@@ -36,6 +36,7 @@ Route::get('/shop/{gender}', 'CustomerController@shopViaGender');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopViaCategory');
 Route::get('/single-product-details/{productID}', 'CustomerController@productDetails');
 Route::get('/set-single-product-details/{setID}', 'CustomerController@setDetails');
+Route::get('/search', 'CustomerController@search');
 
 
 Route::view('/autocomplete', 'hinimo.autocomplete');

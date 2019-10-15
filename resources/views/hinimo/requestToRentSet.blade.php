@@ -25,20 +25,22 @@
                         <label >Name:</label>
                         <input type="text" name="billingName" class="form-control" value="{{$user['fname'].' '.$user['lname']}}" required><br>  
 
-                        <label>Submit Measurements (inches)</label>
+                        <!-- <label>Submit Measurements (inches)</label>
                         <a style="color: blue;" href="https://youtu.be/gIhfrADZ2ZU" target="blank">&nbsp; See guide on how to measure youself here.</a><br>
 
                         <div class="row justify-content-center">
                             @foreach($product->items as $item)
+                            @if($item->product['rtwID'] == null)
                             <div class="col-md-5">
                             <label>{{$item->product['productName']}}:</label><br>
-                            @foreach($item->product->getCategory->getMeasurements as $measurements)
-                            <label>{{$measurements['mName']}}:</label>
-                                <input type="text" name="measurement[{{$item->product['productName']}}][{{$measurements['mName']}}]" class="form-control" required><br> 
-                            @endforeach
+                                @foreach($item->product->getCategory->getMeasurements as $measurements)
+                                <label>{{$measurements['mName']}}:</label>
+                                    <input type="text" name="measurement[{{$item->product['productName']}}][{{$measurements['mName']}}]" class="form-control" required><br> 
+                                @endforeach
                             </div>
+                            @endif
                             @endforeach
-                        </div><br>
+                        </div><br> -->
 
                         <label>Date Item will be used:</label>
                         <!-- <input type="date" name="dateToUse" class="form-control" required><br>  -->
@@ -59,14 +61,18 @@
                             <option value="addAddress"><b>+ Add Address</b></option>
                         </select><br><br><br>
 
+                        @foreach($addresses as $address)
+                            <input type="text" id="{{$address['id']}}" data-lat="{{$address['lat']}}" data-lng="{{$address['lng']}}" hidden>
+                        @endforeach
+
                         <div id="addAddressDIV" hidden=""><br><br>
                             <label>Contact Number:</label>
                             <input type="text" name="phoneNumber" class="form-control" maxlength="11"><br>
                             <label for="deliveryAddress">Input Address <span>*</span></label>
                             <input type="text" class="form-control mb-3" name="deliveryAddress" id="deliveryAddress" autofocus>
                             <div class="col-12 mb-3" id="map"></div>
-                            <input type="text" name="lat" id="lat" hidden>
-                            <input type="text" name="lng" id="lng" hidden>
+                            <input type="text" name="lat" id="lat" >
+                            <input type="text" name="lng" id="lng" >
                     
                             <div class="custom-control custom-checkbox d-block mb-2">
                                 <input type="checkbox" class="custom-control-input" id="customCheck1" name="newAddress" value="newAddress">
@@ -96,19 +102,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-md-5 col-form-label ">Item is only allowed to be rented on these locations:</label>
-                            <div class="col-md-6">
-                                <?php $locs = json_decode($product->rentDetails['locationsAvailable']); ?>
-                                @foreach($locs as $loc)
-                                    @foreach($cities as $city)
-                                    @if($city['citymunCode'] == $loc)
-                                    <label class="col-form-label">{{$city['citymunDesc']}},</label>
-                                    @endif
-                                    @endforeach 
-                                @endforeach
-                            </div>
-                        </div>
 
                         <input type="text" name="boutiqueID" value="{{$product->owner->id}}" hidden>
                         <input type="text" name="setID" value="{{$product['id']}}" hidden>
@@ -118,22 +111,22 @@
                             <label class="col-md-5 col-form-label">Product Rent Price:</label>
                             <div class="col-md-6">
                                 <label class="col-form-label">₱ {{$product->rentDetails['price']}}</label>
-                                <input type="text" name="subtotal" class="form-control" value="{{$product->rentDetails['price']}}" hidden>
+                                <!-- <input type="text" name="subtotal" class="form-control" value="{{$product->rentDetails['price']}}" hidden> -->
                             </div>
                         </div>
 
                         <div class="row">
                             <label class="col-md-5 col-form-label">Cashban:</label>
                             <div class="col-md-6">
-                                <label class="col-form-label">₱ {{$product->rentDetails['depositAmount']}}</label>
+                                <label class="col-form-label">₱ {{$product->rentDetails['cashban']}}</label>
                             </div>
                         </div>
 
                         <div class="row">
                             <label class="col-md-5 col-form-label">Delivery Fee:</label>
                             <div class="col-md-6">
-                                <label class="col-form-label">₱ 50</label>
-                                <input type="text" name="deliveryfee" class="form-control" value="50" hidden>
+                                <label class="col-form-label" id="deliveryfeeDisplay"></label>
+                                <input type="text" name="deliveryfee" id="deliveryfee" value="" hidden>
                             </div>
                         </div>
 
@@ -141,8 +134,8 @@
                         <div class="form-group row">
                             <label class="col-md-5 col-form-label">Total Payment:</label>
                             <div class="col-md-6">
-                                <label class="col-form-label">₱ {{$total}}</label>
-                                <input type="text" name="total" class="form-control" value="{{$total}}" hidden>
+                                <label class="col-form-label" id="totalDisplay"></label>
+                                <input type="text" name="total" id="total" value="" hidden>
                             </div>
                         </div>
 
@@ -153,13 +146,22 @@
                         <?php 
                         $adminShare = $product->rentDetails['price'] * $percentage;
                         $boutiqueShare = $product->rentDetails['price'] - $adminShare;
+                        $subtotal = $product->rentDetails['price'] + $product->rentDetails['cashban'];
                         ?>
 
-                        <input type="text" name="boutiqueShare" value="{{$boutiqueShare}}" hidden>
-                        <input type="text" name="adminShare" value="{{$adminShare}}" hidden>
+                        <input type="text" id="boutiqueLat" value="{{$product->owner->address['lat']}}" hidden>
+                        <input type="text" id="boutiqueLng" value="{{$product->owner->address['lng']}}" hidden>
+
+                        <input type="text" name="subtotal" id="subtotal" value="{{$subtotal}}" hidden>
+                        <input type="text" name="percentage" id="percentage" value="{{$percentage}}" hidden>
+                        <input type="text" id="baseFee" value="{{$baseFee}}" hidden>
+                        <input type="text" id="additionalFee" value="{{$additionalFee}}" hidden>
+
+                        <input type="text" name="boutiqueShare" id="boutiqueShare" value="" hidden>
+                        <input type="text" name="adminShare" id="adminShare" value="" hidden>
 
                         <br><br>
-                        <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Request">
+                        <input type="submit" name="btn_submit" class="btn essence-btn" value="Place Request" disabled>
 
                         </div>
                         </form>
@@ -177,7 +179,7 @@
     .checkout_details_area form label{font-size: 13px;}
     .checkout_details_area form .form-control{border: 1px solid #b7b7b7;}
     .additionalNotes{height: 100px !important;}
-    .datepicker-dropdown{top: 181px ; left: 281.5px; z-index: 11; display: block;} /*di mo take effect ang top kay walay important*/
+    .datepicker-dropdown{top: 428.5px !important; left: 281.5px; z-index: 11; display: block;} /*di mo take effect ang top kay walay important*/
     #map {
         width: 100%;
         height: 300px;
@@ -245,6 +247,9 @@ $('#addressBtn').click(function(){
 
 $('#selectAddress').on('change', function(){
 
+    $("#deliveryfeeDisplay").empty();
+    $("#totalDisplay").empty();
+
     if($(this).val() == "addAddress"){
         $('#addAddressDIV').removeAttr('hidden');
         $('.order-details-confirmation').attr('hidden', "hidden");
@@ -291,6 +296,42 @@ $('#selectAddress').on('change', function(){
                   $("#deliveryAddress").val(r.name);
                   $("#lat").val(r.center.lat);
                   $("#lng").val(r.center.lng);
+
+                        var customerLat = r.center.lat;
+                        var customerLng = r.center.lng;
+                        var ipaddress = 'localhost:5000';
+                        var percentage = $("#percentage").val();
+                        var total = 0;
+
+                        var boutiqueLat =  $("#boutiqueLat").val();
+                        var boutiqueLng =  $("#boutiqueLng").val();
+                        var adminShare = 0;
+                        var subtotal = $("#subtotal").val();
+
+
+                        $.ajax({
+                            url:'http://'+ipaddress+'/route/v1/driving/'+customerLng+','+customerLat+';'+boutiqueLng+','+boutiqueLat+'?overview=false&alternatives=false&steps=true&hints=;',
+                            type: "GET",
+                            success:function(data){
+                                var boutiqueDistance = parseFloat(data.routes[0].distance) / 1000;
+                                var baseFee = parseInt($("#baseFee").val());
+                                var additionalFee = parseInt($("#additionalFee").val());
+                                var deliveryfee = baseFee + (boutiqueDistance.toFixed(1) * additionalFee);
+                                console.log(deliveryfee);
+                                total = parseInt(subtotal) + parseInt(deliveryfee);
+                                adminShare = parseInt(subtotal) * parseFloat(percentage);
+                                boutiqueShare = parseInt(subtotal) - parseInt(adminShare);
+
+                                $("#adminShare").val(adminShare);
+                                $("#boutiqueShare").val(boutiqueShare);
+                                $("#deliveryfee").val(parseInt(deliveryfee));
+                                $("#total").val(total);
+                                $("#deliveryfeeDisplay").text('₱'+parseInt(deliveryfee));
+                                $("#totalDisplay").text('₱'+total);
+                            },
+                            async: false
+                        });
+                            $('#place-request').prop('disabled',false);
                 }
               });
                   marker.setLatLng(e.latlng);
@@ -307,6 +348,46 @@ $('#selectAddress').on('change', function(){
         
     }else{
         $('#addAddressDIV').attr('hidden', "hidden");
+
+        var addressID = $(this).val();
+        var customerLat = $("#"+addressID).data('lat');
+        var customerLng = $("#"+addressID).data('lng');
+        var ipaddress = 'localhost:5000';
+        var percentage = $("#percentage").val();
+        var total = 0;
+
+
+        var boutiqueLat =  $("#boutiqueLat").val();
+        var boutiqueLng =  $("#boutiqueLng").val();
+        var adminShare = 0;
+        var subtotal = $("#subtotal").val();
+
+
+        $.ajax({
+            url:'http://'+ipaddress+'/route/v1/driving/'+customerLng+','+customerLat+';'+boutiqueLng+','+boutiqueLat+'?overview=false&alternatives=false&steps=true&hints=;',
+            type: "GET",
+            success:function(data){
+                var boutiqueDistance = parseFloat(data.routes[0].distance) / 1000;
+                var baseFee = parseInt($("#baseFee").val());
+                var additionalFee = parseInt($("#additionalFee").val());
+                var deliveryfee = baseFee + (boutiqueDistance.toFixed(1) * additionalFee);
+                console.log(deliveryfee);
+                total = parseInt(subtotal) + parseInt(deliveryfee);
+                adminShare = parseInt(subtotal) * parseFloat(percentage);
+                boutiqueShare = parseInt(subtotal) - parseInt(adminShare);
+
+                $("#adminShare").val(adminShare);
+                $("#boutiqueShare").val(boutiqueShare);
+                $("#deliveryfee").val(parseInt(deliveryfee));
+                $("#total").val(total);
+                $("#deliveryfeeDisplay").append('₱'+parseInt(deliveryfee));
+                $("#totalDisplay").append('₱'+total);
+
+            },
+            async: false
+        });
+
+        $('#place-request').prop('disabled',false);
     }
 
 

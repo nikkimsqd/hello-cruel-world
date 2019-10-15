@@ -61,11 +61,11 @@
                                     ?>
                                     <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#womens">
-                                        <a href="{{url('shop/womens')}}">Womens</a>
+                                        <a href="{{url('/boutique/'.$boutique['id'].'?gender=womens')}}">Womens</a>
                                         <ul class="sub-menu collapse {{$womens}}" id="womens">
                                         @foreach($categories as $category)
                                         @if($category['gender'] == "Womens")
-                                            <li><a href="{{url('shop/womens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('/boutique/'.$boutique['id'].'?category='.$category['id'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach
@@ -74,11 +74,11 @@
 
                                     <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#mens">
-                                        <a href="{{url('shop/mens')}}">Mens</a>
+                                        <a href="{{url('/boutique/'.$boutique['id'].'?gender=mens')}}">Mens</a>
                                         <ul class="sub-menu collapse {{$mens}}" id="mens">
                                         @foreach($categories as $category)
                                         @if($category['gender'] == "Mens")
-                                            <li><a href="{{url('shop/mens/'.$category['categoryName'])}}">{{ $category['categoryName'] }}</a></li>
+                                            <li><a href="{{url('/boutique/'.$boutique['id'].'?category='.$category['id'])}}">{{ $category['categoryName'] }}</a></li>
                                             @else
                                             @endif
                                         @endforeach

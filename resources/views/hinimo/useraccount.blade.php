@@ -31,6 +31,15 @@
                 <div class="checkout_details_area mt-50 clearfix">
                     <div class="row">
                         <div class="col-md-9">
+                            <!-- <div class="row">
+                                <div class="col-md-7 cart-page-heading mb-30">
+                                    <h3>Profiling</h3>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <a href="" data-toggle="modal" data-target="#editProfile"><u>Edit Details</u></a>
+                                </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col-md-7 cart-page-heading mb-30">
                                     <h3>Account Details</h3>
@@ -59,6 +68,12 @@
                                     <div class="col-md-9 mb-3">
                                         <label for="first_name">Email</label>
                                         <input type="text" class="form-control" id="first_name" value="{{$user['email']}}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-9 mb-3">
+                                        <label for="first_name">Gender</label>
+                                        <input type="text" class="form-control" id="first_name" value="{{$user['gender']}}" disabled>
                                     </div>
                                 </div>
                                 <!-- <input type="submit" name="btn_submit" value=""> -->
@@ -112,10 +127,10 @@
                                 <td width="70%"><b>{{$address['contactName']}}</b><br></td>
                                 <td width="20%" rowspan="2" width="20%" align="right">
                                     <br>
-                                    <a href="" data-toggle="modal" data-target="#editAddress{{$address['id']}}" class="btn btn-app">
+                                    <!-- <a href="" data-toggle="modal" data-target="#editAddress{{$address['id']}}" class="btn btn-app">
                                         <i class="fa fa-edit"> 
                                         </i>
-                                    </a>
+                                    </a> -->
                                     <a href="{{url('deleteAddress/'.$address['id'])}}" class="btn btn-app">
                                         <i class="fa fa-trash-o"></i>
                                     </a>

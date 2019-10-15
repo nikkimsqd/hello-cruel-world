@@ -37,32 +37,48 @@
                 </tr>
                 </thead>
                 @foreach($biddingOrders as $biddingOrder)
-                <tr>
-                  <td>{{$biddingOrder->bidding['id']}}</td>
-                  <td>{{$biddingOrder->bidding->owner['fname'].' '.$biddingOrder->bidding->owner['lname']}}</td>
-                  <td>{{$biddingOrder->bidding['deadlineOfProduct']}}</td>
-                  <td>
-                    @if($biddingOrder['status'] == "Pending")
-                      <label class="label label-warning">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "In-Progress")
-                      <label class="label label-info">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "For Pickup")
-                      <label class="label bg-navy">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "For Delivery")
-                      <label class="label bg-olive">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "On Delivery")
-                      <label class="label label-maroon">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "Delivered")
-                      <label class="label label-success">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "Completed")
-                      <label class="label label-success">{{$biddingOrder['status']}}</label>
-                    @elseif($biddingOrder['status'] == "On Hold")
-                      <label class="label label-danger">{{$biddingOrder['status']}}</label>
-                    @endif
-                  </td>
-                  <td><a href="{{url('orders/'.$biddingOrder->bidding['orderID'])}}" class="btn btn-default btn-sm">View Order</a></td>
-                  <td><a href="{{url('boutique-bidding/'.$biddingOrder->bidding['id'])}}" class="btn btn-default btn-sm">View bidding details</a></td>
-                </tr>
+                  <?php 
+                    $transactionID = explode("_", $biddingOrder['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'CART'){
+                      $transactionType = 'PURCHASE';
+                    }else if($type == 'MTO'){
+                      $transactionType = 'MADE-TO-ORDER';
+                    }else if($type == 'BIDD'){
+                      $transactionType = 'BIDDING';
+                    }else if($type == 'RENT'){
+                      $transactionType = 'RENT';
+                    }
+                  ?>
+                  @if($type == 'BIDD')
+                    <tr>
+                      <td>{{$biddingOrder->bidding['id']}}</td>
+                      <td>{{$biddingOrder->bidding->owner['fname'].' '.$biddingOrder->bidding->owner['lname']}}</td>
+                      <td>{{$biddingOrder->bidding['deadlineOfProduct']}}</td>
+                      <td>
+                        @if($biddingOrder['status'] == "Pending")
+                          <label class="label label-warning">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "In-Progress")
+                          <label class="label label-info">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "For Pickup")
+                          <label class="label bg-navy">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "For Delivery")
+                          <label class="label bg-olive">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "On Delivery")
+                          <label class="label label-maroon">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "Delivered")
+                          <label class="label label-success">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "Completed")
+                          <label class="label label-success">{{$biddingOrder['status']}}</label>
+                        @elseif($biddingOrder['status'] == "On Hold")
+                          <label class="label label-danger">{{$biddingOrder['status']}}</label>
+                        @endif
+                      </td>
+                      <td><a href="{{url('orders/'.$biddingOrder->bidding['orderID'])}}" class="btn btn-default btn-sm">View Order</a></td>
+                      <td><a href="{{url('boutique-bidding/'.$biddingOrder->bidding['id'])}}" class="btn btn-default btn-sm">View bidding details</a></td>
+                    </tr>
+                  @endif
                 @endforeach
               </table>
               

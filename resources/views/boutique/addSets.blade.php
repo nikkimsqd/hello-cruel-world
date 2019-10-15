@@ -349,7 +349,7 @@ $(".item-choices").on('change', '.product', function(){
                 '<input type="checkbox" name="products[]" value="'+data.product.id+'" checked hidden>' +
                 '<h4>Product Name: <b>'+data.product.productName+'</b></h4>' +
                 '<h4>Product Description: <b>'+data.product.productDesc+'</b></h4>' +
-                  data.sizes +
+                  // data.sizes +
             '</div>'+
           '</div> <hr>'
       );

@@ -432,7 +432,7 @@
 						        <input type="number" name="rentPrice" value="{{$product->rentDetails['price']}}" class="input form-control"><br>
 
 						        <label>Deposit Amount</label>
-						        <input type="number" name="depositAmount" class="input form-control" value="{{$product->rentDetails['depositAmount']}}"><br>
+						        <input type="number" name="depositAmount" class="input form-control" value="{{$product->rentDetails['cashban']}}"><br>
 
 						        <label>Penalty Amount if item is returned late (per day)</label>
 						        <input type="number" name="penaltyAmount" class="input form-control" value="{{$product->rentDetails['penaltyAmount']}}"><br>

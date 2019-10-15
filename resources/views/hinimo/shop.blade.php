@@ -48,7 +48,7 @@
                                     ?>
                                     <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#womens">
-                                        <a href="{{url('shop/womens')}}">Womens</a>
+                                        <a href="{{url('/shop?gender=womens')}}">Womens</a>
                                         <ul class="sub-menu collapse {{$womens}}" id="womens">
                                 		@foreach($categories as $category)
                                 		@if($category['gender'] == "Womens")
@@ -61,7 +61,7 @@
 
                                     <!-- Single Item -->
                                     <li data-toggle="collapse" data-target="#mens">
-                                        <a href="{{url('shop/mens')}}">Mens</a>
+                                        <a href="{{url('/shop?gender=mens')}}">Mens</a>
                                         <ul class="sub-menu collapse {{$mens}}" id="mens">
                                 		@foreach($categories as $category)
                                 		@if($category['gender'] == "Mens")

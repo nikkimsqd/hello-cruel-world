@@ -207,7 +207,17 @@
                                     <span>₱{{$rent->set->rentDetails['penaltyAmount']}}</span>
                                     @endif
                                 </li>
-                                <li><span>Status</span> <span style="color: #0315ff;">{{$rent['status']}}</span></li>
+                                <li><span>Status</span> 
+                                    @if(strlen($rent['status']) == 1)
+                                        <span style="color: red;">
+                                            DECLINED
+                                        </span>
+                                    @else
+                                        <span style="color: #0315ff;">
+                                            {{$rent['status']}}
+                                        </span>
+                                    @endif
+                                </li>
                                 @if($rent['status'] == "Approved")
                                     @if($rent->order['status'] == "Pending" || $rent->order['status'] == "In-Progress")
                                     <li><span></span><span>Payment Info</span><span></span></li>
@@ -232,6 +242,9 @@
                                         <li style="background-color: #ffe9e9;"><span>Required Minimum Downpayment</span> <span>50% = ₱{{$minimumPaymentRequired}}</span></li>
                                         @endif
                                     @endif
+                                @endif
+                                @if(!empty($rent->declineDetails))
+                                    <li style="background-color: #ffd6d6;"><span>Boutique's reason</span> <span>{{$rent->declineDetails['reason']}}</span></li>
                                 @endif
                             </ul>
                         </div> <!-- card closing --> <br>

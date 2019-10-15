@@ -9,7 +9,7 @@
       <div class="box">
         <div class="box-header">
           <h3 class="box-title">
-            RENT ID: {{$rent['rentID']}} | 
+            RENT ID: {{$rent['id']}} | 
             @if($rent['status'] == "Pending")
               <span class="label label-warning">{{ $rent['status']}}</span>
             @elseif($rent['status'] == "Approved")
@@ -33,10 +33,10 @@
               @endif
               {{csrf_field()}}
 
-              <h4><b>Rent ID: {{$rent['rentID']}}</b></h4>
+              <h4><b>Rent ID: {{$rent['id']}}</b></h4>
               <h4>Customer Name: <b>{{$rent->customer['fname'].' '.$rent->customer['lname']}}</b></h4>
               <h4>Request placed at: <b>{{$rent['created_at']->format('M d, Y')}}</b></h4>
-              <h4>Address of Delivery: <b>{{$rent->order->address['completeAddress']}}</b></h4>
+              <h4>Address of Delivery: <b>{{$rent->address['completeAddress']}}</b></h4>
 
               <hr>
               <h4><b>Rent Details</b></h4>
@@ -49,11 +49,11 @@
               </h4>
               <h4>Date Item will be used: <b>{{date('M d, Y',strtotime($rent['dateToUse']))}}</b></h4>
               <h4>Item must be returned on or before: <b>{{date('M d, Y',strtotime($rent['dateToBeReturned']))}}</b></h4>
-              <h4>Penalty Amount: 
+              <h4>Penalty Amount if item is returned late: 
                 @if($rent->product != null)
-                  <b>{{$rent->product->rentDetails['penaltyAmount']}}</b>
+                  <b>₱{{$rent->product->rentDetails['penaltyAmount']}}</b>
                 @else
-                  <b>{{$rent->set->rentDetails['penaltyAmount']}}</b>
+                  <b>₱{{$rent->set->rentDetails['penaltyAmount']}}</b>
                 @endif
               </h4>
 
@@ -77,7 +77,7 @@
               @if($rent->product != null)
                 @foreach($rent->product->productFile as $image)
                 @if($counter == 1)
-                  <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
+                  <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
                 @endif
                 <?php $counter++; ?>
                 @endforeach
@@ -85,7 +85,7 @@
                 @foreach($rent->set->items as $setItem)
                 @foreach($setItem->product->productFile as $image)
                 @if($counter == 1)
-                  <img src="{{ asset('/uploads').$image['filename'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
+                  <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:95%; height: auto; object-fit: cover;margin: 10px;">
                 @endif
                 <?php $counter++; ?>
                 @endforeach
@@ -98,12 +98,12 @@
         </div>
 
         <div class="box-footer" style="text-align: right;">
-          <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
+          <input type="text" name="rentID" value="{{$rent['id']}}" hidden>
           <a href="{{url('rents')}}" class="btn btn-default">Back to Rents</a>
           @if($rent['status'] == "Pending")
-          <a href="" class="btn btn-danger" data-toggle="modal" data-target="#declineModal{{$rent['rentID']}}">Decline Request</a>
+          <a href="" class="btn btn-danger" data-toggle="modal" data-target="#declineModal{{$rent['id']}}">Decline Request</a>
           <!-- <a href="{{url('approveRent/'.$rent['id'])}}" class="btn btn-danger">Decline Request</a> -->
-          <a href="{{url('approveRent/'.$rent['rentID'])}}" class="btn btn-success">Accept Request</a>
+          <a href="{{url('approveRent/'.$rent['id'])}}" class="btn btn-success">Accept Request</a>
           @endif
           </form>
         </div>
@@ -225,7 +225,7 @@
         
         <div class="box-footer" style="text-align: right;">
           <a class="btn btn-success" data-toggle="modal" data-target="#qrCode{{$rent->order['id']}}">View QR Code</a>
-          <!-- <a class="btn btn-default" href="{{url('rents/'.$rent['rentID'])}}"> Back to Rent Details</a> -->
+          <!-- <a class="btn btn-default" href="{{url('rents/'.$rent['id'])}}"> Back to Rent Details</a> -->
         @if($rent->order['paymentStatus'] == "Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] != null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
         @elseif($rent->order['paymentStatus'] == "Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] == null)
@@ -237,7 +237,7 @@
         @elseif($rent->order['paymentStatus'] == "Not Yet Paid" && $rent->order['status'] == "In-Progress")
           <input type="submit" value="For Alterations" class="btn btn-primary" disabled>
         @elseif($rent->order['status'] == "On Rent")
-          <a href="{{url('rentReturned/'.$rent->order['rentID'])}}" class="btn btn-primary">Item Returned</a>
+          <a href="{{url('rentReturned/'.$rent->order['transactionID'])}}" class="btn btn-primary">Item Returned</a>
         @endif
         </div>
 
@@ -378,7 +378,7 @@
 </div>
 
 <!-- DECLINE RENT -->
-<div class="modal fade" id="declineModal{{$rent['rentID']}}" role="dialog">
+<div class="modal fade" id="declineModal{{$rent['id']}}" role="dialog">
   <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -394,7 +394,7 @@
       </div>
 
       <div class="modal-footer">
-        <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
+        <input type="text" name="rentID" value="{{$rent['id']}}" hidden>
         <input type="submit" name="btn_sumbit" class="btn btn-success" value="Submit">
         </form>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -404,7 +404,7 @@
 </div>
 
 <!-- MAKE ORDER -->
-<div class="modal fade" id="makeOrderModal{{$rent['rentID']}}" role="dialog">
+<div class="modal fade" id="makeOrderModal{{$rent['id']}}" role="dialog">
   <div class="modal-dialog modal-lg">
     <!-- Modal content-->
     <div class="modal-content">
@@ -431,7 +431,7 @@
 
       <div class="modal-footer">
         <label>Are these details correct?</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="text" name="rentID" value="{{$rent['rentID']}}" hidden>
+        <input type="text" name="rentID" value="{{$rent['id']}}" hidden>
         <input type="submit" name="btn_sumbit" class="btn btn-primary" value="Submit for Pickup">
         </form>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

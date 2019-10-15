@@ -828,7 +828,7 @@ class BoutiqueController extends Controller
 			$page_title = "Rent Details";
 	    	$id = Auth()->user()->id;
 	    	$boutique = Boutique::where('userID', $id)->first();
-			$rent = Rent::where('rentID', $rentID)->first();
+			$rent = Rent::where('id', $rentID)->first();
         	$measurements = json_decode($rent->measurement->data);
 			$notifications = Auth()->user()->notifications;
 			$notificationsCount = Auth()->user()->unreadNotifications->count();
@@ -856,9 +856,9 @@ class BoutiqueController extends Controller
 		$id = Auth()->user()->id;
     	$boutique = Boutique::where('userID', $id)->first();
 		$currentDate = date('Y-m-d');
-		$rent = Rent::where('rentID', $rentID)->first();
+		$rent = Rent::where('id', $rentID)->first();
 		$customer = User::where('id', $rent['customerID'])->first();
-		$order = Order::where('rentID', $rentID)->first();
+		$order = Order::where('transactionID', $rentID)->first();
 
 
 		$rent->update([
@@ -908,7 +908,7 @@ class BoutiqueController extends Controller
 		]);
 		// dd($declinedrent);
 
-		Rent::where('rentID', $rentID)->update([
+		Rent::where('id', $rentID)->update([
 			'status' => $dt['id']
 		]);
 
@@ -1226,7 +1226,7 @@ class BoutiqueController extends Controller
 		$boutique = Boutique::where('userID', $id)->first();
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
-		$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->get();
+		$orders = Order::where('boutiqueID', $boutique['id'])->where('transactionID', '!=', null)->get();
 
 		$allOrders = Order::where('boutiqueID', $boutique['id'])->get();
 		$complains = array();
@@ -1251,7 +1251,6 @@ class BoutiqueController extends Controller
 		$order = Order::where('id', $orderID)->first();
 
 		$complaint = Complain::where('orderID', $order['id'])->first();
-		// $email = Email::where()
 
 		// $allOrders = Order::where('boutiqueID', $boutique['id'])->get();
 		// $complains = array();
@@ -1576,7 +1575,7 @@ class BoutiqueController extends Controller
 	    $boutique = Boutique::where('userID', $userID)->first();
 	    $notifications = $user->notifications;
 	    $notificationsCount = $user->unreadNotifications->count();
-	    $biddingOrders = Order::where('biddingID', '!=', null)->where('boutiqueID', $boutique['id'])->where('status', '!=', 'Completed')->get();
+	    $biddingOrders = Order::where('boutiqueID', $boutique['id'])->where('status', '!=', 'Completed')->get();
 
 	    return view('boutique/boutique-biddings', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'biddingOrders'));
     }
@@ -1699,7 +1698,7 @@ class BoutiqueController extends Controller
 		$boutique = Boutique::where('userID', $id)->first();
 		$notifications = Auth()->user()->notifications;
 		$notificationsCount = Auth()->user()->unreadNotifications->count();
-		$orders = Order::where('boutiqueID', $boutique['id'])->where('cartID', '!=', null)->where('status', 'Completed')->get();
+		$orders = Order::where('boutiqueID', $boutique['id'])->where('status', 'Completed')->get();
 
 		return view('boutique/archiveorders', compact('page_title', 'boutique', 'notifications', 'notificationsCount', 'orders'));
     }
@@ -1743,7 +1742,7 @@ class BoutiqueController extends Controller
 	    $boutique = Boutique::where('userID', $userID)->first();
 	    $notifications = $user->notifications;
 	    $notificationsCount = $user->unreadNotifications->count();
-	    $biddingOrders = Order::where('biddingID', '!=', null)->where('boutiqueID', $boutique['id'])->where('status', 'Completed')->get();
+	    $biddingOrders = Order::where('boutiqueID', $boutique['id'])->where('status', 'Completed')->get();
 
 	    return view('boutique/archiveboutique-biddings', compact('userID', 'user', 'page_title', 'boutique', 'notificationsCount', 'notifications', 'biddingOrders'));
     }
@@ -1915,7 +1914,8 @@ class BoutiqueController extends Controller
 		// $itemtags = Itemtag::where('itemID', $setID)->where('itemType', 'set')->get();
 		// dd($itemtags);
 
-		$set = Set::where('id', $setID)->update([
+		$set = Set::where('id', $setID)->first();
+		$set->update([
 			'boutiqueID' => $boutique['id'],
 			'setName' => $request->input('setName'),		
 			'setDesc' => $request->input('setDesc'),		
@@ -1925,19 +1925,29 @@ class BoutiqueController extends Controller
 		]);
 
 		if($request->input('rentPrice') != null){
-			$locations = json_encode($request->input('locationsAvailable'));
-	    	$rp = Rentableproduct::where('id', $set['rpID'])->update([
-	    		'price' => $request->input('rentPrice'),
-	    		'depositAmount' => $request->input('depositAmount'),
-	    		'penaltyAmount' => $request->input('penaltyAmount'),
-	    		'limitOfDays' => $request->input('limitOfDays'),
-	    		'fine' => $request->input('fine'),
-	    		'locationsAvailable' => $locations
-	    	]);
+	    	$rp = Rentableproduct::where('id', $set['rpID'])->first();
 
-	    	$set->update([
-	    		'rpID' => $rp['id']
-	    	]);
+	    	if(!empty($rp)){
+		    	$rp->update([
+		    		'price' => $request->input('rentPrice'),
+		    		'cashban' => $request->input('cashban'),
+		    		'penaltyAmount' => $request->input('penaltyAmount'),
+		    		'limitOfDays' => $request->input('limitOfDays'),
+		    		'fine' => $request->input('fine'),
+		    	]);
+	    	}else{
+	    		$rp = Rentableproduct::create([
+		    		'price' => $request->input('rentPrice'),
+		    		'cashban' => $request->input('cashban'),
+		    		'penaltyAmount' => $request->input('penaltyAmount'),
+		    		'limitOfDays' => $request->input('limitOfDays'),
+		    		'fine' => $request->input('fine'),
+	    		]);
+
+		    	$set->update([
+		    		'rpID' => $rp['id']
+		    	]);
+	    	}
     	}
 
     	$setItems = Setitem::where('setID', $setID)->get();
@@ -1954,19 +1964,12 @@ class BoutiqueController extends Controller
 		}
 
 		// FOR TAGS --------------------------------------------------------------------
-		$itemtags = Itemtag::where('itemID', $setID)->where('itemType', 'set')->get();
-		foreach($itemtags as $itemtag){
-    		$itemtag->delete(); //delete existing tags
-    	}
+		$tags = $request->input('tags');
+		$tagjson = json_encode($tags);
 
-		$tags = $request->input('tags'); //add new selected tags
-		foreach($tags as $tag) {
-			Itemtag::create([
-				'tagID' => $tag,
-				'itemID' => $setID,
-				'itemType' => 'set'
-			]);
-		}
+		Tag::where('itemID', $setID)->update([
+			'tags' => $tagjson
+		]);
 		//------------------------------------------------------------------------------
 
 		return redirect('/viewset/'.$setID);

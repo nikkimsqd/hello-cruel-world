@@ -37,14 +37,30 @@
                 </tr>
                 </thead>
                 @foreach($biddingOrders as $biddingOrder)
-                <tr>
-                  <td>{{$biddingOrder->bidding['id']}}</td>
-                  <td>{{$biddingOrder->bidding->owner['fname'].' '.$biddingOrder->bidding->owner['lname']}}</td>
-                  <td>{{date('M d, Y',strtotime($biddingOrder->bidding['deadlineOfProduct']))}}</td>
-                  <td><span class="label label-success">{{$biddingOrder['status']}}</span></td>
-                  <td><a href="{{url('orders/'.$biddingOrder->bidding['orderID'])}}" class="btn btn-default btn-sm">View Order</a></td>
-                  <td><a href="{{url('boutique-bidding/'.$biddingOrder->bidding['id'])}}" class="btn btn-default btn-sm">View bidding details</a></td>
-                </tr>
+                  <?php 
+                    $transactionID = explode("_", $biddingOrder['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'CART'){
+                      $transactionType = 'PURCHASE';
+                    }else if($type == 'MTO'){
+                      $transactionType = 'MADE-TO-ORDER';
+                    }else if($type == 'BIDD'){
+                      $transactionType = 'BIDDING';
+                    }else if($type == 'RENT'){
+                      $transactionType = 'RENT';
+                    }
+                  ?>
+                  @if($type == 'BIDD')
+                  <tr>
+                    <td>{{$biddingOrder->bidding['id']}}</td>
+                    <td>{{$biddingOrder->bidding->owner['fname'].' '.$biddingOrder->bidding->owner['lname']}}</td>
+                    <td>{{date('M d, Y',strtotime($biddingOrder->bidding['deadlineOfProduct']))}}</td>
+                    <td><span class="label label-success">{{$biddingOrder['status']}}</span></td>
+                    <td><a href="{{url('orders/'.$biddingOrder->bidding['orderID'])}}" class="btn btn-default btn-sm">View Order</a></td>
+                    <td><a href="{{url('boutique-bidding/'.$biddingOrder->bidding['id'])}}" class="btn btn-default btn-sm">View bidding details</a></td>
+                  </tr>
+                  @endif
                 @endforeach
               </table>
               

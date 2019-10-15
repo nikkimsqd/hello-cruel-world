@@ -29,6 +29,7 @@
                     	<a href="" class="btn essence-btn" data-toggle="modal" data-target="#notificationsModal">View Notifications here</a>
                     	<br><br><br>
                 	</div> -->
+
                     @if(count($orders) > 0)
                         <table class="table table-hover ">
                         	<col width="100"><col width="100"><col width="482"><col width="170"><col width="150">
@@ -42,7 +43,22 @@
                         	</tr>
                         	</thead>
                             @foreach($orders as $order)
-                            @if($order['cartID'] != null)
+                            <?php 
+                              $transactionID = explode("_", $order['transactionID']);
+                              $type = $transactionID[0];
+
+                              if($type == 'CART'){
+                                $transactionType = 'PURCHASE';
+                              }else if($type == 'MTO'){
+                                $transactionType = 'MADE-TO-ORDER';
+                              }else if($type == 'BIDD'){
+                                $transactionType = 'BIDDING';
+                              }else if($type == 'RENT'){
+                                $transactionType = 'RENT';
+                              }
+                            ?>
+                    
+                            @if($type == 'CART')
                         	<tr>
                                 <td style="text-align: center;">{{$order['id']}}</td>
                         		<td style="text-align: center;"><b>PURCHASE</b></td>
@@ -62,7 +78,7 @@
                         		<td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
                         		<td style="text-align: center;"><a href="{{url('/view-order/'.$order['id'])}}">View Transaction</a></td>
                         	</tr>
-                            @elseif($order['rentID'] != null)
+                            @elseif($type == 'RENT')
                             <tr>
                                 <td style="text-align: center;">{{$order['id']}}</td>
                                 <td style="text-align: center;"><b>RENT</b></td>
@@ -76,7 +92,7 @@
                                 <td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
                                 <td style="text-align: center;"><a href="{{url('/view-rent/'.$order->rent['rentID'])}}">View Transaction</a></td>
                             </tr>
-                            @elseif($order['mtoID'] != null)
+                            @elseif($type == 'MTO')
                                 @if($order->mto['status'] == "Active")
                                 <tr>
                                     <td style="text-align: center;">{{$order['id']}}</td>
@@ -94,7 +110,7 @@
                                     <td style="text-align: center;"><a href="{{url('/view-mto/'.$order->mto['id'])}}">View Transaction</a></td>
                                 </tr>
                                 @endif
-                            @elseif($order['bidding'] != null)
+                            @elseif($type == 'BIDD')
                             <tr>
                                 <td style="text-align: center;">{{$order['id']}}</td>
                                 <td style="text-align: center;"><b>BIDDING</b></td>
@@ -108,42 +124,6 @@
                         <br><br><br>
                     @endif
 
-                    <!-- @if(count($rents) > 0)
-                        <table class="table table-hover table-bordered">
-                            <col width="100"><col width="572"><col width="180"><col width="150">
-                            <thead>
-                            <tr>
-                                <th style="text-align: center;">RENT ID</th>
-                                <th style="text-align: center;">Product/s</th> 
-                                <th style="text-align: center;">Order Status</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            @foreach($rents as $rent)
-                            @if($rent['orderID'] == null)
-                            <tr>
-                                <td style="text-align: center;">{{$rent['rentID']}}</td>
-                                <td>
-                                @if($rent['productID'] != null)
-                                    {{$rent->product['productName']}}
-                                @elseif($rent['setID'] != null)
-                                    {{$rent->set['setName']}}
-                                @endif
-                                </td>
-                                <td style="text-align: center;">
-                                    @if($rent['orderID'] != null)
-                                    {{$rent->order['status']}}
-                                    @elseif($rent['orderID'] == null)
-                                    Rent has no order yet
-                                    @endif
-                                </td>
-                                <td style="text-align: center;"><a href="{{url('/view-rent/'.$rent['rentID'])}}">View Transaction</a></td>
-                            </tr>
-                            @endif
-                            @endforeach
-                        </table>
-                        <br><br><br>
-                    @endif -->
 
                     <!-- Pending MTOs -->
                     @if(count($mtos) > 0)

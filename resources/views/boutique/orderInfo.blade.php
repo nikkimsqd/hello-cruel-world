@@ -6,8 +6,70 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <div class="box">
 
+      <div class="box direct-chat direct-chat-success collapsed-box" id="chat">
+        <div class="box-header with-border">
+          <h3 class="box-title">Chat with client</h3>
+          <div class="box-tools pull-right">
+            <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span> -->
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+
+          <div class="direct-chat-messages">
+            @foreach($chats as $chat)
+              @if($chat['senderID'] != $id)
+                <div class="direct-chat-msg">
+                  <div class="direct-chat-info clearfix">
+                    <span class="direct-chat-name pull-left">{{$chat->sender['fname'].' '.$chat->sender['lname']}}</span>
+                    <span class="direct-chat-timestamp pull-left sender-time">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                  </div>
+
+                  <div class="direct-chat-text">
+                    {{$chat['message']}}
+                  </div>
+                  <!-- /.direct-chat-text -->
+                </div>
+
+
+              @else
+                  <div class="direct-chat-msg right">
+                    <div class="direct-chat-info clearfix">
+                      <!-- <span class="direct-chat-name pull-right">{{$chat->sender->boutique['boutiqueName']}}</span> -->
+                      <span class="direct-chat-timestamp pull-right">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
+                    </div>
+
+                    <div class="direct-chat-text">
+                      {{$chat['message']}}
+                    </div>
+                    <!-- /.direct-chat-text -->
+                  </div>
+              @endif
+
+            @endforeach
+
+          </div>
+
+        </div> <!-- /.box-body -->
+
+        <div class="box-footer">
+          <form action="{{url('bSendChat')}}" method="post">
+            {{ csrf_field() }}
+            <div class="input-group">
+              <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
+                  <span class="input-group-btn">
+                    <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
+                  </span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="box">
         <div class="box-header with-border">
           <h3 class="box-title">Order ID: {{$order['id']}}</h3>
         </div>
@@ -49,16 +111,32 @@
               <span class="label label-danger">{{$order['status']}}</span>
               @endif
             </h4>
+
+            <?php 
+              $transactionID = explode("_", $order['transactionID']);
+              $type = $transactionID[0];
+
+              if($type == 'CART'){
+                $transactionType = 'PURCHASE';
+              }else if($type == 'MTO'){
+                $transactionType = 'MADE-TO-ORDER';
+              }else if($type == 'BIDD'){
+                $transactionType = 'BIDDING';
+              }else if($type == 'RENT'){
+                $transactionType = 'RENT';
+              }
+
+            ?>
             <h4>Order Type: 
-              @if($order['cartID'] != null)
+              @if($type == 'CART')
                 <b>PURCHASE</b>
-              @elseif($order['rentID'] != null)
+              @elseif($type == 'RENT')
                 <b>RENT</b>
               <h4>Date Item will be used: <b>{{date('M d, Y',strtotime($order->rent['dateToUse']))}}</b></h4>
-              @elseif($order['mtoID'] != null)
+              @elseif($type == 'MTO')
                 <b>MADE-TO-ORDER</b>
                 <h4>Date of item's use: <b>{{date('M d, Y',strtotime($order->mto['deadlineOfProduct']))}}</b></h4>
-              @elseif($order['biddingID'] != null)
+              @elseif($type == 'BIDD')
                 <b>BIDDING</b>
                 <h4>Deadline of Product: <b>{{ date('M d, Y',strtotime($order->bidding['deadlineOfProduct'])) }}</b></h4>
               @endif
@@ -201,69 +279,6 @@
         </div>
       </div>
 
-      <div class="box direct-chat direct-chat-success" id="chat">
-        <div class="box-header with-border">
-          <h3 class="box-title">Chat with client</h3>
-          <div class="box-tools pull-right">
-            <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-light-blue">3</span> -->
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="box-body">
-
-          <div class="direct-chat-messages">
-            @foreach($chats as $chat)
-              @if($chat['senderID'] != $id)
-                <div class="direct-chat-msg">
-                  <div class="direct-chat-info clearfix">
-                    <span class="direct-chat-name pull-left">{{$chat->sender['fname'].' '.$chat->sender['lname']}}</span>
-                    <span class="direct-chat-timestamp pull-left sender-time">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
-                  </div>
-
-                  <div class="direct-chat-text">
-                    {{$chat['message']}}
-                  </div>
-                  <!-- /.direct-chat-text -->
-                </div>
-
-
-              @else
-                  <div class="direct-chat-msg right">
-                    <div class="direct-chat-info clearfix">
-                      <!-- <span class="direct-chat-name pull-right">{{$chat->sender->boutique['boutiqueName']}}</span> -->
-                      <span class="direct-chat-timestamp pull-right">{{ date('d M h:i a',strtotime($chat['created_at'])) }}</span>
-                    </div>
-
-                    <div class="direct-chat-text">
-                      {{$chat['message']}}
-                    </div>
-                    <!-- /.direct-chat-text -->
-                  </div>
-              @endif
-
-            @endforeach
-
-          </div>
-
-        </div> <!-- /.box-body -->
-
-        <div class="box-footer">
-          <form action="{{url('bSendChat')}}" method="post">
-            {{ csrf_field() }}
-            <div class="input-group">
-              <input type="text" name="message" placeholder="Type Message ..." class="form-control">
-              <input type="text" name="orderID" value="{{$order['id']}}" hidden>
-                  <span class="input-group-btn">
-                    <input type="submit" name="btn_submit" class="btn btn-primary" value="Send">
-                  </span>
-            </div>
-          </form>
-        </div>
-      </div>
-
-
 
       @if($complaint != null)
       <div class="box box-danger">
@@ -338,6 +353,7 @@
 </section>
 
 <!-- MODAL -->
+@if(!empty($complaint))
 <div class="modal fade" id="viewDisputeModal" role="dialog">
   <div class="modal-dialog ">
     <div class="modal-content">
@@ -357,6 +373,7 @@
     </div> 
   </div>
 </div>
+@endif
 
 <div class="modal fade" id="fileForDisputeModal" role="dialog">
   <div class="modal-dialog ">

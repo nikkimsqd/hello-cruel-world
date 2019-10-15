@@ -798,13 +798,13 @@ class AdminController extends Controller
 		$adminNotifications = $admin->notifications;
 		$notificationsCount = $admin->unreadNotifications->count();
 		// $tags = Tag::all();
-		$tags = Categorytag::all();
+		// $tags = Categorytag::all();
 		$events = Event::all();
         $eventNames = $events->groupBy('event');
 		$complainsCount = count(Complain::where('status', 'Active')->get());
         // dd($eventNames);
 
-    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'tags', 'events', 'eventNames', 'categoryTags', 'complainsCount'));
+    	return view('admin/events', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'events', 'eventNames', 'categoryTags', 'complainsCount'));
     }
 
     public function saveEvent(Request $request)
@@ -872,7 +872,7 @@ class AdminController extends Controller
 		$complains = Complain::all();
 		$activeComplains = Complain::where('status', 'Active')->get();
 		$complainsCount = count($activeComplains);
-        
+
         return view('admin/complaints', compact('page_title', 'admin', 'adminNotifications', 'notificationsCount', 'complainsCount', 'complains'));
     }
 

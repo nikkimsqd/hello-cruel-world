@@ -7,9 +7,9 @@
   <div class="row">
     <div class="col-md-12">
 
-      <div class="box box-success">
+      <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Add Sub-Categories</h3>
+          <h3 class="box-title">Categories</h3>
         </div>
 
         <div class="box-body">
@@ -17,9 +17,16 @@
           <div class="col-md-12">
             <div class="col-md-6"> 
               <label>Women</label>
+              <ul>
               @foreach($womens as $women)
                 <li>{{$women['categoryName']}}</li>
+                <ul>
+                  @foreach($women->getSubCategory as $subCategory)
+                    <li>{{$subCategory['subcatName']}}</li>
+                  @endforeach
+                </ul>
               @endforeach
+              </ul>
             </div>
 
             <div class="col-md-6">
@@ -33,7 +40,8 @@
 
         </div>
       </div>
-      <div class="box box-success">
+
+      <div class="box">
 
         <div class="box-header with-border">
           <h3 class="box-title">Add Categories</h3>
@@ -83,8 +91,7 @@
         <!-- </form> -->
       </div>
 
-
-      <div class="box box-success">
+      <div class="box">
 
         <div class="box-header with-border">
           <h3 class="box-title">Add Sub-Categories</h3>
