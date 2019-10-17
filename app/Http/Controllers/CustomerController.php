@@ -40,6 +40,7 @@ use App\Refund;
 use App\Rtw;
 use App\Deliveryfee;
 use App\View;
+use App\Subcategory;
 use App\Notifications\RentRequest;
 use App\Notifications\NewMTO;
 use App\Notifications\CustomerAcceptsOffer;
@@ -60,6 +61,536 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 class CustomerController extends Controller
 {
 
+
+    public function tally(Request $request) //ipa una n para mo check una sa auth
+    {
+        if (Auth::check()) { //check if nay naka login nga user
+            $activeLink = "womens";
+            $page_title = "Shop";
+            $userID = Auth()->user()->id;
+            $categories = Category::all();
+            $boutiques = Boutique::all();
+            $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
+            if($cart != null){ $cartCount = $cart->items->count(); }
+            else{ $cartCount = 0; }
+            $notifications;
+            $notificationsCount;
+            $this->getNotifications($notifications, $notificationsCount);
+
+            $allProducts = array();
+            $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->with('getSubCategory')->with('tags')->get();
+            $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
+
+
+            //FILTERING-------------------------------------------------------------------------
+                //PRODUCTS
+                if(!empty($request->input('category'))){
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['id'] != $request->input('category')){
+                            $products->forget($key);
+                        }else{
+                            $page_title = $product->getSubCategory->getCategory['gender'].' - '.$product->getSubCategory->getCategory['categoryName'];
+                            $activeLink = strtolower($product->getSubCategory->getCategory['gender']);
+                        }
+                    }
+                }else if(!empty($request->input('gender'))){ //para filter via gender
+                    $page_title = $request->input('gender');
+                    $activeLink = strtolower($request->input('gender'));
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['gender'] != ucfirst($request->input('gender'))){ //pangitaon ang dili pariha
+                            $products->forget($key);
+                        }
+                    }
+                }
+
+                //SETS
+                if(!empty($request->input('category'))){
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key);
+                        }
+                    }
+                }else if(!empty($request->input('gender'))){ //para filter via gender
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['gender'] == ucfirst($request->input('gender'))){ //pangitaon ang ni pariha nga category
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key); //tang'tangon ang way apil
+                        }
+                    }
+                }
+            //----------------------------------------------------------------------------------
+
+
+            //PROFILING-----------------------------------------------------------------------------------
+            $subCategories = array();
+            $profiling = Profiling::where('userID', $userID)->first();
+            $profilingDatas = json_decode($profiling['data']);
+            foreach($profilingDatas as $profilingData){
+                foreach($profilingData as $subcategory){
+                    array_push($subCategories, $subcategory);
+                }
+            }
+
+
+            echo "<table class='table table-bordered'>";
+            echo "<tr style='text-align: center;'> <td colspan='9'><b>PROFILING</td> </tr>";
+            echo "<tr>";
+            echo "<td><b>";
+            print_r("CATEGORY");
+            echo "</td>";
+            echo "<td><b>";
+            print_r("SUBCATEGORIES");
+            echo "</td>";
+            echo "</tr>";
+
+            foreach($profilingDatas as $category => $subcategories){
+                $categories = Category::where('id', $category)->first();
+
+                echo "<tr>";
+                echo "<td>";
+                print_r($categories['gender'].' | '.$categories['categoryName']);
+                echo "</td>";
+                echo "<td>";
+                foreach($subcategories as $subcategory){
+                    $subcat = Subcategory::where('id', $subcategory)->first();
+                    print_r($subcat['subcatName'].' <br> ');
+                }
+
+                echo "</td>";
+                echo "</tr>";
+            }
+            echo "</table>";
+            //--------------------------------------------------------------------------------------------
+
+
+            //LOOP ALL PRODUCTS RETRIEVED-----------------------------------------------------------------
+
+            //PROFILING = 1.3
+            //VIEW = 1.2
+            //FAVORITE = 1.4
+            //ORDER HISTORY = 1.5
+            //TAG = 
+
+
+            foreach($products as $product){
+                $points = 0;
+                $tags = array();
+                $productTags = json_decode($product->tags['tags']);
+
+                $profilingCount = 0;
+                $profilingScore = 0;
+                if(in_array($product['category'], $subCategories)){
+                    $profilingCount += 1;
+                    $profilingScore = $profilingCount * 1.3;
+                    $points += $profilingScore;
+                    // dd($profilingCount);
+                }
+
+                //VIEWSS-----------------------------------------------------------------------------------
+                $viewsCounter = 0;
+                $views = View::where('userID', $userID)->get();
+                foreach($views as $view){
+                    if($view->product['category'] === $product['category']){
+                        $viewsCounter += $view['count'];
+                    }
+
+                    $prodTags = json_decode($view->product->tags['tags']); //array of tags
+                    // $similarTags = array_intersect($productTags, $prodTags);
+                    // $tagsCount = count($similarTags);
+                    // dd($tagsCount); 
+
+                }
+                    $viewPoints = $viewsCounter * 1.2;
+                    $points += $viewPoints;
+
+                    //loop views then match if same sila sa subcat ni $product
+
+                  
+                //-----------------------------------------------------------------------------------------
+
+                //FAVORITES--------------------------------------------------------------------------------
+                $favorites = Favorite::where('userID', $userID)->get();
+                $favoriteCounter= 0;
+                foreach($favorites as $favorite){
+                    $itemID = explode("_", $favorite['itemID']);
+                    $itemType = $itemID[0];
+
+                    if($itemType == "PROD"){
+                        $prod = Product::where('id', $favorite['itemID'])->first(); //get product matched
+
+                        if($product['category'] == $prod['category']){
+                            $favoriteCounter +=1;
+                        }
+                    }else{
+                        $setset = Set::where('id', $favorite['itemID'])->first();
+                        foreach($setset->items as $item){
+                            $setprod = Product::where('id', $item->product['id'])->first();
+
+                            if($setprod['category'] == $product['category']){
+                                $favoriteCounter += 1;
+                            }
+                        }
+                    }
+                    $favScore = $favoriteCounter * 1.4;  //score fav              
+                    $points += $favScore;
+                    // dd($favCounter);
+                }
+                //----------------------------------------------------------------------------------------
+
+                $orderhistories = Order::where('userID', $userID)->limit(5)->get();
+                // dd($orderhistories);
+                $orderCounter = 0;
+                foreach($orderhistories as $orderhistory){
+                    $transactionID = explode("_", $orderhistory['transactionID']);
+                    $type = $transactionID[0];
+
+
+                    if($type == 'CART'){
+                        foreach($orderhistory->cart->items as $cartItem){
+                            // $itemID = explode("_", $cartItem['itemID']);
+                            // $itemType = $itemID[0];
+
+                            //if product ang naa sa cart
+                            if($cartItem->product != null){
+                                $prodCategories = Product::where('category', $cartItem->product['category'])->get();
+                                $prod = Product::where('id', $cartItem['productID'])->first(); //get product matched
+
+                                if($product['category'] == $prod['category']){
+                                    $orderCounter +=1;
+                                }
+                            }else{
+                                $setset = Set::where('id', $cartItem['setID'])->first();
+                                foreach($setset->items as $item){
+                                    $setprod = $product::where('id', $item['id'])->first();
+
+                                    if($setprod['category'] == $product['category']){
+                                        $orderCounter +=1;
+                                    }
+                                }
+                            }
+                        }
+                    }else if($type == 'RENT'){
+                        $itemID = explode("_", $orderhistory['transactionID']);
+                        $itemType = $itemID[0];
+
+                        if($type == 'PROD'){
+                            $prod = Product::where('id', $orderhistory['transactionID'])->first(); //get product matched
+
+                            if($prod['category'] == $product['category']){
+                                $orderCounter +=1;
+                            }
+                        }else{
+                            // $setset = Set::where('id', $orderhistory['transactionID'])->first();
+                            // foreach($setset->items as $item){
+                            //     $setprod = Product::where('id', $item->product['id'])->first();
+
+                            //     if($setprod['category'] == $product['category']){
+                            //         $orderCounter += 1;
+                            //     }
+                            // }
+
+                        }
+                    }
+
+                    $historyScore = $orderCounter * 1.5;  //score fav              
+                    $points += $historyScore;
+                } //order history closing
+
+                //SCORING---------------------------------------------------------------------------------
+
+                $product['points'] = $points;
+                $product['gender'] = $product->getSubCategory->getCategory['gender'];
+                $product['subcategory'] = $product->getSubCategory;
+                $product['profilingCount'] = $profilingCount;
+                $product['profilingScore'] = $profilingScore;
+                $product['viewsCounter'] = $viewsCounter;
+                $product['viewPoints'] = $viewPoints;
+                $product['favoriteCounter'] = $favoriteCounter;
+                $product['favScore'] = $favScore;
+                $product['orderCounter'] = $orderCounter;
+                $product['historyScore'] = $historyScore;
+
+            }
+
+            //END LOOP FOR PRODUCTS-----------------------------------------------------------------------
+
+
+            //SORT PRODUCTS-------------------------------------------------------------------------------
+            $products = $products->sortBy(function($product){
+                return -$product->points;
+            });
+            //--------------------------------------------------------------------------------------------
+
+
+            foreach($sets as $set){
+                $points = 0;
+                $viewsCounter = 0;
+                $setitems = array();
+                foreach($set->items as $item){
+                    $setprod = Product::where('id', $item->product['id'])->with('productFile')->first();
+                    $item['productFile'] = $item->product->productFile;
+                    // array_push($setGender, $item->product->getSubCategory->getCategory['gender']);
+                    // array_push($subcategory, $item->product->getSubCategory['subcatName']);
+
+                    //BASE SA PROFILING
+                    $profilingCount = 0;
+                    $profilingScore = 0;
+                    if(in_array($item->product['category'], $subCategories)){
+                        $profilingCount += 1;
+                        $profilingScore = $profilingCount * 1.3;
+                        $points += $profilingScore;
+                    }
+
+
+                    //BASE SA VIEWS
+                    $views = View::where('userID', $userID)->get();
+                    $viewPoints = 0;
+                    $itemViewsCounter = 0;
+                    foreach($views as $view){
+                        if($view->product['category'] == $item->product['category']){
+                            $itemViewsCounter += $view['count'];
+                            $viewsCounter += $view['count'];
+                        }
+
+                    }
+                            $viewPoints = $itemViewsCounter * 1.2;
+                    $points += $viewPoints;
+                    // dd($item->product['category']);
+
+                    //BASE SA FAVORITES
+                    $favorites = Favorite::where('userID', $userID)->get();
+                    $favoriteCounter = 0;
+                    foreach($favorites as $favorite){
+                        $itemID = explode("_", $favorite['itemID']);
+                        $itemType = $itemID[0];
+
+                        if($itemType == "PROD"){
+                            $prod = Product::where('id', $favorite['itemID'])->first();
+
+                            if($item->product['category'] == $prod['category']){
+                                $favoriteCounter +=1;
+                            }
+                        }else{
+                            $setset = Set::where('id', $favorite['itemID'])->first();
+                            foreach($set->items as $item){
+                                $setprod = Product::where('id', $item->product['id'])->first();
+
+                                if($setprod['category'] == $item->product['category']){
+                                    $favoriteCounter += 1;
+                                }
+                            }
+                        }
+                        $favScore = $favoriteCounter * 1.4;  //score fav              
+                        $points += $favScore;
+                    }
+                    // $points += $favoriteCounter * 2.5;
+
+                    $orderhistories = Order::where('userID', $userID)->limit(5)->get();
+                    $orderCounter = 0;
+                    foreach($orderhistories as $orderhistory){
+                        $transactionID = explode("_", $orderhistory['transactionID']);
+                        $type = $transactionID[0];
+
+                        if($type == 'CART'){
+                            foreach($orderhistory->cart->items as $cartItem){
+                                if($cartItem->product != null){ //if single product ang item
+                                    $prod = Product::where('id', $cartItem['productID'])->first(); //get product matched
+
+                                    if($item->product['category'] == $cartItem->product['category']){
+                                        $orderCounter +=1;
+                                    }
+                                }else{
+                                    $setset = Set::where('id', $cartItem['setID'])->first();
+                                    foreach($setset->items as $item){
+                                        $setprod = $product::where('id', $item['id'])->first();
+
+                                        if($setprod['category'] == $item->product['category']){
+                                            $orderCounter +=1;
+                                        }
+                                    }
+                                }
+                            }
+                        }else if($type == 'RENT'){
+                            $rentItem = explode("_", $orderhistory->rent['itemID']);
+                            $itemType = $rentItem[0];
+
+                            if($itemType == 'PROD'){
+                                $prod = Product::where('id', $orderhistory->rent['itemID'])->first(); //get product matched
+
+                                if($prod['category'] == $item->product['category']){
+                                    $orderCounter +=1;
+                                }
+                            }else{
+                                $setset = Set::where('id', $orderhistory->rent['itemID'])->first();
+                                foreach($setset->items as $item){
+                                    $setprod = Product::where('id', $item->product['id'])->first();
+
+                                    if($setprod['category'] == $item->product['category']){
+                                        $orderCounter += 1;
+                                    }
+                                }
+                            }
+                        }
+                        $historyScore = $orderCounter * 1.5;  //score fav              
+                        $points += $historyScore;
+                    } //order history closing
+
+
+                    $setprod['gender'] = $item->product->getSubCategory->getCategory['gender'];
+                    $setprod['subcategory'] = $item->product->getSubCategory;
+                    $setprod['profilingCount'] = $profilingCount;
+                    $setprod['profilingScore'] = $profilingScore;
+                    $setprod['itemViewsCounter'] = $itemViewsCounter;
+                    $setprod['viewsCounter'] = $viewsCounter;
+                    $setprod['viewPoints'] = $viewPoints;
+
+                    $setprod['favoriteCounter'] = $favoriteCounter;
+                    $setprod['favScore'] = $favScore;
+                    $setprod['orderCounter'] = $orderCounter;
+                    $setprod['historyScore'] = $historyScore;
+                    array_push($setitems, $setprod);
+
+                } //set item loop closing
+                $set['items'] = $setitems;
+                $set['in_favorites'] = $favorites;
+                $set['points'] = $points;
+
+            } //set loop closing
+
+            $sets = $sets->sortBy(function($set){
+                return -$set->points;
+            });
+
+            $allProducts = array_merge($products->toArray(), $sets->toArray());
+            $pPoints = array_column($allProducts, 'points');
+            array_multisort($pPoints, SORT_DESC, $allProducts);
+
+
+            $productsCount = count($allProducts);
+
+            //PAGINATION
+            $currentPage = $request->page;
+            $pageItems = 12;
+            if(empty($currentPage)){
+                $currentPage = 1;
+            }
+
+            $offset = ($currentPage * $pageItems) - $pageItems;
+            $itemsForCurrentPage = array_slice($allProducts, $offset, $pageItems);
+
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+            $paginator->withPath('shop');
+
+
+        return view('hinimo/tally', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink', 'allProducts', 'products', 'sets', 'profilingDatas', 'profiling'));
+        // return view('hinimo/tally');
+
+        }else {
+            $activeLink = "womens";
+            $page_title = "Shop";
+            $userID = null;
+            $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->get();
+            $categories = Category::all();
+            $cart = null;
+            $cartCount = null;
+            $boutiques = Boutique::all();
+            $notAvailables = Product::where('productStatus', 'Not Available')->get();
+            $notificationsCount = null;
+            $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->with('items')->get();
+            $allProducts = array();
+
+
+            //FILTERING-------------------------------------------------------------------------
+                //PRODUCTS
+                if(!empty($request->input('category'))){
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['id'] != $request->input('category')){
+                            $products->forget($key);
+                        }else{
+                            $page_title = $product->getSubCategory->getCategory['gender'].' - '.$product->getSubCategory->getCategory['categoryName'];
+                            $activeLink = strtolower($product->getSubCategory->getCategory['gender']);
+                        }
+                    }
+                }else if(!empty($request->input('gender'))){ //para filter via gender
+                    $page_title = $request->input('gender');
+                    $activeLink = strtolower($request->input('gender'));
+                    foreach($products as $key => $product){
+                        if($product->getSubCategory->getCategory['gender'] != ucfirst($request->input('gender'))){ //pangitaon ang dili pariha
+                            $products->forget($key);
+                        }
+                    }
+                }
+
+                //SETS
+                if(!empty($request->input('category'))){
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['id'] == $request->input('category')){
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key);
+                        }
+                    }
+                }else if(!empty($request->input('gender'))){ //para filter via gender
+                    foreach($sets as $key => $set){
+                        $variable = 0;
+                        foreach($set->items as $item){
+                            if($item->product->getSubCategory->getCategory['gender'] == ucfirst($request->input('gender'))){ //pangitaon ang ni pariha nga category
+                                $variable += 1;
+                            }
+                        }
+                        if($variable == 0){
+                            $sets->forget($key); //tang'tangon ang way apil
+                        }
+                    }
+                }
+            //----------------------------------------------------------------------------------
+
+
+            foreach($sets as $set){ 
+                foreach($set->items as $item){
+                    $item['productFile'] = $item->product->productFile;
+                }
+            }
+
+            $allProducts = array_merge($products->toArray(), $sets->toArray()); //merge products &sets
+            $createdAt = array_column($allProducts, 'created_at');
+            array_multisort($createdAt, SORT_DESC, $allProducts); //sort all products & sets via created_at
+            $productsCount = count($allProducts);
+
+            //PAGINATION
+            $currentPage = $request->page;
+            $pageItems = 12;
+            if(empty($currentPage)){
+                $currentPage = 1;
+            }
+
+            $offset = ($currentPage * $pageItems) - $pageItems;
+            $itemsForCurrentPage = array_slice($allProducts, $offset, $pageItems);
+
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
+            $paginator->withPath('shop');
+
+            // dd($allProducts);
+
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink'));
+        }
+    }
+
     public function shop(Request $request) //ipa una n para mo check una sa auth
     {
         if (Auth::check()) { //check if nay naka login nga user
@@ -77,7 +608,7 @@ class CustomerController extends Controller
                 $this->getNotifications($notifications, $notificationsCount);
 
                 $allProducts = array();
-                $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->get();
+                $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->with('getSubCategory')->with('tags')->get();
                 $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
 
 
@@ -144,19 +675,48 @@ class CustomerController extends Controller
 
 
                 //LOOP ALL PRODUCTS RETRIEVED-----------------------------------------------------------------
+
+                //PROFILING = 1.3
+                //VIEW = 1.2
+                //FAVORITE = 1.4
+                //ORDER HISTORY = 1.5
+                //TAG = 
+
+
                 foreach($products as $product){
                     $points = 0;
+                    $tags = array();
+                    $productTags = json_decode($product->tags['tags']);
 
+                    $profilingCount = 0;
+                    $profilingScore = 0;
                     if(in_array($product['category'], $subCategories)){
-                        $points += 2;
+                        $profilingCount += 1;
+                        $profilingScore = $profilingCount * 1.3;
+                        $points += $profilingScore;
+                        // dd($profilingCount);
                     }
 
                     //VIEWSS-----------------------------------------------------------------------------------
-                    $views = View::where('userID', $userID)->where('itemID', $product['id'])->first();
-                    if(!empty($views)){
-                        $viewPoints = $views['count'] * 1;
-                        $points += $viewPoints;
+                    $viewsCounter = 0;
+                    $views = View::where('userID', $userID)->get();
+                    foreach($views as $view){
+                        if($view->product['category'] === $product['category']){
+                            $viewsCounter += $view['count'];
+                        }
+
+                        $prodTags = json_decode($view->product->tags['tags']); //array of tags
+                        // $similarTags = array_intersect($productTags, $prodTags);
+                        // $tagsCount = count($similarTags);
+                        // dd($tagsCount); 
+
                     }
+                        $viewPoints = $viewsCounter * 1.2;
+                        $points += $viewPoints;
+
+                        //loop views then match if same sila sa subcat ni $product
+
+                      
                     //-----------------------------------------------------------------------------------------
 
                     //FAVORITES--------------------------------------------------------------------------------
@@ -182,9 +742,9 @@ class CustomerController extends Controller
                                 }
                             }
                         }
-                        $favCounter = $favoriteCounter * 2;  //score fav              
-                        $points += $favCounter;
-                        // dd($points);
+                        $favScore = $favoriteCounter * 1.4;  //score fav              
+                        $points += $favScore;
+                        // dd($favCounter);
                     }
                     //----------------------------------------------------------------------------------------
 
@@ -195,16 +755,6 @@ class CustomerController extends Controller
                         $transactionID = explode("_", $orderhistory['transactionID']);
                         $type = $transactionID[0];
 
-                        if($type == 'CART'){
-                            $transactionType = 'PURCHASE';
-                        }else if($type == 'MTO'){
-                            $transactionType = 'MADE-TO-ORDER';
-                        }else if($type == 'BIDD'){
-                            $transactionType = 'BIDDING';
-                        }else if($type == 'RENT'){
-                            $transactionType = 'RENT';
-                        }
-
 
                         if($type == 'CART'){
                             foreach($orderhistory->cart->items as $cartItem){
@@ -213,16 +763,16 @@ class CustomerController extends Controller
 
                                 //if product ang naa sa cart
                                 if($cartItem->product != null){
+                                    $prodCategories = Product::where('category', $cartItem->product['category'])->get();
                                     $prod = Product::where('id', $cartItem['productID'])->first(); //get product matched
 
                                     if($product['category'] == $prod['category']){
                                         $orderCounter +=1;
-                                        // dd($orderCounter);
                                     }
                                 }else{
                                     $setset = Set::where('id', $cartItem['setID'])->first();
                                     foreach($setset->items as $item){
-                                        $setprod = $product::where('id', $item->product['id'])->first();
+                                        $setprod = $product::where('id', $item['id'])->first();
 
                                         if($setprod['category'] == $product['category']){
                                             $orderCounter +=1;
@@ -241,55 +791,82 @@ class CustomerController extends Controller
                                     $orderCounter +=1;
                                 }
                             }else{
-                                $setset = Set::where('id', $orderhistory['transactionID'])->first();
-                                foreach($setset->items as $item){
-                                    $setprod = Product::where('id', $item->product['id'])->first();
+                                // $setset = Set::where('id', $orderhistory['transactionID'])->first();
+                                // foreach($setset->items as $item){
+                                //     $setprod = Product::where('id', $item->product['id'])->first();
 
-                                    if($setprod['category'] == $product['category']){
-                                        $orderCounter += 1;
-                                    }
-                                }
+                                //     if($setprod['category'] == $product['category']){
+                                //         $orderCounter += 1;
+                                //     }
+                                // }
 
                             }
                         }
 
-                            $historyCounter = $orderCounter * 3;  //score fav              
-                            $points += $historyCounter;
+                        $historyScore = $orderCounter * 1.5;  //score fav              
+                        $points += $historyScore;
                     } //order history closing
 
                     //SCORING---------------------------------------------------------------------------------
-                    $points += $favoriteCounter * 2.5;
 
                     $product['points'] = $points;
+                    $product['gender'] = $product->getSubCategory->getCategory['gender'];
+                    $product['subcategory'] = $product->getSubCategory;
+                    $product['profilingCount'] = $profilingCount;
+                    $product['profilingScore'] = $profilingScore;
+                    $product['viewsCounter'] = $viewsCounter;
+                    $product['viewPoints'] = $viewPoints;
+                    $product['favoriteCounter'] = $favoriteCounter;
+                    $product['favScore'] = $favScore;
+                    $product['orderCounter'] = $orderCounter;
+                    $product['historyScore'] = $historyScore;
+
                 }
-                //---------------------------------------------------------------------------------------------
+
+                //END LOOP FOR PRODUCTS-----------------------------------------------------------------------
 
 
-                //SORT PRODUCTS----------------------------------------
+                //SORT PRODUCTS-------------------------------------------------------------------------------
                 $products = $products->sortBy(function($product){
                     return -$product->points;
                 });
-                //-----------------------------------------------------
+                //--------------------------------------------------------------------------------------------
 
 
                 foreach($sets as $set){
                     $points = 0;
-
+                    $viewsCounter = 0;
+                    $setitems = array();
                     foreach($set->items as $item){
                         $setprod = Product::where('id', $item->product['id'])->with('productFile')->first();
                         $item['productFile'] = $item->product->productFile;
+                        // array_push($setGender, $item->product->getSubCategory->getCategory['gender']);
+                        // array_push($subcategory, $item->product->getSubCategory['subcatName']);
 
                         //BASE SA PROFILING
+                        $profilingCount = 0;
+                        $profilingScore = 0;
                         if(in_array($item->product['category'], $subCategories)){
-                            $points += 2;
+                            $profilingCount += 1;
+                            $profilingScore = $profilingCount * 1.3;
+                            $points += $profilingScore;
                         }
 
+
                         //BASE SA VIEWS
-                        $views = View::where('itemID', $item->product['id'])->where('userID', $userID)->first();
-                        if(!empty($views)){
-                            $viewPoints = $views['count'] * 1;
-                            $points += $viewPoints;
+                        $views = View::where('userID', $userID)->get();
+                        $viewPoints = 0;
+                        $itemViewsCounter = 0;
+                        foreach($views as $view){
+                            if($view->product['category'] == $item->product['category']){
+                                $itemViewsCounter += $view['count'];
+                                $viewsCounter += $view['count'];
+                            }
+
                         }
+                                $viewPoints = $itemViewsCounter * 1.2;
+                        $points += $viewPoints;
+                        // dd($item->product['category']);
 
                         //BASE SA FAVORITES
                         $favorites = Favorite::where('userID', $userID)->get();
@@ -301,7 +878,7 @@ class CustomerController extends Controller
                             if($itemType == "PROD"){
                                 $prod = Product::where('id', $favorite['itemID'])->first();
 
-                                if($product['category'] == $prod['category']){
+                                if($item->product['category'] == $prod['category']){
                                     $favoriteCounter +=1;
                                 }
                             }else{
@@ -309,18 +886,87 @@ class CustomerController extends Controller
                                 foreach($set->items as $item){
                                     $setprod = Product::where('id', $item->product['id'])->first();
 
-                                    if($setprod['category'] == $product['category']){
+                                    if($setprod['category'] == $item->product['category']){
                                         $favoriteCounter += 1;
                                     }
                                 }
                             }
+                            $favScore = $favoriteCounter * 1.4;  //score fav              
+                            $points += $favScore;
                         }
-                        $points += $favoriteCounter * 2.5;
+                        // $points += $favoriteCounter * 2.5;
 
-                    }
+                        $orderhistories = Order::where('userID', $userID)->limit(5)->get();
+                        $orderCounter = 0;
+                        foreach($orderhistories as $orderhistory){
+                            $transactionID = explode("_", $orderhistory['transactionID']);
+                            $type = $transactionID[0];
+
+                            if($type == 'CART'){
+                                foreach($orderhistory->cart->items as $cartItem){
+                                    if($cartItem->product != null){ //if single product ang item
+                                        $prod = Product::where('id', $cartItem['productID'])->first(); //get product matched
+
+                                        if($item->product['category'] == $cartItem->product['category']){
+                                            $orderCounter +=1;
+                                        }
+                                    }else{
+                                        $setset = Set::where('id', $cartItem['setID'])->first();
+                                        foreach($setset->items as $item){
+                                            $setprod = $product::where('id', $item['id'])->first();
+
+                                            if($setprod['category'] == $item->product['category']){
+                                                $orderCounter +=1;
+                                            }
+                                        }
+                                    }
+                                }
+                            }else if($type == 'RENT'){
+                                $rentItem = explode("_", $orderhistory->rent['itemID']);
+                                $itemType = $rentItem[0];
+
+                                if($itemType == 'PROD'){
+                                    $prod = Product::where('id', $orderhistory->rent['itemID'])->first(); //get product matched
+
+                                    if($prod['category'] == $item->product['category']){
+                                        $orderCounter +=1;
+                                    }
+                                }else{
+                                    $setset = Set::where('id', $orderhistory->rent['itemID'])->first();
+                                    foreach($setset->items as $item){
+                                        $setprod = Product::where('id', $item->product['id'])->first();
+
+                                        if($setprod['category'] == $item->product['category']){
+                                            $orderCounter += 1;
+                                        }
+                                    }
+                                }
+                            }
+                            $historyScore = $orderCounter * 1.5;  //score fav              
+                            $points += $historyScore;
+                        } //order history closing
+
+                        $setprod['gender'] = $item->product->getSubCategory->getCategory['gender'];
+                        $setprod['subcategory'] = $item->product->getSubCategory;
+                        $setprod['profilingCount'] = $profilingCount;
+                        $setprod['profilingScore'] = $profilingScore;
+                        $setprod['itemViewsCounter'] = $itemViewsCounter;
+                        $setprod['viewsCounter'] = $viewsCounter;
+                        $setprod['viewPoints'] = $viewPoints;
+
+                        $setprod['favoriteCounter'] = $favoriteCounter;
+                        $setprod['favScore'] = $favScore;
+                        $setprod['orderCounter'] = $orderCounter;
+                        $setprod['historyScore'] = $historyScore;
+                        array_push($setitems, $setprod);
+
+                    } //set item loop closing
+                    $set['items'] = $setitems;
                     $set['in_favorites'] = $favorites;
                     $set['points'] = $points;
-                }
+
+                } //set loop closing
+                    // dd($sets);
 
                 // $sets = Set::where('setStatus', 'Available')->with('inFavorites')->with('owner')->with('rentDetails')->get();
                 $sets = $sets->sortBy(function($set){
@@ -330,6 +976,7 @@ class CustomerController extends Controller
                 $allProducts = array_merge($products->toArray(), $sets->toArray());
                 $pPoints = array_column($allProducts, 'points');
                 array_multisort($pPoints, SORT_DESC, $allProducts);
+
 
                 $productsCount = count($allProducts);
 
@@ -346,11 +993,8 @@ class CustomerController extends Controller
                 $paginator = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $productsCount, $pageItems, $currentPage);
                 $paginator->withPath('shop');
 
-                // dd($paginator);
-
 
                 return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink'));
-                
 
             } else if(Auth()->user()->roles == "boutique") {
                 return redirect('/dashboard');
@@ -791,6 +1435,7 @@ class CustomerController extends Controller
             $id = Auth()->user()->id;
 
             $views = View::where('userID', $id)->where('itemID', $productID)->first();
+            // dd($views);
             if(empty($views)){
                 $views = View::create([
                     'userID' => $id,
@@ -1441,7 +2086,7 @@ class CustomerController extends Controller
         $order = Order::create([
             'id' => $orderID,
             'userID' => $id,
-            'rentID' => $rent['id'],
+            'transactionID' => $rent['id'],
             'boutiqueID' => $request->input('boutiqueID'),
             'subtotal' => $request->input('subtotal'),
             'deliveryfee' => $request->input('deliveryfee'),
@@ -1857,18 +2502,15 @@ class CustomerController extends Controller
         //------------------------------------------------------------------------------
 
         $order = Order::create([
-            'id', $orderID,
+            'id' => $orderID,
             'userID' => $userID,
-            'biddingID' => $bidding['id'],
+            'transactionID' => $bidding['id'],
             'boutiqueID' => $bid->owner['id'],
             'subtotal' => $request->input('subtotal'),
             'deliveryfee' => $request->input('deliveryfee'),
             'total' => $request->input('total'),
-            'deliveryAddress' => $addressID,
             'status' => "Pending",
             'paymentStatus' => "Not Yet Paid",
-            'billingName' => $request->input('billingName'),
-            'phoneNumber' => $addressID,
             'boutiqueShare' => $request->input('boutiqueShare'),
             'adminShare' => $request->input('adminShare'),
             'addressID' => $addressID
@@ -2652,7 +3294,7 @@ class CustomerController extends Controller
     public function paypalTransactionComplete(Request $request)
     {
         if($request->rentID != null){
-            $rent = Rent::where('rentID', $request->rentID)->first();
+            $rent = Rent::where('id', $request->rentID)->first();
             $order = Order::where('id', $request->rentOrderID)->first();
             $existingPayments = Payment::where('orderID', $request->rentOrderID)->get();
             $amount = 0;
@@ -2686,7 +3328,7 @@ class CustomerController extends Controller
             $boutiqueseller = User::where('id', $rent->boutique->owner['id'])->first();
             $boutiqueseller->notify(new CustomerPaysOrder($order));
 
-            return redirect('/view-rent/'.$rent['rentID']);
+            return redirect('/view-rent/'.$rent['id']);
 
 
         }elseif($request->mtoOrderID != null){

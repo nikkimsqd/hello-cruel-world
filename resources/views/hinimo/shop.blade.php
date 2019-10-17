@@ -184,13 +184,16 @@
         	                            <!-- Product Description -->
         	                            <div class="product-description">
         	                                <span>{{ $product['owner']['boutiqueName'] }}</span>
-        	                                <a href="#">
+        	                                <a href="{{url('single-product-details/').'/'.$product['id']}}">
         	                                    <h6>{{ $product['productName'] }}</h6>
         	                                </a>
                                             @if($product['price'] != null)
         	                                <p class="product-price">₱{{ number_format($product['price']) }}</p>
                                             @else
                                             <p class="product-price">₱{{ number_format($product['rent_details']['price']) }}</p>
+                                            @endif
+                                            @if(!empty($product['points']))
+                                            <p class="product-points">{{ $product['points']}}</p>
                                             @endif
 
         	                                <!-- Hover Content -->
@@ -281,6 +284,9 @@
                                             @else
                                             <p class="product-price">₱{{ number_format($product['rentDetails']['price']) }}</p>
                                             @endif
+                                            @if(!empty($product['points']))
+                                            <p class="product-points">{{ $product['points']}}</p>
+                                            @endif
 
                                             <!-- <div class="add-to-cart-btn">
                                                 @if($product['setStatus'] == "Available")
@@ -334,6 +340,7 @@
 <style type="text/css">
     /*.single-product-wrapper .product-img .product-badge*/
     .single-product-wrapper .product-img .product-badge .set-badge{ left: 0px; right: 20px !important; background-color: #ff3c00 !important;}
+    .product-points{color: #dfdfdf !important;}
 </style>
 
 @endsection

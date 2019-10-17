@@ -94,7 +94,6 @@
                                     <label class="custom-control-label" for="customCheck1">Terms and conitions</label>
                                 </div>
                             </div> -->
-                            <input type="text" id="{{$address['id']}}" data-lat="{{$address['lat']}}" data-lng="{{$address['lng']}}" hidden>
 
                                 <input type="text" name="userID" value="{{$user['id']}}" hidden>
                                 <input type="text" name="cartID" value="{{$cart['id']}}" hidden>
@@ -354,7 +353,7 @@ $('#selectAddress').on('change', function(){
                 }
             });
                   marker.setLatLng(e.latlng);
-
+console.log(customerLat);
         });
         // ==================================================================================================//
 

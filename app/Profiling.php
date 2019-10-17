@@ -10,4 +10,14 @@ class Profiling extends Model
     
     protected $fillable = ['userID', 'data'];
 
+ 	public function getCategory()
+ 	{
+        return $this->hasOne('App\Category', 'id', 'data');
+ 	}
+
+    public function getSubCategory()
+    {
+        return $this->hasMany('App\Subcategory', 'id', 'data');
+    }
+
 }

@@ -30,7 +30,7 @@
                             <table class="table table-borderless">
                                 <tr>
                                     <td><h4>Your schedule for alterations will be on:</h4></td>
-                                    <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($rent->order['alterationDateStart'])).' - '.date('M d, Y',strtotime($rent->order['alterationDateEnd']))}}</h5></td>
+                                    <td style="text-align: right;"><h5>{{date('M d, Y',strtotime($rent->order->alteration['dateStart'])).' - '.date('M d, Y',strtotime($rent->order->alteration['dateEnd']))}}</h5></td>
                                 </tr>
                             </table>
                                 <p>You are required to visit the boutique at this time interval. If you failed to pay your visit, the boutique will deliver your item to you with the exact measurements you have given without any alterations.</p>
@@ -121,7 +121,7 @@
                                 <li><span>Product/s</span>
                                     @if($rent->order['cartID'] != null)
                                     <span>$rent->order->cart['id']</span>
-                                    @elseif($rent->order['rentID'] != null)
+                                    @elseif($rent->order['id'] != null)
                                         @if($rent->product != null)
                                         <span>{{$rent->product['productName']}}</span>
                                         @else
@@ -165,7 +165,7 @@
                             @elseif($rent->order['status'] == "Delivered")
                             <div class="notif-area cart-area" style="text-align: right;">
                                 <a href="" class="btn essence-btn white-btn" data-toggle="modal" data-target="#fileForComplain">File for complains</a> &nbsp;&nbsp;&nbsp;
-                                <a href="{{url('receiveRent/'.$rent['rentID'])}}" class="btn essence-btn">Item Received</a>
+                                <a href="{{url('receiveRent/'.$rent['id'])}}" class="btn essence-btn">Item Received</a>
                             </div>
                             @elseif($rent->order['status'] == "On Rent")
                             <div class="notif-area cart-area" style="text-align: right;">
@@ -181,7 +181,7 @@
                             </div>
 
                             <ul class="order-details-form mb-4">
-                                <li><span>Rent ID</span> <span>{{$rent['rentID']}}</span></li>
+                                <li><span>Rent ID</span> <span>{{$rent['id']}}</span></li>
                                 <li><span>Boutique Name</span> <span>{{$rent->boutique['boutiqueName']}}</span></li>
                                 <li><span>Product/s</span> 
                                     @if($rent->product != null)
@@ -286,7 +286,7 @@
                         <h5>Pay here:</h5>
                         <div class="col-md-3" id="paypal-button-container">
                             <input type="text" id="amount" class="form-control mb-10">
-                            <input type="text" id="rentID" value="{{$rent['rentID']}}" hidden>
+                            <input type="text" id="rentID" value="{{$rent['id']}}" hidden>
                             <input type="text" id="rentOrderID" value="{{$rent->order['id']}}" hidden>
                             <input type="text" id="total" value="{{$total}}" hidden>
                             <input type="text" id="minimumPaymentRequired" value="{{$minimumPaymentRequired}}" hidden>

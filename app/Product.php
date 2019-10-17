@@ -51,4 +51,9 @@ class Product extends Model
     {
         return $this->hasOne('App\Favorite', 'itemID', 'id');
     }
+
+    public function tags()
+    {
+        return $this->hasOne('App\Tag', 'itemID', 'id');
+    }
 }

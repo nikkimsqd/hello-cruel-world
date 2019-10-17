@@ -45,8 +45,10 @@
                   <td>{{$rent['created_at']->format('M d, Y')}}</td>
                   @if($rent->order['paymentStatus'] == "Not Yet Paid")
                     <td style="color: red">{{$rent->order['paymentStatus']}}</td>
-                  @else
+                  @elseif(!empty($rent->order['paymentStatus']))
                     <td style="color: #0315ff;">{{$rent->order['paymentStatus']}}</td>
+                  @else
+                    <td style="color: #0315ff;">Rent has no order</td>
                   @endif
                   @if($rent['status'] == "Pending")
                     <td><span class="label label-warning">{{$rent['status']}}</span></td>

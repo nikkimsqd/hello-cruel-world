@@ -90,7 +90,7 @@
                                 @endif
                                 </td>
                                 <td style="text-align: center; color: #0315ff;">{{$order['status']}}</td>
-                                <td style="text-align: center;"><a href="{{url('/view-rent/'.$order->rent['rentID'])}}">View Transaction</a></td>
+                                <td style="text-align: center;"><a href="{{url('/view-rent/'.$order->rent['id'])}}">View Transaction</a></td>
                             </tr>
                             @elseif($type == 'MTO')
                                 @if($order->mto['status'] == "Active")

@@ -36,7 +36,7 @@
                             <div class="col-md-5">
                                 @foreach($category->getSubCategory as $subcategory)
                                 <div class="custom-control custom-checkbox d-block mb-2">
-                                    <input type="checkbox" name="subcategory[{{$subcategory['id']}}][]" value="{{$subcategory['id']}}" class="custom-control-input" id="{{$subcategory['id']}}">
+                                    <input type="checkbox" name="subcategory[{{$category['id']}}][]" value="{{$subcategory['id']}}" class="custom-control-input" id="{{$subcategory['id']}}">
                                     <label class="custom-control-label" for="{{$subcategory['id']}}">{{ucfirst($subcategory['subcatName'])}}</label>
                                 </div>
                                 @endforeach

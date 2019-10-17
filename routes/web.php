@@ -31,6 +31,7 @@ Auth::routes();
 
 //SHOP
 Route::get('/shop', 'CustomerController@shop');
+Route::get('/tally', 'CustomerController@tally');
 Route::get('/index', 'CustomerController@index');
 Route::get('/shop/{gender}', 'CustomerController@shopViaGender');
 Route::get('/shop/{gender}/{category}', 'CustomerController@shopViaCategory');

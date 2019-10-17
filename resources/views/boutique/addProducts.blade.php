@@ -129,7 +129,7 @@
       
 
       
-      <div class="form-group">
+      <div class="form-group in-stock" hidden>
         <h4>In-Stock:</h4>
         <input type="number" name="quantity" id="quantity" class="input form-control" required>
       </div>
@@ -274,12 +274,16 @@
 
     if(value == 'yes'){
       $('.rtwSizes').attr('hidden', !this.checked);
+      $('.in-stock').attr('hidden', this.checked);
+      $('#quantity').prop('required', false);
       rtw = 'yes';
 
       $('#measurement-choices').empty();
       $('#measurement-input').empty(); //para ma wala ang existing if ever naa
 
     }else{
+      $('.in-stock').attr('hidden', !this.checked);
+      $('#quantity').prop('required', true);
       $('.rtwSizes').attr('hidden', this.checked);
       $(".sizes").prop("checked", false);
       $('#XSquantity').attr('hidden', this.checked);
@@ -290,6 +294,79 @@
       $('#XXLquantity').attr('hidden', this.checked);
       rtw = 'no';
     }
+  });
+
+  $('#XSquantity').on('keyup', 'input', function(){
+    var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+    var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+    var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+    var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+    var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+    var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+    var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+    $('#quantity').val(quantity);
+    console.log($('#quantity').val());
+  });
+  $('#Squantity').on('keyup', 'input', function(){
+    var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+    var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+    var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+    var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+    var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+    var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+    var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+    $('#quantity').val(quantity);
+    console.log($('#quantity').val());
+  });
+  $('#Mquantity').on('keyup', 'input', function(){
+    var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+    var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+    var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+    var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+    var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+    var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+    var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+    $('#quantity').val(quantity);
+    console.log($('#quantity').val());
+  });
+  $('#Lquantity').on('keyup', 'input', function(){
+    var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+    var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+    var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+    var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+    var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+    var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+    var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+    $('#quantity').val(quantity);
+    console.log($('#quantity').val());
+  });
+  $('#XLquantity').on('keyup', 'input', function(){
+    var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+    var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+    var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+    var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+    var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+    var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+    var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+    $('#quantity').val(quantity);
+    console.log($('#quantity').val());
+  });
+  $('#XXLquantity').on('keyup', 'input', function(){
+    var XSquantity = parseInt($('#XSquantity').find('input').val()) || 0;
+    var Squantity = parseInt($('#Squantity').find('input').val()) || 0;
+    var Mquantity = parseInt($('#Mquantity').find('input').val()) || 0;
+    var Lquantity = parseInt($('#Lquantity').find('input').val()) || 0;
+    var XLquantity = parseInt($('#XLquantity').find('input').val()) || 0;
+    var XXLquantity = parseInt($('#XXLquantity').find('input').val()) || 0;
+
+    var quantity = XSquantity + Squantity + Mquantity + Lquantity + XLquantity + XXLquantity;
+    $('#quantity').val(quantity);
+    console.log($('#quantity').val());
   });
 
   $('.sizes').on('change', function() {

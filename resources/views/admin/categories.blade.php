@@ -31,9 +31,16 @@
 
             <div class="col-md-6">
               <label>Men</label>
+              <ul>
               @foreach($mens as $men)
                 <li>{{$men['categoryName']}}</li>
+                <ul>
+                  @foreach($men->getSubCategory as $subCategory)
+                    <li>{{$subCategory['subcatName']}}</li>
+                  @endforeach
+                </ul>
               @endforeach
+              </ul>
             </div>
 
           </div>

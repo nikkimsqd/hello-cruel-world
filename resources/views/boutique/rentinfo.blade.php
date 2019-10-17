@@ -226,9 +226,9 @@
         <div class="box-footer" style="text-align: right;">
           <a class="btn btn-success" data-toggle="modal" data-target="#qrCode{{$rent->order['id']}}">View QR Code</a>
           <!-- <a class="btn btn-default" href="{{url('rents/'.$rent['id'])}}"> Back to Rent Details</a> -->
-        @if($rent->order['paymentStatus'] == "Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] != null)
+        @if($rent->order['paymentStatus'] == "Fully Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] != null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>
-        @elseif($rent->order['paymentStatus'] == "Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] == null)
+        @elseif($rent->order['paymentStatus'] == "Fully Paid" && $rent->order['status'] == "In-Progress" && $rent->order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forAlterationsModal"> Set Date for Fittings</a>
         @elseif($rent->order['status'] == "For Alterations" && $rent->order['cartID'] == null)
           <a class="btn btn-primary" href="" data-toggle="modal" data-target="#forPickupModal"> For Pickup</a>

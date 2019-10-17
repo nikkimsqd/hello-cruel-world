@@ -131,10 +131,10 @@ class BoutiqueController extends Controller
 					$notif = $notification;
 					$notification->markAsRead();
 
-					$rent = Rent::where('rentID', $notif->data['rentID'])->first();
+					$rent = Rent::where('id', $notif->data['rentID'])->first();
 
 					// return view('boutique/rentNotification', compact('page_title', 'boutique', 'user', 'notifications', 'notificationsCount', 'rent'));
-					return redirect('/rents/'.$rent['rentID']);
+					return redirect('/rents/'.$rent['id']);
 
 				}elseif ($notification->type == 'App\Notifications\NewMTO') {
 					$notif = $notification;
@@ -158,26 +158,25 @@ class BoutiqueController extends Controller
 
 					$order = Order::where('id', $notif->data['orderID'])->first();
 
-					if($order['cartID'] != null){
+                    $transactionID = explode("_", $order['transactionID']);
+                    $type = $transactionID[0];
 
-						return redirect('/orders/'.$order['id']);
+                    if($type == 'MTO'){
+						$mto = Mto::where('id', $order['transactionID'])->first();
+                        return redirect('/made-to-orders/'.$mto['id']);
 
-					}elseif($order['rentID'] != null){
+                    }elseif($type == 'CART'){
+                        return redirect('/orders/'.$order['id']);
 
-						$rent = Rent::where('rentID', $order['rentID'])->first();
-						return redirect('/rents/'.$rent['rentID']);
+                    }elseif($type == 'RENT'){
+						$rent = Rent::where('rentID', $order['transactionID'])->first();
+                        return redirect('/rents/'.$rent['id']);
 
-					}elseif($order['mtoID'] != null){
+                    }elseif($type == 'BIDD'){
+						$bidding = Bidding::where('id', $order['transactionID'])->first();
+                        return redirect('/orders/'.$bidding['id']);
+                    }
 
-						$mto = Mto::where('id', $order['mtoID'])->first();
-						return redirect('/made-to-orders/'.$mto['id']);
-
-					}elseif($order['biddingID'] != null) {
-
-						$bidding = Bidding::where('id', $order['biddingID'])->first();
-						return redirect('orders/'.$bidding->order['id']);
-
-					}
 					$mto = Mto::where('id', $notif->data['orderID'])->first();
 
 					return redirect('/made-to-orders/'.$mto['id']);
@@ -870,7 +869,7 @@ class BoutiqueController extends Controller
 
     	$customer->notify(new RentApproved($rentID, $boutique['boutiqueName']));
 
-		return redirect('/rents/'.$rent['rentID']);
+		return redirect('/rents/'.$rent['id']);
 	}
 
 	// public function updateRentInfo(Request $request)
