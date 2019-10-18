@@ -9,7 +9,7 @@
     <div class="col-md-12">
       <div class="box box-success">
         <div class="box-header with-border">
-          <h3 class="box-title">Orders from Bidding</h3>
+          <h3 class="box-title"><b>ORDERS FROM BIDDING</b></h3>
 
           <div class="box-tools">
             <div class="input-group input-group-sm" style="width: 150px;">

@@ -9,7 +9,7 @@
       <div class="box">
 
         <div class="box-header with-border">
-          <h3 class="box-title"><b>RENT REQUESTS</b></h3>
+          <h3 class="box-title"><b>ARCHIVE RENTS</b></h3>
 
           <div class="box-tools">
             <div class="input-group input-group-sm" style="width: 150px;">
@@ -39,14 +39,14 @@
                 @foreach($rents as $rent)
                 @if(!empty($rent['status']))
                 <tr>
-                  <td>{{$rent['rentID']}}</td>
+                  <td>{{$rent['id']}}</td>
                   <td>{{$rent->customer->lname.', '.$rent->customer->fname}}</td>
                   <td>{{$rent['created_at']->format('M d, Y')}}</td>
                   @if($rent['status'] == "Completed")
                     <td><span class="label label-success">{{$rent['status']}}</span></td>
 
-                  @elseif($rent['status'] == "Declined")
-                    <td><span class="label label-danger">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] != "Approved" && $rent['status'] != "Pending")
+                    <td><span class="label label-danger">Declined</span></td>
                   @endif
                   <td><a href="rents/{{$rent['id']}}" class="btn btn-default btn-sm">View Order</a></td>
                 </tr>

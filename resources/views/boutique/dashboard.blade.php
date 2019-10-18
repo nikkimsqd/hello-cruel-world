@@ -113,40 +113,78 @@
                 </thead>
                 @if(count($orders) > 0)
                 @foreach($orders as $order)
-                @if(!empty($order['status']))
-                <tr>
-                  <td>{{$order['id']}}</td>
-                  <td>{{$order->cart->owner['fname'].' '.$order->cart->owner['lname']}}</td>
-                  <td>{{$order['created_at']->format('M d, Y')}}</td>
-                  @if($order['paymentStatus'] == "Not Yet Paid")
-                    <td style="color: red">{{$order['paymentStatus']}}</td>
-                  @else
-                    <td style="color: #0315ff;">{{$order['paymentStatus']}}</td>
-                  @endif
-                  @if($order['status'] == "Pending")
-                  <td><span class="label label-warning">{{$order['status']}}</span></td>
+                <?php
+                  $itemID = explode("_", $order['transactionID']);
+                  $itemType = $itemID[0];
+                ?>
+                @if($itemType == 'CART')
+                  <tr>
+                    <td>{{$order['id']}}</td>
+                    <td>{{$order->cart->owner['fname'].' '.$order->cart->owner['lname']}}</td>
+                    <td>{{$order['created_at']->format('M d, Y')}}</td>
+                    @if($order['paymentStatus'] == "Not Yet Paid")
+                      <td style="color: red">{{$order['paymentStatus']}}</td>
+                    @else
+                      <td style="color: #0315ff;">{{$order['paymentStatus']}}</td>
+                    @endif
+                    @if($order['status'] == "Pending")
+                    <td><span class="label label-warning">{{$order['status']}}</span></td>
 
-                  @elseif($order['status'] == "In-Progress")
-                  <td><span class="label label-info">{{$order['status']}}</span></td>
+                    @elseif($order['status'] == "In-Progress")
+                    <td><span class="label label-info">{{$order['status']}}</span></td>
 
-                  @elseif($order['status'] == "For Pickup")
-                  <td><span class="label bg-navy">{{$order['status']}}</span></td>
+                    @elseif($order['status'] == "For Pickup")
+                    <td><span class="label bg-navy">{{$order['status']}}</span></td>
 
-                  @elseif($order['status'] == "For Delivery")
-                  <td><span class="label bg-olive">{{$order['status']}}</span></td>
+                    @elseif($order['status'] == "For Delivery")
+                    <td><span class="label bg-olive">{{$order['status']}}</span></td>
 
-                  @elseif($order['status'] == "On Delivery")
-                  <td><span class="label label-maroon">{{$order['status']}}</span></td>
+                    @elseif($order['status'] == "On Delivery")
+                    <td><span class="label label-maroon">{{$order['status']}}</span></td>
 
-                  @elseif($order['status'] == "Delivered")
-                  <td><span class="label label-success">{{$order['status']}}</span></td>
+                    @elseif($order['status'] == "Delivered")
+                    <td><span class="label label-success">{{$order['status']}}</span></td>
 
-                  @elseif($order['status'] == "Completed")
-                  <td><span class="label label-success">{{$order['status']}}</span></td>
+                    @elseif($order['status'] == "Completed")
+                    <td><span class="label label-success">{{$order['status']}}</span></td>
 
-                  @endif
-                  <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
-                </tr>
+                    @endif
+                    <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                  </tr>
+                @elseif($itemType == 'RENT')
+                  <tr>
+                    <td>{{$order['id']}}</td>
+                    <td>{{$order->customer['fname'].' '.$order->customer['lname']}}</td>
+                    <td>{{$order['created_at']->format('M d, Y')}}</td>
+                    @if($order['paymentStatus'] == "Not Yet Paid")
+                      <td style="color: red">{{$order['paymentStatus']}}</td>
+                    @else
+                      <td style="color: #0315ff;">{{$order['paymentStatus']}}</td>
+                    @endif
+                    @if($order['status'] == "Pending")
+                    <td><span class="label label-warning">{{$order['status']}}</span></td>
+
+                    @elseif($order['status'] == "In-Progress")
+                    <td><span class="label label-info">{{$order['status']}}</span></td>
+
+                    @elseif($order['status'] == "For Pickup")
+                    <td><span class="label bg-navy">{{$order['status']}}</span></td>
+
+                    @elseif($order['status'] == "For Delivery")
+                    <td><span class="label bg-olive">{{$order['status']}}</span></td>
+
+                    @elseif($order['status'] == "On Delivery")
+                    <td><span class="label label-maroon">{{$order['status']}}</span></td>
+
+                    @elseif($order['status'] == "Delivered")
+                    <td><span class="label label-success">{{$order['status']}}</span></td>
+
+                    @elseif($order['status'] == "Completed")
+                    <td><span class="label label-success">{{$order['status']}}</span></td>
+
+                    @endif
+                    <td><a href="orders/{{$order['id']}}" class="btn btn-default btn-sm">View Order</a></td>
+                  </tr>
                 @endif
                 @endforeach
                 @else

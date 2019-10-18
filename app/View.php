@@ -12,4 +12,9 @@ class View extends Model
  	{
         return $this->hasOne('App\Product', 'id', 'itemID');
  	}
+
+ 	public function set()
+ 	{
+        return $this->hasOne('App\Set', 'id', 'itemID');
+ 	}
 }

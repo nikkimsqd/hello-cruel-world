@@ -124,6 +124,7 @@
                             <!-- //INDIVIDUAL PRODUCTS -->
                         <div class="products_list row"> <!-- Products Display -->
                         	@foreach($paginator->items() as $product)
+                            @if(!in_array($product['id'], $orderedItems))
 
                                 @if(!empty($product['productName']))
     	                        <!-- Single Product -->
@@ -193,7 +194,7 @@
                                             <p class="product-price">₱{{ number_format($product['rent_details']['price']) }}</p>
                                             @endif
                                             @if(!empty($product['points']))
-                                            <p class="product-points">{{ $product['points']}}</p>
+                                            <p class="product-points">{{ round($product['points'], 2)}}</p>
                                             @endif
 
         	                                <!-- Hover Content -->
@@ -209,7 +210,15 @@
         	                            </div>
                                     </div>
     	                        </div>
-                                @else       <!-- if product is set -->
+                                @else    <!-- if product is set -->
+                                <?php $inArray = 0;  ?>
+                                @foreach( $product['items'] as $item)
+                                    @if(in_array($item['productID'], $orderedItems))
+                                        <?php $inArray += 1;  ?>
+                                    @endif
+                                @endforeach
+
+                                @if($inArray != count($product['items']))
                                 <!-- Single Product -->
                                 <div class="col-12 col-sm-6 col-lg-4">
                                     <div class="single-product-wrapper">
@@ -285,7 +294,7 @@
                                             <p class="product-price">₱{{ number_format($product['rentDetails']['price']) }}</p>
                                             @endif
                                             @if(!empty($product['points']))
-                                            <p class="product-points">{{ $product['points']}}</p>
+                                            <p class="product-points">{{ round($product['points'], 2)}}</p>
                                             @endif
 
                                             <!-- <div class="add-to-cart-btn">
@@ -310,6 +319,9 @@
                                     </div>
                                 </div>
                                 @endif
+                                @endif
+                                
+                            @endif
                             @endforeach
 
                         </div>

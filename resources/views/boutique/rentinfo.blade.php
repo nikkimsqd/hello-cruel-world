@@ -14,7 +14,11 @@
               <span class="label label-warning">{{ $rent['status']}}</span>
             @elseif($rent['status'] == "Approved")
               <span class="label label-success">Approved</span>
-            @elseif($rent['status'] != "Pending" && $rent['status'] != "Approved")
+            @elseif($rent['status'] == "On Rent")
+              <span class="label label-navy">{{ $rent['status']}}</span>
+            @elseif($rent['status'] == "Completed")
+              <span class="label label-success">{{ $rent['status']}}</span>
+            @elseif($rent['status'] != "Pending" && $rent['status'] != "Approved" && $rent['status'] != "On Rent" && $rent['status'] != "Completed")
               <span class="label label-danger">Declined</span>
             @endif
           </h3>
@@ -451,7 +455,7 @@
       </div>
 
       <div class="modal-body">
-        <p style="text-align: center;">{!! QrCode::size(300)->generate( $rent->order['id'].'_'.$rent->order['userID'].'_'.$rent->order['boutiqueID'].'_'.$rent->order['created_at'] ); !!}</p>
+        <p style="text-align: center;">{!! QrCode::size(300)->generate( $rent->order['id'].'-'.$rent->order['userID'].'-'.$rent->order['boutiqueID'].'-'.$rent->order['created_at'] ); !!}</p>
       </div>
 
       <div class="modal-footer">

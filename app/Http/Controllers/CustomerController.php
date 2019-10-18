@@ -66,8 +66,9 @@ class CustomerController extends Controller
     {
         if (Auth::check()) { //check if nay naka login nga user
             $activeLink = "womens";
-            $page_title = "Shop";
+            $page_title = "Tally";
             $userID = Auth()->user()->id;
+            $user = User::where('id', $userID)->first();
             $categories = Category::all();
             $boutiques = Boutique::all();
             $cart = Cart::where('userID', $userID)->where('status', 'Active')->first();
@@ -80,6 +81,32 @@ class CustomerController extends Controller
             $allProducts = array();
             $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->with('getSubCategory')->with('tags')->get();
             $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
+
+            $orderedItems = array();
+            $orderItems = Order::where('userID', $userID)->get();
+            foreach($orderItems as $orderItem){
+
+                $transactionID = explode("_", $orderItem['transactionID']);
+                $type = $transactionID[0];
+
+                if($type == 'CART'){
+                    foreach($orderItem->cart->items as $cartItem){
+                        if($cartItem->product != null){
+
+                            array_push($orderedItems, $cartItem['productID']);
+
+                        }else{
+
+                            array_push($orderedItems, $cartItem['setID']);
+                                
+                        }
+                    }
+                }else if($type == 'RENT'){
+
+                    array_push($orderedItems, $orderItem->rent['itemID']);
+                }
+            }
+
 
 
             //FILTERING-------------------------------------------------------------------------
@@ -182,7 +209,7 @@ class CustomerController extends Controller
             //ORDER HISTORY = 1.5
             //TAG = 
 
-
+            // dd($products);
             foreach($products as $product){
                 $points = 0;
                 $tags = array();
@@ -214,24 +241,21 @@ class CustomerController extends Controller
                     $productName = explode(" ", strtolower($view->product['productName']));
                     $productDesc = explode(" ", strtolower($view->product['productDesc']));
                     foreach($productName as $pName){
-                        if(!in_array($pName, $viewTags)){
-                            array_push($viewTags, $pName);
-                        }
+                        array_push($viewTags, $pName);
                     }
                     foreach($productDesc as $pDesc){
-                        if(!in_array($pDesc, $viewTags)){
-                            array_push($viewTags, $pDesc);
-                        }
+                        array_push($viewTags, $pDesc);
                     }
 
-                    $prodTags = json_decode($view->product->tags['tags']); //array of tags
-                    foreach($prodTags as $prodtag){
-                        if(!in_array($prodtag, $viewTags)){
+                    if(!empty($view->product->tags)){
+                        $prodTags = json_decode($view->product->tags['tags']); //array of tags
+                        foreach($prodTags as $prodtag){
                             array_push($viewTags, $prodtag);
                         }
                     }
 
-                    $similarTags = array_intersect($viewTags, $productTags);
+                    array_unique($viewTags);
+                    $similarTags = array_intersect($productTags, $viewTags);
                     $productTagsCount = count($productTags);
                     $similarTagsCount = count($similarTags);
                     $viewTagsCount = $similarTagsCount / $productTagsCount;
@@ -261,23 +285,18 @@ class CustomerController extends Controller
                         $productName = explode(" ", strtolower($prod['productName']));
                         $productDesc = explode(" ", strtolower($prod['productDesc']));
                         foreach($productName as $pName){
-                            if(!in_array($pName, $favoriteTags)){
-                                array_push($favoriteTags, $pName);
-                            }
+                            array_push($favoriteTags, $pName);
                         }
                         foreach($productDesc as $pDesc){
-                            if(!in_array($pDesc, $favoriteTags)){
-                                array_push($favoriteTags, $pDesc);
-                            }
+                            array_push($favoriteTags, $pDesc);
                         }
 
                         $prodTags = json_decode($prod->tags['tags']); //array of tags
                         foreach($prodTags as $prodtag){
-                            if(!in_array($prodtag, $favoriteTags)){
-                                array_push($favoriteTags, $prodtag);
-                            }
+                            array_push($favoriteTags, $prodtag);
                         }
-                        $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                        array_unique($favoriteTags);
+                        $favSimilarTags = array_intersect($productTags, $favoriteTags);
                         $productTagsCount = count($productTags); //dili apilon ug output
                         $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                         $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -295,23 +314,18 @@ class CustomerController extends Controller
                             $productName = explode(" ", strtolower($setprod['productName']));
                             $productDesc = explode(" ", strtolower($setprod['productDesc']));
                             foreach($productName as $pName){
-                                if(!in_array($pName, $favoriteTags)){
-                                    array_push($favoriteTags, $pName);
-                                }
+                                array_push($favoriteTags, $pName);
                             }
                             foreach($productDesc as $pDesc){
-                                if(!in_array($pDesc, $favoriteTags)){
-                                    array_push($favoriteTags, $pDesc);
-                                }
+                                array_push($favoriteTags, $pDesc);
                             }
 
                             $prodTags = json_decode($setprod->tags['tags']); //array of tags
                             foreach($prodTags as $prodtag){
-                                if(!in_array($prodtag, $favoriteTags)){
-                                    array_push($favoriteTags, $prodtag);
-                                }
+                                array_push($favoriteTags, $prodtag);
                             }
-                            $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                            array_unique($favoriteTags);
+                            $favSimilarTags = array_intersect($productTags, $favoriteTags);
                             $productTagsCount = count($productTags); //dili apilon ug output
                             $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                             $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -346,23 +360,18 @@ class CustomerController extends Controller
                                 $productName = explode(" ", strtolower($prod['productName']));
                                 $productDesc = explode(" ", strtolower($prod['productDesc']));
                                 foreach($productName as $pName){
-                                    if(!in_array($pName, $orderTags)){
-                                        array_push($orderTags, $pName);
-                                    }
+                                    array_push($orderTags, $pName);
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $orderTags)){
-                                        array_push($orderTags, $pDesc);
-                                    }
+                                    array_push($orderTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($prod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $orderTags)){
-                                        array_push($orderTags, $prodtag);
-                                    }
+                                    array_push($orderTags, $prodtag);
                                 }
-                                $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                array_unique($orderTags);
+                                $orderSimilarTags = array_intersect($productTags, $orderTags);
                                 $orderSimilarTagsCount = count($orderSimilarTags);
                                 $productTagsCount = count($productTags);
                                 $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
@@ -380,23 +389,18 @@ class CustomerController extends Controller
                                     $productName = explode(" ", strtolower($setprod['productName']));
                                     $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                     foreach($productName as $pName){
-                                        if(!in_array($pName, $orderTags)){
                                             array_push($orderTags, $pName);
-                                        }
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $orderTags)){
                                             array_push($orderTags, $pDesc);
-                                        }
                                     }
 
                                     $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $orderTags)){
                                             array_push($orderTags, $prodtag);
-                                        }
                                     }
-                                    $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                    array_unique($orderTags);
+                                    $orderSimilarTags = array_intersect($productTags, $orderTags);
                                     $orderSimilarTagsCount = count($orderSimilarTags);
                                     $productTagsCount = count($productTags);
                                     $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
@@ -405,11 +409,11 @@ class CustomerController extends Controller
                             }
                         }
                     }else if($type == 'RENT'){
-                        $itemID = explode("_", $orderhistory['transactionID']);
+                        $itemID = explode("_", $orderhistory->rent['itemID']);
                         $itemType = $itemID[0];
 
-                        if($type == 'PROD'){
-                            $prod = Product::where('id', $orderhistory['transactionID'])->first(); //get product matched
+                        if($itemType == 'PROD'){
+                            $prod = Product::where('id', $orderhistory->rent['itemID'])->first(); //get product matched
 
                             if($prod['category'] == $product['category']){
                                 $orderCounter +=1;
@@ -418,30 +422,27 @@ class CustomerController extends Controller
                             $productName = explode(" ", strtolower($prod['productName']));
                             $productDesc = explode(" ", strtolower($prod['productDesc']));
                             foreach($productName as $pName){
-                                if(!in_array($pName, $orderTags)){
-                                    array_push($orderTags, $pName);
-                                }
+                                array_push($orderTags, $pName);
                             }
                             foreach($productDesc as $pDesc){
-                                if(!in_array($pDesc, $orderTags)){
-                                    array_push($orderTags, $pDesc);
-                                }
+                                array_push($orderTags, $pDesc);
                             }
 
                             $prodTags = json_decode($prod->tags['tags']); //array of tags
                             foreach($prodTags as $prodtag){
-                                if(!in_array($prodtag, $favoriteTags)){
-                                    array_push($orderTags, $prodtag);
-                                }
+                                array_push($orderTags, $prodtag);
                             }
-                            $orderSimilarTags = array_intersect($orderTags, $productTags);
+                            array_unique($orderTags);
+                            $orderSimilarTags = array_intersect($productTags, $orderTags);
                             $orderSimilarTagsCount = count($orderSimilarTags);
                             $productTagsCount = count($productTags);
                             $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
                             $orderTagsScore = $orderTagsCount * 1.5;
 
+                            // dd("asas");
                         }else{
                             $setset = Set::where('id', $cartItem['setID'])->first();
+                            // dd($setset);
                             foreach($setset->items as $item){
                                 $setprod = Product::where('id', $item->product['id'])->first();
 
@@ -457,18 +458,15 @@ class CustomerController extends Controller
                                     }
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $orderTags)){
-                                        array_push($orderTags, $pDesc);
-                                    }
+                                    array_push($orderTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $favoriteTags)){
-                                        array_push($orderTags, $prodtag);
-                                    }
+                                    array_push($orderTags, $prodtag);
                                 }
-                                $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                array_unique($orderTags);
+                                $orderSimilarTags = array_intersect($productTags, $orderTags);
                                 $orderSimilarTagsCount = count($orderSimilarTags);
                                 $productTagsCount = count($productTags);
                                 $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
@@ -476,10 +474,10 @@ class CustomerController extends Controller
                             }
                         }
                     }
+                } //order history closing
                     $historyScore = $orderCounter * 1.5;  //score fav  
                     $totalOrderScore = $historyScore + $orderTagsScore;            
                     $points += $totalOrderScore;
-                } //order history closing
 
                 //SCORING---------------------------------------------------------------------------------
                 //orders
@@ -561,42 +559,45 @@ class CustomerController extends Controller
                     $itemViewsCounter = 0;
                     $viewTags = array();
                     foreach($views as $view){
-                        if($view->product['category'] == $item->product['category']){
-                            $itemViewsCounter += $view['count'];
-                            // $viewsCounter += $view['count'];
-                        }
+                        $itemID = explode("_", $view['itemID']);
+                        $itemType = $itemID[0];
 
-                        $productName = explode(" ", strtolower($view->product['productName']));
-                        $productDesc = explode(" ", strtolower($view->product['productDesc']));
-                        foreach($productName as $pName){
-                            if(!in_array($pName, $viewTags)){
+                        if($itemType == 'SET'){
+                            foreach($view->set->items as $setItem){
+                                if($setItem->product['category'] == $item->product['category']){
+                                    $itemViewsCounter += $view['count'];
+                                }
+                            }
+
+                            $productName = explode(" ", strtolower($view->set['setName']));
+                            $productDesc = explode(" ", strtolower($view->set['setDesc']));
+                            foreach($productName as $pName){
                                 array_push($viewTags, $pName);
                             }
-                        }
-                        foreach($productDesc as $pDesc){
-                            if(!in_array($pDesc, $viewTags)){
+                            foreach($productDesc as $pDesc){
                                 array_push($viewTags, $pDesc);
                             }
                         }
 
-                        $prodTags = json_decode($view->product->tags['tags']); //array of tags
-                        foreach($prodTags as $prodtag){
-                            if(!in_array($prodtag, $viewTags)){
+                        if(!empty($view->product->tags)){
+                            $prodTags = json_decode($view->product->tags['tags']); //array of tags
+                            foreach($prodTags as $prodtag){
                                 array_push($viewTags, $prodtag);
                             }
                         }
-
-                        $similarTags = array_intersect($viewTags, $productTags);
+                    }
+                        array_unique($viewTags);
+                        $similarTags = array_intersect($productTags, $viewTags);
                         $productTagsCount = count($productTags);
                         $similarTagsCount = count($similarTags);
                         $viewTagsCount = $similarTagsCount / $productTagsCount;
                         $viewTagsScore = $viewTagsCount * 1.2;
-                    }
 
-                    $viewPoints = $itemViewsCounter * 1.2;
-                    $totalViewPoints = $viewPoints + $viewTagsScore;
-                    $points += $totalViewPoints;
-                    // dd($item->product['category']);
+                        $viewPoints = $itemViewsCounter * 1.2;
+
+                        $totalViewPoints = $viewPoints + $viewTagsScore;
+                        $points += $totalViewPoints;
+
 
 
                     //BASE SA FAVORITES
@@ -617,24 +618,18 @@ class CustomerController extends Controller
                             $productName = explode(" ", strtolower($prod['productName']));
                             $productDesc = explode(" ", strtolower($prod['productDesc']));
                             foreach($productName as $pName){
-                                if(!in_array($pName, $favoriteTags)){
-                                    array_push($favoriteTags, $pName);
-                                }
+                                array_push($favoriteTags, $pName);
                             }
                             foreach($productDesc as $pDesc){
-                                if(!in_array($pDesc, $favoriteTags)){
-                                    array_push($favoriteTags, $pDesc);
-                                }
+                                array_push($favoriteTags, $pDesc);
                             }
 
                             $prodTags = json_decode($prod->tags['tags']); //array of tags
                             foreach($prodTags as $prodtag){
-                                if(!in_array($prodtag, $favoriteTags)){
-                                    array_push($favoriteTags, $prodtag);
-                                }
+                                array_push($favoriteTags, $prodtag);
                             }
-
-                            $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                            array_unique($favoriteTags);
+                            $favSimilarTags = array_intersect($productTags, $favoriteTags);
                             $productTagsCount = count($productTags); //dili apilon ug output
                             $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                             $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -652,23 +647,18 @@ class CustomerController extends Controller
                                 $productName = explode(" ", strtolower($setprod['productName']));
                                 $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                 foreach($productName as $pName){
-                                    if(!in_array($pName, $favoriteTags)){
-                                        array_push($favoriteTags, $pName);
-                                    }
+                                    array_push($favoriteTags, $pName);
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $favoriteTags)){
-                                        array_push($favoriteTags, $pDesc);
-                                    }
+                                    array_push($favoriteTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $favoriteTags)){
-                                        array_push($favoriteTags, $prodtag);
-                                    }
+                                    array_push($favoriteTags, $prodtag);
                                 }
-                                $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                                array_unique($favoriteTags);
+                                $favSimilarTags = array_intersect($productTags, $favoriteTags);
                                 $productTagsCount = count($productTags); //dili apilon ug output
                                 $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                                 $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -681,6 +671,7 @@ class CustomerController extends Controller
                         $points += $totalFavPoints;
                     }
                     // $points += $favoriteCounter * 2.5;
+
 
                     $orderhistories = Order::where('userID', $userID)->limit(5)->get();
                     $orderCounter = 0;
@@ -701,27 +692,16 @@ class CustomerController extends Controller
                                     $productName = explode(" ", strtolower($prod['productName']));
                                     $productDesc = explode(" ", strtolower($prod['productDesc']));
                                     foreach($productName as $pName){
-                                        if(!in_array($pName, $orderTags)){
-                                            array_push($orderTags, $pName);
-                                        }
+                                        array_push($orderTags, $pName);
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $orderTags)){
-                                            array_push($orderTags, $pDesc);
-                                        }
+                                        array_push($orderTags, $pDesc);
                                     }
 
                                     $prodTags = json_decode($prod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $orderTags)){
-                                            array_push($orderTags, $prodtag);
-                                        }
+                                        array_push($orderTags, $prodtag);
                                     }
-                                    $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                    $orderSimilarTagsCount = count($orderSimilarTags);
-                                    $productTagsCount = count($productTags);
-                                    $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                    $orderTagsScore = $orderTagsCount * 1.5;
 
                                 }else{
                                     $setset = Set::where('id', $cartItem['setID'])->first();
@@ -735,27 +715,16 @@ class CustomerController extends Controller
                                         $productName = explode(" ", strtolower($setprod['productName']));
                                         $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                         foreach($productName as $pName){
-                                            if(!in_array($pName, $orderTags)){
-                                                array_push($orderTags, $pName);
-                                            }
+                                            array_push($orderTags, $pName);
                                         }
                                         foreach($productDesc as $pDesc){
-                                            if(!in_array($pDesc, $orderTags)){
-                                                array_push($orderTags, $pDesc);
-                                            }
+                                            array_push($orderTags, $pDesc);
                                         }
 
                                         $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                         foreach($prodTags as $prodtag){
-                                            if(!in_array($prodtag, $orderTags)){
-                                                array_push($orderTags, $prodtag);
-                                            }
+                                            array_push($orderTags, $prodtag);
                                         }
-                                        $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                        $orderSimilarTagsCount = count($orderSimilarTags);
-                                        $productTagsCount = count($productTags);
-                                        $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                        $orderTagsScore = $orderTagsCount * 1.5;
                                     }
                                 }
                             }
@@ -773,27 +742,16 @@ class CustomerController extends Controller
                                 $productName = explode(" ", strtolower($prod['productName']));
                                 $productDesc = explode(" ", strtolower($prod['productDesc']));
                                 foreach($productName as $pName){
-                                    if(!in_array($pName, $orderTags)){
-                                        array_push($orderTags, $pName);
-                                    }
+                                    array_push($orderTags, $pName);
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $orderTags)){
-                                        array_push($orderTags, $pDesc);
-                                    }
+                                    array_push($orderTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($prod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $favoriteTags)){
-                                        array_push($orderTags, $prodtag);
-                                    }
+                                    array_push($orderTags, $prodtag);
                                 }
-                                $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                $orderSimilarTagsCount = count($orderSimilarTags);
-                                $productTagsCount = count($productTags);
-                                $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                $orderTagsScore = $orderTagsCount * 1.5;
 
                             }else{
                                 $setset = Set::where('id', $orderhistory->rent['itemID'])->first();
@@ -807,48 +765,45 @@ class CustomerController extends Controller
                                     $productName = explode(" ", strtolower($setprod['productName']));
                                     $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                     foreach($productName as $pName){
-                                        if(!in_array($pName, $orderTags)){
-                                            array_push($orderTags, $pName);
-                                        }
+                                        array_push($orderTags, $pName);
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $orderTags)){
-                                            array_push($orderTags, $pDesc);
-                                        }
+                                        array_push($orderTags, $pDesc);
                                     }
 
                                     $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $favoriteTags)){
-                                            array_push($orderTags, $prodtag);
-                                        }
+                                        array_push($orderTags, $prodtag);
                                     }
-                                    $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                    $orderSimilarTagsCount = count($orderSimilarTags);
-                                    $productTagsCount = count($productTags);
-                                    $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                    $orderTagsScore = $orderTagsCount * 1.5;
                                 }
                             }
                         }
-                        $historyScore = $orderCounter * 1.5;  //score fav              
-                        $totalOrderScore = $historyScore + $orderTagsScore;            
-                        $points += $totalOrderScore;
                     } //order history closing
+                    array_unique($orderTags);
+                    $orderSimilarTags = array_intersect($productTags, $orderTags);
+                    $orderSimilarTagsCount = count($orderSimilarTags);
+                    $productTagsCount = count($productTags);
+                    $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
+                    $orderTagsScore = $orderTagsCount * 1.5;
 
+                    $historyScore = $orderCounter * 1.5;  //score fav              
+                    $totalOrderScore = $historyScore + $orderTagsScore;
+                    $points += $totalOrderScore;
+
+                    //PARA SA TALLY
                     //orders
-                    $product['orderTags'] = $orderTags;
-                    $product['orderSimilarTags'] = $orderSimilarTags;
-                    $product['orderTagsCount'] = $orderTagsCount;
-                    $product['orderTagsScore'] = $orderTagsScore;
-                    $product['totalOrderScore'] = $totalOrderScore;
+                    $setprod['orderTags'] = $orderTags;
+                    $setprod['orderSimilarTags'] = $orderSimilarTags;
+                    $setprod['orderTagsCount'] = $orderTagsCount;
+                    $setprod['orderTagsScore'] = $orderTagsScore;
+                    $setprod['totalOrderScore'] = $totalOrderScore;
 
                     //favorites
-                    $product['favoriteTags'] = $favoriteTags;
-                    $product['favSimilarTags'] = $favSimilarTags;
-                    $product['favTagsCount'] = $favTagsCount;
-                    $product['favoriteTagsScore'] = $favoriteTagsScore;
-                    $product['totalFavPoints'] = $totalFavPoints;
+                    $setprod['favoriteTags'] = $favoriteTags;
+                    $setprod['favSimilarTags'] = $favSimilarTags;
+                    $setprod['favTagsCount'] = $favTagsCount;
+                    $setprod['favoriteTagsScore'] = $favoriteTagsScore;
+                    $setprod['totalFavPoints'] = $totalFavPoints;
 
                     //views
                     $setprod['viewPoints'] = $viewPoints;
@@ -872,6 +827,7 @@ class CustomerController extends Controller
                     array_push($setitems, $setprod);
 
                 } //set item loop closing
+
                 $set['items'] = $setitems;
                 $set['in_favorites'] = $favorites;
                 $set['points'] = $points;
@@ -886,7 +842,6 @@ class CustomerController extends Controller
             $allProducts = array_merge($products->toArray(), $sets->toArray());
             $pPoints = array_column($allProducts, 'points');
             array_multisort($pPoints, SORT_DESC, $allProducts);
-
 
             $productsCount = count($allProducts);
 
@@ -904,8 +859,7 @@ class CustomerController extends Controller
             $paginator->withPath('shop');
 
 
-        return view('hinimo/tally', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink', 'allProducts', 'products', 'sets', 'profilingDatas', 'profiling'));
-        // return view('hinimo/tally');
+            return view('hinimo/tally', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink', 'allProducts', 'sets', 'profilingDatas', 'profiling', 'user', 'orderItems', 'views', 'favorites'));
 
         }else {
             $activeLink = "womens";
@@ -920,7 +874,7 @@ class CustomerController extends Controller
             $notificationsCount = null;
             $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->with('items')->get();
             $allProducts = array();
-
+            $orderedItems = array();
 
             //FILTERING-------------------------------------------------------------------------
                 //PRODUCTS
@@ -998,7 +952,7 @@ class CustomerController extends Controller
 
             // dd($allProducts);
 
-            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink'));
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink', 'orderedItems'));
         }
     }
 
@@ -1021,6 +975,31 @@ class CustomerController extends Controller
                 $allProducts = array();
                 $products = Product::where('productStatus', 'Available')->with('productFile')->with('inFavorites')->with('owner')->with('rentDetails')->with('getSubCategory')->with('tags')->get();
                 $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->get();
+
+                $orderedItems = array();
+                $orderItems = Order::where('userID', $userID)->get();
+                foreach($orderItems as $orderItem){
+
+                    $transactionID = explode("_", $orderItem['transactionID']);
+                    $type = $transactionID[0];
+
+                    if($type == 'CART'){
+                        foreach($orderItem->cart->items as $cartItem){
+                            if($cartItem->product != null){
+
+                                array_push($orderedItems, $cartItem['productID']);
+
+                            }else{
+
+                                array_push($orderedItems, $cartItem['setID']);
+                                    
+                            }
+                        }
+                    }else if($type == 'RENT'){
+
+                        array_push($orderedItems, $orderItem->rent['itemID']);
+                    }
+                }
 
 
                 //FILTERING-------------------------------------------------------------------------
@@ -1084,15 +1063,12 @@ class CustomerController extends Controller
                 }
                 //--------------------------------------------------------------------------------------------
 
-
                 //LOOP ALL PRODUCTS RETRIEVED-----------------------------------------------------------------
-
                 //PROFILING = 1.3
                 //VIEW = 1.2
                 //FAVORITE = 1.4
                 //ORDER HISTORY = 1.5
                 //TAG = 
-
 
                 foreach($products as $product){
                     $points = 0;
@@ -1125,24 +1101,20 @@ class CustomerController extends Controller
                         $productName = explode(" ", strtolower($view->product['productName']));
                         $productDesc = explode(" ", strtolower($view->product['productDesc']));
                         foreach($productName as $pName){
-                            if(!in_array($pName, $viewTags)){
-                                array_push($viewTags, $pName);
-                            }
+                            array_push($viewTags, $pName);
                         }
                         foreach($productDesc as $pDesc){
-                            if(!in_array($pDesc, $viewTags)){
-                                array_push($viewTags, $pDesc);
-                            }
+                            array_push($viewTags, $pDesc);
                         }
 
-                        $prodTags = json_decode($view->product->tags['tags']); //array of tags
-                        foreach($prodTags as $prodtag){
-                            if(!in_array($prodtag, $viewTags)){
+                        if(!empty($view->product->tags)){
+                            $prodTags = json_decode($view->product->tags['tags']); //array of tags
+                            foreach($prodTags as $prodtag){
                                 array_push($viewTags, $prodtag);
                             }
                         }
-
-                        $similarTags = array_intersect($viewTags, $productTags);
+                        array_unique($viewTags);
+                        $similarTags = array_intersect($productTags, $viewTags);
                         $productTagsCount = count($productTags);
                         $similarTagsCount = count($similarTags);
                         $viewTagsCount = $similarTagsCount / $productTagsCount;
@@ -1172,23 +1144,18 @@ class CustomerController extends Controller
                             $productName = explode(" ", strtolower($prod['productName']));
                             $productDesc = explode(" ", strtolower($prod['productDesc']));
                             foreach($productName as $pName){
-                                if(!in_array($pName, $favoriteTags)){
-                                    array_push($favoriteTags, $pName);
-                                }
+                                array_push($favoriteTags, $pName);
                             }
                             foreach($productDesc as $pDesc){
-                                if(!in_array($pDesc, $favoriteTags)){
-                                    array_push($favoriteTags, $pDesc);
-                                }
+                                array_push($favoriteTags, $pDesc);
                             }
 
                             $prodTags = json_decode($prod->tags['tags']); //array of tags
                             foreach($prodTags as $prodtag){
-                                if(!in_array($prodtag, $favoriteTags)){
-                                    array_push($favoriteTags, $prodtag);
-                                }
+                                array_push($favoriteTags, $prodtag);
                             }
-                            $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                            array_unique($favoriteTags);
+                            $favSimilarTags = array_intersect($productTags, $favoriteTags);
                             $productTagsCount = count($productTags); //dili apilon ug output
                             $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                             $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -1206,23 +1173,18 @@ class CustomerController extends Controller
                                 $productName = explode(" ", strtolower($setprod['productName']));
                                 $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                 foreach($productName as $pName){
-                                    if(!in_array($pName, $favoriteTags)){
-                                        array_push($favoriteTags, $pName);
-                                    }
+                                    array_push($favoriteTags, $pName);
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $favoriteTags)){
-                                        array_push($favoriteTags, $pDesc);
-                                    }
+                                    array_push($favoriteTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $favoriteTags)){
-                                        array_push($favoriteTags, $prodtag);
-                                    }
+                                    array_push($favoriteTags, $prodtag);
                                 }
-                                $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                                array_unique($favoriteTags);
+                                $favSimilarTags = array_intersect($productTags, $favoriteTags);
                                 $productTagsCount = count($productTags); //dili apilon ug output
                                 $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                                 $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -1257,23 +1219,18 @@ class CustomerController extends Controller
                                     $productName = explode(" ", strtolower($prod['productName']));
                                     $productDesc = explode(" ", strtolower($prod['productDesc']));
                                     foreach($productName as $pName){
-                                        if(!in_array($pName, $orderTags)){
-                                            array_push($orderTags, $pName);
-                                        }
+                                        array_push($orderTags, $pName);
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $orderTags)){
-                                            array_push($orderTags, $pDesc);
-                                        }
+                                        array_push($orderTags, $pDesc);
                                     }
 
                                     $prodTags = json_decode($prod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $orderTags)){
-                                            array_push($orderTags, $prodtag);
-                                        }
+                                        array_push($orderTags, $prodtag);
                                     }
-                                    $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                    array_unique($orderTags);
+                                    $orderSimilarTags = array_intersect($productTags, $orderTags);
                                     $orderSimilarTagsCount = count($orderSimilarTags);
                                     $productTagsCount = count($productTags);
                                     $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
@@ -1291,23 +1248,18 @@ class CustomerController extends Controller
                                         $productName = explode(" ", strtolower($setprod['productName']));
                                         $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                         foreach($productName as $pName){
-                                            if(!in_array($pName, $orderTags)){
                                                 array_push($orderTags, $pName);
-                                            }
                                         }
                                         foreach($productDesc as $pDesc){
-                                            if(!in_array($pDesc, $orderTags)){
                                                 array_push($orderTags, $pDesc);
-                                            }
                                         }
 
                                         $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                         foreach($prodTags as $prodtag){
-                                            if(!in_array($prodtag, $orderTags)){
                                                 array_push($orderTags, $prodtag);
-                                            }
                                         }
-                                        $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                        array_unique($orderTags);
+                                        $orderSimilarTags = array_intersect($productTags, $orderTags);
                                         $orderSimilarTagsCount = count($orderSimilarTags);
                                         $productTagsCount = count($productTags);
                                         $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
@@ -1316,11 +1268,11 @@ class CustomerController extends Controller
                                 }
                             }
                         }else if($type == 'RENT'){
-                            $itemID = explode("_", $orderhistory['transactionID']);
+                            $itemID = explode("_", $orderhistory->rent['itemID']);
                             $itemType = $itemID[0];
 
-                            if($type == 'PROD'){
-                                $prod = Product::where('id', $orderhistory['transactionID'])->first(); //get product matched
+                            if($itemType == 'PROD'){
+                                $prod = Product::where('id', $orderhistory->rent['itemID'])->first(); //get product matched
 
                                 if($prod['category'] == $product['category']){
                                     $orderCounter +=1;
@@ -1329,30 +1281,27 @@ class CustomerController extends Controller
                                 $productName = explode(" ", strtolower($prod['productName']));
                                 $productDesc = explode(" ", strtolower($prod['productDesc']));
                                 foreach($productName as $pName){
-                                    if(!in_array($pName, $orderTags)){
-                                        array_push($orderTags, $pName);
-                                    }
+                                    array_push($orderTags, $pName);
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $orderTags)){
-                                        array_push($orderTags, $pDesc);
-                                    }
+                                    array_push($orderTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($prod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $favoriteTags)){
-                                        array_push($orderTags, $prodtag);
-                                    }
+                                    array_push($orderTags, $prodtag);
                                 }
-                                $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                array_unique($orderTags);
+                                $orderSimilarTags = array_intersect($productTags, $orderTags);
                                 $orderSimilarTagsCount = count($orderSimilarTags);
                                 $productTagsCount = count($productTags);
                                 $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
                                 $orderTagsScore = $orderTagsCount * 1.5;
 
+                                // dd("asas");
                             }else{
-                                $setset = Set::where('id', $cartItem['setID'])->first();
+                                $setset = Set::where('id', $orderhistory->rent['itemID'])->first();
+                                // dd($setset);
                                 foreach($setset->items as $item){
                                     $setprod = Product::where('id', $item->product['id'])->first();
 
@@ -1368,18 +1317,15 @@ class CustomerController extends Controller
                                         }
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $orderTags)){
-                                            array_push($orderTags, $pDesc);
-                                        }
+                                        array_push($orderTags, $pDesc);
                                     }
 
                                     $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $favoriteTags)){
-                                            array_push($orderTags, $prodtag);
-                                        }
+                                        array_push($orderTags, $prodtag);
                                     }
-                                    $orderSimilarTags = array_intersect($orderTags, $productTags);
+                                    array_unique($orderTags);
+                                    $orderSimilarTags = array_intersect($productTags, $orderTags);
                                     $orderSimilarTagsCount = count($orderSimilarTags);
                                     $productTagsCount = count($productTags);
                                     $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
@@ -1387,13 +1333,34 @@ class CustomerController extends Controller
                                 }
                             }
                         }
+                    } //order history closing
                         $historyScore = $orderCounter * 1.5;  //score fav  
                         $totalOrderScore = $historyScore + $orderTagsScore;            
                         $points += $totalOrderScore;
-                    } //order history closing
 
                     //SCORING---------------------------------------------------------------------------------
-                    $product['points'] = round($points, 2);
+                    //orders
+                    $product['orderTags'] = $orderTags;
+                    $product['orderSimilarTags'] = $orderSimilarTags;
+                    $product['orderTagsCount'] = $orderTagsCount;
+                    $product['orderTagsScore'] = $orderTagsScore;
+                    $product['totalOrderScore'] = $totalOrderScore;
+
+
+                    //favorites
+                    $product['favoriteTags'] = $favoriteTags;
+                    $product['favSimilarTags'] = $favSimilarTags;
+                    $product['favTagsCount'] = $favTagsCount;
+                    $product['favoriteTagsScore'] = $favoriteTagsScore;
+                    $product['totalFavPoints'] = $totalFavPoints;
+
+
+                    //views
+                    $product['viewTagsCount'] = $viewTagsCount;
+                    $product['viewTagsScore'] = $viewTagsScore;
+                    $product['totalViewPoints'] = $totalViewPoints;
+
+                    $product['points'] = $points;
                     $product['gender'] = $product->getSubCategory->getCategory['gender'];
                     $product['subcategory'] = $product->getSubCategory;
                     $product['profilingCount'] = $profilingCount;
@@ -1408,7 +1375,10 @@ class CustomerController extends Controller
                     $product['productTags'] = $productTags;
 
                 }
+
                 //END LOOP FOR PRODUCTS-----------------------------------------------------------------------
+
+
                 //SORT PRODUCTS-------------------------------------------------------------------------------
                 $products = $products->sortBy(function($product){
                     return -$product->points;
@@ -1448,42 +1418,47 @@ class CustomerController extends Controller
                         $itemViewsCounter = 0;
                         $viewTags = array();
                         foreach($views as $view){
-                            if($view->product['category'] == $item->product['category']){
-                                $itemViewsCounter += $view['count'];
-                                // $viewsCounter += $view['count'];
-                            }
+                            $itemID = explode("_", $view['itemID']);
+                            $itemType = $itemID[0];
 
-                            $productName = explode(" ", strtolower($view->product['productName']));
-                            $productDesc = explode(" ", strtolower($view->product['productDesc']));
-                            foreach($productName as $pName){
-                                if(!in_array($pName, $viewTags)){
+                            if($itemType == 'SET'){
+                                foreach($view->set->items as $setItem){
+                                    if($setItem->product['category'] == $item->product['category']){
+                                        $itemViewsCounter += $view['count'];
+                                    }
+                                }
+
+                                $productName = explode(" ", strtolower($view->set['setName']));
+                                $productDesc = explode(" ", strtolower($view->set['setDesc']));
+                                foreach($productName as $pName){
                                     array_push($viewTags, $pName);
                                 }
-                            }
-                            foreach($productDesc as $pDesc){
-                                if(!in_array($pDesc, $viewTags)){
+                                foreach($productDesc as $pDesc){
                                     array_push($viewTags, $pDesc);
                                 }
                             }
 
-                            $prodTags = json_decode($view->product->tags['tags']); //array of tags
-                            foreach($prodTags as $prodtag){
-                                if(!in_array($prodtag, $viewTags)){
+                            if(!empty($view->product->tags)){
+                                $prodTags = json_decode($view->product->tags['tags']); //array of tags
+                                foreach($prodTags as $prodtag){
                                     array_push($viewTags, $prodtag);
                                 }
                             }
-
-                            $similarTags = array_intersect($viewTags, $productTags);
+                        }
+                            array_unique($viewTags);
+                            $similarTags = array_intersect($productTags, $viewTags);
                             $productTagsCount = count($productTags);
                             $similarTagsCount = count($similarTags);
                             $viewTagsCount = $similarTagsCount / $productTagsCount;
                             $viewTagsScore = $viewTagsCount * 1.2;
-                        }
 
-                        $viewPoints = $itemViewsCounter * 1.2;
-                        $totalViewPoints = $viewPoints + $viewTagsScore;
-                        $points += $totalViewPoints;
-                        // dd($item->product['category']);
+                            $viewPoints = $itemViewsCounter * 1.2;
+
+                            $totalViewPoints = $viewPoints + $viewTagsScore;
+                            $points += $totalViewPoints;
+
+                            
+                    
 
 
                         //BASE SA FAVORITES
@@ -1504,24 +1479,18 @@ class CustomerController extends Controller
                                 $productName = explode(" ", strtolower($prod['productName']));
                                 $productDesc = explode(" ", strtolower($prod['productDesc']));
                                 foreach($productName as $pName){
-                                    if(!in_array($pName, $favoriteTags)){
-                                        array_push($favoriteTags, $pName);
-                                    }
+                                    array_push($favoriteTags, $pName);
                                 }
                                 foreach($productDesc as $pDesc){
-                                    if(!in_array($pDesc, $favoriteTags)){
-                                        array_push($favoriteTags, $pDesc);
-                                    }
+                                    array_push($favoriteTags, $pDesc);
                                 }
 
                                 $prodTags = json_decode($prod->tags['tags']); //array of tags
                                 foreach($prodTags as $prodtag){
-                                    if(!in_array($prodtag, $favoriteTags)){
-                                        array_push($favoriteTags, $prodtag);
-                                    }
+                                    array_push($favoriteTags, $prodtag);
                                 }
-
-                                $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                                array_unique($favoriteTags);
+                                $favSimilarTags = array_intersect($productTags, $favoriteTags);
                                 $productTagsCount = count($productTags); //dili apilon ug output
                                 $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                                 $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -1539,23 +1508,18 @@ class CustomerController extends Controller
                                     $productName = explode(" ", strtolower($setprod['productName']));
                                     $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                     foreach($productName as $pName){
-                                        if(!in_array($pName, $favoriteTags)){
-                                            array_push($favoriteTags, $pName);
-                                        }
+                                        array_push($favoriteTags, $pName);
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $favoriteTags)){
-                                            array_push($favoriteTags, $pDesc);
-                                        }
+                                        array_push($favoriteTags, $pDesc);
                                     }
 
                                     $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $favoriteTags)){
-                                            array_push($favoriteTags, $prodtag);
-                                        }
+                                        array_push($favoriteTags, $prodtag);
                                     }
-                                    $favSimilarTags = array_intersect($favoriteTags, $productTags);
+                                    array_unique($favoriteTags);
+                                    $favSimilarTags = array_intersect($productTags, $favoriteTags);
                                     $productTagsCount = count($productTags); //dili apilon ug output
                                     $favSimilarTagsCount = count($favSimilarTags); //dili apilon ug output
                                     $favTagsCount = $favSimilarTagsCount / $productTagsCount;
@@ -1567,8 +1531,9 @@ class CustomerController extends Controller
                             $totalFavPoints = $favScore + $favoriteTagsScore;
                             $points += $totalFavPoints;
                         }
+                        // $points += $favoriteCounter * 2.5;
 
-                        //ORDER HISTORY
+
                         $orderhistories = Order::where('userID', $userID)->limit(5)->get();
                         $orderCounter = 0;
                         $orderTags = array();
@@ -1588,27 +1553,16 @@ class CustomerController extends Controller
                                         $productName = explode(" ", strtolower($prod['productName']));
                                         $productDesc = explode(" ", strtolower($prod['productDesc']));
                                         foreach($productName as $pName){
-                                            if(!in_array($pName, $orderTags)){
-                                                array_push($orderTags, $pName);
-                                            }
+                                            array_push($orderTags, $pName);
                                         }
                                         foreach($productDesc as $pDesc){
-                                            if(!in_array($pDesc, $orderTags)){
-                                                array_push($orderTags, $pDesc);
-                                            }
+                                            array_push($orderTags, $pDesc);
                                         }
 
                                         $prodTags = json_decode($prod->tags['tags']); //array of tags
                                         foreach($prodTags as $prodtag){
-                                            if(!in_array($prodtag, $orderTags)){
-                                                array_push($orderTags, $prodtag);
-                                            }
+                                            array_push($orderTags, $prodtag);
                                         }
-                                        $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                        $orderSimilarTagsCount = count($orderSimilarTags);
-                                        $productTagsCount = count($productTags);
-                                        $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                        $orderTagsScore = $orderTagsCount * 1.5;
 
                                     }else{
                                         $setset = Set::where('id', $cartItem['setID'])->first();
@@ -1622,27 +1576,16 @@ class CustomerController extends Controller
                                             $productName = explode(" ", strtolower($setprod['productName']));
                                             $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                             foreach($productName as $pName){
-                                                if(!in_array($pName, $orderTags)){
-                                                    array_push($orderTags, $pName);
-                                                }
+                                                array_push($orderTags, $pName);
                                             }
                                             foreach($productDesc as $pDesc){
-                                                if(!in_array($pDesc, $orderTags)){
-                                                    array_push($orderTags, $pDesc);
-                                                }
+                                                array_push($orderTags, $pDesc);
                                             }
 
                                             $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                             foreach($prodTags as $prodtag){
-                                                if(!in_array($prodtag, $orderTags)){
-                                                    array_push($orderTags, $prodtag);
-                                                }
+                                                array_push($orderTags, $prodtag);
                                             }
-                                            $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                            $orderSimilarTagsCount = count($orderSimilarTags);
-                                            $productTagsCount = count($productTags);
-                                            $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                            $orderTagsScore = $orderTagsCount * 1.5;
                                         }
                                     }
                                 }
@@ -1660,28 +1603,17 @@ class CustomerController extends Controller
                                     $productName = explode(" ", strtolower($prod['productName']));
                                     $productDesc = explode(" ", strtolower($prod['productDesc']));
                                     foreach($productName as $pName){
-                                        if(!in_array($pName, $orderTags)){
-                                            array_push($orderTags, $pName);
-                                        }
+                                        array_push($orderTags, $pName);
                                     }
                                     foreach($productDesc as $pDesc){
-                                        if(!in_array($pDesc, $orderTags)){
-                                            array_push($orderTags, $pDesc);
-                                        }
+                                        array_push($orderTags, $pDesc);
                                     }
 
                                     $prodTags = json_decode($prod->tags['tags']); //array of tags
                                     foreach($prodTags as $prodtag){
-                                        if(!in_array($prodtag, $favoriteTags)){
-                                            array_push($orderTags, $prodtag);
-                                        }
+                                        array_push($orderTags, $prodtag);
                                     }
-                                    $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                    $orderSimilarTagsCount = count($orderSimilarTags);
-                                    $productTagsCount = count($productTags);
-                                    $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                    $orderTagsScore = $orderTagsCount * 1.5;
-                                    
+
                                 }else{
                                     $setset = Set::where('id', $orderhistory->rent['itemID'])->first();
                                     foreach($setset->items as $item){
@@ -1694,35 +1626,31 @@ class CustomerController extends Controller
                                         $productName = explode(" ", strtolower($setprod['productName']));
                                         $productDesc = explode(" ", strtolower($setprod['productDesc']));
                                         foreach($productName as $pName){
-                                            if(!in_array($pName, $orderTags)){
-                                                array_push($orderTags, $pName);
-                                            }
+                                            array_push($orderTags, $pName);
                                         }
                                         foreach($productDesc as $pDesc){
-                                            if(!in_array($pDesc, $orderTags)){
-                                                array_push($orderTags, $pDesc);
-                                            }
+                                            array_push($orderTags, $pDesc);
                                         }
 
                                         $prodTags = json_decode($setprod->tags['tags']); //array of tags
                                         foreach($prodTags as $prodtag){
-                                            if(!in_array($prodtag, $favoriteTags)){
-                                                array_push($orderTags, $prodtag);
-                                            }
+                                            array_push($orderTags, $prodtag);
                                         }
-                                        $orderSimilarTags = array_intersect($orderTags, $productTags);
-                                        $orderSimilarTagsCount = count($orderSimilarTags);
-                                        $productTagsCount = count($productTags);
-                                        $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
-                                        $orderTagsScore = $orderTagsCount * 1.5;
                                     }
                                 }
                             }
-                            $historyScore = $orderCounter * 1.5;  //score fav              
-                            $totalOrderScore = $historyScore + $orderTagsScore;            
-                            $points += $totalOrderScore;
                         } //order history closing
+                        array_unique($orderTags);
+                        $orderSimilarTags = array_intersect($productTags, $orderTags);
+                        $orderSimilarTagsCount = count($orderSimilarTags);
+                        $productTagsCount = count($productTags);
+                        $orderTagsCount = $orderSimilarTagsCount / $productTagsCount;
+                        $orderTagsScore = $orderTagsCount * 1.5;
 
+                        $historyScore = $orderCounter * 1.5;  //score fav              
+                        $totalOrderScore = $historyScore + $orderTagsScore;
+                        $points += $totalOrderScore;
+                        
 
                         //setprod orig
                         $setprod['gender'] = $item->product->getSubCategory->getCategory['gender'];
@@ -1740,13 +1668,13 @@ class CustomerController extends Controller
                         array_push($setitems, $setprod);
 
                     } //set item loop closing
+
                     $set['items'] = $setitems;
                     $set['in_favorites'] = $favorites;
-                    $set['points'] = round($points, 2);
+                    $set['points'] = $points;
                     // dd($set);
 
                 } //set loop closing
-                    // dd($sets);
 
                 $sets = $sets->sortBy(function($set){
                     return -$set->points;
@@ -1756,6 +1684,7 @@ class CustomerController extends Controller
                 $pPoints = array_column($allProducts, 'points');
                 array_multisort($pPoints, SORT_DESC, $allProducts);
 
+                // dd($allProducts[6]);
 
                 $productsCount = count($allProducts);
 
@@ -1773,7 +1702,7 @@ class CustomerController extends Controller
                 $paginator->withPath('shop');
 
 
-                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink'));
+                return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'page_title', 'notifications', 'notificationsCount', 'paginator', 'activeLink', 'orderedItems'));
 
             } else if(Auth()->user()->roles == "boutique") {
                 return redirect('/dashboard');
@@ -1795,6 +1724,7 @@ class CustomerController extends Controller
             $notificationsCount = null;
             $sets = Set::where('setStatus', 'Available')->with('owner')->with('rentDetails')->with('items')->get();
             $allProducts = array();
+            $orderedItems = array();
 
 
             //FILTERING-------------------------------------------------------------------------
@@ -1873,7 +1803,7 @@ class CustomerController extends Controller
 
             // dd($allProducts);
 
-            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink'));
+            return view('hinimo/shop', compact('products', 'categories', 'cart', 'cartCount', 'userID', 'productsCount', 'boutiques', 'notAvailables', 'page_title', 'notificationsCount', 'sets', 'paginator', 'activeLink', 'orderedItems'));
         }
     }
 
@@ -2900,7 +2830,7 @@ class CustomerController extends Controller
         $rent->update([
             'status' => "On Rent"
         ]);
-        $order = Order::where('rentID', $rentID)->update([
+        $order = Order::where('transactionID', $rentID)->update([
             'status' => "On Rent"
         ]);
 
@@ -2917,6 +2847,7 @@ class CustomerController extends Controller
         $page_title = 'Biddings';
         $categories = Category::all();
         $boutiques = Boutique::all();
+        // $biddings = Bidding::where('endDate', '>=', $dateToday)->get();
         $biddings = Bidding::where('status', 'Open')->get();
         $biddingsCount = $biddings->count();
         $notifications;
@@ -2927,6 +2858,16 @@ class CustomerController extends Controller
             $cartCount = $cart->items->count();
         }else{
             $cartCount = 0;
+        }
+
+        $dateToday = date('Y-m-d');
+
+        foreach($biddings as $bidding){
+            if($bidding['endDate'] < $dateToday){
+                $bidding->update([
+                    'status' => 'Closed'
+                ]);
+            }
         }
 
         // $time = date();
@@ -3439,7 +3380,7 @@ class CustomerController extends Controller
                         return redirect('/view-order/'.$order['id']);
 
                     }elseif($type == 'RENT'){
-                        return redirect('/view-rent/'.$order->rent['rentID']);
+                        return redirect('/view-rent/'.$order->rent['id']);
 
                     }elseif($type == 'BIDD'){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
@@ -3464,7 +3405,7 @@ class CustomerController extends Controller
                         return redirect('/view-order/'.$order['id']);
 
                     }elseif($type == 'RENT'){
-                        return redirect('/view-rent/'.$order->rent['rentID']);
+                        return redirect('/view-rent/'.$order->rent['id']);
 
                     }elseif($type == 'BIDD'){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
@@ -3497,7 +3438,7 @@ class CustomerController extends Controller
                         return redirect('/view-order/'.$order['id'].'#chat');
 
                     }elseif($type == 'RENT'){
-                        return redirect('/view-rent/'.$order->rent['rentID'].'#chat');
+                        return redirect('/view-rent/'.$order->rent['id'].'#chat');
 
                     }elseif($type == 'BIDD'){
                         return redirect('/view-bidding-order/'.$order->bidding['id'].'#chat');
@@ -3517,7 +3458,7 @@ class CustomerController extends Controller
                         return redirect('/view-order/'.$order['id']);
 
                     }elseif($order['rentID'] != null){
-                        return redirect('/view-rent/'.$order->rent['rentID']);
+                        return redirect('/view-rent/'.$order->rent['id']);
 
                     }elseif($order['biddingID'] != null){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
@@ -3537,7 +3478,7 @@ class CustomerController extends Controller
                         return redirect('/view-order/'.$order['id']);
 
                     }elseif($order['rentID'] != null){
-                        return redirect('/view-rent/'.$order->rent['rentID']);
+                        return redirect('/view-rent/'.$order->rent['id']);
 
                     }elseif($order['biddingID'] != null){
                         return redirect('/view-bidding-order/'.$order->bidding['id']);
@@ -4464,6 +4405,7 @@ class CustomerController extends Controller
     public function setDetails($setID)
     {
         $user = Auth()->user();
+        $id = Auth()->user()->id;
         $set = Set::where('id', $setID)->first();
         $addresses = Address::where('userID', $user['id'])->get();
         $boutiques = Boutique::all();
@@ -4476,6 +4418,25 @@ class CustomerController extends Controller
             $cartCount = $cart->items->count();
         }else{
             $cartCount = 0;
+        }
+
+
+        if(!empty($user)){
+            $id = Auth()->user()->id;
+
+            $views = View::where('userID', $id)->where('itemID', $setID)->first();
+            // dd($views);
+            if(empty($views)){
+                $views = View::create([
+                    'userID' => $id,
+                    'itemID' => $setID,
+                    'count' => 1
+                ]);
+            }else{
+                $views->update([
+                    'count' => $views['count'] + 1
+                ]);
+            }
         }
 
         $cities = City::all();

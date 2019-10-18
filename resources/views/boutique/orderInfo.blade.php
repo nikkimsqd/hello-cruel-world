@@ -242,7 +242,7 @@
           <div class="col-md-12">
             <hr>
             <h4>Courier's Name: <b>{{$order->courier->user['fname'].' '.$order->courier->user['lname']}}</b></h4>
-          </div>8
+          </div>
           @endif
 
         </div>
@@ -489,7 +489,7 @@
       <div class="modal-body">
         <p style="text-align: center;">
           {!! QrCode::size(300)->generate( 
-         $order['id'].'_'.$order['userID'].'_'.$order['boutiqueID']  
+         $order['id'].'-'.$order['userID'].'-'.$order['boutiqueID']  
           ); !!}
 
         <!--   {!! QrCode::size(300)->generate( 

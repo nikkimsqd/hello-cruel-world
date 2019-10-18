@@ -169,7 +169,7 @@ class BoutiqueController extends Controller
                         return redirect('/orders/'.$order['id']);
 
                     }elseif($type == 'RENT'){
-						$rent = Rent::where('rentID', $order['transactionID'])->first();
+						$rent = Rent::where('id', $order['transactionID'])->first();
                         return redirect('/rents/'.$rent['id']);
 
                     }elseif($type == 'BIDD'){
@@ -947,19 +947,19 @@ class BoutiqueController extends Controller
 	public function rentReturned($rentID)
 	{
 		$currentDate = date('Y-m-d');
-		$rent = Rent::where('rentID', $rentID)->first();
+		$rent = Rent::where('id', $rentID)->first();
         $rent->update([
         	'completed_at' => $currentDate,
             'status' => "Completed"
         ]);
 
-        $order = Order::where('rentID', $rentID)->update([
+        $order = Order::where('transactionID', $rentID)->update([
         	'status' => "Completed"
         ]);
 
-        Product::where('id', $rent['productID'])->update([
-        	'productStatus' => "Available"
-        ]);
+        // Product::where('id', $rent['productID'])->update([
+        // 	'productStatus' => "Available"
+        // ]);
 
 
         return redirect('/orders/'.$rent['orderID']);
@@ -1692,7 +1692,7 @@ class BoutiqueController extends Controller
 
     public function archiveOrders()
     {
-    	$page_title = "Archive Orders";
+    	$page_title = "Archives";
    		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$notifications = Auth()->user()->notifications;
@@ -1704,7 +1704,7 @@ class BoutiqueController extends Controller
 
     public function archiveRents()
     {
-    	$page_title = "Archive Rents";
+    	$page_title = "Archives";
     	$id = Auth()->user()->id;
     	$boutique = Boutique::where('userID', $id)->first();
 
@@ -1722,7 +1722,7 @@ class BoutiqueController extends Controller
 
     public function archiveMtos()
     {
-    	$page_title = "Archive Made-to-Orders";
+    	$page_title = "Archives";
    		$id = Auth()->user()->id;
 		$boutique = Boutique::where('userID', $id)->first();
 		$notifications = Auth()->user()->notifications;
@@ -1737,7 +1737,7 @@ class BoutiqueController extends Controller
     {
     	$userID = Auth()->user()->id;
 	    $user = User::find($userID);
-	    $page_title = 'Archive Orders from Bidding';
+	    $page_title = 'Archives';
 	    $boutique = Boutique::where('userID', $userID)->first();
 	    $notifications = $user->notifications;
 	    $notificationsCount = $user->unreadNotifications->count();

@@ -26,7 +26,7 @@
       
 	    <div class="form-group">
 	     <h4>Product Name</h4>
-			 <input type="text" name="productName" class="input form-control" placeholder="Enter product name" required>
+			 <input type="text" name="productName" class="input form-control" placeholder="Enter product name" required autofocus>
 	    </div>
 
 	    <div class="form-group">
@@ -137,12 +137,14 @@
       <div class="form-group">
         <h4>Item Availability:</h4>
         <!-- <div class="icheckbox_minimal-blue"> -->
-        <input type="checkbox" id="forRent" name="forRent" class="minimal" value="true"> For Rent &nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="forRent" name="forRent" class="minimal" value="true">
+        <label for="forRent"> For Rent</label>  &nbsp;&nbsp;&nbsp;
         <!-- </div> -->
-        <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true"> For Sale
+        <input type="checkbox" id="forSale" name="forSale" class="minimal-red" value="true" checked> 
+        <label for="forSale"> For Sale</label>
       </div>
 
-      <div class="form-group" id="forSalePrice" hidden>
+      <div class="form-group" id="forSalePrice">
         <h4>Retail Price</h4>
         <input type="number" name="retailPrice" class="input form-control" autofocus><br>
       </div>

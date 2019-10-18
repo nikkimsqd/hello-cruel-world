@@ -83,7 +83,7 @@
                                 <td style="text-align: center;">{{$order['id']}}</td>
                                 <td style="text-align: center;"><b>RENT</b></td>
                                 <td>
-                                @if($order->rent['productID'] != null)
+                                @if($order->rent['itemID'] != null)
                                     {{$order->rent->product['productName']}}
                                 @elseif($order->rent['setID'] != null)
                                     {{$order->rent->set['setName']}}

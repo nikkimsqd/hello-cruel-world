@@ -77,10 +77,10 @@
                     @if($user != null)
                         <div class="add-to-cart-btn">
                             <input type="text" name="productID" value="{{$set['id']}}" hidden>
-                            <a class="btn essence-btn">Add to Cart</a>&nbsp;
+                            <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                         </div>
                     @else
-                        <a class="btn essence-btn">Add to Cart</a>&nbsp;
+                        <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                     @endif
 
                 <a href="{{url('requestToRentSet/'.$set['id'])}}" class="btn essence-btn">Request to Rent</a>
@@ -94,7 +94,7 @@
                     <div class="add-to-cart-btn">
                         <input type="text" name="productID" value="{{$set['id']}}" hidden>
                         <input type="text" name="counter" value="{{$counter-1}}" id="counter" hidden>
-                        <a class="btn essence-btn">Add to Cart</a>&nbsp;
+                        <a href="" class="btn essence-btn">Add to Cart</a>&nbsp;
                     </div>
                     @else
                         <input type="submit" class="btn essence-btn" value="Add to Cart" data-toggle="modal" data-target="#LoginModal">

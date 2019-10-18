@@ -54,6 +54,10 @@
                     <td><span class="label label-warning">{{$rent['status']}}</span></td>
                   @elseif($rent['status'] == "Approved")
                     <td><span class="label label-info">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "On Rent")
+                    <td><span class="label label-navy">{{$rent['status']}}</span></td>
+                  @elseif($rent['status'] == "Completed")
+                    <td><span class="label label-success">{{$rent['status']}}</span></td>
                   @else
                     <td><span class="label label-danger">Declined</span></td>
                   @endif

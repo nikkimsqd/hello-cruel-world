@@ -145,7 +145,7 @@ class IonicController extends Controller
     public function pickupOrder($data)
     {
         // $orderData = array();
-        $orderData = explode("_", $data);
+        $orderData = explode("-", $data);
         // dd($orderData);
     	$order = Order::where('id', $orderData[0])->first();
     	$order->update([

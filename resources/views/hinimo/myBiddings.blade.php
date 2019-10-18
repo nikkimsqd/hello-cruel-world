@@ -83,7 +83,7 @@
                             @foreach($bidding->productFile as $image)
                                 <div class="product-img">
                                 @if($imagecounter == 1)    
-                                    <img src="{{ asset('/uploads').$image['filename'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
+                                    <img src="{{ asset('/uploads').$image['filepath'] }}" style="width:calc(100% + 40px); height: 350px; object-fit: cover; ">
                                 @else
                                 @endif
                                 </div>

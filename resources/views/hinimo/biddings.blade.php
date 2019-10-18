@@ -52,7 +52,7 @@
                                         <p><span>{{$biddingsCount}}</span> biddings found</p>
                                     </div>
                                     <!-- Sorting -->
-                                    <div class="product-sorting d-flex">
+                                    <!-- <div class="product-sorting d-flex">
                                         <p>Sort by:</p>
                                         <form action="#" method="get">
                                             <select name="select" id="sortByselect">
@@ -64,7 +64,7 @@
                                             </select>
                                             <input type="submit" class="d-none" value="">
                                         </form> 
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
